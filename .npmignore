@@ -1,0 +1,32 @@
+# Build scripts
+build
+
+# Source files
+src
+
+# Test files
+test
+
+# Template files
+templates
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Output of 'npm pack'
+*.tgz
+
+# Visual Studio Code
+.vscode
+
+# IntelliJ
+.idea
+
+# MYC output
+.nyc_output
+coverage
+
+# GitHub
+.github
