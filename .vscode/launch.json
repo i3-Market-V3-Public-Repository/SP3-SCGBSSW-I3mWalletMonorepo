@@ -6,10 +6,11 @@
   "configurations": [
     {
       "args": [
+        "testing/bootstrap.js",
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/test"
+        "${workspaceFolder}/testing/tests/node"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Mocha Tests",
@@ -25,7 +26,10 @@
       "request": "launch",
       "name": "Rollup",
       "program": "${workspaceFolder}/node_modules/.bin/rollup",
-      "args": ["-c", "${workspaceFolder}/build/rollup.config.js"]
+      "args": [
+        "-c",
+        "${workspaceFolder}/build/rollup.config.js"
+      ]
     },
     {
       "type": "node",
@@ -33,7 +37,9 @@
       "name": "TypeScript",
       "program": "${workspaceFolder}/src/index.ts",
       "preLaunchTask": "npm: build:js",
-      "outFiles": ["${workspaceFolder}/dist/index.node.cjs.js"]
+      "outFiles": [
+        "${workspaceFolder}/dist/index.node.cjs.js"
+      ]
     },
     {
       "type": "node",
@@ -41,7 +47,9 @@
       "name": "JavaScript",
       "program": "${workspaceFolder}/src/index.js",
       "preLaunchTask": "npm: build:js",
-      "outFiles": ["${workspaceFolder}/dist/index.node.cjs.js"]
+      "outFiles": [
+        "${workspaceFolder}/dist/index.node.cjs.js"
+      ]
     }
   ]
 }

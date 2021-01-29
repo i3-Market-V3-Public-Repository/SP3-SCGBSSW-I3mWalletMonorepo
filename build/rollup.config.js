@@ -52,7 +52,7 @@ module.exports = [
     ],
     plugins: addTsToPlugins([
       replace({
-        'process.env.BROWSER': 'true'
+        IS_BROWSER: true
       })
     ]),
     external: [] // external modules here
@@ -96,7 +96,7 @@ module.exports = [
     ],
     plugins: addTsToPlugins([
       replace({
-        'process.env.BROWSER': 'false'
+        IS_BROWSER: false
       })
     ]),
     external: [] // external modules here

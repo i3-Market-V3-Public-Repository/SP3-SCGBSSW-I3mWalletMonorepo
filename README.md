@@ -77,17 +77,12 @@ YOUR JAVASCRIPT EXAMPLE CODE HERE
 
 ## API reference documentation
 
-<a name="module_my-package-name"></a>
+<a name="echo"></a>
 
-### my-package-name
-My module description. Please update with your module data.
-
-<a name="module_my-package-name..echo"></a>
-
-#### my-package-name~echo(a) ⇒ <code>string</code>
+### echo(a) ⇒ <code>string</code>
 Returns the input string
 
-**Kind**: inner method of [<code>my-package-name</code>](#module_my-package-name)  
+**Kind**: global function  
 **Returns**: <code>string</code> - a gratifying echo response from either node or browser  
 
 | Param | Type |

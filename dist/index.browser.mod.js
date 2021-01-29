@@ -1,8 +1,4 @@
 /**
- * My module description. Please update with your module data.
- * @module my-package-name
- */
-/**
  * Returns the input string
  *
  * @param {string} a
@@ -14,7 +10,7 @@ function echo (a) {
     */
   /* eslint-disable no-lone-blocks */
   {
-    console.log('Node.js echoes: ' + a)
+    console.log('Browser echoes: ' + a)
   }
   /* eslint-enable no-lone-blocks */
   return a
