@@ -12,7 +12,7 @@ describe('testing function echo()', function () {
         const ret = await testFn(input)
         chai.expect(ret).to.equal(input)
       })
-      it(`should return ${input} in Browser`, async function () { // This will be run in browser
+      it(`should return ${input} in Browser`, async function () { // This will be run in a browser page that have already imported /dist/index.browser.mod.js
         const ret = await page.evaluate(testFn, input) // first param is the function to test, the next ones are the parameters of the function.
         chai.expect(ret).to.equal(input)
       })
