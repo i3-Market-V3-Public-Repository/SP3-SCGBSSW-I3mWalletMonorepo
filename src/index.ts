@@ -2,7 +2,7 @@
  * My module description. Please update with your module data.
  * @module my-package-name
  */
-declare var IS_BROWSER: boolean
+
 /**
  * Returns the input string
  *

@@ -48,7 +48,8 @@
       "/testing/tests/browser/",
       "/dist/index.browser.bundle.iife.js",
       "/dist/index.browser.bundle.mod.js",
-      "/types/index.d.ts"
+      "/types/index.d.ts",
+      "/typings/is-browser.d.ts"
     ]
   },
   "devDependencies": {
