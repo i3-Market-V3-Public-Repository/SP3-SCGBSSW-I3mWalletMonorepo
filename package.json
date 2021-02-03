@@ -24,7 +24,7 @@
     "test": "./testing/tests"
   },
   "scripts": {
-    "clean": "rimraf .nyc_output coverage dist testing/.tests",
+    "clean": "rimraf .nyc_output coverage dist testing/.tests node_modules",
     "test:browser": "node testing/browser/index.js",
     "pretest:node": "npx tsc -t ESNEXT --lib esnext -m commonjs --esModuleInterop false --outDir testing/.tests --inlineSourceMap --allowJs testing/tests/*",
     "test:node": "nyc --check-coverage --reporter=text mocha testing/.tests/**/*.js",
@@ -34,8 +34,8 @@
     "postbuild:js": "node build/build.dts.js",
     "standard": "ts-standard --fix",
     "docs": "node build/build.docs.js",
-    "build": "run-s build:js standard docs",
-    "preversion": "npm run build && npm run test",
+    "build": "run-s standard build:js docs test",
+    "preversion": "npm run build",
     "postversion": "git push"
   },
   "ts-standard": {
