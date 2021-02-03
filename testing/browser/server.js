@@ -50,7 +50,7 @@ async function buildTests () {
     //   'chai',
     //   path.join(rootDir, pkgJson.browser)
     // ],
-    input: path.join(rootDir, pkgJson.directories.test, '**/*.ts'),
+    input: path.join(rootDir, pkgJson.directories.test, '**/*.{js,ts}'),
     plugins: [
       multi({ exports: true }),
       replace({
