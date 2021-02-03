@@ -5,16 +5,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "args": [
-        "--timeout",
-        "999999",
-        "--colors",
-        "${workspaceFolder}/testing/tests"
-      ],
-      "internalConsoleOptions": "openOnSessionStart",
-      "name": "Mocha Tests",
-      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "name": "Debug my tests in node.js",
       "request": "launch",
+      "runtimeArgs": [
+        "run",
+        "test:node"
+      ],
+      "runtimeExecutable": "npm",
       "skipFiles": [
         "<node_internals>/**"
       ],
