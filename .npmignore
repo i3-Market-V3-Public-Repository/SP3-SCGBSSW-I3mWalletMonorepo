@@ -1,14 +1,11 @@
 # Build scripts
 build
 
-# Source files
-src
-
-# Test files
-test
-
-# Template files
+# Templates
 templates
+
+# Testing files
+testing
 
 # Logs
 logs

@@ -4,6 +4,7 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const typescript = require('@rollup/plugin-typescript')
+const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
 const fs = require('fs')
@@ -26,19 +27,13 @@ const pkgCamelisedName = camelise(pkgName)
 let _ts = true
 let input = path.join(srcDir, 'index.ts')
 
+const typescriptOptions = { exclude: ['testing/tests/**/*'] }
 if (fs.existsSync(input) !== true) {
   input = path.join(srcDir, 'index.js')
   _ts = false
 }
 
 if (fs.existsSync(input) !== true) throw new Error('You must create either index.js or index.js')
-
-function addTsToPlugins (plugins) {
-  if (_ts) {
-    plugins.unshift(typescript())
-  }
-  return plugins
-}
 
 module.exports = [
   { // ESM for browsers
@@ -50,11 +45,13 @@ module.exports = [
         format: 'es'
       }
     ],
-    plugins: addTsToPlugins([
+    plugins: [
+      ...(_ts ? [typescript(typescriptOptions)] : []),
       replace({
         IS_BROWSER: true
-      })
-    ]),
+      }),
+      commonjs()
+    ],
     external: [] // external modules here
   },
   { // Browser bundles
@@ -70,15 +67,18 @@ module.exports = [
         format: 'es'
       }
     ],
-    plugins: addTsToPlugins([
+    plugins: [
       replace({
-        'process.env.BROWSER': 'true'
+        IS_BROWSER: true
       }),
+      ...(_ts ? [typescript(typescriptOptions)] : []),
       resolve({
-        browser: true
+        browser: true,
+        exportConditions: ['browser', 'module', 'import', 'default']
       }),
+      commonjs(),
       terser()
-    ])
+    ]
   },
   { // Node
     input: input,
@@ -94,11 +94,13 @@ module.exports = [
         format: 'esm'
       }
     ],
-    plugins: addTsToPlugins([
+    plugins: [
       replace({
         IS_BROWSER: false
-      })
-    ]),
+      }),
+      ...(_ts ? [typescript(typescriptOptions)] : []),
+      commonjs()
+    ],
     external: [] // external modules here
   }
 ]

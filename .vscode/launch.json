@@ -6,11 +6,10 @@
   "configurations": [
     {
       "args": [
-        "testing/bootstrap.js",
         "--timeout",
         "999999",
         "--colors",
-        "${workspaceFolder}/testing/tests/node"
+        "${workspaceFolder}/testing/tests"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "name": "Mocha Tests",
