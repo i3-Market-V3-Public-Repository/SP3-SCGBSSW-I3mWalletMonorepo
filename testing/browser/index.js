@@ -49,7 +49,7 @@ const opts = {
     // timeout: 10000
   },
   doNotLogWarnings: true,
-  keepServerRunning: false, // keep server running until manually closed with ctrl-c
+  keepServerRunning: false, // keep server running until manually closed with ctrl-c. In combination with puppeteerOptions.headless (or just connecting any browser to the test page) allows debugging in browser
   serverPort: 38000
 }
 browserTests(opts)
