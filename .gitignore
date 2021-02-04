@@ -12,3 +12,6 @@ node_modules
 # MYC output
 .nyc_output
 coverage
+
+# Test temporal files
+testing/.tests

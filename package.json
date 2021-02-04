@@ -26,10 +26,10 @@
   "scripts": {
     "clean": "rimraf .nyc_output coverage dist testing/.tests node_modules",
     "_mocha:tsc": "tsc -p testing ",
-    "_mocha:js": "mocha --watch-files testing/.tests,dist/index.node.cjs.js 'testing/.tests/**/*.js' ",
+    "_mocha:js": "mocha --watch-files testing/.tests,dist/index.d.ts 'testing/.tests/**/*.js' ",
     "_mocha:clean": "rimraf testing/.tests",
     "_watch:tsc": "tsc-watch -p testing --onFirstSuccess \"npm run _mocha:js -- --watch\"",
-    "watch": "run-s -c _watch:tsc _mocha:clean",
+    "watch": "run-s -c _mocha:clean _watch:tsc",
     "test:browser": "node testing/browser/index.js",
     "test:node": "run-s _mocha:tsc _mocha:js _mocha:clean",
     "test": "run-s test:browser test:node",
