@@ -2,10 +2,6 @@ import CompactSign from 'jose/jws/compact/sign';
 import parseJwk from 'jose/jwk/parse';
 
 /**
- * My module description. Please update with your module data.
- * @module my-package-name
- */
-/**
  * Returns the input string
  *
  * @param {string} a
@@ -22,6 +18,7 @@ function echo(a) {
     /* eslint-enable no-lone-blocks */
     return a;
 }
+
 async function sign(a) {
     const encoder = new TextEncoder();
     const privateKey = await parseJwk({

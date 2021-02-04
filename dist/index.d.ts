@@ -1,8 +1,4 @@
 /**
- * My module description. Please update with your module data.
- * @module my-package-name
- */
-/**
  * Returns the input string
  *
  * @param {string} a

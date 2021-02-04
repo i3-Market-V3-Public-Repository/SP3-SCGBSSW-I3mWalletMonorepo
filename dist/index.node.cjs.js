@@ -11,10 +11,6 @@ var CompactSign__default = /*#__PURE__*/_interopDefaultLegacy(CompactSign);
 var parseJwk__default = /*#__PURE__*/_interopDefaultLegacy(parseJwk);
 
 /**
- * My module description. Please update with your module data.
- * @module my-package-name
- */
-/**
  * Returns the input string
  *
  * @param {string} a
@@ -31,6 +27,7 @@ function echo(a) {
     /* eslint-enable no-lone-blocks */
     return a;
 }
+
 async function sign(a) {
     const encoder = new TextEncoder();
     const privateKey = await parseJwk__default['default']({

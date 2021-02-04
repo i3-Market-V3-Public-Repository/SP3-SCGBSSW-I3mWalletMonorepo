@@ -1,13 +1,13 @@
 const puppeteer = require('puppeteer')
 
-const browserTests = async ({ doNotLogWarnings = true, serverPort = 38000, keepServerRunning = false, puppeteerOptions = {} }) => {
+const browserTests = async ({ logWarnings = false, serverPort = 38000, keepServerRunning = false, puppeteerOptions = {} }) => {
   const server = require('./server').server
   await server.init()
   await server.listen(serverPort)
   const browser = await puppeteer.launch(puppeteerOptions)
   const page = await browser.newPage()
   page.on('console', function (message) {
-    let ignore = message.type() === 'warning' && doNotLogWarnings
+    let ignore = message.type() === 'warning' && !logWarnings
     if (message.type() === 'error' && message.location()) {
       if (message.location().url.includes('favicon.ico')) {
         ignore = true
@@ -26,7 +26,18 @@ const browserTests = async ({ doNotLogWarnings = true, serverPort = 38000, keepS
     if (message.type() === 'error' && message.location()) {
       text = `${message.location().url} : ${text}`
     }
-    console[message.type()](`${text}`, ...args)
+    let consoleType = 'log'
+    switch (message.type()) {
+      case 'error':
+        consoleType = 'error'
+        break
+      case 'warning':
+        consoleType = 'warn'
+        break
+      default:
+        break
+    }
+    console[consoleType](text, ...args)
   })
   page.on('error', function (err) { page.emit(new Error(err)) })
 

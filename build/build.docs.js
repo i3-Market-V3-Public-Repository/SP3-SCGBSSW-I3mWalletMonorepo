@@ -38,7 +38,7 @@ if (repoProvider && repoProvider === 'github') {
   coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
 }
 
-const templateFile = path.join(rootDir, pkgJson.directories.templates, 'readme-template.md')
+const templateFile = path.join(rootDir, pkgJson.directories.build, 'templates/readme-template.md')
 let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
   .replace(/\{\{PKG_CAMELCASE\}\}/g, camelise(pkgJson.name))

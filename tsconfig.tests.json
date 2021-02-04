@@ -3,10 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "module": "commonjs",
-    "outDir": "./testing/.tests/",
+    "outDir": ".tests/",
     "noEmit": false, 
     "inlineSourceMap": true,
     "preserveWatchOutput": true
   },
-  "include": ["testing/tests/**/*", "src/**/*.spec.ts"]
+  "include": ["build/typings/**/*", "test/**/*", "src/**/*.spec.ts"]
 }
