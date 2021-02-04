@@ -23,11 +23,11 @@
     "test": "/test"
   },
   "scripts": {
-    "clean": "rimraf .nyc_output coverage dist .tests node_modules",
+    "clean": "rimraf .nyc_output coverage dist .tests",
     "_mocha:tsc": "tsc --build tsconfig.tests.json ",
-    "_mocha:js": "mocha --watch-files .test,dist/index.d.ts '.tests/**/*.js' ",
+    "_mocha:js": "mocha --watch-files .tests,dist/index.d.ts '.tests/**/*.js' ",
     "_mocha:clean": "rimraf .tests",
-    "_watch:tsc": "tsc-watch --build tsconfig.tests.json --onFirstSuccess \"npm run _mocha:js -- --watch\"",
+    "_watch:tsc": "tsc-watch --build tsconfig.tests.json --preserveWatchOutput --onFirstSuccess \"npm run _mocha:js -- --watch\"",
     "watch": "run-s -c _mocha:clean _watch:tsc",
     "test:browser": "node build/browser-testing/index.js",
     "test:node": "run-s _mocha:tsc _mocha:js _mocha:clean",
@@ -35,14 +35,14 @@
     "precoverage": "npm run _mocha:tsc",
     "coverage": "nyc --check-coverage --reporter=text --reporter=lcov mocha '.tests/**/*.js'",
     "postcoverage": "npm run _mocha:clean",
+    "prebuild:js": "link-module-alias",
     "build:js": "rollup -c build/rollup.config.js",
     "postbuild:js": "node build/build.dts.js",
     "lint": "ts-standard --fix",
     "docs": "node build/build.docs.js",
     "build": "run-s lint build:js docs test:browser coverage",
     "preversion": "npm run build",
-    "postversion": "git push",
-    "postinstall": "link-module-alias"
+    "postversion": "git push"
   },
   "ts-standard": {
     "env": [

@@ -5,8 +5,7 @@
     "module": "commonjs",
     "outDir": ".tests/",
     "noEmit": false, 
-    "inlineSourceMap": true,
-    "preserveWatchOutput": true
+    "inlineSourceMap": true
   },
   "include": ["build/typings/**/*", "test/**/*", "src/**/*.spec.ts"]
 }

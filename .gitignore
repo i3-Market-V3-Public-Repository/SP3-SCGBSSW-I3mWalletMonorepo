@@ -14,4 +14,4 @@ node_modules
 coverage
 
 # Test temporal files
-testing/.tests
+.tests

@@ -1,11 +1,8 @@
 # Build scripts
 build
 
-# Templates
-templates
-
 # Testing files
-testing
+test
 
 # Logs
 logs
@@ -27,3 +24,7 @@ coverage
 
 # GitHub
 .github
+
+# tsconfig
+tsconfig.json
+tsconfig.tests.json
