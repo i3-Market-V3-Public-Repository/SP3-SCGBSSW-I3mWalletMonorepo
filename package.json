@@ -21,19 +21,20 @@
     "dist": "./dist",
     "src": "./src",
     "templates": "./templates",
-    "test": "./testing/tests"
+    "test": "./testing/tests",
+    "typings": "./typings"
   },
   "scripts": {
     "clean": "rimraf .nyc_output coverage dist testing/.tests node_modules",
-    "_mocha:tsc": "tsc -p testing ",
+    "_mocha:tsc": "tsc --build tsconfig.tests.json ",
     "_mocha:js": "mocha --watch-files testing/.tests,dist/index.d.ts 'testing/.tests/**/*.js' ",
     "_mocha:clean": "rimraf testing/.tests",
-    "_watch:tsc": "tsc-watch -p testing --onFirstSuccess \"npm run _mocha:js -- --watch\"",
+    "_watch:tsc": "tsc-watch --build tsconfig.tests.json --onFirstSuccess \"npm run _mocha:js -- --watch\"",
     "watch": "run-s -c _mocha:clean _watch:tsc",
     "test:browser": "node testing/browser/index.js",
     "test:node": "run-s _mocha:tsc _mocha:js _mocha:clean",
     "test": "run-s test:browser test:node",
-    "precoverage": "tsc -p testing",
+    "precoverage": "npm run _mocha:tsc",
     "coverage": "nyc --check-coverage --reporter=text --reporter=lcov mocha 'testing/.tests/**/*.js'",
     "postcoverage": "npm run _mocha:clean",
     "build:js": "rollup -c build/rollup.config.js",
@@ -42,7 +43,8 @@
     "docs": "node build/build.docs.js",
     "build": "run-s lint build:js docs test:browser coverage",
     "preversion": "npm run build",
-    "postversion": "git push"
+    "postversion": "git push",
+    "postinstall": "link-module-alias"
   },
   "ts-standard": {
     "env": [
@@ -69,6 +71,7 @@
     "@types/mocha": "^8.2.0",
     "chai": "^4.2.0",
     "jsdoc-to-markdown": "^6.0.1",
+    "link-module-alias": "^1.2.0",
     "mocha": "^8.2.1",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
@@ -82,5 +85,8 @@
   },
   "dependencies": {
     "jose": "^3.5.4"
+  },
+  "_moduleAliases": {
+    "~root": "."
   }
 }

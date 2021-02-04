@@ -27,7 +27,7 @@ const pkgCamelisedName = camelise(pkgName)
 let _ts = true
 let input = path.join(srcDir, 'index.ts')
 
-const typescriptOptions = { exclude: ['testing/tests/**/*'] }
+const typescriptOptions = { exclude: ['testing/tests/**/*', 'src/**/*.spec.ts'] }
 if (fs.existsSync(input) !== true) {
   input = path.join(srcDir, 'index.js')
   _ts = false

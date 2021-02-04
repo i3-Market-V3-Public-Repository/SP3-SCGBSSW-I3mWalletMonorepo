@@ -50,12 +50,12 @@ async function buildTests () {
     //   'chai',
     //   path.join(rootDir, pkgJson.browser)
     // ],
-    input: path.join(rootDir, pkgJson.directories.test, '**/*.{js,ts}'),
+    input: [path.join(rootDir, pkgJson.directories.test, '**/*.{js,ts}'), path.join(rootDir, pkgJson.directories.src, '**/*.spec.{js,ts}')],
     plugins: [
       multi({ exports: true }),
       replace({
-        'const _pkg = require(\'../../dist/index.node.cjs\')': '',
-        'import * as _pkg from \'../..\'': '',
+        'const _pkg = require(\'~root\')': '',
+        'import * as _pkg from \'~root\'': '',
         'const chai = require(\'chai\')': '',
         'import * as chai from \'chai\'': '',
         delimiters: ['', ''],
