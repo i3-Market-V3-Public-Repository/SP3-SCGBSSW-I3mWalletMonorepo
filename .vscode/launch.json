@@ -5,11 +5,47 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Attach by Process ID",
+      "processId": "${command:PickProcess}",
+      "request": "attach",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
+      "name": "Attach",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
+      "args": [
+        "--timeout",
+        "999999",
+        "-r",
+        "${workspaceFolder}/build/testing/node/mocha-bootstrap.js",
+        "${workspaceFolder}/test/echo.ts"
+      ],
+      "internalConsoleOptions": "openOnSessionStart",
+      "name": "Mocha Tests",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "request": "launch",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "pwa-node"
+    },
+    {
       "name": "Debug my tests in node.js",
       "request": "launch",
       "runtimeArgs": [
         "run",
-        "test:node"
+        // "test:node"
+        "_mocha:watch"
       ],
       "runtimeExecutable": "npm",
       "skipFiles": [

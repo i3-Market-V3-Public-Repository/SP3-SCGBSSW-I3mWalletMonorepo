@@ -3,7 +3,7 @@
 const fs = require('fs')
 const http = require('http')
 const path = require('path')
-const pkgJson = require('../../package.json')
+const pkgJson = require('../../../package.json')
 
 const rollup = require('rollup')
 const resolve = require('@rollup/plugin-node-resolve').nodeResolve
@@ -11,7 +11,7 @@ const replace = require('@rollup/plugin-replace')
 const multi = require('@rollup/plugin-multi-entry')
 const typescript = require('@rollup/plugin-typescript')
 
-const rootDir = path.join(__dirname, '..', '..')
+const rootDir = path.join(__dirname, '..', '..', '..')
 
 const indexHtml = `<!DOCTYPE html>
   <html>
@@ -49,11 +49,6 @@ async function buildTests () {
     plugins: [
       multi({ exports: true }),
       replace({
-        'const _pkg = require(\'~root\')': '',
-        'import * as _pkg from \'~root\'': '',
-        'const chai = require(\'chai\')': '',
-        'import * as chai from \'chai\'': '',
-        delimiters: ['', ''],
         IS_BROWSER: true
       }),
       typescript(),
