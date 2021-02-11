@@ -1,9 +1,10 @@
 /**
- * Returns the input string
+ * My module description. Please update with your module data.
  *
- * @param {string} a
+ * @remarks
+ * This module runs perfectly in node.js and browsers
  *
- * @returns {string} a gratifying echo response from either node or browser
+ * @packageDocumentation
  */
-export function echo(a: string): string;
-export function sign(a: any): Promise<string>;
+export { echo } from './echo';
+export { sign } from './sign';

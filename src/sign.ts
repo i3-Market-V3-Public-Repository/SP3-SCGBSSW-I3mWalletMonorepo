@@ -1,8 +1,15 @@
 import CompactSign from 'jose/jws/compact/sign'
 import parseJwk from 'jose/jwk/parse'
 
-export async function sign (a: string): Promise<string> {
-  const encoder = new TextEncoder()
+/**
+ * Signs input and returns compact JWS
+ *
+ * @param a - the input to sign
+ *
+ * @returns a promise that resolves to a compact JWS
+ *
+ */
+export async function sign (a: ArrayBufferLike | string): Promise<string> {
   const privateKey = await parseJwk({
     alg: 'ES256',
     crv: 'P-256',
@@ -11,8 +18,9 @@ export async function sign (a: string): Promise<string> {
     x: 'ySK38C1jBdLwDsNWKzzBHqKYEE5Cgv-qjWvorUXk9fw',
     y: '_LeQBw07cf5t57Iavn4j-BqJsAD1dpoz8gokd3sBsOo'
   })
+  const input = (typeof a === 'string') ? (new TextEncoder()).encode(a) : new Uint8Array(a)
 
-  const jws = await new CompactSign(encoder.encode(JSON.stringify({ msg: 'It’s a dangerous business, Frodo, going out your door.' })))
+  const jws = await new CompactSign(input)
     .setProtectedHeader({ alg: 'ES256' })
     .sign(privateKey)
 

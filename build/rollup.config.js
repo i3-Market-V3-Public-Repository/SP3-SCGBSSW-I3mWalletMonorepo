@@ -4,6 +4,7 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const typescript = require('@rollup/plugin-typescript')
+// const typescript = require('rollup-plugin-typescript2')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
@@ -27,13 +28,17 @@ const pkgCamelisedName = camelise(pkgName)
 let _ts = true
 let input = path.join(srcDir, 'index.ts')
 
-const typescriptOptions = { exclude: ['test/**/*', 'src/**/*.spec.ts'] }
+const typescriptOptions = {
+  exclude: ['test/**/*', 'src/**/*.spec.ts']
+}
 if (fs.existsSync(input) !== true) {
   input = path.join(srcDir, 'index.js')
   _ts = false
 }
 
-if (fs.existsSync(input) !== true) throw new Error('You must create either index.js or index.js')
+if (fs.existsSync(input) !== true) throw new Error('You must create either index.ts or index.js')
+
+const external = [...Object.keys(pkgJson.dependencies || {}), ...Object.keys(pkgJson.peerDependencies || {})]
 
 module.exports = [
   { // ESM for browsers
@@ -42,7 +47,7 @@ module.exports = [
       {
         file: path.join(rootDir, pkgJson.browser),
         sourcemap: true,
-        format: 'es'
+        format: 'esm'
       }
     ],
     plugins: [
@@ -52,7 +57,7 @@ module.exports = [
       }),
       commonjs()
     ],
-    external: [] // external modules here
+    external
   },
   { // Browser bundles
     input: input,
@@ -101,6 +106,6 @@ module.exports = [
       ...(_ts ? [typescript(typescriptOptions)] : []),
       commonjs()
     ],
-    external: [] // external modules here
+    external
   }
 ]

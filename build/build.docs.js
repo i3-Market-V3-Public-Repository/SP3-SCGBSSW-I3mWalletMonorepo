@@ -1,7 +1,7 @@
 'use strict'
 
 const fs = require('fs')
-const jsdoc2md = require('jsdoc-to-markdown')
+const TypeDoc = require('typedoc')
 const path = require('path')
 const pkgJson = require('../package.json')
 
@@ -12,6 +12,30 @@ function camelise (str) {
     function (m, w) {
       return w.toUpperCase()
     })
+}
+
+async function typedoc () {
+  const app = new TypeDoc.Application()
+
+  // If you want TypeDoc to load tsconfig.json / typedoc.json files
+  app.options.addReader(new TypeDoc.TSConfigReader())
+  app.options.addReader(new TypeDoc.TypeDocReader())
+
+  app.bootstrap({
+    // typedoc options here
+    entryPoints: ['src/index.ts'],
+    plugin: ['typedoc-plugin-markdown']
+  })
+
+  const project = app.convert()
+
+  if (project) {
+    // Project may not have converted correctly
+    const outputDir = 'docs'
+
+    // Rendered docs
+    await app.generateDocs(project, outputDir)
+  }
 }
 
 function getRepositoryData () {
@@ -49,21 +73,7 @@ if (repoProvider && repoProvider === 'github') {
   template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget + '\n' + coverallsBadge)
 }
 
-const input = path.join(rootDir, pkgJson.browser)
-// Let us replace bigint literals by standard numbers to avoid issues with bigint
-const source = fs.readFileSync(input, { encoding: 'UTF-8' }).replace(/([0-9]+)n([,\s\n)])/g, '$1$2')
+const readmeFile = path.join(rootDir, 'README.md')
+fs.writeFileSync(readmeFile, template)
 
-jsdoc2md.clear().then(() => {
-  const data = jsdoc2md.getTemplateDataSync({ source })
-  data.sort((fn1, fn2) => (fn1.id > fn2.id) ? 1 : -1) // sort functions alphabetically
-  const options = {
-    data,
-    template,
-    'heading-depth': 3, // The initial heading depth. For example, with a value of 2 the top-level markdown headings look like "## The heading"
-    'global-index-format': 'none' // none, grouped, table, dl.
-  }
-  const readmeContents = jsdoc2md.renderSync(options)
-
-  const readmeFile = path.join(rootDir, 'README.md')
-  fs.writeFileSync(readmeFile, readmeContents)
-})
+typedoc()
