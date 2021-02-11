@@ -24,17 +24,20 @@ async function typedoc () {
   app.bootstrap({
     // typedoc options here
     entryPoints: ['src/index.ts'],
-    plugin: ['typedoc-plugin-markdown']
+    plugin: ['typedoc-plugin-markdown'],
+    includeVersion: true,
+    entryDocument: 'API.md',
+    readme: 'none'
   })
 
   const project = app.convert()
 
   if (project) {
     // Project may not have converted correctly
-    const outputDir = 'docs'
+    const output = './docs'
 
     // Rendered docs
-    await app.generateDocs(project, outputDir)
+    await app.generateDocs(project, output)
   }
 }
 
@@ -62,7 +65,7 @@ if (repoProvider && repoProvider === 'github') {
   coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
 }
 
-const templateFile = path.join(rootDir, pkgJson.directories.build, 'templates/readme-template.md')
+const templateFile = path.join(rootDir, pkgJson.directories.src, 'README.md')
 let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
   .replace(/\{\{PKG_CAMELCASE\}\}/g, camelise(pkgJson.name))

@@ -3,6 +3,7 @@ build
 
 # Testing files
 test
+**/*.spec.ts
 
 # Logs
 logs
@@ -28,3 +29,6 @@ coverage
 # tsconfig
 tsconfig.json
 tsconfig.tests.json
+
+# README src
+src/README.md

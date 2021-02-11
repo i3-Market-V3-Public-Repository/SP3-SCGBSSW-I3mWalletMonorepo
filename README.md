@@ -77,4 +77,4 @@ YOUR JAVASCRIPT EXAMPLE CODE HERE
 
 ## API reference documentation
 
-{{>main}}
+[Check the API](./docs/API.md)
