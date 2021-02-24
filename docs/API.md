@@ -1,6 +1,6 @@
-my-package-name - v0.9.0
+@my-org/my-package-name - v0.9.0
 
-# my-package-name - v0.9.0
+# @my-org/my-package-name - v0.9.0
 
 My module description. Please update with your module data.
 

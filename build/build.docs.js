@@ -57,18 +57,34 @@ function getRepositoryData () {
 
 const { repoProvider, repoUsername, repoName } = getRepositoryData() || { repoProvider: null, repoUsername: null, repoName: null }
 
+const regex = /^(?:(?<scope>@.*?)\/)?(?<name>.*)/ // We are going to take only the package name part if there is a scope, e.g. @my-org/package-name
+const { name } = pkgJson.name.match(regex).groups
+const camelCaseName = camelise(name)
+
 let iifeBundle, esmBundle, workflowBadget, coverallsBadge
-if (repoProvider && repoProvider === 'github') {
-  iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.iife.js)`
-  esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.mod.js)`
-  workflowBadget = `[![Node CI](https://github.com/${repoUsername}/${repoName}/workflows/Node%20CI/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions?query=workflow%3A%22Node+CI%22)`
-  coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
+if (repoProvider) {
+  switch (repoProvider) {
+    case 'github':
+      iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.iife.js)`
+      esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.mod.js)`
+      workflowBadget = `[![Node CI](https://github.com/${repoUsername}/${repoName}/workflows/Node%20CI/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions?query=workflow%3A%22Node+CI%22)`
+      coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
+      break
+
+    case 'gitlab':
+      iifeBundle = `https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/index.browser.bundle.iife.js?inline=false`
+      esmBundle = `https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/index.browser.bundle.mod.js?inline=false`
+      break
+
+    default:
+      break
+  }
 }
 
 const templateFile = path.join(rootDir, pkgJson.directories.src, 'README.md')
 let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
-  .replace(/\{\{PKG_CAMELCASE\}\}/g, camelise(pkgJson.name))
+  .replace(/\{\{PKG_CAMELCASE\}\}/g, camelCaseName)
   .replace(/\{\{IIFE_BUNDLE\}\}/g, iifeBundle || 'IIFE bundle')
   .replace(/\{\{ESM_BUNDLE\}\}/g, esmBundle || 'ESM bundle')
 

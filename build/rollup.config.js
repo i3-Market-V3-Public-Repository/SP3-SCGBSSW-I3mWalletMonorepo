@@ -22,8 +22,9 @@ function camelise (str) {
     })
 }
 
-const pkgName = pkgJson.name
-const pkgCamelisedName = camelise(pkgName)
+const regex = /^(?:(?<scope>@.*?)\/)?(?<name>.*)/ // We are going to take only the package name part if there is a scope, e.g. @my-org/package-name
+const { name } = pkgJson.name.match(regex).groups
+const pkgCamelisedName = camelise(name)
 
 let _ts = true
 let input = path.join(srcDir, 'index.ts')

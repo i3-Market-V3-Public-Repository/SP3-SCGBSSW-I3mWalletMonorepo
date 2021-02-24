@@ -1,5 +1,5 @@
 {
-  "name": "my-package-name",
+  "name": "@my-org/my-package-name",
   "version": "0.9.0",
   "description": "My package is wonderful",
   "keywords": [
