@@ -4,7 +4,6 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const typescript = require('@rollup/plugin-typescript')
-// const typescript = require('rollup-plugin-typescript2')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
@@ -26,18 +25,12 @@ const regex = /^(?:(?<scope>@.*?)\/)?(?<name>.*)/ // We are going to take only t
 const { name } = pkgJson.name.match(regex).groups
 const pkgCamelisedName = camelise(name)
 
-let _ts = true
-let input = path.join(srcDir, 'index.ts')
+const input = path.join(srcDir, 'index.ts')
+if (fs.existsSync(input) !== true) throw new Error('The entry point should be index.ts')
 
 const typescriptOptions = {
   exclude: ['test/**/*', 'src/**/*.spec.ts']
 }
-if (fs.existsSync(input) !== true) {
-  input = path.join(srcDir, 'index.js')
-  _ts = false
-}
-
-if (fs.existsSync(input) !== true) throw new Error('You must create either index.ts or index.js')
 
 const external = [...Object.keys(pkgJson.dependencies || {}), ...Object.keys(pkgJson.peerDependencies || {})]
 
@@ -52,7 +45,7 @@ module.exports = [
       }
     ],
     plugins: [
-      ...(_ts ? [typescript(typescriptOptions)] : []),
+      typescript(typescriptOptions),
       replace({
         IS_BROWSER: true
       }),
@@ -77,7 +70,7 @@ module.exports = [
       replace({
         IS_BROWSER: true
       }),
-      ...(_ts ? [typescript(typescriptOptions)] : []),
+      typescript(typescriptOptions),
       resolve({
         browser: true,
         exportConditions: ['browser', 'module', 'import', 'default']
@@ -104,7 +97,7 @@ module.exports = [
       replace({
         IS_BROWSER: false
       }),
-      ...(_ts ? [typescript(typescriptOptions)] : []),
+      typescript(typescriptOptions),
       commonjs()
     ],
     external

@@ -10,6 +10,7 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const multi = require('@rollup/plugin-multi-entry')
 const typescript = require('@rollup/plugin-typescript')
+const commonjs = require('@rollup/plugin-commonjs')
 
 const rootDir = path.join(__dirname, '..', '..', '..')
 
@@ -45,7 +46,7 @@ const indexHtml = `<!DOCTYPE html>
 async function buildTests () {
   // create a bundle
   const inputOptions = {
-    input: [path.join(rootDir, pkgJson.directories.test, '**/*.{js,ts}'), path.join(rootDir, pkgJson.directories.src, '**/*.spec.{js,ts}')],
+    input: [path.join(rootDir, pkgJson.directories.test, '**/*.ts'), path.join(rootDir, pkgJson.directories.src, '**/*.spec.ts')],
     plugins: [
       multi({ exports: true }),
       replace({
@@ -55,8 +56,8 @@ async function buildTests () {
       resolve({
         browser: true,
         exportConditions: ['browser', 'module', 'import', 'default']
-      })
-      // commonjs()
+      }),
+      commonjs()
     ]
   }
   const bundle = await rollup.rollup(inputOptions)

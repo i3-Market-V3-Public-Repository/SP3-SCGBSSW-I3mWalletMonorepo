@@ -35,7 +35,7 @@
     "test:node": "npm run mocha -- '.tests/**/*.js'",
     "test": "run-s test:browser test:node",
     "precoverage": "npm run _tsc:tests",
-    "coverage": "nyc --check-coverage --exclude build/**/*.js --exclude **/*.spec.{js,ts} --exclude test/**/*.{js,ts} --reporter=text --reporter=lcov mocha --require build/testing/node/register-chai.js build/testing/node/mocha-init.js '.tests/**/*.js'",
+    "coverage": "nyc --check-coverage --exclude build --exclude **/*.spec.ts --exclude test/**/*.ts --reporter=text --reporter=lcov mocha --require build/testing/node/register-chai.js build/testing/node/mocha-init.js '.tests/**/*.js'",
     "postcoverage": "npm run _tsc:clean",
     "prebuild:js": "link-module-alias",
     "build:js": "rollup -c build/rollup.config.js",
