@@ -1,6 +1,6 @@
-@my-org/my-package-name - v0.9.0
+@my-scope/my-package-name - v0.9.0
 
-# @my-org/my-package-name - v0.9.0
+# @my-scope/my-package-name - v0.9.0
 
 My module description. Please update with your module data.
 
@@ -27,7 +27,7 @@ Returns the input string
 #### Parameters:
 
 Name | Type | Description |
------- | ------ | ------ |
+:------ | :------ | :------ |
 `a` | *string* | the text to echo    |
 
 **Returns:** *string*
@@ -40,17 +40,17 @@ ___
 
 ### sign
 
-▸ **sign**(`a`: ArrayBufferLike \| *string*): *Promise*<*string*\>
+▸ **sign**(`a`: ArrayBufferLike \| *string*): *Promise*<string\>
 
 Signs input and returns compact JWS
 
 #### Parameters:
 
 Name | Type | Description |
------- | ------ | ------ |
+:------ | :------ | :------ |
 `a` | ArrayBufferLike \| *string* | the input to sign    |
 
-**Returns:** *Promise*<*string*\>
+**Returns:** *Promise*<string\>
 
 a promise that resolves to a compact JWS
 

@@ -47,7 +47,8 @@ module.exports = [
     plugins: [
       typescript(typescriptOptions),
       replace({
-        IS_BROWSER: true
+        IS_BROWSER: true,
+        preventAssignment: true
       }),
       commonjs()
     ],
@@ -68,7 +69,8 @@ module.exports = [
     ],
     plugins: [
       replace({
-        IS_BROWSER: true
+        IS_BROWSER: true,
+        preventAssignment: true
       }),
       typescript(typescriptOptions),
       resolve({
@@ -95,7 +97,8 @@ module.exports = [
     ],
     plugins: [
       replace({
-        IS_BROWSER: false
+        IS_BROWSER: false,
+        preventAssignment: true
       }),
       typescript(typescriptOptions),
       commonjs()

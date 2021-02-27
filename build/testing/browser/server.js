@@ -50,7 +50,8 @@ async function buildTests () {
     plugins: [
       multi({ exports: true }),
       replace({
-        IS_BROWSER: true
+        IS_BROWSER: true,
+        preventAssignment: true
       }),
       typescript(),
       resolve({
