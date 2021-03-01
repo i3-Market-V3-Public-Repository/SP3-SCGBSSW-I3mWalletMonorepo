@@ -20,7 +20,8 @@
     "build": "./build",
     "dist": "./dist",
     "src": "./src",
-    "test": "/test"
+    "test": "./test",
+    "tmp": "./.tmp"
   },
   "scripts": {
     "build": "run-s lint build:js docs test:browser coverage",
@@ -29,19 +30,19 @@
     "postbuild:js": "node build/build.dts.js",
     "clean": "rimraf .nyc_output coverage dist .tests docs",
     "precoverage": "npm run _tsc:tests",
-    "coverage": "nyc --check-coverage --exclude build --exclude **/*.spec.ts --exclude test/**/*.ts --reporter=text --reporter=lcov mocha --require build/testing/node/register-chai.js build/testing/node/mocha-init.js '.tests/**/*.js'",
+    "coverage": "nyc --check-coverage --exclude build --exclude **/*.spec.ts --exclude test/**/*.ts --reporter=text --reporter=lcov mocha --require build/testing/node/mocha-init.js '.tmp/tests**/*.js'",
     "postcoverage": "npm run _tsc:clean",
     "docs": "node build/build.docs.js",
     "lint": "ts-standard --fix",
     "premocha": "npm run _tsc:tests",
-    "mocha": "mocha --require build/testing/node/register-chai.js build/testing/node/mocha-init.js ",
+    "mocha": "mocha --require build/testing/node/mocha-init.js ",
     "postmocha": "npm run _tsc:clean",
-    "mocha-watch": "mocha --require build/testing/node/register-chai.js --require build/testing/node/register-ts-watcher.js --watch-files .tests,dist/index.d.ts --watch build/testing/node/mocha-init.js ",
+    "mocha-watch": "mocha --require build/testing/node/mocha-init.js --require build/testing/node/watchers --watch-files .tmp/**/semaphore --watch ",
     "preversion": "npm run build",
     "test": "run-s test:browser test:node",
     "test:browser": "node build/testing/browser/index.js",
-    "test:node": "npm run mocha -- '.tests/**/*.js'",
-    "watch": "npm run mocha-watch -- '.tests/**/*.js'",
+    "test:node": "npm run mocha -- '.tmp/tests/**/*.js'",
+    "watch": "npm run mocha-watch -- '.tmp/tests/**/*.js'",
     "_tsc:tests": "tsc -b tsconfig.tests.json",
     "_tsc:clean": "rimraf .tests"
   },
@@ -52,7 +53,9 @@
     "globals": [
       "IS_BROWSER",
       "browser",
-      "page"
+      "page",
+      "_pkg",
+      "chai"
     ],
     "project": "./tsconfig.json",
     "ignore": [
@@ -68,6 +71,7 @@
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.1",
     "chai": "^4.2.0",
+    "json5": "^2.2.0",
     "link-module-alias": "^1.2.0",
     "mocha": "^8.3.0",
     "npm-run-all": "^4.1.5",
