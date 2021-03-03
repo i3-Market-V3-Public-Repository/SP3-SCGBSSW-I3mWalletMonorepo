@@ -3,64 +3,74 @@ const fs = require('fs')
 const path = require('path')
 
 const rollup = require('rollup')
-const loadConfigFile = require('rollup/dist/loadConfigFile')
+const loadAndParseConfigFile = require('rollup/dist/loadConfigFile')
 
 const Builder = require('./Builder')
 
 const rootDir = path.join(__dirname, '../../../../')
 const pkgJson = require(path.join(rootDir, 'package.json'))
 
-let defaultTempDir
-if (pkgJson.directories.tmp !== undefined) {
-  defaultTempDir = path.join(rootDir, pkgJson.directories.tmp)
-} else {
-  defaultTempDir = path.join(rootDir, './tmp')
-}
-
 module.exports = class RollupBuilder extends Builder {
-  constructor ({ configPath = path.join(rootDir, 'rollup.config.js'), tempDir = defaultTempDir, watch = false }) {
-    super(path.join(tempDir, 'rollup'))
-    this._error = false
-
-    loadConfigFile(configPath).then(({ options }) => {
-      // Watch only the Node ES module (which also generates the typings)
-      const rollupOptions = options.filter(bundle => {
-        const file = (bundle.output[0].dir !== undefined)
-          ? path.join(bundle.output[0].dir, bundle.output[0].entryFileNames)
-          : bundle.output[0].file
-        return file === path.join(rootDir, pkgJson.main)
-      })
-
-      this.builder = new RollupBundler(rollupOptions, watch)
-
-      this.builder.on('event', event => {
-        this.emit('busy')
-        if (event.code === 'START') {
-          if (this.first === true) {
-            console.info('\x1b[34m%s\x1b[0m [rollup] building your module...', 'ℹ')
-          } else {
-            console.info('\x1b[34m%s\x1b[0m [rollup] file changes detected. Rebuilding module files...', 'ℹ')
-          }
-          this._error = false
-        } else if (event.code === 'END') {
-          if (this._error === false) {
-            this.emit('ready')
-          }
-          this.first = false
-        } else if (event.code === 'ERROR') {
-          this._error = true
-          console.error(event.error)
-        }
-        if (event.result !== undefined) {
-          event.result.close()
-        }
-      })
-
-      this.builder.start()
-    }).catch((reason) => { throw new Error(reason) })
+  constructor ({ name = 'rollup', configPath = path.join(rootDir, 'rollup.config.js'), tempDir = path.join(rootDir, '.mocha-ts'), watch = false }) {
+    super(path.join(tempDir, 'semaphore'), name)
+    this.configPath = configPath
+    this.watch = watch
   }
 
-  close () {
+  async start () {
+    await super.start()
+
+    const { options } = await loadAndParseConfigFile(this.configPath)
+    // Watch only the Node CJS module (which also generates the typings)
+    const rollupOptions = options.filter(bundle => {
+      const file = (bundle.output[0].dir !== undefined)
+        ? path.join(bundle.output[0].dir, bundle.output[0].entryFileNames)
+        : bundle.output[0].file
+      return file === path.join(rootDir, pkgJson.main)
+    })[0]
+
+    this.builder = new RollupBundler(rollupOptions, this.watch)
+
+    this.builder.on('event', event => {
+      switch (event.code) {
+        case 'START':
+          this.emit('busy')
+          if (this.firstBuild === true) {
+            this.emit('message', 'building your module...')
+          } else {
+            this.emit('message', 'file changes detected. Rebuilding module files...')
+          }
+          break
+
+        case 'BUNDLE_END':
+          if (event.result) event.result.close()
+          break
+
+        case 'END':
+          if (event.result) event.result.close()
+          this.emit('ready')
+          break
+
+        case 'ERROR':
+          if (event.result) event.result.close()
+          this.emit('error', event.error)
+          fs.writeFileSync(path.join(rootDir, pkgJson.main), '', 'utf8')
+          this.emit('ready')
+          break
+
+        default:
+          this.emit('busy')
+          break
+      }
+    })
+
+    this.builder.start()
+
+    return await this.ready()
+  }
+
+  async close () {
+    await super.close()
     this.builder.close()
   }
 }
@@ -72,9 +82,10 @@ class RollupBundler extends EventEmitter {
     this.watch = watch
   }
 
-  async start (forceBuild = false) {
+  async start () {
     if (this.watch === true) {
       this.watcher = rollup.watch(this.rollupOptions)
+
       this.watcher.on('event', event => {
         this.emit('event', event)
       })
@@ -82,7 +93,7 @@ class RollupBundler extends EventEmitter {
       if (fs.existsSync(path.join(rootDir, pkgJson.main)) === false) {
         await this._bundle()
       } else {
-        this.emit('event', { code: 'END' })
+        this.emit('event', { code: 'END', noBuild: true })
       }
     }
   }
@@ -90,12 +101,16 @@ class RollupBundler extends EventEmitter {
   async _bundle () {
     this.emit('event', { code: 'START' })
     for (const optionsObj of this.rollupOptions) {
-      const bundle = await rollup.rollup(optionsObj)
       try {
-        await Promise.all(optionsObj.output.map(bundle.write))
-        this.emit('event', { code: 'BUNDLE_END' })
+        const bundle = await rollup.rollup(optionsObj)
+        try {
+          await Promise.all(optionsObj.output.map(bundle.write))
+          this.emit('event', { code: 'BUNDLE_END' })
+        } catch (error) {
+          this.emit('event', { code: 'ERROR', error })
+        }
       } catch (error) {
-        this.emit('event', { code: 'ERROR' })
+        this.emit('event', { code: 'ERROR', error })
       }
     }
     this.emit('event', { code: 'END' })

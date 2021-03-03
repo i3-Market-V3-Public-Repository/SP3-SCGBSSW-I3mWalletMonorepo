@@ -4,6 +4,7 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const typescriptPlugin = require('@rollup/plugin-typescript')
+// const typescriptPlugin = require('rollup-plugin-typescript2')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
@@ -39,6 +40,24 @@ const tsDeclarationOptions = {
   declarationDir: dstDir,
   declarationMap: true
 }
+
+// const tsBundleOptions = {
+//   tsconfigOverride: {
+//     exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
+//   }
+// }
+
+// const tsDeclarationOptions = {
+//   tsconfigOverride: {
+//     exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts'],
+//     compilerOptions: {
+//       declaration: true,
+//       outDir: path.relative(rootDir, dstDir),
+//       declarationDir: path.relative(rootDir, dstDir),
+//       declarationMap: true
+//     }
+//   }
+// }
 
 const external = [...Object.keys(pkgJson.dependencies || {}), ...Object.keys(pkgJson.peerDependencies || {})]
 
@@ -98,7 +117,7 @@ module.exports = [
       dir: dstDir,
       entryFileNames: path.basename(pkgJson.module),
       ...sourcemapOutputOptions,
-      format: 'cjs'
+      format: 'es'
     },
     plugins: [
       replace({

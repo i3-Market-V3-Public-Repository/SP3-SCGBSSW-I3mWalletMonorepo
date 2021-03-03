@@ -7,7 +7,6 @@ const JSON5 = require('json5')
 const Builder = require('./Builder')
 
 const rootDir = path.join(__dirname, '../../../../')
-const pkgJson = require(path.join(rootDir, 'package.json'))
 
 const formatHost = {
   getCanonicalFileName: path => path,
@@ -15,18 +14,13 @@ const formatHost = {
   getNewLine: () => ts.sys.newLine
 }
 
-let defaultTempDir
-if (pkgJson.directories.tmp !== undefined) {
-  defaultTempDir = path.join(rootDir, pkgJson.directories.tmp)
-} else {
-  defaultTempDir = path.join(rootDir, './tmp')
-}
-
 module.exports = class TestsBuilder extends Builder {
-  constructor ({ configPath = path.join(rootDir, 'tsconfig.json'), tempDir = defaultTempDir }) {
-    super(path.join(tempDir, 'tests'))
+  constructor ({ name = 'tsc', configPath = path.join(rootDir, 'tsconfig.json'), tempDir = path.join(rootDir, '.mocha-ts') }) {
+    super(path.join(tempDir, 'semaphore'), name)
 
     if (fs.existsSync(configPath) !== true) throw new Error(`Couldn't find a tsconfig file at ${configPath}`)
+
+    this.tempDir = tempDir
 
     const readFileAndMangle = (path) => { // We need to change the include or file in the original file to only compile the tests
       const fileStr = fs.readFileSync(path, 'utf8')
@@ -43,26 +37,30 @@ module.exports = class TestsBuilder extends Builder {
 
     const reportDiagnostic = (diagnostic) => {
       const filePath = path.relative(rootDir, diagnostic.file.fileName)
-      console.error(`[Error ${diagnostic.code}]`, filePath, ':', ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine()))
+      const tranpiledJsPath = `${path.join(tempDir, filePath).slice(0, -3)}.js`
+      const errorLine = diagnostic.file.text.slice(0, diagnostic.start).split(/\r\n|\r|\n/).length
+      if (fs.existsSync(tranpiledJsPath)) {
+        fs.writeFileSync(tranpiledJsPath, '', 'utf8')
+      }
+      this.emit('error', `[Error ${diagnostic.code}]`, `${filePath}:${errorLine}`, ':', ts.flattenDiagnosticMessageText(diagnostic.messageText, formatHost.getNewLine()))
     }
 
     const reportWatchStatusChanged = (diagnostic, newLine, options, errorCount) => {
       if (errorCount !== undefined) {
-        this._ready = true
         this.emit('ready')
       } else {
-        if (diagnostic.code === 6031) {
-          console.info('\x1b[34m%s\x1b[0m [tsc] transpiling your tests...', 'ℹ')
-        } else if (diagnostic.code === 6032) {
-          console.info('\x1b[34m%s\x1b[0m [tsc] file changes detected. Transpiling your tests...', 'ℹ')
-        }
         this.emit('busy')
+        if (diagnostic.code === 6031) {
+          this.emit('message', 'transpiling your tests...')
+        } else if (diagnostic.code === 6032) {
+          this.emit('message', 'file changes detected. Transpiling your tests...')
+        }
       }
     }
 
     // Note that there is another overload for `createWatchCompilerHost` that takes
     // a set of root files.
-    const host = ts.createWatchCompilerHost(
+    this.host = ts.createWatchCompilerHost(
       parsedTsConfig.fileNames,
       {
         ...parsedTsConfig.options,
@@ -77,13 +75,18 @@ module.exports = class TestsBuilder extends Builder {
       reportDiagnostic,
       reportWatchStatusChanged
     )
-
-    // `createWatchProgram` creates an initial program, watches files, and updates
-    // the program over time.
-    this.watcher = ts.createWatchProgram(host)
   }
 
-  close () {
+  async start () {
+    await super.start()
+    // `createWatchProgram` creates an initial program, watches files, and updates
+    // the program over time.
+    this.watcher = ts.createWatchProgram(this.host)
+    return await this.ready()
+  }
+
+  async close () {
+    await super.close()
     this.watcher.close()
   }
 }

@@ -2,28 +2,35 @@ const EventEmitter = require('events')
 const fs = require('fs')
 const path = require('path')
 
-const rimraf = require('rimraf')
-
 module.exports = class Builder extends EventEmitter {
-  constructor (tempDir, noRerunOnFirstBuild = true) {
+  constructor (semaphoreFile, name = 'builder') {
     super()
-    this.first = true
-    this._ready = false
-    this.tempDir = tempDir
+    this.name = name
+    this.firstBuild = true
+    fs.mkdirSync(path.dirname(semaphoreFile), { recursive: true })
 
-    try {
-      fs.mkdirSync(tempDir, { recursive: true })
-    } catch (error) { }
-    this.semaphoreFile = path.join(tempDir, 'semaphore')
+    this.semaphoreFile = semaphoreFile
+    this._ready = false
+
+    this.on('message', (...message) => {
+      if (message !== undefined) {
+        console.log(`\x1b[33mℹ [${this.name}]`, ...message, '\x1b[0m')
+      }
+    })
+
+    this.on('error', (...error) => {
+      if (error !== undefined) {
+        console.error(`\x1b[31m❗ [${this.name}]`, ...error, '\x1b[0m')
+      }
+    })
 
     this.on('ready', () => {
-      this._ready = true
-      if (this.first !== true || noRerunOnFirstBuild === false) {
-        fs.writeFile(this.semaphoreFile, 'utf-8', (err) => {
-          if (err) throw err
-        })
+      if (this.firstBuild === false) {
+        fs.writeFileSync(this.semaphoreFile, '', 'utf-8')
+      } else {
+        this.firstBuild = false
       }
-      this.first = false
+      this._ready = true
     })
 
     this.on('busy', () => {
@@ -40,15 +47,13 @@ module.exports = class Builder extends EventEmitter {
     })
   }
 
-  async close () {
+  async start () {
+
   }
 
-  cleanFiles () {
-    return new Promise(resolve => {
-      rimraf(this.tempDir, { disableGlob: true }, (error) => {
-        if (error) throw error
-        resolve()
-      })
-    })
+  async close () {}
+
+  clean () {
+    fs.rmSync(this.semaphoreFile, { force: true })
   }
 }
