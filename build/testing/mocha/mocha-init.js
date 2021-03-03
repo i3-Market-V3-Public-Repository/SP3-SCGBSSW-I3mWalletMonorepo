@@ -1,27 +1,15 @@
 'use strict'
 
-// const fs = require('fs')
 const path = require('path')
 const Module = require('module')
 
 const chai = require('chai')
-// const minimatch = require('minimatch')
-// const addHook = require('pirates').addHook
 const rimraf = require('rimraf')
 
 const rootDir = path.join(__dirname, '../../../')
 const pkgJson = require(path.join(rootDir, 'package.json'))
 
 global.chai = chai
-
-// // Add a hook for ts files that returns the contents of the transpiled files.
-// addHook(
-//   (code, filename) => {
-//     const relativePath = path.relative(rootDir, filename)
-//     return fs.readFileSync(path.join(rootDir, pkgJson.directories.tmp, 'tests', `${relativePath.slice(0, -3)}.js`), 'utf8')
-//   },
-//   { exts: ['.ts'], matcher }
-// )
 
 const watch = (process.argv.includes('--watch') || process.argv.includes('-w'))
 
@@ -66,14 +54,3 @@ exports.mochaGlobalTeardown = function () {
   // about files being deleted
   rimraf.sync(tempDir, { disableGlob: true })
 }
-
-// function matcher (filename) {
-//   // Here, you can inspect the filename to determine if it should be hooked or
-//   // not. Just return a truthy/falsey. Files in node_modules are automatically ignored,
-//   // unless otherwise specified in options (see below).
-//   console.log(process._preload_modules)
-//   const file = path.relative(rootDir, filename)
-//   const isTsTestFile = minimatch(file, '{test/**/*.ts,src/**/*.spec.ts}', { matchBase: true })
-//   // TODO: Implement your logic here
-//   return isTsTestFile
-// }
