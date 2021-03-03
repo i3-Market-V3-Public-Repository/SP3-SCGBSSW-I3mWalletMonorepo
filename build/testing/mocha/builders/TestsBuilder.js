@@ -4,7 +4,7 @@ const fs = require('fs')
 const ts = require('typescript')
 const JSON5 = require('json5')
 
-const Watcher = require('./Watcher')
+const Builder = require('./Builder')
 
 const rootDir = path.join(__dirname, '../../../../')
 const pkgJson = require(path.join(rootDir, 'package.json'))
@@ -22,7 +22,7 @@ if (pkgJson.directories.tmp !== undefined) {
   defaultTempDir = path.join(rootDir, './tmp')
 }
 
-module.exports = class TestsWatcher extends Watcher {
+module.exports = class TestsBuilder extends Builder {
   constructor ({ configPath = path.join(rootDir, 'tsconfig.json'), tempDir = defaultTempDir }) {
     super(path.join(tempDir, 'tests'))
 
@@ -56,7 +56,7 @@ module.exports = class TestsWatcher extends Watcher {
         } else if (diagnostic.code === 6032) {
           console.info('\x1b[34m%s\x1b[0m [tsc] file changes detected. Transpiling your tests...', 'ℹ')
         }
-        this._ready = false
+        this.emit('busy')
       }
     }
 
@@ -69,8 +69,8 @@ module.exports = class TestsWatcher extends Watcher {
         outDir: this.tempDir,
         module: 'commonjs',
         noEmit: false,
-        inlineSourceMap: true,
-        noResolve: true
+        noResolve: true,
+        sourceMap: true
       },
       ts.sys,
       createProgram,
@@ -81,5 +81,9 @@ module.exports = class TestsWatcher extends Watcher {
     // `createWatchProgram` creates an initial program, watches files, and updates
     // the program over time.
     this.watcher = ts.createWatchProgram(host)
+  }
+
+  close () {
+    this.watcher.close()
   }
 }

@@ -7,3 +7,4 @@
  *
  */
 export declare function sign(a: ArrayBufferLike | string): Promise<string>;
+//# sourceMappingURL=sign.d.ts.map

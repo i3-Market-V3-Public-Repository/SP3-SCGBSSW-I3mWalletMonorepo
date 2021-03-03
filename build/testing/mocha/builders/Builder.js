@@ -4,10 +4,11 @@ const path = require('path')
 
 const rimraf = require('rimraf')
 
-module.exports = class Watcher extends EventEmitter {
+module.exports = class Builder extends EventEmitter {
   constructor (tempDir, noRerunOnFirstBuild = true) {
     super()
     this.first = true
+    this._ready = false
     this.tempDir = tempDir
 
     try {
@@ -16,6 +17,7 @@ module.exports = class Watcher extends EventEmitter {
     this.semaphoreFile = path.join(tempDir, 'semaphore')
 
     this.on('ready', () => {
+      this._ready = true
       if (this.first !== true || noRerunOnFirstBuild === false) {
         fs.writeFile(this.semaphoreFile, 'utf-8', (err) => {
           if (err) throw err
@@ -24,15 +26,9 @@ module.exports = class Watcher extends EventEmitter {
       this.first = false
     })
 
-    this._ready = false
-  }
-
-  get busy () {
-    return !this._ready
-  }
-
-  set busy (value) {
-    this._ready = !value
+    this.on('busy', () => {
+      this._ready = false
+    })
   }
 
   ready () {
@@ -44,8 +40,7 @@ module.exports = class Watcher extends EventEmitter {
     })
   }
 
-  close () {
-    this.watcher.close()
+  async close () {
   }
 
   cleanFiles () {

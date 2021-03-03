@@ -8,3 +8,4 @@
  */
 export { echo } from './echo';
 export { sign } from './sign';
+//# sourceMappingURL=index.d.ts.map

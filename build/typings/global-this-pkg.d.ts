@@ -1,4 +1,4 @@
-import * as _pkgModule from '~root'
+import * as _pkgModule from '../..'
 
 export as namespace _pkg
 

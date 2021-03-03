@@ -8,3 +8,4 @@
  * @returns a gratifying echo response from either node or browser
  */
 export declare function echo(a: string): string;
+//# sourceMappingURL=echo.d.ts.map

@@ -3,7 +3,7 @@
 const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
-const typescript = require('@rollup/plugin-typescript')
+const typescriptPlugin = require('@rollup/plugin-typescript')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
@@ -28,11 +28,24 @@ const pkgCamelisedName = camelise(name)
 const input = path.join(srcDir, 'index.ts')
 if (fs.existsSync(input) !== true) throw new Error('The entry point should be index.ts')
 
-const typescriptOptions = {
-  exclude: ['test/**/*', 'src/**/*.spec.ts']
+const tsBundleOptions = {
+  exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
+}
+
+const tsDeclarationOptions = {
+  ...tsBundleOptions,
+  declaration: true,
+  outDir: dstDir,
+  declarationDir: dstDir,
+  declarationMap: true
 }
 
 const external = [...Object.keys(pkgJson.dependencies || {}), ...Object.keys(pkgJson.peerDependencies || {})]
+
+const sourcemapOutputOptions = {
+  sourcemap: 'inline',
+  sourcemapExcludeSources: true
+}
 
 module.exports = [
   { // ESM for browsers
@@ -40,17 +53,16 @@ module.exports = [
     output: [
       {
         file: path.join(rootDir, pkgJson.browser),
-        sourcemap: true,
-        format: 'esm'
+        ...sourcemapOutputOptions,
+        format: 'es'
       }
     ],
     plugins: [
-      typescript(typescriptOptions),
       replace({
         IS_BROWSER: true,
         preventAssignment: true
       }),
-      commonjs()
+      typescriptPlugin(tsBundleOptions)
     ],
     external
   },
@@ -72,37 +84,47 @@ module.exports = [
         IS_BROWSER: true,
         preventAssignment: true
       }),
-      typescript(typescriptOptions),
+      typescriptPlugin(tsBundleOptions),
       resolve({
         browser: true,
         exportConditions: ['browser', 'module', 'import', 'default']
       }),
-      commonjs(),
       terser()
     ]
   },
-  { // Node
+  { // Node ESM
     input: input,
-    output: [
-      {
-        file: path.join(rootDir, pkgJson.main),
-        sourcemap: true,
-        format: 'cjs'
-      },
-      {
-        file: path.join(rootDir, pkgJson.module),
-        sourcemap: true,
-        format: 'esm'
-      }
-    ],
+    output: {
+      dir: dstDir,
+      entryFileNames: path.basename(pkgJson.module),
+      ...sourcemapOutputOptions,
+      format: 'cjs'
+    },
     plugins: [
       replace({
         IS_BROWSER: false,
         preventAssignment: true
       }),
-      typescript(typescriptOptions),
-      commonjs()
+      typescriptPlugin(tsBundleOptions),
+      commonjs({ extensions: ['.js', '.ts'] }) // the ".ts" extension is required
     ],
     external
+  },
+  { // Node CJS with declaration files
+    input: input,
+    output: {
+      dir: dstDir,
+      entryFileNames: path.basename(pkgJson.main),
+      ...sourcemapOutputOptions,
+      format: 'cjs'
+    },
+    plugins: [
+      replace({
+        IS_BROWSER: false,
+        preventAssignment: true
+      }),
+      typescriptPlugin(tsDeclarationOptions),
+      commonjs({ extensions: ['.js', '.ts'] }) // the ".ts" extension is required
+    ]
   }
 ]
