@@ -61,19 +61,21 @@ const regex = /^(?:(?<scope>@.*?)\/)?(?<name>.*)/ // We are going to take only t
 const { name } = pkgJson.name.match(regex).groups
 const camelCaseName = camelise(name)
 
-let iifeBundle, esmBundle, workflowBadget, coverallsBadge
+let iifeBundle, esmBundle, umdBundle, workflowBadget, coverallsBadge
 if (repoProvider) {
   switch (repoProvider) {
     case 'github':
-      iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.iife.js)`
-      esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/index.browser.bundle.mod.js)`
+      iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/bundles/${name}.iife.js)`
+      esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/bundles/${name}.esm.js)`
+      umdBundle = `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/dist/bundles/${name}.umd.js)`
       workflowBadget = `[![Node CI](https://github.com/${repoUsername}/${repoName}/workflows/Node%20CI/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions?query=workflow%3A%22Node+CI%22)`
       coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
       break
 
     case 'gitlab':
-      iifeBundle = `https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/index.browser.bundle.iife.js?inline=false`
-      esmBundle = `https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/index.browser.bundle.mod.js?inline=false`
+      iifeBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.iife.js?inline=false)`
+      esmBundle = `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.esm.js?inline=false)`
+      umdBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.umd.js?inline=false)`
       break
 
     default:
@@ -87,6 +89,7 @@ let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{PKG_CAMELCASE\}\}/g, camelCaseName)
   .replace(/\{\{IIFE_BUNDLE\}\}/g, iifeBundle || 'IIFE bundle')
   .replace(/\{\{ESM_BUNDLE\}\}/g, esmBundle || 'ESM bundle')
+  .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
 if (repoProvider && repoProvider === 'github') {
   template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget + '\n' + coverallsBadge)

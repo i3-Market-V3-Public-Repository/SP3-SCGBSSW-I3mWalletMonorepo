@@ -42,17 +42,17 @@ if (IS_BROWSER === 'true') {
   - &#123;&#123;PKG_CAMELCASE&#125;&#125; will be replaced by a came case transformation of the package_name.
   - &#123;&#123;IIFE_BUNDLE&#125;&#125; will point to the IIFE bundle file if using github or gitlab as repository.
   - &#123;&#123;ESM_BUNDLE&#125;&#125; will point to the ESM bundle file if using github or gitlab as repository.
+  - &#123;&#123;UMD_BUNDLE&#125;&#125; will point to the UMD bundle file if using github or gitlab as repository.
   - It has also some automatically added badges (see the top of this file), that you can remove if desired.
 
 - `npm run lint`. Uses the `ts-standard` linter to fix all the project files. If unconfortable, change the linter for the one of your liking.
-- `npm run mocha -- <glob>`. Runs Node.js mocha for the selected tests (use glob pattern).
-- `npm run mocha-watch -- <glob>`. Runs Node.js mocha in watch mode (test reexecuted if code changes) for the selected tests (use glob pattern).
+- `npm run mocha -- <glob>`. Runs Node.js mocha for the selected tests (use glob pattern). Add `--watch` before the glob to start mocha in watch mode.
 - `npm test`. Runs all the unit tests (`src/**/*.spec.ts` and `test/**/*.ts`) in both Node.js and browser (using puppeteer).
 - `npm run test:browser`. Runs all the unit tests (`src/**/*.spec.ts` and `test/**/*.ts`) in a browser (using pupppeteer).
 - `npm run test:node`. Runs all the unit tests (`src/**/*.spec.ts` and `test/**/*.ts`) in Node.js.
 - `npm run watch`. Likely to be the default script during development. Tests are automatically reexecuted whenever a test or source file changes.
 
-## Installation
+## Usage
 
 `{{PKG_NAME}}` can be imported to your project with `npm`:
 
@@ -60,60 +60,23 @@ if (IS_BROWSER === 'true') {
 npm install {{PKG_NAME}}
 ```
 
-NPM installation defaults to the ES6 module for browsers and the CJS one for Node.js.
+Then either require (Node.js CJS):
 
-For web browsers, you could also directly download the {{IIFE_BUNDLE}} or the {{ESM_BUNDLE}} from the repository.
+```javascript
+const {{PKG_CAMELCASE}} = require('{{PKG_NAME}}')
+... // your code here
+```
 
-## Usage examples
+or import (JavaScript ES module):
 
-Import your module as :
+```javascript
+import * as {{PKG_CAMELCASE}} from '{{PKG_NAME}}'
+... // your code here
+```
 
-- Node.js
+The appropriate version for browser or node is automatically exported.
 
-   ```javascript
-   const {{PKG_CAMELCASE}} = require('{{PKG_NAME}}')
-   ... // your code here
-   ```
-
-- JavaScript native or TypeScript project (including React and Angular)
-
-   ```javascript
-   import * as {{PKG_CAMELCASE}} from '{{PKG_NAME}}'
-   ... // your code here
-   ```
-
-   If you are using Angular, since this library uses node typings, you should also add them to the `angularCompilerOptions` in your `tsconfig.json`:
-
-   ```json
-     "angularCompilerOptions": {
-       "types": ["node"]
-       ...
-     }
-   ```
-
-- JavaScript native browser ES module
-
-   ```html
-   <script type="module">
-     import * as {{PKG_CAMELCASE}} from 'index.browser.bundle.mod.js'  // Use your actual path to the browser mod bundle, which you can find in the dist directory
-     ...  // your code here
-   </script>
-   ```
-
-- JavaScript native browser IIFE
-
-   ```html
-   <head>
-     ...
-     <script src="index.browser.bundle.iife.js"></script><!-- Use your actual path to the browser iife bundle, which you can find in the dist -->
-   </head>
-   <body>
-     ...
-     <script>
-       ...  // your code here
-     </script>
-   </body>
-   ```
+You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDLE}} and manually add it to your project. If you have already imported `{{PKG_NAME}}` to your project, you can access all the bundles in `./dist/bundles/`.
 
 An example of usage could be:
 
