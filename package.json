@@ -12,10 +12,22 @@
     "email": "email@myemaildomain.com"
   },
   "repository": "repoprovider:username/my-package-name",
-  "main": "./dist/index.node.cjs.js",
-  "browser": "./dist/index.browser.mod.js",
-  "module": "./dist/index.node.esm.js",
-  "types": "./dist/index.d.ts",
+  "type": "module",
+  "types": "./dist/esm/types/index.d.ts",
+  "main": "./dist/cjs/index.node.cjs",
+  "browser": "./dist/esm/index.browser.js",
+  "module": "./dist/esm/index.node.js",
+  "exports": {
+    ".": {
+      "node": {
+        "require": "./dist/cjs/index.node.cjs",
+        "import": "./dist/esm/index.node.js"
+      },
+      "default": "./dist/esm/index.browser.js"
+    },
+    "./bundles/": "./dist/bundles/",
+    "./types/": "./dist/esm/types/"
+  },
   "directories": {
     "build": "./build",
     "dist": "./dist",
@@ -27,13 +39,13 @@
     "build": "run-s lint build:js docs test:browser coverage",
     "build:js": "rollup -c build/rollup.config.cjs",
     "clean": "rimraf .nyc_output .mocha-ts coverage dist docs",
-    "coverage": "nyc --check-coverage --exclude build --exclude '{src/**/*.spec.ts,test/**/*.ts}' --reporter=text --reporter=lcov node ./build/bin/mocha-ts.js --require build/testing/mocha/mocha-init.js '{src/**/*.spec.ts,test/**/*.ts}'",
-    "docs": "node build/build.docs.js",
+    "coverage": "nyc --check-coverage --exclude build --exclude '{src/**/*.spec.ts,test/**/*.ts}' --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --require build/testing/mocha/mocha-init.cjs '{src/**/*.spec.ts,test/**/*.ts}'",
+    "docs": "node build/build.docs.cjs",
     "lint": "ts-standard --fix",
-    "mocha": "node ./build/bin/mocha-ts.js --require build/testing/mocha/mocha-init.js ",
+    "mocha": "node ./build/bin/mocha-ts.cjs --require build/testing/mocha/mocha-init.cjs ",
     "preversion": "npm run build",
     "test": "run-s test:browser test:node",
-    "test:browser": "node build/testing/browser/index.js",
+    "test:browser": "node build/testing/browser/index.cjs",
     "test:node": "npm run mocha -- '{src/**/*.spec.ts,test/**/*.ts}'",
     "watch": "npm run mocha -- --watch '{src/**/*.spec.ts,test/**/*.ts}'"
   },

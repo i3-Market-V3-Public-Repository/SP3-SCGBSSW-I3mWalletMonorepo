@@ -33,14 +33,6 @@ const tsBundleOptions = {
   exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
 }
 
-const tsDeclarationOptions = {
-  ...tsBundleOptions,
-  declaration: true,
-  outDir: dstDir,
-  declarationDir: dstDir,
-  declarationMap: true
-}
-
 // const tsBundleOptions = {
 //   tsconfigOverride: {
 //     exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
@@ -71,7 +63,7 @@ module.exports = [
     input: input,
     output: [
       {
-        file: path.join(rootDir, pkgJson.browser),
+        file: path.join(rootDir, pkgJson.exports['.'].default),
         ...sourcemapOutputOptions,
         format: 'es'
       }
@@ -89,13 +81,18 @@ module.exports = [
     input: input,
     output: [
       {
-        file: path.join(dstDir, 'index.browser.bundle.iife.js'),
+        file: path.join(dstDir, `bundles/${name}.iife.js`),
         format: 'iife',
         name: pkgCamelisedName
       },
       {
-        file: path.join(dstDir, 'index.browser.bundle.mod.js'),
+        file: path.join(dstDir, `bundles/${name}.esm.js`),
         format: 'es'
+      },
+      {
+        file: path.join(dstDir, `bundles/${name}.umd.js`),
+        format: 'umd',
+        name: pkgCamelisedName
       }
     ],
     plugins: [
@@ -114,8 +111,8 @@ module.exports = [
   { // Node ESM
     input: input,
     output: {
-      dir: dstDir,
-      entryFileNames: path.basename(pkgJson.module),
+      dir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.import)),
+      entryFileNames: path.basename(pkgJson.exports['.'].node.import),
       ...sourcemapOutputOptions,
       format: 'es'
     },
@@ -124,7 +121,13 @@ module.exports = [
         IS_BROWSER: false,
         preventAssignment: true
       }),
-      typescriptPlugin(tsBundleOptions),
+      typescriptPlugin({
+        ...tsBundleOptions,
+        declaration: true,
+        outDir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.import)),
+        declarationDir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.import), 'types'),
+        declarationMap: true
+      }),
       commonjs({ extensions: ['.js', '.ts'] }) // the ".ts" extension is required
     ],
     external
@@ -132,8 +135,8 @@ module.exports = [
   { // Node CJS with declaration files
     input: input,
     output: {
-      dir: dstDir,
-      entryFileNames: path.basename(pkgJson.main),
+      dir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.require)),
+      entryFileNames: path.basename(pkgJson.exports['.'].node.require),
       ...sourcemapOutputOptions,
       format: 'cjs'
     },
@@ -142,7 +145,7 @@ module.exports = [
         IS_BROWSER: false,
         preventAssignment: true
       }),
-      typescriptPlugin(tsDeclarationOptions),
+      typescriptPlugin(tsBundleOptions),
       commonjs({ extensions: ['.js', '.ts'] }) // the ".ts" extension is required
     ]
   }
