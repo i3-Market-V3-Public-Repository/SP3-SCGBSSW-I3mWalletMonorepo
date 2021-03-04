@@ -5,8 +5,8 @@ const path = require('path')
 const chai = require('chai')
 const rimraf = require('rimraf')
 
-const RollupBuilder = require('./builders/RollupBuilder.cjs')
-const TestsBuilder = require('./builders/TestsBuilder.cjs')
+const RollupBuilder = require('./builders/RollupBuilder.js')
+const TestsBuilder = require('./builders/TestsBuilder.js')
 
 const rootDir = path.join(__dirname, '../../../')
 
@@ -16,7 +16,7 @@ const watch = process.argv.includes('--watch') || process.argv.includes('-w')
 
 const tempDir = path.join(rootDir, '.mocha-ts')
 
-const rollupBuilder = new RollupBuilder({ name: 'rollup', configPath: path.join(rootDir, 'build/rollup.config.cjs'), tempDir, watch })
+const rollupBuilder = new RollupBuilder({ name: 'rollup', configPath: path.join(rootDir, 'build/rollup.config.js'), tempDir, watch })
 const testBuilder = new TestsBuilder({ name: 'tsc', tempDir })
 
 rollupBuilder.start() // This should be in exports.mochaGlobalSetup but mocha fails when not in watch mode (DIRT...)

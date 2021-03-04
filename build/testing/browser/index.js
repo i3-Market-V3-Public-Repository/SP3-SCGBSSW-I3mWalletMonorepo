@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer')
 
 const browserTests = async ({ logWarnings = false, serverPort = 38000, keepServerRunning = false, puppeteerOptions = {} }) => {
-  const server = require('./server.cjs').server
+  const server = require('./server.js').server
   await server.init()
   await server.listen(serverPort)
   const browser = await puppeteer.launch(puppeteerOptions)
