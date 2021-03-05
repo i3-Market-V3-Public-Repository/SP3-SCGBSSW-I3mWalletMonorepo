@@ -30,5 +30,8 @@ coverage
 tsconfig.json
 tsconfig.tests.json
 
-# README src
-src/README.md
+# SRC docs
+src/docs
+
+# Test temporal files
+.mocha-ts

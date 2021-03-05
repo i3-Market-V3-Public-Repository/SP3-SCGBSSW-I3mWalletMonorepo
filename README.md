@@ -56,7 +56,7 @@ if (IS_BROWSER === 'true') {
 
 `@my-scope/my-package-name` can be imported to your project with `npm`:
 
-```bash
+```console
 npm install @my-scope/my-package-name
 ```
 
@@ -64,14 +64,12 @@ Then either require (Node.js CJS):
 
 ```javascript
 const myPackageName = require('@my-scope/my-package-name')
-... // your code here
 ```
 
 or import (JavaScript ES module):
 
 ```javascript
 import * as myPackageName from '@my-scope/my-package-name'
-... // your code here
 ```
 
 The appropriate version for browser or node is automatically exported.
@@ -80,8 +78,8 @@ You can also download the IIFE bundle, the ESM bundle or the UMD bundle and manu
 
 An example of usage could be:
 
-```javascript
-YOUR JAVASCRIPT EXAMPLE CODE HERE
+```typescript
+YOUR TYPESCRIPT EXAMPLE CODE HERE
 ```
 
 ## API reference documentation

@@ -34,7 +34,7 @@ async function typedoc () {
 
   if (project) {
     // Project may not have converted correctly
-    const output = './docs'
+    const output = path.join(rootDir, './docs')
 
     // Rendered docs
     await app.generateDocs(project, output)
@@ -83,7 +83,7 @@ if (repoProvider) {
   }
 }
 
-const templateFile = path.join(rootDir, pkgJson.directories.src, 'README.md')
+const templateFile = path.join(rootDir, pkgJson.directories.src, 'docs/index.md')
 let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
   .replace(/\{\{PKG_CAMELCASE\}\}/g, camelCaseName)

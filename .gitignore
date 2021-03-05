@@ -14,4 +14,4 @@ node_modules
 coverage
 
 # Test temporal files
-.tests
+.mocha-ts
