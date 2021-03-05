@@ -30,6 +30,7 @@
   "directories": {
     "build": "./build",
     "dist": "./dist",
+    "docs": "./docs",
     "src": "./src",
     "test": "./test"
   },
