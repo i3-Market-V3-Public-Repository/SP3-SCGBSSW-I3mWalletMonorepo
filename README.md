@@ -74,7 +74,7 @@ import * as myPackageName from '@my-scope/my-package-name'
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the IIFE bundle, the ESM bundle or the UMD bundle and manually add it to your project. If you have already imported `@my-scope/my-package-name` to your project, you can access all the bundles in `./dist/bundles/`.
+You can also download the IIFE bundle, the ESM bundle or the UMD bundle and manually add it to your project, or, if you have already imported `@my-scope/my-package-name` to your project, just get the bundles from `node_modules/@my-scope/my-package-name/dist/bundles/`.
 
 An example of usage could be:
 
