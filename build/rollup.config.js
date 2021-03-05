@@ -4,7 +4,6 @@ const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const { terser } = require('rollup-plugin-terser')
 const typescriptPlugin = require('@rollup/plugin-typescript')
-// const typescriptPlugin = require('rollup-plugin-typescript2')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const path = require('path')
@@ -32,24 +31,6 @@ if (fs.existsSync(input) !== true) throw new Error('The entry point should be in
 const tsBundleOptions = {
   exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
 }
-
-// const tsBundleOptions = {
-//   tsconfigOverride: {
-//     exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
-//   }
-// }
-
-// const tsDeclarationOptions = {
-//   tsconfigOverride: {
-//     exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts'],
-//     compilerOptions: {
-//       declaration: true,
-//       outDir: path.relative(rootDir, dstDir),
-//       declarationDir: path.relative(rootDir, dstDir),
-//       declarationMap: true
-//     }
-//   }
-// }
 
 const external = [...Object.keys(pkgJson.dependencies || {}), ...Object.keys(pkgJson.peerDependencies || {})]
 
