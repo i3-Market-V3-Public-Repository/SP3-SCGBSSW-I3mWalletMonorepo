@@ -7,6 +7,8 @@ const JSON5 = require('json5')
 const Builder = require('./Builder.js')
 
 const rootDir = path.join(__dirname, '../../../../')
+const mochaTsRelativeDir = '.mocha-ts'
+const mochaTsDir = path.join(rootDir, mochaTsRelativeDir)
 
 const formatHost = {
   getCanonicalFileName: path => path,
@@ -15,7 +17,7 @@ const formatHost = {
 }
 
 module.exports = class TestsBuilder extends Builder {
-  constructor ({ name = 'tsc', configPath = path.join(rootDir, 'tsconfig.json'), tempDir = path.join(rootDir, '.mocha-ts') }) {
+  constructor ({ name = 'tsc', configPath = path.join(rootDir, 'tsconfig.json'), tempDir = mochaTsDir }) {
     super(path.join(tempDir, 'semaphore'), name)
 
     if (fs.existsSync(configPath) !== true) throw new Error(`Couldn't find a tsconfig file at ${configPath}`)
@@ -64,6 +66,7 @@ module.exports = class TestsBuilder extends Builder {
       parsedTsConfig.fileNames,
       {
         ...parsedTsConfig.options,
+        rootDir,
         outDir: this.tempDir,
         module: 'commonjs',
         noEmit: false,

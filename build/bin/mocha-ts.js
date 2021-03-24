@@ -3,6 +3,7 @@ const path = require('path')
 const childProcess = require('child_process')
 
 const rootDir = path.join(__dirname, '../..')
+const mochaTsRelativeDir = '.mocha-ts'
 const minimatch = require('minimatch')
 const glob = require('glob')
 
@@ -21,7 +22,7 @@ function processArgs (args) {
       return filenames.map(file => {
         const isTsTestFile = minimatch(file, '{test/**/*.ts,src/**/*.spec.ts}', { matchBase: true })
         if (isTsTestFile) {
-          return `.mocha-ts/${file.slice(0, -3)}.js`
+          return `${mochaTsRelativeDir}/${file.slice(0, -3)}.js`
         }
         return file
       })
@@ -41,14 +42,14 @@ function processArgs (args) {
       if (arg === '--watch' || arg === '-w') {
         addSemaphore = true
       } else if (arg === '--watch-files') {
-        processedArgs.push('.mocha-ts/semaphore')
+        processedArgs.push(`${mochaTsRelativeDir}/semaphore`)
         semaphoreAdded = true
       }
     }
   }
   if (addSemaphore === true || semaphoreAdded === false) {
     processedArgs.push('--watch-files')
-    processedArgs.push('.mocha-ts/semaphore')
+    processedArgs.push(`${mochaTsRelativeDir}/semaphore`)
   }
 
   return processedArgs
