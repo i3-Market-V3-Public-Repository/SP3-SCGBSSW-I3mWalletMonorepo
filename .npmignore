@@ -1,7 +1,7 @@
 # Build scripts
 build
 
-# Testing files
+# Test files
 test
 **/*.spec.ts
 
@@ -28,7 +28,6 @@ coverage
 
 # tsconfig
 tsconfig.json
-tsconfig.tests.json
 
 # SRC docs
 src/docs
