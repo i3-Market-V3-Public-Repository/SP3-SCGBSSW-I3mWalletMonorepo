@@ -89,7 +89,7 @@ module.exports = [
       terser()
     ]
   },
-  { // Node ESM
+  { // Node ESM with declaration files
     input: input,
     output: {
       dir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.import)),
@@ -113,7 +113,7 @@ module.exports = [
     ],
     external
   },
-  { // Node CJS with declaration files
+  { // Node CJS
     input: input,
     output: {
       dir: path.join(rootDir, path.dirname(pkgJson.exports['.'].node.require)),
