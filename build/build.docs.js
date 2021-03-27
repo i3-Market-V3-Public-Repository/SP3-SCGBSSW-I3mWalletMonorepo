@@ -49,7 +49,7 @@ function getRepositoryData () {
       return {
         repoProvider,
         repoUsername: repodata[1],
-        repoName: repodata[2]
+        repoName: repodata.slice(2).join('/')
       }
     } else return null
   }
@@ -75,7 +75,7 @@ if (repoProvider) {
     case 'gitlab':
       iifeBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.iife.js?inline=false)`
       esmBundle = `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.esm.js?inline=false)`
-      umdBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.umd.js?inline=false)`
+      umdBundle = `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/bundles/${name}.umd.js?inline=false)`
       break
 
     default:

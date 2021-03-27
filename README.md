@@ -28,7 +28,7 @@ import * as nonRepudiationProofs from '@i3-market/non-repudiation-proofs'
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.esm.js?inline=false) or the [IIFE bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.umd.js?inline=false) and manually add it to your project, or, if you have already imported `@i3-market/non-repudiation-proofs` to your project, just get the bundles from `node_modules/@i3-market/non-repudiation-proofs/dist/bundles/`.
+You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/raw/master/dist/bundles/non-repudiation-proofs.iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/raw/master/dist/bundles/non-repudiation-proofs.esm.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/raw/master/dist/bundles/non-repudiation-proofs.umd.js?inline=false) and manually add it to your project, or, if you have already imported `@i3-market/non-repudiation-proofs` to your project, just get the bundles from `node_modules/@i3-market/non-repudiation-proofs/dist/bundles/`.
 
 An example of usage could be:
 
