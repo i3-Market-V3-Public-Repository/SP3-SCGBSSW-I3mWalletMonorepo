@@ -4,7 +4,7 @@
 
 # {{PKG_NAME}}
 
-This is the library for the i3-market non-repudiable proofs.
+This is the library for the i3-market non-repudiation proofs.
 
 ## Usage
 

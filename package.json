@@ -1,17 +1,14 @@
 {
-  "name": "@my-scope/my-package-name",
+  "name": "@i3-market/non-repudiation-proofs",
   "version": "0.9.0",
-  "description": "My package is wonderful",
+  "description": "Library for the i3-market non-repudiation proofs",
   "keywords": [
-    "keyword1",
-    "keyword2"
+    "non-repudiation",
+    "non-repudiable",
+    "jws"
   ],
   "license": "MIT",
-  "author": {
-    "name": "My name",
-    "email": "email@myemaildomain.com"
-  },
-  "repository": "repoprovider:username/my-package-name",
+  "repository": "gitlab:i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs",
   "types": "./dist/esm/types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
   "browser": "./dist/esm/index.browser.js",

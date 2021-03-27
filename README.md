@@ -2,33 +2,33 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 
-# @my-scope/my-package-name
+# @i3-market/non-repudiation-proofs
 
-This is the library for the i3-market non-repudiable proofs.
+This is the library for the i3-market non-repudiation proofs.
 
 ## Usage
 
-`@my-scope/my-package-name` can be imported to your project with `npm`:
+`@i3-market/non-repudiation-proofs` can be imported to your project with `npm`:
 
 ```console
-npm install @my-scope/my-package-name
+npm install @i3-market/non-repudiation-proofs
 ```
 
 Then either require (Node.js CJS):
 
 ```javascript
-const myPackageName = require('@my-scope/my-package-name')
+const nonRepudiationProofs = require('@i3-market/non-repudiation-proofs')
 ```
 
 or import (JavaScript ES module):
 
 ```javascript
-import * as myPackageName from '@my-scope/my-package-name'
+import * as nonRepudiationProofs from '@i3-market/non-repudiation-proofs'
 ```
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the IIFE bundle, the ESM bundle or the UMD bundle and manually add it to your project, or, if you have already imported `@my-scope/my-package-name` to your project, just get the bundles from `node_modules/@my-scope/my-package-name/dist/bundles/`.
+You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.esm.js?inline=false) or the [IIFE bundle](https://gitlab.com/i3-market/code/-/raw/master/dist/bundles/non-repudiation-proofs.umd.js?inline=false) and manually add it to your project, or, if you have already imported `@i3-market/non-repudiation-proofs` to your project, just get the bundles from `node_modules/@i3-market/non-repudiation-proofs/dist/bundles/`.
 
 An example of usage could be:
 
