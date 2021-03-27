@@ -12,7 +12,7 @@ const pkgJson = require('../package.json')
 
 const rootDir = path.join(__dirname, '..')
 const dstDir = path.join(rootDir, pkgJson.directories.dist)
-const srcDir = path.join(rootDir, 'src')
+const srcDir = path.join(rootDir, 'src', 'ts')
 
 function camelise (str) {
   return str.replace(/-([a-z])/g,

@@ -6,6 +6,7 @@
  *
  * @packageDocumentation
  */
-export { echo } from './echo';
-export { sign } from './sign';
+export { createJwk, createPoO, signProof, createPoR, createBlockchainProof } from './createProofs';
+export { account, poO, poR } from './proofInterfaces';
+export { validatePoR, validatePoO, validatePoP, decryptCipherblock, validateCipherblock, decodePoo, decodePor } from './validateProofs';
 //# sourceMappingURL=index.d.ts.map

@@ -93,6 +93,8 @@ let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
 
 if (repoProvider && repoProvider === 'github') {
   template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget + '\n' + coverallsBadge)
+} else {
+  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, '')
 }
 
 const readmeFile = path.join(rootDir, 'README.md')
