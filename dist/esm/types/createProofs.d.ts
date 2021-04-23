@@ -4,7 +4,17 @@ export declare const SIGNING_ALG = "ES256";
 export declare const ENC_ALG = "AES-GCM";
 export declare const ENC_ALG_KEY_LENGTH = 256;
 /**
+ *
  * Create Proof of Origin and sign with Provider private key
+ *
+ * @param privateKey - private key of the signer/issuer
+ * @param block - the blocks asdfsdfsd
+ * @param providerId
+ * @param consumerId
+ * @param exchangeId
+ * @param blockId
+ * @param jwk
+ * @returns
  */
 declare const createPoO: (privateKey: KeyLike, block: ArrayBufferLike | string, providerId: string, consumerId: string, exchangeId: number, blockId: number, jwk: JWK) => Promise<{
     cipherblock: string;
@@ -12,6 +22,8 @@ declare const createPoO: (privateKey: KeyLike, block: ArrayBufferLike | string, 
 }>;
 /**
  * Create random (high entropy)\none time symmetric JWK secret
+ *
+ * @returns a promise that resolves to a JWK
  */
 declare const createJwk: () => Promise<JWK>;
 /**

@@ -60,7 +60,7 @@ Name | Type |
 
 **Returns:** *Promise*<[*account*](interfaces/account.md)\>
 
-Defined in: createProofs.ts:113
+Defined in: createProofs.ts:125
 
 ___
 
@@ -72,7 +72,9 @@ Create random (high entropy)\none time symmetric JWK secret
 
 **Returns:** *Promise*<JWK\>
 
-Defined in: createProofs.ts:53
+a promise that resolves to a JWK
+
+Defined in: createProofs.ts:65
 
 ___
 
@@ -84,19 +86,19 @@ Create Proof of Origin and sign with Provider private key
 
 #### Parameters:
 
-Name | Type |
-:------ | :------ |
-`privateKey` | KeyLike |
-`block` | *string* \| ArrayBufferLike |
-`providerId` | *string* |
-`consumerId` | *string* |
-`exchangeId` | *number* |
-`blockId` | *number* |
-`jwk` | JWK |
+Name | Type | Description |
+:------ | :------ | :------ |
+`privateKey` | KeyLike | private key of the signer/issuer   |
+`block` | *string* \| ArrayBufferLike | the blocks asdfsdfsd   |
+`providerId` | *string* |  |
+`consumerId` | *string* |  |
+`exchangeId` | *number* |  |
+`blockId` | *number* |  |
+`jwk` | JWK |  |
 
 **Returns:** *Promise*<{ `cipherblock`: *string* ; `poO`: *string*  }\>
 
-Defined in: createProofs.ts:18
+Defined in: createProofs.ts:28
 
 ___
 
@@ -118,7 +120,7 @@ Name | Type |
 
 **Returns:** *Promise*<string\>
 
-Defined in: createProofs.ts:91
+Defined in: createProofs.ts:103
 
 ___
 
@@ -211,7 +213,7 @@ Name | Type |
 
 **Returns:** *Promise*<string\>
 
-Defined in: createProofs.ts:79
+Defined in: createProofs.ts:91
 
 ___
 
