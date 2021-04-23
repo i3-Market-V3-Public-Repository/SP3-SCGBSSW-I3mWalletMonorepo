@@ -3,7 +3,7 @@ import { KeyLike } from 'jose/webcrypto/types'
 import CompactSign from 'jose/jws/compact/sign'
 import CompactEncrypt from 'jose/jwe/compact/encrypt'
 import parseJwk from 'jose/jwk/parse'
-import crypto from 'crypto'
+import createHash from 'create-hash'
 import chaiAsPromised from 'chai-as-promised'
 
 chai.use(chaiAsPromised)
@@ -37,7 +37,7 @@ describe('unit tests on non repudiable protocol functions', function () {
     describe('test proof or Origin validation function', function () {
       it('should validate a proof of Origin', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
-        const hashCipherBlock: string = crypto.createHash('sha256').update(cipherblock).digest('hex')
+        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
 
         const poO: _pkgTypes.poO = {
           iss: 'urn:example:issuer',
@@ -65,9 +65,38 @@ describe('unit tests on non repudiable protocol functions', function () {
         expect(valPoo).to.be.true // eslint-disable-line
       })
 
+      it('should not validate a proof of Origin with wrong key', async function () {
+        const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
+        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
+
+        const poO: _pkgTypes.poO = {
+          iss: 'urn:example:issuer',
+          sub: 'urn:example:subject',
+          iat: Date.now(),
+          exchange: {
+            id: 3,
+            orig: 'urn:example:issuer',
+            dest: 'urn:example:subject',
+            block_id: 4,
+            block_desc: 'description',
+            hash_alg: 'sha256',
+            cipherblock_dgst: hashCipherBlock,
+            block_commitment: 'd8a73ab676c0b1bd31ad3831da5d8bea768d58935ffd7369aeca2dea8a61580a',
+            key_commitment: 'b28c94b2195c8ed259f0b415aaee3f39b0b2920a4537611499fa044956917a21'
+          }
+        }
+
+        const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
+        const jws = await new CompactSign(jwt)
+          .setProtectedHeader({ alg: 'EdDSA' })
+          .sign(privateKeyProvider)
+
+        expect(_pkg.validatePoO(publicKeyBackplane, jws, cipherblock)).to.be.rejected
+      })
+
       it('should not validate a proof of Origin with wrong iat', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
-        const hashCipherBlock: string = crypto.createHash('sha256').update(cipherblock).digest('hex')
+        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
         const poO: _pkgTypes.poO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
@@ -149,6 +178,49 @@ describe('unit tests on non repudiable protocol functions', function () {
         expect(valPoR).to.be.true // eslint-disable-line
       })
 
+      it('should not validate a proof of Receipt with wrong iat', async function () {
+        const providerPoO: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
+        const poR: _pkgTypes.poR = {
+          iss: 'urn:example:issuer',
+          sub: 'urn:example:subject',
+          iat: Date.now()-560000,
+          exchange: {
+            poo_dgst: 'c08abbcb1e3370a0aed9ca722b321c664282811dc7c027664b08911b93e7c04e',
+            hash_alg: 'sha256',
+            exchangeId: 3
+          }
+        }
+
+        const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
+        const jwsPor = await new CompactSign(jwt)
+          .setProtectedHeader({ alg: 'EdDSA' })
+          .sign(privateKeyProvider)
+
+        await expect(_pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)).to.be.rejectedWith("timestamp error")
+
+      })
+
+      it('should not validate a proof of Receipt with wrong key', async function () {
+        const providerPoO: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
+        const poR: _pkgTypes.poR = {
+          iss: 'urn:example:issuer',
+          sub: 'urn:example:subject',
+          iat: Date.now(),
+          exchange: {
+            poo_dgst: 'c08abbcb1e3370a0aed9ca722b321c664282811dc7c027664b08911b93e7c04e',
+            hash_alg: 'sha256',
+            exchangeId: 3
+          }
+        }
+
+        const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
+        const jwsPor = await new CompactSign(jwt)
+          .setProtectedHeader({ alg: 'EdDSA' })
+          .sign(privateKeyProvider)
+
+        await expect(_pkg.validatePoR(publicKeyBackplane, jwsPor, providerPoO)).to.be.rejected
+      })
+
       it('should not validate a consumer poR that contains an hashed poO different from the one created by the provider', async function () {
         const providerPoO: string = 'DeyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
         const poR: _pkgTypes.poR = {
@@ -188,7 +260,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            block_commitment: crypto.createHash('sha256').update(text).digest('hex')
+            block_commitment: createHash('sha256').update(text).digest('hex')
           }
         }
 
@@ -217,7 +289,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            block_commitment: crypto.createHash('sha256').update(wrongText).digest('hex')
+            block_commitment: createHash('sha256').update(wrongText).digest('hex')
           }
         }
 
@@ -243,7 +315,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            key_commitment: crypto.createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
+            key_commitment: createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
           }
         }
         const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
@@ -263,6 +335,38 @@ describe('unit tests on non repudiable protocol functions', function () {
         expect(validatePoP).to.be.true // eslint-disable-line
       })
 
+      it('should not validate a poP with wrong key', async function () {
+        const jwk = {
+          kty: 'oct',
+          alg: 'HS256',
+          k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
+          kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
+        }
+
+        const poO: any = {
+          iss: 'urn:example:issuer',
+          sub: 'urn:example:subject',
+          iat: Date.now(),
+          exchange: {
+            key_commitment: createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
+          }
+        }
+        const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
+        const jwsPoO = await new CompactSign(jwtPoO)
+          .setProtectedHeader({ alg: 'EdDSA' })
+          .sign(privateKeyProvider)
+
+        const poP: any = {
+          test: 'testPop'
+        }
+        const jwtPoP: Uint8Array = new TextEncoder().encode(JSON.stringify(poP))
+        const jwsPop = await new CompactSign(jwtPoP)
+          .setProtectedHeader({ alg: 'EdDSA' })
+          .sign(privateKeyBackplane)
+
+        await expect(_pkg.validatePoP(publicKeyProvider, publicKeyProvider, jwsPop, jwk, jwsPoO)).to.be.rejected
+      })
+
       it('should not validate the poP verification function, if the hash of the key received is different from the one stored in the PoO ', async function () {
         const jwk = {
           kty: 'oct',
@@ -276,7 +380,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            key_commitment: crypto.createHash('sha256').update('DIFFERENT-JWK', 'utf8').digest('hex')
+            key_commitment: createHash('sha256').update('DIFFERENT-JWK', 'utf8').digest('hex')
           }
         }
         const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))

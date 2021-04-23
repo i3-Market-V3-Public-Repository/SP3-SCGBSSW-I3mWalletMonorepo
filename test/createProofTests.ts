@@ -3,7 +3,7 @@ import { KeyLike } from 'jose/webcrypto/types'
 import { JWK } from 'jose/jwk/from_key_like'
 import compactVerify from 'jose/jws/compact/verify'
 import CompactSign from 'jose/jws/compact/sign'
-import crypto from 'crypto'
+import createHash from 'create-hash'
 
 describe('unit tests on non repudiable protocol functions', function () {
   let publicKeyConsumer: KeyLike
@@ -24,21 +24,39 @@ describe('unit tests on non repudiable protocol functions', function () {
 
   describe('- testing on createProof functions used by a non repudiable protocol ', function () {
     describe('create proof of Origin', function () {
-      it('should create a valid signed proof of origin that can be validated using the provider public key', async function () {
+      it('should create a valid signed proof of origin passing a string type block', async function () {
         const block: string = 'testblock'
         const blockId: number = 4
         const jwk: JWK = await _pkg.createJwk()
         const result = await _pkg.createPoO(privateKeyProvider, block, 'urn:example:issuer', 'urn:example:subject', 3, blockId, jwk)
         const { payload } = await compactVerify(result.poO, publicKeyProvider)
 
-        const hashCipherBlock: string = crypto.createHash('sha256').update(result.cipherblock).digest('hex')
+        const hashCipherBlock: string = createHash('sha256').update(result.cipherblock).digest('hex')
         const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
         chai.expect(poO.iss).to.equal('urn:example:issuer')
         chai.expect(poO.sub).to.equal('urn:example:subject')
         chai.expect(poO.exchange.block_id).to.equal(blockId)
 
-        const hashBlock: string = crypto.createHash('sha256').update(block).digest('hex')
+        const hashBlock: string = createHash('sha256').update(block).digest('hex')
+        chai.expect(hashBlock).to.equal(poO.exchange.block_commitment)
+      })
+
+      it('should create a valid signed proof of origin passing an Uint8Array type block', async function () {
+        const block: Uint8Array = new Uint8Array([0, 2, 0, 1, 0])
+        const blockId: number = 4
+        const jwk: JWK = await _pkg.createJwk()
+        const result = await _pkg.createPoO(privateKeyProvider, block, 'urn:example:issuer', 'urn:example:subject', 3, blockId, jwk)
+        const { payload } = await compactVerify(result.poO, publicKeyProvider)
+
+        const hashCipherBlock: string = createHash('sha256').update(result.cipherblock).digest('hex')
+        const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
+        chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
+        chai.expect(poO.iss).to.equal('urn:example:issuer')
+        chai.expect(poO.sub).to.equal('urn:example:subject')
+        chai.expect(poO.exchange.block_id).to.equal(blockId)
+
+        const hashBlock: string = createHash('sha256').update(block).digest('hex')
         chai.expect(hashBlock).to.equal(poO.exchange.block_commitment)
       })
     })
@@ -49,7 +67,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const responsePoR = await _pkg.createPoR(privateKeyConsumer, poOProof, 'urn:example:issuer', 'urn:example:subject', 3)
         const { payload } = await compactVerify(responsePoR, publicKeyConsumer)
 
-        const hashPoO: string = crypto.createHash('sha256').update(poOProof).digest('hex')
+        const hashPoO: string = createHash('sha256').update(poOProof).digest('hex')
         const decodedPayload = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashPoO).to.equal(decodedPayload.exchange.poo_dgst)
         chai.expect(decodedPayload.iss).to.equal('urn:example:issuer')

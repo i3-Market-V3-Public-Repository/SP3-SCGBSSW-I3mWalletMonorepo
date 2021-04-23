@@ -12,7 +12,7 @@ import { decodePoo } from './validateProofs'
  * Create Proof of Origin and sign with Provider private key
  */
 const createPoO = async (privateKey: KeyLike, block: ArrayBufferLike | string, providerId: string, consumerId: string, exchangeId: number, blockId: number, jwk: JWK): Promise<any> => {
-  const input = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
+  const input: Uint8Array  = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
   const key: KeyLike = await parseJwk(jwk)
   const cipherblock: string = await new CompactEncrypt(input)
     .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
