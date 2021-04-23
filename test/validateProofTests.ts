@@ -91,7 +91,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           .setProtectedHeader({ alg: 'EdDSA' })
           .sign(privateKeyProvider)
 
-        expect(_pkg.validatePoO(publicKeyBackplane, jws, cipherblock)).to.be.rejected
+        await expect(_pkg.validatePoO(publicKeyBackplane, jws, cipherblock)).to.be.rejected
       })
 
       it('should not validate a proof of Origin with wrong iat', async function () {
@@ -183,7 +183,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const poR: _pkgTypes.poR = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
-          iat: Date.now()-560000,
+          iat: Date.now() - 560000,
           exchange: {
             poo_dgst: 'c08abbcb1e3370a0aed9ca722b321c664282811dc7c027664b08911b93e7c04e',
             hash_alg: 'sha256',
@@ -196,8 +196,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           .setProtectedHeader({ alg: 'EdDSA' })
           .sign(privateKeyProvider)
 
-        await expect(_pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)).to.be.rejectedWith("timestamp error")
-
+        await expect(_pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)).to.be.rejectedWith('timestamp error')
       })
 
       it('should not validate a proof of Receipt with wrong key', async function () {
