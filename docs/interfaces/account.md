@@ -1,5 +1,3 @@
-[@i3-market/non-repudiation-proofs - v0.9.0](../API.md) / account
-
 # Interface: account
 
 ## Table of contents

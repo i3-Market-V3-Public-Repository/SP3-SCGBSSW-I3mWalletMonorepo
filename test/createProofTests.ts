@@ -3,7 +3,6 @@ import { KeyLike } from 'jose/webcrypto/types'
 import { JWK } from 'jose/jwk/from_key_like'
 import compactVerify from 'jose/jws/compact/verify'
 import CompactSign from 'jose/jws/compact/sign'
-import createHash from 'create-hash'
 
 describe('unit tests on non repudiable protocol functions', function () {
   let publicKeyConsumer: KeyLike
@@ -13,11 +12,11 @@ describe('unit tests on non repudiable protocol functions', function () {
   let privateKeyProvider: KeyLike
 
   this.beforeAll(async () => {
-    const consumerkey = await generateKeyPair('EdDSA')
+    const consumerkey = await generateKeyPair(_pkg.SIGNING_ALG)
     publicKeyConsumer = consumerkey.publicKey
     privateKeyConsumer = consumerkey.privateKey
 
-    const providerkey = await generateKeyPair('EdDSA')
+    const providerkey = await generateKeyPair(_pkg.SIGNING_ALG)
     publicKeyProvider = providerkey.publicKey
     privateKeyProvider = providerkey.privateKey
   })
@@ -31,14 +30,14 @@ describe('unit tests on non repudiable protocol functions', function () {
         const result = await _pkg.createPoO(privateKeyProvider, block, 'urn:example:issuer', 'urn:example:subject', 3, blockId, jwk)
         const { payload } = await compactVerify(result.poO, publicKeyProvider)
 
-        const hashCipherBlock: string = createHash('sha256').update(result.cipherblock).digest('hex')
+        const hashCipherBlock = await _pkg.sha(result.cipherblock)
         const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
         chai.expect(poO.iss).to.equal('urn:example:issuer')
         chai.expect(poO.sub).to.equal('urn:example:subject')
         chai.expect(poO.exchange.block_id).to.equal(blockId)
 
-        const hashBlock: string = createHash('sha256').update(block).digest('hex')
+        const hashBlock: string = await _pkg.sha(block)
         chai.expect(hashBlock).to.equal(poO.exchange.block_commitment)
       })
 
@@ -49,14 +48,14 @@ describe('unit tests on non repudiable protocol functions', function () {
         const result = await _pkg.createPoO(privateKeyProvider, block, 'urn:example:issuer', 'urn:example:subject', 3, blockId, jwk)
         const { payload } = await compactVerify(result.poO, publicKeyProvider)
 
-        const hashCipherBlock: string = createHash('sha256').update(result.cipherblock).digest('hex')
+        const hashCipherBlock: string = await _pkg.sha(result.cipherblock)
         const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
         chai.expect(poO.iss).to.equal('urn:example:issuer')
         chai.expect(poO.sub).to.equal('urn:example:subject')
         chai.expect(poO.exchange.block_id).to.equal(blockId)
 
-        const hashBlock: string = createHash('sha256').update(block).digest('hex')
+        const hashBlock: string = await _pkg.sha(block)
         chai.expect(hashBlock).to.equal(poO.exchange.block_commitment)
       })
     })
@@ -67,7 +66,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const responsePoR = await _pkg.createPoR(privateKeyConsumer, poOProof, 'urn:example:issuer', 'urn:example:subject', 3)
         const { payload } = await compactVerify(responsePoR, publicKeyConsumer)
 
-        const hashPoO: string = createHash('sha256').update(poOProof).digest('hex')
+        const hashPoO: string = await _pkg.sha(poOProof)
         const decodedPayload = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashPoO).to.equal(decodedPayload.exchange.poo_dgst)
         chai.expect(decodedPayload.iss).to.equal('urn:example:issuer')
@@ -104,7 +103,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         }
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jwsPoO = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const poRProof: string = 'null'

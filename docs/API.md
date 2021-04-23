@@ -1,6 +1,4 @@
-@i3-market/non-repudiation-proofs - v0.9.0
-
-# @i3-market/non-repudiation-proofs - v0.9.0
+# @i3-market/non-repudiation-proofs
 
 My module description. Please update with your module data.
 
@@ -15,6 +13,10 @@ This module runs perfectly in node.js and browsers
 - [poO](interfaces/poo.md)
 - [poR](interfaces/por.md)
 
+### Variables
+
+- [SIGNING\_ALG](API.md#signing_alg)
+
 ### Functions
 
 - [createBlockchainProof](API.md#createblockchainproof)
@@ -24,11 +26,20 @@ This module runs perfectly in node.js and browsers
 - [decodePoo](API.md#decodepoo)
 - [decodePor](API.md#decodepor)
 - [decryptCipherblock](API.md#decryptcipherblock)
+- [sha](API.md#sha)
 - [signProof](API.md#signproof)
 - [validateCipherblock](API.md#validatecipherblock)
 - [validatePoO](API.md#validatepoo)
 - [validatePoP](API.md#validatepop)
 - [validatePoR](API.md#validatepor)
+
+## Variables
+
+### SIGNING\_ALG
+
+• `Const` **SIGNING\_ALG**: *ES256*= 'ES256'
+
+Defined in: createProofs.ts:11
 
 ## Functions
 
@@ -49,7 +60,7 @@ Name | Type |
 
 **Returns:** *Promise*<[*account*](interfaces/account.md)\>
 
-Defined in: createProofs.ts:102
+Defined in: createProofs.ts:113
 
 ___
 
@@ -61,13 +72,13 @@ Create random (high entropy)\none time symmetric JWK secret
 
 **Returns:** *Promise*<JWK\>
 
-Defined in: createProofs.ts:55
+Defined in: createProofs.ts:53
 
 ___
 
 ### createPoO
 
-▸ `Const`**createPoO**(`privateKey`: KeyLike, `block`: *string* \| ArrayBufferLike, `providerId`: *string*, `consumerId`: *string*, `exchangeId`: *number*, `blockId`: *number*, `jwk`: JWK): *Promise*<any\>
+▸ `Const`**createPoO**(`privateKey`: KeyLike, `block`: *string* \| ArrayBufferLike, `providerId`: *string*, `consumerId`: *string*, `exchangeId`: *number*, `blockId`: *number*, `jwk`: JWK): *Promise*<{ `cipherblock`: *string* ; `poO`: *string*  }\>
 
 Create Proof of Origin and sign with Provider private key
 
@@ -83,9 +94,9 @@ Name | Type |
 `blockId` | *number* |
 `jwk` | JWK |
 
-**Returns:** *Promise*<any\>
+**Returns:** *Promise*<{ `cipherblock`: *string* ; `poO`: *string*  }\>
 
-Defined in: createProofs.ts:14
+Defined in: createProofs.ts:18
 
 ___
 
@@ -107,7 +118,7 @@ Name | Type |
 
 **Returns:** *Promise*<string\>
 
-Defined in: createProofs.ts:80
+Defined in: createProofs.ts:91
 
 ___
 
@@ -168,6 +179,23 @@ Defined in: validateProofs.ts:86
 
 ___
 
+### sha
+
+▸ `Const`**sha**(`input`: *string* \| *Uint8Array*, `algorithm?`: *string*): *Promise*<string\>
+
+#### Parameters:
+
+Name | Type | Default value |
+:------ | :------ | :------ |
+`input` | *string* \| *Uint8Array* | - |
+`algorithm` | *string* | 'SHA-256' |
+
+**Returns:** *Promise*<string\>
+
+Defined in: sha.ts:1
+
+___
+
 ### signProof
 
 ▸ `Const`**signProof**(`privateKey`: KeyLike, `proof`: *any*): *Promise*<string\>
@@ -183,7 +211,7 @@ Name | Type |
 
 **Returns:** *Promise*<string\>
 
-Defined in: createProofs.ts:68
+Defined in: createProofs.ts:79
 
 ___
 

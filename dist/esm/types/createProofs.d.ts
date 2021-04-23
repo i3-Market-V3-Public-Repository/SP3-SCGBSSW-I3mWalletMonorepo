@@ -1,9 +1,15 @@
 import { KeyLike, JWK } from 'jose/jwk/from_key_like';
-import { account } from './proofInterfaces';
+import { account, poO } from './proofInterfaces';
+export declare const SIGNING_ALG = "ES256";
+export declare const ENC_ALG = "AES-GCM";
+export declare const ENC_ALG_KEY_LENGTH = 256;
 /**
  * Create Proof of Origin and sign with Provider private key
  */
-declare const createPoO: (privateKey: KeyLike, block: ArrayBufferLike | string, providerId: string, consumerId: string, exchangeId: number, blockId: number, jwk: JWK) => Promise<any>;
+declare const createPoO: (privateKey: KeyLike, block: ArrayBufferLike | string, providerId: string, consumerId: string, exchangeId: number, blockId: number, jwk: JWK) => Promise<{
+    cipherblock: string;
+    poO: string;
+}>;
 /**
  * Create random (high entropy)\none time symmetric JWK secret
  */

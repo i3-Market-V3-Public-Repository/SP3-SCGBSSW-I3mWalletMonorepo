@@ -7,6 +7,7 @@
  * @packageDocumentation
  */
 
-export { createJwk, createPoO, signProof, createPoR, createBlockchainProof } from './createProofs'
+export { SIGNING_ALG, createJwk, createPoO, signProof, createPoR, createBlockchainProof } from './createProofs'
 export { account, poO, poR } from './proofInterfaces'
 export { validatePoR, validatePoO, validatePoP, decryptCipherblock, validateCipherblock, decodePoo, decodePor } from './validateProofs'
+export { sha } from './sha'

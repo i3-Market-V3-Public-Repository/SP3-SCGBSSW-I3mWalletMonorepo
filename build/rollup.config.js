@@ -29,6 +29,7 @@ const input = path.join(srcDir, 'index.ts')
 if (fs.existsSync(input) !== true) throw new Error('The entry point should be index.ts')
 
 const tsBundleOptions = {
+  outDir: undefined, // ignore outDir in tsconfig.json
   exclude: ['test/**/*', 'src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
 }
 

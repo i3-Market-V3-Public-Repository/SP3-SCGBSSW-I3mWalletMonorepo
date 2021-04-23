@@ -2,7 +2,7 @@ import { KeyLike, JWK } from 'jose/jwk/from_key_like'
 import parseJwk from 'jose/jwk/parse'
 import compactDecrypt from 'jose/jwe/compact/decrypt'
 import compactVerify from 'jose/jws/compact/verify'
-import crypto from 'crypto'
+import sha from './sha'
 import { poO, poR } from './proofInterfaces'
 
 // TODO decide a fixed delay for the protocol
@@ -13,7 +13,7 @@ const IAT_DELAY = 5000
  */
 const validatePoR = async (publicKey: KeyLike, poR: string, poO: string): Promise<boolean> => {
   const poRpayload: poR = await decodePor(publicKey, poR)
-  const hashPooDgst: string = crypto.createHash('sha256').update(poO).digest('hex')
+  const hashPooDgst: string = await sha(poO)
 
   if (hashPooDgst !== poRpayload.exchange.poo_dgst) {
     throw new Error('the hashed proof of origin received does not correspond to the poo_dgst parameter in the proof of origin')
@@ -40,7 +40,7 @@ const decodePor = async (publicKey: KeyLike, poR: string): Promise<poR> => {
  */
 const validatePoO = async (publicKey: KeyLike, poO: string, cipherblock: string): Promise<boolean> => {
   const poOpayload: poO = await decodePoo(publicKey, poO)
-  const hashedCipherBlock: string = crypto.createHash('sha256').update(cipherblock).digest('hex')
+  const hashedCipherBlock: string = await sha(cipherblock)
 
   if (poOpayload.exchange.cipherblock_dgst !== hashedCipherBlock) {
     throw new Error('the cipherblock_dgst parameter in the proof of origin does not correspond to hash of the cipherblock received by the provider')
@@ -71,7 +71,7 @@ const validatePoP = async (publicKeyBackplain: KeyLike, publicKeyProvider: KeyLi
   })
 
   const poOPayload: poO = await decodePoo(publicKeyProvider, poO)
-  const hashedJwk: string = crypto.createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
+  const hashedJwk: string = await sha(JSON.stringify(jwk))
 
   if (poOPayload.exchange.key_commitment === hashedJwk) {
     return true
@@ -85,7 +85,7 @@ const validatePoP = async (publicKeyBackplain: KeyLike, publicKeyProvider: KeyLi
  */
 const decryptCipherblock = async (chiperblock: string, jwk: JWK): Promise<string> => {
   const decoder = new TextDecoder()
-  const key: KeyLike = await parseJwk(jwk, 'HS256')
+  const key: KeyLike = await parseJwk(jwk, 'A256GCM') // TODO: ENC_ALG
 
   const { plaintext } = await compactDecrypt(chiperblock, key)
   return decoder.decode(plaintext)
@@ -96,10 +96,7 @@ const decryptCipherblock = async (chiperblock: string, jwk: JWK): Promise<string
  */
 const validateCipherblock = async (publicKey: KeyLike, chiperblock: string, jwk: JWK, poO: poO): Promise<boolean> => {
   const decodedCipherBlock = await decryptCipherblock(chiperblock, jwk)
-  const hashedDecodedCipherBlock: string = crypto
-    .createHash('sha256')
-    .update(decodedCipherBlock)
-    .digest('hex')
+  const hashedDecodedCipherBlock: string = await sha(decodedCipherBlock)
 
   if (hashedDecodedCipherBlock === poO.exchange.block_commitment) {
     // TODO check also block_description

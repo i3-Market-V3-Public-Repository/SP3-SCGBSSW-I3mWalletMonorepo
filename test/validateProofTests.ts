@@ -3,7 +3,6 @@ import { KeyLike } from 'jose/webcrypto/types'
 import CompactSign from 'jose/jws/compact/sign'
 import CompactEncrypt from 'jose/jwe/compact/encrypt'
 import parseJwk from 'jose/jwk/parse'
-import createHash from 'create-hash'
 import chaiAsPromised from 'chai-as-promised'
 
 chai.use(chaiAsPromised)
@@ -20,15 +19,15 @@ describe('unit tests on non repudiable protocol functions', function () {
   let privateKeyBackplane: KeyLike
 
   this.beforeAll(async () => {
-    // const consumerkey = await generateKeyPair('EdDSA')
+    // const consumerkey = await generateKeyPair(_pkg.SIGNING_ALG)
     // publicKeyConsumer = consumerkey.publicKey
     // privateKeyConsumer = consumerkey.privateKey
 
-    const providerkey = await generateKeyPair('EdDSA')
+    const providerkey = await generateKeyPair(_pkg.SIGNING_ALG)
     publicKeyProvider = providerkey.publicKey
     privateKeyProvider = providerkey.privateKey
 
-    const backplainkey = await generateKeyPair('EdDSA')
+    const backplainkey = await generateKeyPair(_pkg.SIGNING_ALG)
     publicKeyBackplane = backplainkey.publicKey
     privateKeyBackplane = backplainkey.privateKey
   })
@@ -37,7 +36,7 @@ describe('unit tests on non repudiable protocol functions', function () {
     describe('test proof or Origin validation function', function () {
       it('should validate a proof of Origin', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
-        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
+        const hashCipherBlock: string = await _pkg.sha(cipherblock)
 
         const poO: _pkgTypes.poO = {
           iss: 'urn:example:issuer',
@@ -58,7 +57,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jws = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const valPoo = await _pkg.validatePoO(publicKeyProvider, jws, cipherblock)
@@ -67,7 +66,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
       it('should not validate a proof of Origin with wrong key', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
-        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
+        const hashCipherBlock: string = await _pkg.sha(cipherblock)
 
         const poO: _pkgTypes.poO = {
           iss: 'urn:example:issuer',
@@ -88,7 +87,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jws = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         await expect(_pkg.validatePoO(publicKeyBackplane, jws, cipherblock)).to.be.rejected
@@ -96,7 +95,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
       it('should not validate a proof of Origin with wrong iat', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
-        const hashCipherBlock: string = createHash('sha256').update(cipherblock).digest('hex')
+        const hashCipherBlock: string = await _pkg.sha(cipherblock)
         const poO: _pkgTypes.poO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
@@ -118,7 +117,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jws = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         await expect(_pkg.validatePoO(publicKeyProvider, jws, cipherblock)).to.be.rejectedWith('timestamp error')
@@ -146,7 +145,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jws = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         // const hashCipherBlock: string = crypto.createHash('sha256').update(cipherblock).digest('hex')
@@ -171,7 +170,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
         const jwsPor = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const valPoR = await _pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)
@@ -193,7 +192,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
         const jwsPor = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         await expect(_pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)).to.be.rejectedWith('timestamp error')
@@ -214,7 +213,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
         const jwsPor = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         await expect(_pkg.validatePoR(publicKeyBackplane, jwsPor, providerPoO)).to.be.rejected
@@ -235,7 +234,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poR))
         const jwsPor = await new CompactSign(jwt)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         await expect(_pkg.validatePoR(publicKeyProvider, jwsPor, providerPoO)).to.be.rejectedWith('the hashed proof of origin received does not correspond to the poo_dgst parameter in the proof of origin')
@@ -247,7 +246,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const text = 'test'
         const jwk = {
           kty: 'oct',
-          alg: 'HS256',
+          alg: 'A256GCM', // TODO: ENC_ALG
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
@@ -259,7 +258,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            block_commitment: createHash('sha256').update(text).digest('hex')
+            block_commitment: await _pkg.sha(text)
           }
         }
 
@@ -277,7 +276,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
         const jwk = {
           kty: 'oct',
-          alg: 'HS256',
+          alg: 'A256GCM',
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
@@ -288,7 +287,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            block_commitment: createHash('sha256').update(wrongText).digest('hex')
+            block_commitment: await _pkg.sha(wrongText)
           }
         }
 
@@ -296,7 +295,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
           .encrypt(key)
 
-        await expect(_pkg.validateCipherblock(publicKeyProvider, cipherblock, jwk, poO)).to.be.rejectedWith('hashed CipherBlock not correspond to block_commitment parameter included in the proof of origin')
+        await expect(_pkg.validateCipherblock(publicKeyProvider, cipherblock, jwk, poO)).to.be.rejected
       })
     })
 
@@ -304,7 +303,7 @@ describe('unit tests on non repudiable protocol functions', function () {
       it('should validate a poP', async function () {
         const jwk = {
           kty: 'oct',
-          alg: 'HS256',
+          alg: 'A256GCM',
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
@@ -314,12 +313,12 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            key_commitment: createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
+            key_commitment: await _pkg.sha(JSON.stringify(jwk))
           }
         }
         const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jwsPoO = await new CompactSign(jwtPoO)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const poP: any = {
@@ -327,7 +326,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         }
         const jwtPoP: Uint8Array = new TextEncoder().encode(JSON.stringify(poP))
         const jwsPop = await new CompactSign(jwtPoP)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyBackplane)
 
         const validatePoP = await _pkg.validatePoP(publicKeyBackplane, publicKeyProvider, jwsPop, jwk, jwsPoO)
@@ -337,7 +336,7 @@ describe('unit tests on non repudiable protocol functions', function () {
       it('should not validate a poP with wrong key', async function () {
         const jwk = {
           kty: 'oct',
-          alg: 'HS256',
+          alg: 'A256GCM',
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
@@ -347,12 +346,12 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            key_commitment: createHash('sha256').update(JSON.stringify(jwk)).digest('hex')
+            key_commitment: await _pkg.sha(JSON.stringify(jwk))
           }
         }
         const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jwsPoO = await new CompactSign(jwtPoO)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const poP: any = {
@@ -360,7 +359,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         }
         const jwtPoP: Uint8Array = new TextEncoder().encode(JSON.stringify(poP))
         const jwsPop = await new CompactSign(jwtPoP)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyBackplane)
 
         await expect(_pkg.validatePoP(publicKeyProvider, publicKeyProvider, jwsPop, jwk, jwsPoO)).to.be.rejected
@@ -369,7 +368,7 @@ describe('unit tests on non repudiable protocol functions', function () {
       it('should not validate the poP verification function, if the hash of the key received is different from the one stored in the PoO ', async function () {
         const jwk = {
           kty: 'oct',
-          alg: 'HS256',
+          alg: 'A256GCM',
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
@@ -379,12 +378,12 @@ describe('unit tests on non repudiable protocol functions', function () {
           sub: 'urn:example:subject',
           iat: Date.now(),
           exchange: {
-            key_commitment: createHash('sha256').update('DIFFERENT-JWK', 'utf8').digest('hex')
+            key_commitment: await _pkg.sha('DIFFERENT-JWK')
           }
         }
         const jwtPoO: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
         const jwsPoO = await new CompactSign(jwtPoO)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyProvider)
 
         const poP: any = {
@@ -392,7 +391,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         }
         const jwtPoP: Uint8Array = new TextEncoder().encode(JSON.stringify(poP))
         const jwsPop = await new CompactSign(jwtPoP)
-          .setProtectedHeader({ alg: 'EdDSA' })
+          .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
           .sign(privateKeyBackplane)
 
         await expect(_pkg.validatePoP(publicKeyBackplane, publicKeyProvider, jwsPop, jwk, jwsPoO)).to.be.rejectedWith('hashed key not correspond to poO key_commitment parameter')

@@ -21,8 +21,10 @@
       },
       "default": "./dist/esm/index.browser.js"
     },
-    "./bundles/": "./dist/bundles/",
-    "./types/": "./dist/esm/types/"
+    "./esm-browser-bundle": "./dist/bundles/esm.js",
+    "./iife-browser-bundle": "./dist/bundles/iife.js",
+    "./umd-browser-bundle": "./dist/bundles/umd.js",
+    "./types": "./dist/esm/types/index.d.ts"
   },
   "directories": {
     "build": "./build",
@@ -39,8 +41,7 @@
     "docs": "node build/build.docs.js",
     "lint": "ts-standard --fix",
     "mocha": "node ./build/bin/mocha-ts.js --require build/testing/mocha/mocha-init.js ",
-    "preversion": "run-s lint build:js test:browser coverage",
-    "postversion": "npm run docs",
+    "preversion": "npm run build",
     "test": "run-s test:browser test:node",
     "test:browser": "node build/testing/browser/index.js",
     "test:node": "npm run mocha -- '{src/ts/**/*.spec.ts,test/**/*.ts}'",
@@ -74,6 +75,7 @@
     "@types/mocha": "^8.2.1",
     "chai": "^4.3.3",
     "chai-as-promised": "^7.1.1",
+    "create-hash": "^1.2.0",
     "glob": "^7.1.6",
     "json5": "^2.2.0",
     "minimatch": "^3.0.4",
