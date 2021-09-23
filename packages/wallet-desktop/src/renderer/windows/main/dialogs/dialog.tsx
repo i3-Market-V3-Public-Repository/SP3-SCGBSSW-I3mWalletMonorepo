@@ -131,7 +131,7 @@ export function Dialog (props: DialogProps): JSX.Element {
       if (exit) {
         onClose(undefined)
       } else if (props.type === 'form') {
-        buildFormValue(onClose)
+        buildFormValue(onClose, selectedOption)
       } else if (selectedOption === undefined) {
         onClose(undefined)
       } else {
@@ -150,7 +150,7 @@ export function Dialog (props: DialogProps): JSX.Element {
     }
   }
 
-  const buildFormValue = (getValues: (value: any) => void): void => {
+  const buildFormValue = (getValues: (value: any) => void, option?: DialogOption<any>): void => {
     updateFormValues((formValues) => {
       getValues(order.reduce((prev, curr, i) => {
         const formValue = formValues[i]
@@ -159,7 +159,7 @@ export function Dialog (props: DialogProps): JSX.Element {
         }
         return prev
       }, {}))
-    })
+    }, option)
   }
 
   const updateFormValues = (onUpdate: (value: Array<DialogOption<any> | undefined>) => void, option?: DialogOption<any>): void => {
