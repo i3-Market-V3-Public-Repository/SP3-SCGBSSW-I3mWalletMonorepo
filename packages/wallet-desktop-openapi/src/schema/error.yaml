@@ -1,0 +1,28 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+      
+    ApiError:
+      type: object
+      title: Error
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+      

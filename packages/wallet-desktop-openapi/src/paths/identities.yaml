@@ -1,0 +1,127 @@
+openapi: '3.0.2'
+
+info:
+  version: 1.0.0
+  title: i3M Wallet API
+
+paths:
+  /identities/select:
+    get:
+      summary: Gets an identity selected by the user.
+      operationId: identitySelect
+      x-eov-operation-handler: identities
+      tags:
+        - identities
+      parameters:
+        - in: query
+          name: reason
+          schema:
+            type: string
+            description: Message to show to the user with the reason to pick an identity
+      responses:
+        "200":
+          description: Selected identity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdentitySelectOutput"
+
+  /identities:
+    get:
+      summary: List all DIDs
+      operationId: identityList
+      x-eov-operation-handler: identities
+      tags:
+        - identities
+      parameters:
+        - in: query
+          name: alias
+          schema:
+            type: string
+            description: An alias for the identity
+      responses:
+        "200":
+          description: An array of identities
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdentityListInput"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+    post:
+      summary: Create an account
+      operationId: identityCreate
+      x-eov-operation-handler: identities
+      tags:
+        - identities
+      requestBody:
+        description: Create a DID.
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IdentityCreateInput"
+      responses:
+        "201":
+          description: the ID and type of the created account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IdentityCreateOutput"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+components:
+  schemas:
+    IdentitySelectOutput: 
+      title: IdentitySelectOutput
+      type: object
+      properties:
+        did:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+      required:
+        - did
+
+    IdentityListInput:
+      title: IdentityListInput
+      description: A list of DIDs
+      type: array
+      items:
+        type: object
+        properties:
+          did:
+            $ref: "../schema/identity.yaml#/components/schemas/did"
+        required:
+          - did
+
+    IdentityCreateInput:
+      title: IdentityCreateInput
+      description: |
+        Besides the here defined options, provider specific properties should be added here if necessary, e.g. "path" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).
+      type: object
+      properties:
+        alias:
+          type: string
+      additionalProperties: true
+    
+    IdentityCreateOutput:
+      title: IdentityCreateOutput
+      description: |
+        It returns the account id and type
+      type: object
+      properties:
+        did:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+      additionalProperties: true
+      required:
+        - did
+  

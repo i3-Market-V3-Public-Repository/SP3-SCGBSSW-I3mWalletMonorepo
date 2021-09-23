@@ -1,0 +1,17 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "ES2020",
+        "jsx": "react",
+        "typeRoots": [
+            "../../node_modules/@types",
+            "./typing",
+        ]
+    },
+    "files": [
+        "./index.ts"
+    ],
+    "include": [
+        "**/*"
+    ]
+}

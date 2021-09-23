@@ -1,0 +1,152 @@
+openapi: '3.0.2'
+
+info:
+  version: 1.0.0
+  title: i3M Wallet API
+
+paths:
+  /resources:
+    get:
+      summary: List all resources
+      operationId: resourceList
+      x-eov-operation-handler: resources
+      tags:
+        - resources
+      responses:
+        "200":
+          description: A paged array of accounts. Only the props requested will be returned. Security policies may prevent some props from being returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceListOutput"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+    post:
+      summary: Create a resource
+      operationId: resourceCreate
+      x-eov-operation-handler: resources
+      tags:
+        - resources
+      requestBody:
+        description: Create a resource.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Resource"
+      responses:
+        "201":
+          description: the ID and type of the created account
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceId"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+components:
+  schemas:
+    ResourceListOutput:
+      title: ResourceListOutput
+      description: A list of resources
+      type: array
+      items:
+        $ref: "#/components/schemas/ResourceId"
+        # allOf:
+        #   - $ref: "#/components/schemas/ResourceId"
+        #   - $ref: "#/components/schemas/Resource"
+
+    Resource:
+      title: Resource
+      anyOf:
+        - $ref: "#/components/schemas/VerifiableCredential"
+
+    VerifiableCredential:
+      title: VerifiableCredential
+      type: object
+      properties:
+        type:
+          $ref:  "#/components/schemas/ResourceType"
+          enum:
+            - VerifiableCredential
+        identity:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+        resource:
+          type: object
+          properties:
+            "@context":
+              type: array
+              items:
+                type: string
+              example: ['https://www.w3.org/2018/credentials/v1']
+            id:
+              type: string
+              example: http://example.edu/credentials/1872
+            type: 
+              type: array
+              items:
+                type: string
+              example: ['VerifiableCredential']
+            issuer:
+              type: object
+              properties:
+                id:
+                  $ref: "../schema/identity.yaml#/components/schemas/did"
+              additionalProperties: true
+              required:
+                - id
+            issuanceDate:
+              type: string
+              format: date-time
+              example: "2021-06-10T19:07:28.000Z"
+            credentialSubject:
+              type: object
+              properties:
+                id:
+                  $ref: "../schema/identity.yaml#/components/schemas/did"
+              required:
+                - id
+              additionalProperties: true
+            proof:
+              type: object
+              properties:
+                type:
+                  type: string
+                  enum:
+                    - JwtProof2020
+              required:
+                - type
+              additionalProperties: true
+          additionalProperties: true
+          required:
+            - "@context"
+            - type
+            - issuer
+            - issuanceDate
+            - credentialSubject
+            - proof
+      required:
+        - type
+        - resource
+
+    ResourceId:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+
+    ResourceType:
+      type: string
+      enum:
+        - VerifiableCredential
+  

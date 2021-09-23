@@ -1,0 +1,35 @@
+
+
+.status-bar {
+  display: flex;
+  align-items: stretch;
+
+  height: 24px;
+  padding: 0px 10px;
+
+  font-size: 14px;
+  color: #E8F5E7;
+
+  border-top: 2px solid #119540;
+  background-image: linear-gradient(to right bottom, #119540, #3BBD59 90%);;
+
+  .status-bar-item {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 0px 5px;
+
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: #ffffff33
+      }
+    }
+
+    > .icon {
+      width: 16px;
+      margin-right: 5px;
+    }
+  }
+}

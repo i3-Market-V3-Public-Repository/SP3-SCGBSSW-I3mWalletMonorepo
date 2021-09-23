@@ -1,0 +1,403 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    alg:
+      type: string
+      description: |
+        The "alg" (algorithm) parameter identifies the algorithm intended for use with the key. In JWE is a header parameter that identifies the cryptographic algorithm used to encrypt or determine the value of the CEK.
+        
+        The values used should either be registered in the IANA "JSON Web Signature and Encryption Algorithms" registry established by [JWA]((http://www.rfc-editor.org/info/rfc7518)) or be a value that contains a Collision-Resistant Name. The "alg" value is a case-sensitive ASCII string.
+      example: ES256
+
+    crit:
+      type: array
+      items:
+        type: string
+      description: |
+        The "crit" (critical) Header Parameter indicates that extensions to this specification and/or [JWA] are being used that MUST be understood and processed.
+        
+        Its value is an array listing the Header Parameter names present in the JOSE Header that use those extensions. If any of the listed extension Header Parameters are not understood and supported by the recipient, then the JWS is invalid. Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the "crit" list.  Producers MUST NOT use the empty list "[]" as the "crit" value. Recipients MAY consider the JWS to be invalid if the critical list contains any Header Parameter names defined by this specification or [JWA] for use with JWS or if any other constraints on its use are violated.  When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header.
+        
+        This Header Parameter MUST be understood and processed by implementations.
+
+        An example use, along with a hypothetical "exp" (expiration time) field is:
+          {"alg":"ES256",
+            "crit":["exp"],
+            "exp":1363284000
+          }
+      example: [ 'exp' ]
+
+    cty:
+      type: string
+      description: |
+        The "cty" (content type) Header Parameter is used by JWS applications to declare the media type [IANA.MediaTypes] of the secured content (the payload).  This is intended for use by the application when more than one kind of object could be present in the JWS Payload; the application can use this value to disambiguate among the different kinds of objects that might be present. It will typically not be used by applications when the kind of object is already known. This parameter is ignored by JWS implementations; any processing of this parameter is performed by the JWS application.
+      
+        Per RFC 2045 [RFC2045], all media type values, subtype values, and parameter names are case insensitive. However, parameter values are case sensitive unless otherwise specified for the specific parameter.
+
+        To keep messages compact in common situations, it is RECOMMENDED that producers omit an "application/" prefix of a media type value in a "cty" Header Parameter when no other '/' appears in the media type value.  A recipient using the media type value MUST treat it as if "application/" were prepended to any "cty" value not containing a '/'.  For instance, a "cty" value of "example" SHOULD be used to represent the "application/example" media type, whereas the media type "application/example;part="1/2"" cannot be shortened to "example;part="1/2"".
+
+    enc:
+      type: string
+      description: |
+        The "enc" (encryption algorithm) Header Parameter identifies the content encryption algorithm used to perform authenticated encryption on the plaintext to produce the ciphertext and the Authentication Tag. This algorithm MUST be an AEAD algorithm with a specified key length. The encrypted content is not usable if the "enc" value does not represent a supported algorithm. "enc" values should either be registered in the IANA "JSON Web Signature and Encryption Algorithms" registry established by [JWA] or be a value that contains a Collision-Resistant Name.  The "enc" value is a case-sensitive ASCII string containing a StringOrURI value. This Header Parameter MUST be present and MUST be understood and processed by implementations.
+
+        A list of defined "enc" values for this use can be found in the IANA "JSON Web Signature and Encryption Algorithms" registry established by [JWA]; the initial contents of this registry are the values defined in Section 5.1 of [JWA].
+      example: A256GCM
+
+    jku:
+      type: string
+      description: |
+        The "jku" (JWK Set URL) is a URI [RFC3986] that refers to a resource for a set of JSON-encoded public keys, one of which corresponds to the key used to digitally sign the JWS. The keys MUST be encoded as a JWK Set [JWK]. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the JWK Set MUST use Transport Layer Security (TLS) [RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125]. Also, see Section 8 on TLS requirements.
+      format: uri
+    
+    jwk:
+      type: string
+      description: |
+        The "jwk" (JSON Web Key) when in a JWS header is the public key that corresponds to the key used to digitally sign the JWS. This key is represented as a JSON Web Key [JWK]
+      pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+
+    key_ops:
+      type: array
+      items:
+        type: string
+      example: ['sign', 'decrypt']
+      description: |
+        The "key_ops" (key operations) parameter identifies the operation(s) for which the key is intended to be used.  The "key_ops" parameter is intended for use cases in which public, private, or symmetric keys may be present.
+
+        Its value is an array of key operation values.  Values defined by this specification are:
+        - "sign" (compute digital signature or MAC)
+        - "verify" (verify digital signature or MAC)
+        - "encrypt" (encrypt content)
+        - "decrypt" (decrypt content and validate decryption, if applicable)
+        - "wrapKey" (encrypt key)
+        - "unwrapKey" (decrypt key and validate decryption, if applicable)
+        - "deriveKey" (derive key)
+        - "deriveBits" (derive bits not to be used as a key)
+
+        (Note that the "key_ops" values intentionally match the "KeyUsage" values defined in the Web Cryptography API specification.)
+
+        Other values MAY be used.  The key operation values are case-sensitive strings.  Duplicate key operation values MUST NOT be present in the array.
+  
+    kid:
+      type: string
+      description: |
+        The "kid" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the "kid" value is unspecified.  When "kid" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct "kid" values.  (One example in which different keys might use the same "kid" value is if they have different "kty" (key type) values but are considered to be equivalent alternatives by the application using them.) The "kid" value is a case-sensitive string. When used with JWS or JWE, the "kid" value is used to match a JWS or JWE "kid" Header Parameter value.
+      example: ES256
+
+    kty:
+      type: string
+      description: |
+        The "kty" (key type) parameter identifies the cryptographic algorithm family used with the key, such as "RSA" or "EC".  "kty" values should either be registered in the IANA "JSON Web Key Types" registry established by [JWA](http://www.rfc-editor.org/info/rfc7518) or be a value that contains a Collision-Resistant Name.  The "kty" value is a case-sensitive string. This member MUST be present in a JWK.
+
+        A list of defined "kty" values can be found in the IANA "JSON Web Key Types" registry established by [JWA]; the initial contents of this registry are the values defined in Section 6.1 of [JWA](http://www.rfc-editor.org/info/rfc7518).
+
+        The key type definitions include specification of the members to be used for those key types.  Members used with specific "kty" values can be found in the IANA "JSON Web Key Parameters" registry.
+      example: EC
+
+    typ:
+      type: string
+      description: |
+        The "typ" (type) Header Parameter is used by JWS applications to declare the media type [IANA.MediaTypes] of this complete JWS. This is intended for use by the application when more than one kind of object could be present in an application data structure that can contain a JWS; the application can use this value to disambiguate among the different kinds of objects that might be present. It will typically not be used by applications when the kind of object is already known. This parameter is ignored by JWS implementations; any processing of this parameter is performed by the JWS application.
+
+        Per RFC 2045 [RFC2045], all media type values, subtype values, and parameter names are case insensitive.  However, parameter values are
+        case sensitive unless otherwise specified for the specific parameter. To keep messages compact in common situations, it is RECOMMENDED that
+        producers omit an "application/" prefix of a media type value in a "typ" Header Parameter when no other '/' appears in the media type value. A recipient using the media type value MUST treat it as if "application/" were prepended to any "typ" value not containing a '/'.  For instance, a "typ" value of "example" SHOULD be used to represent the "application/example" media type, whereas the media type "application/example;part="1/2"" cannot be shortened to
+        "example;part="1/2"".
+
+        The "typ" value "JOSE" can be used by applications to indicate that this object is a JWS or JWE using the JWS Compact Serialization or the JWE Compact Serialization. The "typ" value "JOSE+JSON" can be used by applications to indicate that this object is a JWS or JWE using the JWS JSON Serialization or the JWE JSON Serialization. Other type values can also be used by applications.
+      example: 'JOSE+JSON'
+
+    use:
+      type: string
+      example: sig
+      description: |
+        OPTIONAL. The "use" (public key use) parameter identifies the intended use of the public key.  The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
+
+        Values defined by this specification are:
+        - "sig" (signature)
+        - "enc" (encryption)
+
+        Other values MAY be used.  The "use" value is a case-sensitive string.  Use of the "use" member is OPTIONAL, unless the application requires its presence.
+        
+    x5c:
+      type: array
+      items:
+        type: string
+      description: |
+        The "x5c" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates [RFC5280].
+    
+    x5t:
+      type: string
+      description: |
+        The "x5t" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].  Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK.
+    
+    x5tS256:
+      title: x5t#S256
+      type: string
+      description: |
+        The "x5t#S256" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].  Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. 
+
+    x5u:
+      type: string
+      description: |
+        The "x5u" (X.509 URL) parameter is a URI [RFC3986] that refers to a resource for an X.509 public key certificate or certificate chain [RFC5280]
+
+    zip:
+      type: string
+      description: |
+        The "zip" (compression algorithm) applied to the plaintext before encryption, if any. The "zip" value defined by RFC7516 specification is "DEF" (Compression with the DEFLATE [RFC1951] algorithm) although other values MAY be used. Compression algorithm values can be registered in the IANA "JSON Web Encryption Compression Algorithms" registry established by [JWA]. The "zip" value is a case-sensitive string.  If no "zip" parameter is present, no compression is applied to the plaintext before encryption. When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWE Protected Header. Use of this Header Parameter is OPTIONAL. This Header Parameter MUST be understood and processed by implementations.
+
+    JWK:
+      type: object
+      title: JWK
+      properties:
+        kty:
+          $ref: "#/components/schemas/kty"
+        use:
+          $ref: "#/components/schemas/use"        
+        key_ops:
+          $ref: "#/components/schemas/key_ops"
+        alg:
+          $ref: "#/components/schemas/alg"
+        kid:
+          $ref: "#/components/schemas/kid"
+        x5u:
+          $ref: "#/components/schemas/x5u"
+        x5c:
+          $ref: "#/components/schemas/x5c"
+        x5t:
+          $ref: "#/components/schemas/x5t"
+        x5t#S256:
+          $ref: "#/components/schemas/x5tS256"
+      additionalProperties: true
+      example:
+        kty: 'EC'
+        crv: 'P-256'
+        x: 'f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU'
+        y: 'x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0'
+        kid: '12'
+
+    JWEFlattenedJSON:
+      title: JWEFlattenedJSON
+      type: object
+      description: |
+        The flattened JWE JSON Serialization syntax is based upon the general syntax, but flattens it, optimizing it for the single-recipient case. It flattens it by removing the "recipients" member and instead placing those members defined for use in the "recipients" array (the "header" and "encrypted_key" members) in the top-level JSON object (at the same level as the "ciphertext" member).
+
+        The "recipients" member MUST NOT be present when using this syntax. Other than this syntax difference, JWE JSON Serialization objects using the flattened syntax are processed identically to those using the general syntax.
+
+        In summary, the syntax of a JWE using the flattened JWE JSON
+
+        Serialization is as follows:
+          {
+            "protected":"<integrity-protected header contents>",
+            "unprotected":<non-integrity-protected header contents>,
+            "header":<more non-integrity-protected header contents>,
+            "encrypted_key":"<encrypted key contents>",
+            "aad":"<additional authenticated data contents>",
+            "iv":"<initialization vector contents>",
+            "ciphertext":"<ciphertext contents>",
+            "tag":"<authentication tag contents>"
+          }
+
+        Note that when using the flattened syntax, just as when using the
+        general syntax, any unprotected Header Parameter values can reside in
+        either the "unprotected" member or the "header" member, or in both.
+      example:
+        protected: "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0"
+        unprotected:
+          jku: "https://server.example.com/keys.jwks"
+        header: 
+          alg: A128KW
+          kid: '7'
+        encrypted_key: 6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ"
+        iv: "AxY8DCtDaGlsbGljb3RoZQ"
+        ciphertext: KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY"
+        tag: "Mz-VPPyU4RlcuYv1IwIvzw"
+      properties:
+        protected:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: | 
+            BASE64URL(UTF8(JWE Protected Header))
+            
+            The JWE Protected Header declares:
+              - `alg`: algorithm to encrypt a fresh and randomly generated Content Encryption Key (CEK) `encrypted_key`
+              - `enc`: the content encryption algorithm. It should be a symmetric Authenticated Encryption with Associated Data (AEAD) algorithm. Contents will we encrypted using `enc` algorithm with the `encrypted_key`
+              - `kid`: an identifier of the key that shold be used to decrypt the `encrypted_key`
+
+            The "protected" member MUST be present and contain the value BASE64URL(UTF8(JWE Protected Header)) when the JWE Protected Header value is non-empty; otherwise, it MUST be absent. These Header Parameter values are integrity protected.
+
+            An example JWE Protected header is:
+            `{"alg":"ES256","enc":"A256GCM","kid":"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#key-1"}`
+          example: eyJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiRVMyNTYiLCJraWQiOiJkaWQ6ZXRocjoweGI5YzU3MTQwODk0NzhhMzI3ZjA5MTk3OTg3ZjE2ZjllNWQ5MzZlOGEja2V5LTEifQ
+        unprotected:
+          type: object
+          additionalProperties: true
+          description: |
+            JWE Unprotected Header
+
+            Non-integrity-protected header contents
+
+            The "unprotected" member MUST be present and contain the value JWE Shared Unprotected Header when the JWE Shared Unprotected Header value is non-empty; otherwise, it MUST be absent. This value is represented as an unencoded JSON object, rather than as a string. These Header Parameter values are not integrity protected.
+        header:
+          type: object
+          properties:
+            alg:
+              $ref: "#/components/schemas/alg"
+            enc:
+              $ref: "#/components/schemas/enc"
+            zip:
+              $ref: "#/components/schemas/zip"
+            jku:
+              $ref: "#/components/schemas/jku"
+            jwk:
+              $ref: "#/components/schemas/jwk"
+            kid:
+              $ref: "#/components/schemas/kid"
+            x5u:
+              $ref: "#/components/schemas/x5u"
+            x5c:
+              $ref: "#/components/schemas/x5c"
+            x5t:
+              $ref: "#/components/schemas/x5t"
+            x5t#S256:
+              $ref: "#/components/schemas/x5tS256"
+            typ:
+              $ref: "#/components/schemas/typ"
+            cty:
+              $ref: "#/components/schemas/cty"
+            crit:
+              $ref: "#/components/schemas/crit"
+          additionalProperties: true
+          description: |
+            More non-integrity-protected header contents
+
+            The "header" member MUST be present and contain the value JWE Per-Recipient Unprotected Header when the JWE Per-Recipient Unprotected Header value is non-empty; otherwise, it MUST be absent. This value is represented as an unencoded JSON object, rather than as a string. These Header Parameter values are not integrity protected.
+          
+        encrypted_key:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            BASE64URL(JWE Encrypted Key)
+            It should be decrypted with the key identified in the `kid` protected header parameter. Once decrypted, it can be used to decrypt the `ciphertext`
+        aad:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            OPTIONAL. BASE64URL(JWE additional Authenticated Data contents). A JWE AAD value can be included to supply a base64url-encoded value to be integrity protected but not encrypted.
+        iv:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            OPTIONAL. BASE64URL(JWE Initialization Vector)
+            Initialization Vector value used when encrypting the plaintext
+        ciphertext:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: BASE64URL(JWE Ciphertext)
+        tag:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            OPTIONAL. BASE64URL(JWE Authentication Tag)
+            An output of an AEAD operation that ensures the integrity of the ciphertext and the Additional Authenticated Data.  Note that some algorithms may not use an Authentication Tag, in which case this value is the empty octet sequence.
+
+    JWSFlattenedJSON:
+      title: JWSFlattenedJSON
+      description: A JWS with flattened JSON serialization. Optional unprotected header properties are not implemented
+      type: object
+      properties:
+        protected: 
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            Base64Url encoded of the JWS Protected Headers: BASE64URL(UTF8(JWS Protected Header)).
+
+            The JWS Protected Header declares that the encoded object is a JSON Web Token (`"typ"="JWT"`), the signature algorithm `alg`, and and identifier of the verification key (`kid`)
+                        
+            Examples values for `alg` could be:
+              - `HS256`: HMAC using SHA-256 hash algorithm
+              - `HS384`: HMAC using SHA-384 hash algorithm
+              - `HS512`: HMAC using SHA-512 hash algorithm
+              - `ES256`: ECDSA using P-256 curve and SHA-256 hash algorithm
+              - `ES384`: ECDSA using P-384 curve and SHA-384 hash algorithm
+              - `ES512`: ECDSA using P-521 curve and SHA-512 hash algorithm
+
+            An example JWS Protected header is:
+            `{"typ":"JWT","alg":"ES256","kid":"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#key-1"}`
+          example: eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDpldGhyOjB4YjljNTcxNDA4OTQ3OGEzMjdmMDkxOTc5ODdmMTZmOWU1ZDkzNmU4YSNrZXktMSJ9
+        
+        header:
+          description: |
+            For a JWS, the members of the JSON object(s) representing the JOSE Header describe the digital signature or MAC applied to the JWS Protected Header and the JWS Payload and optionally additional properties of the JWS. The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 ("The JSON Object") of ECMAScript 5.1 [ECMAScript].
+
+            Implementations are required to understand the specific Header Parameters defined by this specification that are designated as "MUST be understood" and process them in the manner defined in this specification.  All other Header Parameters defined by this specification that are not so designated MUST be ignored when not understood.  Unless listed as a critical Header Parameter, per   Section 4.1.11, all Header Parameters not defined by this specification MUST be ignored when not understood.
+          type: object
+          properties:
+            alg:
+              $ref: "#/components/schemas/alg"
+            jku:
+              $ref: "#/components/schemas/jku"
+            jwk:
+              $ref: "#/components/schemas/jwk"
+            kid:
+              $ref: "#/components/schemas/kid"
+            x5u:
+              $ref: "#/components/schemas/x5u"
+            x5c:
+              $ref: "#/components/schemas/x5c"
+            x5t:
+              $ref: "#/components/schemas/x5t"
+            x5t#S256:
+              $ref: "#/components/schemas/x5tS256"
+            typ:
+              $ref: "#/components/schemas/typ"
+            cty:
+              $ref: "#/components/schemas/cty"
+            crit:
+              $ref: "#/components/schemas/crit"
+          additionalProperties: true
+          example:
+            kid: 'e9bc097a-ce51-4036-9562-d2ade882db0d'
+
+        payload: 
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            Base64Url encoded of the JWS Pyload: BASE64URL(JWS Payload).
+            The payload is the binary array that it has been signed. It is often a UTF-8 representation of a JSON object that includes the `signed` object along with some other props assigned by the signer.
+
+            An example payload could be:
+            `{"iss":"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a","iat":1611076613,"signed":"aTMtbWFya2V0IGlzIHdoYXQgaXQgaXMuIERvIHlvdSBrbm93IHdoYXQgaXMgaXQ_"}`
+          example: eyJpc3MiOiJkaWQ6ZXRocjoweGI5YzU3MTQwODk0NzhhMzI3ZjA5MTk3OTg3ZjE2ZjllNWQ5MzZlOGEiLCJpYXQiOjE2MTEwNzY2MTMsInNpZ25lZCI6ImFUTXRiV0Z5YTJWMElHbHpJSGRvWVhRZ2FYUWdhWE11SUVSdklIbHZkU0JyYm05M0lIZG9ZWFFnYVhNZ2FYUV8ifQ
+
+        signature:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            The signature or HMAC of the JWS Signing Input ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)) with the algoritm `alg`
+          example: LSOC5nsxpqs3XeRh_uhBbGlF1uqyOxFNmHfUua66Fw0iPM1plHh01V4nVrz10Hq8_6oOowtU9ePKvxPTDYZo4g
+
+      required:
+        - protected
+        - payload
+        - signature
+      
+      example:
+        payload: 'eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ'
+        protected: 'eyJhbGciOiJFUzI1NiJ9'
+        header:
+          kid: 'e9bc097a-ce51-4036-9562-d2ade882db0d'
+        signature: 'DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q'
+  

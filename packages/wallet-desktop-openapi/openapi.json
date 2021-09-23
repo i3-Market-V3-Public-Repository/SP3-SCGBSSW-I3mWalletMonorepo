@@ -1,0 +1,1371 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "version": "{{VERSION}}",
+    "title": "i3M Wallet API",
+    "contact": {
+      "name": "Juan Hernández Serrano",
+      "email": "j.hernandez@upc.edu"
+    },
+    "license": {
+      "name": "MIT"
+    },
+    "description": "i3M-Wallet interface. i3M-Wallet will run as a microservice that will be called by the i3M-SDK. It is going to be developed as a desktop or mobile app.\n\nThere will be a SW implemetation of all the funcionalities and all the i3M-Wallet providers, namely the Cloud Wallet and the HW Wallet, will replace some of them.\n\ni3m-wallet should support the use of:\n- *accounts*: two kinds of accounts:\n  - identity: a public-private key pair with some contextual information\n  - secrets: cryptographic keys for symmetric crypto with some contextual information\n- *vault*: a secure storage for arbitrary objects\n"
+  },
+  "tags": [
+    {
+      "name": "accounts",
+      "description": "A wallet account refers to a cryptographic [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) with some addtional context, e.g. a name, comments, associated blockchain address.\n\nAn account can be of two types:\n- `identity`, made of a public-private key pair (owned account) or just a public key (external account) and some contextual information.\n\n  Identities are mainly used to prove ownership of digital resources (such as DIDs, verifiable claims, or cryptotokens) in i3M. Main funcionalities of an identity account are:\n  - `sign`: sign an arbitrary object using the account's private key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature using the account's public key.\n  - `encrypt`: encrypt an arbitrary object using the account's public key.\n  - `decrypt`: decrypt a ciphertext using the account's private key. Implementation SHOULD require explicit user consent.\n\n- `secret`, made of a cryptographic symmetric key that will be protected and operated by the wallet. \n\n  Secrets are mainly used in i3-market for securely managing symmetric keys that have been used to encrypt arbitrary data stored elsewhere. Main funcionalities of a `secret` account are:\n  - `sign`: generate a MAC of an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature (MAC) using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `encrypt`: sign an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `decrypt`: decrypt a ciphertext using the account's secret key. Implementation SHOULD require explicit user consent.\n\nA wallet SHOULD BE able to hold multiple accounts.\n"
+    },
+    {
+      "name": "identities",
+      "description": "Endpoints to manage identities (DIDs).\n"
+    },
+    {
+      "name": "selectiveDisclosure",
+      "description": "Besides identities and secrets, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request.\n"
+    }
+  ],
+  "paths": {
+    "/accounts": {
+      "get": {
+        "summary": "List all accounts or selected accounts",
+        "operationId": "accountList",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "parameters": [
+          {
+            "name": "account_ids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "allowReserved": true
+          },
+          {
+            "name": "props",
+            "in": "query",
+            "description": "a comma-separated list of props to retrieve from the account. Props differ depending on the type of account ('identity' or 'secret')",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "default": [
+                "id",
+                "type",
+                "name"
+              ]
+            },
+            "style": "form",
+            "explode": false,
+            "required": false,
+            "allowReserved": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged array of accounts. Only the props requested will be returned. Security policies may prevent some props from being returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountListOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an account",
+        "operationId": "accountCreate",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "description": "Creation option. Whether an 'identity' or a 'secret', an optional name and comment, and addtional wallet-provider's specific options",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountCreateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "the ID and type of the created account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountCreateOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/sign": {
+      "post": {
+        "summary": "sign the input",
+        "operationId": "accountSign",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountSignInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object containing the a JSON serialization of a JWS",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountSignOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/verify": {
+      "post": {
+        "summary": "verify a signature",
+        "operationId": "accountVerify",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountVerifyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object containing whether the signature has been verified or not.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountVerifyOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/encrypt": {
+      "post": {
+        "summary": "encrypt the input",
+        "operationId": "accountEncrypt",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "description": "An object containing:\n- `accountId`: [OPTIONAL] if accountId is set, it will be used; otherwise, the end user will have to interactively select one account.\n- `input`: base64url-encoded versions of the plaintext to encrypt, and an optional iv (random one will be chosen if not provided).\n",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountEncryptInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object containing the base64url-encoded ciphertext.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountEncryptOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/decrypt": {
+      "post": {
+        "summary": "decrypt the input",
+        "operationId": "accountDecrypt",
+        "x-eov-operation-handler": "accounts",
+        "tags": [
+          "accounts"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountDecryptInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "An object containing the base64url-encoded decrypted plaintext",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountDecryptOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identities": {
+      "get": {
+        "summary": "List all DIDs",
+        "operationId": "identityList",
+        "x-eov-operation-handler": "identities",
+        "tags": [
+          "identities"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "alias",
+            "schema": {
+              "type": "string",
+              "description": "An alias for the identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "An array of identities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityListInput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an account",
+        "operationId": "identityCreate",
+        "x-eov-operation-handler": "identities",
+        "tags": [
+          "identities"
+        ],
+        "requestBody": {
+          "description": "Create a DID.",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityCreateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "the ID and type of the created account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentityCreateOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/identities/select": {
+      "get": {
+        "summary": "Gets an identity selected by the user.",
+        "operationId": "identitySelect",
+        "x-eov-operation-handler": "identities",
+        "tags": [
+          "identities"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "reason",
+            "schema": {
+              "type": "string",
+              "description": "Message to show to the user with the reason to pick an identity"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Selected identity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IdentitySelectOutput"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resources": {
+      "get": {
+        "summary": "List all resources",
+        "operationId": "resourceList",
+        "x-eov-operation-handler": "resources",
+        "tags": [
+          "resources"
+        ],
+        "responses": {
+          "200": {
+            "description": "A paged array of accounts. Only the props requested will be returned. Security policies may prevent some props from being returned.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceListOutput"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a resource",
+        "operationId": "resourceCreate",
+        "x-eov-operation-handler": "resources",
+        "tags": [
+          "resources"
+        ],
+        "requestBody": {
+          "description": "Create a resource.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Resource"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "the ID and type of the created account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResourceId"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/disclosure/{jwt}": {
+      "get": {
+        "summary": "Request selective disclosure of resources",
+        "operationId": "selectiveDisclosure",
+        "x-eov-operation-handler": "disclosure",
+        "tags": [
+          "selectiveDisclosure"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jwt",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+            },
+            "required": true,
+            "description": "A JWT containing a selective disclosure object. The payload MUST contain:\n\n```json\n{\n  \"type\": \"selectiveDisclosureReq\", // MUST be selectiveDisclosureReq\n  \"iss\": \"did:\", // the DID of the OIDC Provider\n  \"aud\": \"\", // DID of the OIDC RP\n  \"iat\": 4354535,\t// The time of issuance\n  \"exp\": 3452345, // [OPTIONAL] Expiration time of JWT\n  callback: \"https://...\", // Callback URL for returning the response to a request\n  resources: [\n    { \"id\": \"id\", \"mandatory\": true, \"iss\": [ { did: or url:} ], \"reason\": \"\" }\n  ]\n}\n```\n"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Disclosure ok (mandatory claims provided)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jwt": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "callbackUriQuery": {
+        "in": "query",
+        "name": "cb",
+        "description": "Callback URI where to POST the result.\nIf it is provided, the results will be POSTed to the provided `cb`\nIt SHOULD match the `callback_uri` registered in the i3m-Wallet Provider when instanciated.\n",
+        "required": false,
+        "schema": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    },
+    "schemas": {
+      "AccountCreateInput": {
+        "title": "AccountCreateInput",
+        "description": "Besides the here defined options, provider specific properties should be added here if necessary, e.g. \"path\" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).\n",
+        "type": "object",
+        "properties": {
+          "type": {
+            "default": "Identity"
+          },
+          "name": {
+            "type": "string"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "AccountCreateOutput": {
+        "title": "AccountCreateOutput",
+        "description": "It returns the account id and type\n",
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "type",
+          "id"
+        ]
+      },
+      "AccountDecryptInput": {
+        "title": "AccountDecryptInput",
+        "description": "An object containing:\n- `accountId`: [OPTIONAL] if accountId is set, it will be used; otherwise, the end user will have to interactively select one account.\n- `ciphertext`: an object containing base64url-encoded versions of the ciphertext, and the iv used to encrypt it (if used).\n",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "ciphertext": {
+            "$ref": "#/components/schemas/JWEFlattenedJSON"
+          }
+        },
+        "required": [
+          "ciphertext"
+        ]
+      },
+      "AccountDecryptOutput": {
+        "title": "AccountDecryptOutput",
+        "type": "string",
+        "pattern": "^[A-Za-z0-9_-]+$",
+        "description": "The decrypted message Base64Url"
+      },
+      "AccountEncryptInput": {
+        "title": "AccountEncryptInput",
+        "description": "An object containing:\n- `accountId`: [OPTIONAL] if accountId is set, it will be used; otherwise, the end user will have to interactively select one account.\n- `input`: base64url-encoded versions of the plaintext to encrypt, and an optional iv (random one will be chosen if not provided).\n",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "encryptInput": {
+            "type": "object",
+            "properties": {
+              "plaintext": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "description": "the plaintext to be encrypted in Base64Url"
+              },
+              "iv": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "description": "OPTIONAL. Base64Url-encoded iv to use for encryption (if required)"
+              }
+            },
+            "required": [
+              "plaintext"
+            ]
+          }
+        },
+        "required": [
+          "encryptInput"
+        ]
+      },
+      "AccountEncryptOutput": {
+        "title": "AccountEncryptOutput",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JWEFlattenedJSON"
+          }
+        ]
+      },
+      "AccountListInput": {
+        "title": "AccountListInput",
+        "type": "object",
+        "properties": {
+          "account_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "props": {
+            "description": "a comma-separated list of props to retrieve from the account besides the account id. Props differ depending on the type of account ('identity' or 'secret')",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "type",
+              "name"
+            ]
+          }
+        }
+      },
+      "AccountListOutput": {
+        "title": "AccountListOutput",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Account"
+        }
+      },
+      "AccountSignInput": {
+        "title": "AccountSignInput",
+        "description": "An object containing:\n- `accountId`: [OPTIONAL] if accountId is set, it will be used; otherwise, the end user will have to interactively select one account.\n- `messageToSign`: It can be either an plain object or a string (preferably a BASE64URL). Examples:\n  `eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDpldGhyOjB4YjljNTcxNDA4OTQ3OGEzMjdmMDkxOTc5ODdmMTZmOWU1ZDkzNmU4YSNrZXktMSJ9`.\n",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "messageToSign": {
+            "$ref": "#/components/schemas/AccountSignInputMessageToSign"
+          },
+          "output": {
+            "type": "string",
+            "enum": [
+              "raw",
+              "jws"
+            ],
+            "default": "raw"
+          }
+        },
+        "required": [
+          "messageToSign"
+        ]
+      },
+      "AccountSignInputMessageToSign": {
+        "title": "AccountSignInputMessageToSign",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "an object to sign",
+            "additionalProperties": true,
+            "example": {
+              "msg": "hello new world",
+              "date": "2050-01-01"
+            }
+          },
+          {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "base64url-encoded binary stream",
+            "example": "SGVsbG8gV29ybGQ"
+          }
+        ]
+      },
+      "AccountSignOutput": {
+        "title": "AccountSignOutput",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Signature"
+          }
+        ]
+      },
+      "AccountVerifyInput": {
+        "title": "AccountVerifyInput",
+        "description": "An object containing:\n- `accountId`: [OPTIONAL] if accountId is set, it will be used; otherwise, the end user will have to interactively select one account.\n- `signature`: either a JWS JSON serialized object or a base64url-encoded binary stream\n",
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "signature": {
+            "$ref": "#/components/schemas/Signature"
+          }
+        },
+        "required": [
+          "signature"
+        ]
+      },
+      "AccountVerifyOutput": {
+        "title": "AccountVerifyOutput",
+        "type": "object",
+        "properties": {
+          "verified": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "verified"
+        ],
+        "description": "whether the signature was properly verified (true) or not (false)."
+      },
+      "AccountId": {
+        "title": "AccountId",
+        "type": "string",
+        "example": "m/44'/60'/0'/0/2"
+      },
+      "AccountType": {
+        "title": "AccountType",
+        "type": "string",
+        "enum": [
+          "Identity",
+          "Secret"
+        ]
+      },
+      "Account": {
+        "title": "Account",
+        "type": "object",
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/AccountId"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "key": {
+            "$ref": "#/components/schemas/JWK"
+          }
+        },
+        "additionalProperties": true,
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "Identity": {
+        "title": "Identity",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Account"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "publicKey": {
+                "example": {
+                  "alg": "RSA",
+                  "mod": "0vx7agoebGcQSuuPiLJXZptN9nndrQmbXEps2aiAFbWhM78LhWx4cbbfAAtVT86zwu1RK7aPFFxuhDR1L6tSoc_BJECPebWKRXjBZCiFV4n3oknjhMstn64tZ_2W-5JsGY4Hc5n9yBXArwl93lqt7_RN5w6Cf0h4QyQ5v-65YGjQR0_FDW2QvzqY368QQMicAtaSqzs8KJZgnYb9c7d0zgdAZHzu6qMQvRL5hajrn1n91CbOpbISD08qNLyrdkt-bFTWhAI4vMQFh6WeZu0fM4lFd2NcRwr3XPksINHaQ-G_xBniIqbw0Ls1jF44-csFCur-kEgU8awapJzKnqDKgw",
+                  "exp": "AQAB",
+                  "kid": "2011-04-29"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "Secret": {
+        "title": "Secret",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Account"
+          }
+        ]
+      },
+      "Signature": {
+        "title": "Signature",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/JWSFlattenedJSON"
+          },
+          {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "base64url-encoded binary stream"
+          }
+        ]
+      },
+      "IdentitySelectOutput": {
+        "title": "IdentitySelectOutput",
+        "type": "object",
+        "properties": {
+          "did": {
+            "$ref": "#/components/schemas/did"
+          }
+        },
+        "required": [
+          "did"
+        ]
+      },
+      "IdentityListInput": {
+        "title": "IdentityListInput",
+        "description": "A list of DIDs",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "did": {
+              "$ref": "#/components/schemas/did"
+            }
+          },
+          "required": [
+            "did"
+          ]
+        }
+      },
+      "IdentityCreateInput": {
+        "title": "IdentityCreateInput",
+        "description": "Besides the here defined options, provider specific properties should be added here if necessary, e.g. \"path\" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).\n",
+        "type": "object",
+        "properties": {
+          "alias": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      },
+      "IdentityCreateOutput": {
+        "title": "IdentityCreateOutput",
+        "description": "It returns the account id and type\n",
+        "type": "object",
+        "properties": {
+          "did": {
+            "$ref": "#/components/schemas/did"
+          }
+        },
+        "additionalProperties": true,
+        "required": [
+          "did"
+        ]
+      },
+      "ResourceListOutput": {
+        "title": "ResourceListOutput",
+        "description": "A list of resources",
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ResourceId"
+        }
+      },
+      "Resource": {
+        "title": "Resource",
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/VerifiableCredential"
+          }
+        ]
+      },
+      "VerifiableCredential": {
+        "title": "VerifiableCredential",
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "VerifiableCredential"
+            ]
+          },
+          "identity": {
+            "$ref": "#/components/schemas/did"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "@context": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "https://www.w3.org/2018/credentials/v1"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "example": "http://example.edu/credentials/1872"
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "VerifiableCredential"
+                ]
+              },
+              "issuer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/did"
+                  }
+                },
+                "additionalProperties": true,
+                "required": [
+                  "id"
+                ]
+              },
+              "issuanceDate": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-06-10T19:07:28.000Z"
+              },
+              "credentialSubject": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "$ref": "#/components/schemas/did"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              },
+              "proof": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "JwtProof2020"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "@context",
+              "type",
+              "issuer",
+              "issuanceDate",
+              "credentialSubject",
+              "proof"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
+      "ResourceId": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ]
+      },
+      "ResourceType": {
+        "type": "string",
+        "enum": [
+          "VerifiableCredential"
+        ]
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "alg": {
+        "type": "string",
+        "description": "The \"alg\" (algorithm) parameter identifies the algorithm intended for use with the key. In JWE is a header parameter that identifies the cryptographic algorithm used to encrypt or determine the value of the CEK.\n\nThe values used should either be registered in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA]((http://www.rfc-editor.org/info/rfc7518)) or be a value that contains a Collision-Resistant Name. The \"alg\" value is a case-sensitive ASCII string.\n",
+        "example": "ES256"
+      },
+      "crit": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The \"crit\" (critical) Header Parameter indicates that extensions to this specification and/or [JWA] are being used that MUST be understood and processed.\n\nIts value is an array listing the Header Parameter names present in the JOSE Header that use those extensions. If any of the listed extension Header Parameters are not understood and supported by the recipient, then the JWS is invalid. Producers MUST NOT include Header Parameter names defined by this specification or [JWA] for use with JWS, duplicate names, or names that do not occur as Header Parameter names within the JOSE Header in the \"crit\" list.  Producers MUST NOT use the empty list \"[]\" as the \"crit\" value. Recipients MAY consider the JWS to be invalid if the critical list contains any Header Parameter names defined by this specification or [JWA] for use with JWS or if any other constraints on its use are violated.  When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWS Protected Header.\n\nThis Header Parameter MUST be understood and processed by implementations.\n\nAn example use, along with a hypothetical \"exp\" (expiration time) field is:\n  {\"alg\":\"ES256\",\n    \"crit\":[\"exp\"],\n    \"exp\":1363284000\n  }\n",
+        "example": [
+          "exp"
+        ]
+      },
+      "cty": {
+        "type": "string",
+        "description": "The \"cty\" (content type) Header Parameter is used by JWS applications to declare the media type [IANA.MediaTypes] of the secured content (the payload).  This is intended for use by the application when more than one kind of object could be present in the JWS Payload; the application can use this value to disambiguate among the different kinds of objects that might be present. It will typically not be used by applications when the kind of object is already known. This parameter is ignored by JWS implementations; any processing of this parameter is performed by the JWS application.\n\nPer RFC 2045 [RFC2045], all media type values, subtype values, and parameter names are case insensitive. However, parameter values are case sensitive unless otherwise specified for the specific parameter.\n\nTo keep messages compact in common situations, it is RECOMMENDED that producers omit an \"application/\" prefix of a media type value in a \"cty\" Header Parameter when no other '/' appears in the media type value.  A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"cty\" value not containing a '/'.  For instance, a \"cty\" value of \"example\" SHOULD be used to represent the \"application/example\" media type, whereas the media type \"application/example;part=\"1/2\"\" cannot be shortened to \"example;part=\"1/2\"\".\n"
+      },
+      "enc": {
+        "type": "string",
+        "description": "The \"enc\" (encryption algorithm) Header Parameter identifies the content encryption algorithm used to perform authenticated encryption on the plaintext to produce the ciphertext and the Authentication Tag. This algorithm MUST be an AEAD algorithm with a specified key length. The encrypted content is not usable if the \"enc\" value does not represent a supported algorithm. \"enc\" values should either be registered in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA] or be a value that contains a Collision-Resistant Name.  The \"enc\" value is a case-sensitive ASCII string containing a StringOrURI value. This Header Parameter MUST be present and MUST be understood and processed by implementations.\n\nA list of defined \"enc\" values for this use can be found in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA]; the initial contents of this registry are the values defined in Section 5.1 of [JWA].\n",
+        "example": "A256GCM"
+      },
+      "jku": {
+        "type": "string",
+        "description": "The \"jku\" (JWK Set URL) is a URI [RFC3986] that refers to a resource for a set of JSON-encoded public keys, one of which corresponds to the key used to digitally sign the JWS. The keys MUST be encoded as a JWK Set [JWK]. The protocol used to acquire the resource MUST provide integrity protection; an HTTP GET request to retrieve the JWK Set MUST use Transport Layer Security (TLS) [RFC2818] [RFC5246]; and the identity of the server MUST be validated, as per Section 6 of RFC 6125 [RFC6125]. Also, see Section 8 on TLS requirements.\n",
+        "format": "uri"
+      },
+      "jwk": {
+        "type": "string",
+        "description": "The \"jwk\" (JSON Web Key) when in a JWS header is the public key that corresponds to the key used to digitally sign the JWS. This key is represented as a JSON Web Key [JWK]\n",
+        "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+      },
+      "key_ops": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "example": [
+          "sign",
+          "decrypt"
+        ],
+        "description": "The \"key_ops\" (key operations) parameter identifies the operation(s) for which the key is intended to be used.  The \"key_ops\" parameter is intended for use cases in which public, private, or symmetric keys may be present.\n\nIts value is an array of key operation values.  Values defined by this specification are:\n- \"sign\" (compute digital signature or MAC)\n- \"verify\" (verify digital signature or MAC)\n- \"encrypt\" (encrypt content)\n- \"decrypt\" (decrypt content and validate decryption, if applicable)\n- \"wrapKey\" (encrypt key)\n- \"unwrapKey\" (decrypt key and validate decryption, if applicable)\n- \"deriveKey\" (derive key)\n- \"deriveBits\" (derive bits not to be used as a key)\n\n(Note that the \"key_ops\" values intentionally match the \"KeyUsage\" values defined in the Web Cryptography API specification.)\n\nOther values MAY be used.  The key operation values are case-sensitive strings.  Duplicate key operation values MUST NOT be present in the array.\n"
+      },
+      "kid": {
+        "type": "string",
+        "description": "The \"kid\" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the \"kid\" value is unspecified.  When \"kid\" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct \"kid\" values.  (One example in which different keys might use the same \"kid\" value is if they have different \"kty\" (key type) values but are considered to be equivalent alternatives by the application using them.) The \"kid\" value is a case-sensitive string. When used with JWS or JWE, the \"kid\" value is used to match a JWS or JWE \"kid\" Header Parameter value.\n",
+        "example": "ES256"
+      },
+      "kty": {
+        "type": "string",
+        "description": "The \"kty\" (key type) parameter identifies the cryptographic algorithm family used with the key, such as \"RSA\" or \"EC\".  \"kty\" values should either be registered in the IANA \"JSON Web Key Types\" registry established by [JWA](http://www.rfc-editor.org/info/rfc7518) or be a value that contains a Collision-Resistant Name.  The \"kty\" value is a case-sensitive string. This member MUST be present in a JWK.\n\nA list of defined \"kty\" values can be found in the IANA \"JSON Web Key Types\" registry established by [JWA]; the initial contents of this registry are the values defined in Section 6.1 of [JWA](http://www.rfc-editor.org/info/rfc7518).\n\nThe key type definitions include specification of the members to be used for those key types.  Members used with specific \"kty\" values can be found in the IANA \"JSON Web Key Parameters\" registry.\n",
+        "example": "EC"
+      },
+      "typ": {
+        "type": "string",
+        "description": "The \"typ\" (type) Header Parameter is used by JWS applications to declare the media type [IANA.MediaTypes] of this complete JWS. This is intended for use by the application when more than one kind of object could be present in an application data structure that can contain a JWS; the application can use this value to disambiguate among the different kinds of objects that might be present. It will typically not be used by applications when the kind of object is already known. This parameter is ignored by JWS implementations; any processing of this parameter is performed by the JWS application.\n\nPer RFC 2045 [RFC2045], all media type values, subtype values, and parameter names are case insensitive.  However, parameter values are\ncase sensitive unless otherwise specified for the specific parameter. To keep messages compact in common situations, it is RECOMMENDED that\nproducers omit an \"application/\" prefix of a media type value in a \"typ\" Header Parameter when no other '/' appears in the media type value. A recipient using the media type value MUST treat it as if \"application/\" were prepended to any \"typ\" value not containing a '/'.  For instance, a \"typ\" value of \"example\" SHOULD be used to represent the \"application/example\" media type, whereas the media type \"application/example;part=\"1/2\"\" cannot be shortened to\n\"example;part=\"1/2\"\".\n\nThe \"typ\" value \"JOSE\" can be used by applications to indicate that this object is a JWS or JWE using the JWS Compact Serialization or the JWE Compact Serialization. The \"typ\" value \"JOSE+JSON\" can be used by applications to indicate that this object is a JWS or JWE using the JWS JSON Serialization or the JWE JSON Serialization. Other type values can also be used by applications.\n",
+        "example": "JOSE+JSON"
+      },
+      "use": {
+        "type": "string",
+        "example": "sig",
+        "description": "OPTIONAL. The \"use\" (public key use) parameter identifies the intended use of the public key.  The \"use\" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.\n\nValues defined by this specification are:\n- \"sig\" (signature)\n- \"enc\" (encryption)\n\nOther values MAY be used.  The \"use\" value is a case-sensitive string.  Use of the \"use\" member is OPTIONAL, unless the application requires its presence.\n"
+      },
+      "x5c": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "The \"x5c\" (X.509 certificate chain) parameter contains a chain of one or more PKIX certificates [RFC5280].\n"
+      },
+      "x5t": {
+        "type": "string",
+        "description": "The \"x5t\" (X.509 certificate SHA-1 thumbprint) parameter is a base64url-encoded SHA-1 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].  Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK.\n"
+      },
+      "x5tS256": {
+        "title": "x5t#S256",
+        "type": "string",
+        "description": "The \"x5t#S256\" (X.509 certificate SHA-256 thumbprint) parameter is a base64url-encoded SHA-256 thumbprint (a.k.a. digest) of the DER encoding of an X.509 certificate [RFC5280].  Note that certificate thumbprints are also sometimes known as certificate fingerprints. The key in the certificate MUST match the public key represented by other members of the JWK. \n"
+      },
+      "x5u": {
+        "type": "string",
+        "description": "The \"x5u\" (X.509 URL) parameter is a URI [RFC3986] that refers to a resource for an X.509 public key certificate or certificate chain [RFC5280]\n"
+      },
+      "zip": {
+        "type": "string",
+        "description": "The \"zip\" (compression algorithm) applied to the plaintext before encryption, if any. The \"zip\" value defined by RFC7516 specification is \"DEF\" (Compression with the DEFLATE [RFC1951] algorithm) although other values MAY be used. Compression algorithm values can be registered in the IANA \"JSON Web Encryption Compression Algorithms\" registry established by [JWA]. The \"zip\" value is a case-sensitive string.  If no \"zip\" parameter is present, no compression is applied to the plaintext before encryption. When used, this Header Parameter MUST be integrity protected; therefore, it MUST occur only within the JWE Protected Header. Use of this Header Parameter is OPTIONAL. This Header Parameter MUST be understood and processed by implementations.\n"
+      },
+      "JWK": {
+        "type": "object",
+        "title": "JWK",
+        "properties": {
+          "kty": {
+            "$ref": "#/components/schemas/kty"
+          },
+          "use": {
+            "$ref": "#/components/schemas/use"
+          },
+          "key_ops": {
+            "$ref": "#/components/schemas/key_ops"
+          },
+          "alg": {
+            "$ref": "#/components/schemas/alg"
+          },
+          "kid": {
+            "$ref": "#/components/schemas/kid"
+          },
+          "x5u": {
+            "$ref": "#/components/schemas/x5u"
+          },
+          "x5c": {
+            "$ref": "#/components/schemas/x5c"
+          },
+          "x5t": {
+            "$ref": "#/components/schemas/x5t"
+          },
+          "x5t#S256": {
+            "$ref": "#/components/schemas/x5tS256"
+          }
+        },
+        "additionalProperties": true,
+        "example": {
+          "kty": "EC",
+          "crv": "P-256",
+          "x": "f83OJ3D2xF1Bg8vub9tLe1gHMzV76e8Tus9uPHvRVEU",
+          "y": "x_FEzRu9m36HLN_tue659LNpXW6pCyStikYjKIWI5a0",
+          "kid": "12"
+        }
+      },
+      "JWEFlattenedJSON": {
+        "title": "JWEFlattenedJSON",
+        "type": "object",
+        "description": "The flattened JWE JSON Serialization syntax is based upon the general syntax, but flattens it, optimizing it for the single-recipient case. It flattens it by removing the \"recipients\" member and instead placing those members defined for use in the \"recipients\" array (the \"header\" and \"encrypted_key\" members) in the top-level JSON object (at the same level as the \"ciphertext\" member).\n\nThe \"recipients\" member MUST NOT be present when using this syntax. Other than this syntax difference, JWE JSON Serialization objects using the flattened syntax are processed identically to those using the general syntax.\n\nIn summary, the syntax of a JWE using the flattened JWE JSON\n\nSerialization is as follows:\n  {\n    \"protected\":\"<integrity-protected header contents>\",\n    \"unprotected\":<non-integrity-protected header contents>,\n    \"header\":<more non-integrity-protected header contents>,\n    \"encrypted_key\":\"<encrypted key contents>\",\n    \"aad\":\"<additional authenticated data contents>\",\n    \"iv\":\"<initialization vector contents>\",\n    \"ciphertext\":\"<ciphertext contents>\",\n    \"tag\":\"<authentication tag contents>\"\n  }\n\nNote that when using the flattened syntax, just as when using the\ngeneral syntax, any unprotected Header Parameter values can reside in\neither the \"unprotected\" member or the \"header\" member, or in both.\n",
+        "example": {
+          "protected": "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2In0",
+          "unprotected": {
+            "jku": "https://server.example.com/keys.jwks"
+          },
+          "header": {
+            "alg": "A128KW",
+            "kid": "7"
+          },
+          "encrypted_key": "6KB707dM9YTIgHtLvtgWQ8mKwboJW3of9locizkDTHzBC2IlrT1oOQ\"",
+          "iv": "AxY8DCtDaGlsbGljb3RoZQ",
+          "ciphertext": "KDlTtXchhZTGufMYmOYGS4HffxPSUrfmqCHXaI9wOGY\"",
+          "tag": "Mz-VPPyU4RlcuYv1IwIvzw"
+        },
+        "properties": {
+          "protected": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "BASE64URL(UTF8(JWE Protected Header))\n\nThe JWE Protected Header declares:\n  - `alg`: algorithm to encrypt a fresh and randomly generated Content Encryption Key (CEK) `encrypted_key`\n  - `enc`: the content encryption algorithm. It should be a symmetric Authenticated Encryption with Associated Data (AEAD) algorithm. Contents will we encrypted using `enc` algorithm with the `encrypted_key`\n  - `kid`: an identifier of the key that shold be used to decrypt the `encrypted_key`\n\nThe \"protected\" member MUST be present and contain the value BASE64URL(UTF8(JWE Protected Header)) when the JWE Protected Header value is non-empty; otherwise, it MUST be absent. These Header Parameter values are integrity protected.\n\nAn example JWE Protected header is:\n`{\"alg\":\"ES256\",\"enc\":\"A256GCM\",\"kid\":\"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#key-1\"}`\n",
+            "example": "eyJlbmMiOiJBMjU2R0NNIiwiYWxnIjoiRVMyNTYiLCJraWQiOiJkaWQ6ZXRocjoweGI5YzU3MTQwODk0NzhhMzI3ZjA5MTk3OTg3ZjE2ZjllNWQ5MzZlOGEja2V5LTEifQ"
+          },
+          "unprotected": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "JWE Unprotected Header\n\nNon-integrity-protected header contents\n\nThe \"unprotected\" member MUST be present and contain the value JWE Shared Unprotected Header when the JWE Shared Unprotected Header value is non-empty; otherwise, it MUST be absent. This value is represented as an unencoded JSON object, rather than as a string. These Header Parameter values are not integrity protected.\n"
+          },
+          "header": {
+            "type": "object",
+            "properties": {
+              "alg": {
+                "$ref": "#/components/schemas/alg"
+              },
+              "enc": {
+                "$ref": "#/components/schemas/enc"
+              },
+              "zip": {
+                "$ref": "#/components/schemas/zip"
+              },
+              "jku": {
+                "$ref": "#/components/schemas/jku"
+              },
+              "jwk": {
+                "$ref": "#/components/schemas/jwk"
+              },
+              "kid": {
+                "$ref": "#/components/schemas/kid"
+              },
+              "x5u": {
+                "$ref": "#/components/schemas/x5u"
+              },
+              "x5c": {
+                "$ref": "#/components/schemas/x5c"
+              },
+              "x5t": {
+                "$ref": "#/components/schemas/x5t"
+              },
+              "x5t#S256": {
+                "$ref": "#/components/schemas/x5tS256"
+              },
+              "typ": {
+                "$ref": "#/components/schemas/typ"
+              },
+              "cty": {
+                "$ref": "#/components/schemas/cty"
+              },
+              "crit": {
+                "$ref": "#/components/schemas/crit"
+              }
+            },
+            "additionalProperties": true,
+            "description": "More non-integrity-protected header contents\n\nThe \"header\" member MUST be present and contain the value JWE Per-Recipient Unprotected Header when the JWE Per-Recipient Unprotected Header value is non-empty; otherwise, it MUST be absent. This value is represented as an unencoded JSON object, rather than as a string. These Header Parameter values are not integrity protected.\n"
+          },
+          "encrypted_key": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "BASE64URL(JWE Encrypted Key)\nIt should be decrypted with the key identified in the `kid` protected header parameter. Once decrypted, it can be used to decrypt the `ciphertext`\n"
+          },
+          "aad": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "OPTIONAL. BASE64URL(JWE additional Authenticated Data contents). A JWE AAD value can be included to supply a base64url-encoded value to be integrity protected but not encrypted.\n"
+          },
+          "iv": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "OPTIONAL. BASE64URL(JWE Initialization Vector)\nInitialization Vector value used when encrypting the plaintext\n"
+          },
+          "ciphertext": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "BASE64URL(JWE Ciphertext)"
+          },
+          "tag": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "OPTIONAL. BASE64URL(JWE Authentication Tag)\nAn output of an AEAD operation that ensures the integrity of the ciphertext and the Additional Authenticated Data.  Note that some algorithms may not use an Authentication Tag, in which case this value is the empty octet sequence.\n"
+          }
+        }
+      },
+      "JWSFlattenedJSON": {
+        "title": "JWSFlattenedJSON",
+        "description": "A JWS with flattened JSON serialization. Optional unprotected header properties are not implemented",
+        "type": "object",
+        "properties": {
+          "protected": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Base64Url encoded of the JWS Protected Headers: BASE64URL(UTF8(JWS Protected Header)).\n\nThe JWS Protected Header declares that the encoded object is a JSON Web Token (`\"typ\"=\"JWT\"`), the signature algorithm `alg`, and and identifier of the verification key (`kid`)\n            \nExamples values for `alg` could be:\n  - `HS256`: HMAC using SHA-256 hash algorithm\n  - `HS384`: HMAC using SHA-384 hash algorithm\n  - `HS512`: HMAC using SHA-512 hash algorithm\n  - `ES256`: ECDSA using P-256 curve and SHA-256 hash algorithm\n  - `ES384`: ECDSA using P-384 curve and SHA-384 hash algorithm\n  - `ES512`: ECDSA using P-521 curve and SHA-512 hash algorithm\n\nAn example JWS Protected header is:\n`{\"typ\":\"JWT\",\"alg\":\"ES256\",\"kid\":\"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#key-1\"}`\n",
+            "example": "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImRpZDpldGhyOjB4YjljNTcxNDA4OTQ3OGEzMjdmMDkxOTc5ODdmMTZmOWU1ZDkzNmU4YSNrZXktMSJ9"
+          },
+          "header": {
+            "description": "For a JWS, the members of the JSON object(s) representing the JOSE Header describe the digital signature or MAC applied to the JWS Protected Header and the JWS Payload and optionally additional properties of the JWS. The Header Parameter names within the JOSE Header MUST be unique; JWS parsers MUST either reject JWSs with duplicate Header Parameter names or use a JSON parser that returns only the lexically last duplicate member name, as specified in Section 15.12 (\"The JSON Object\") of ECMAScript 5.1 [ECMAScript].\n\nImplementations are required to understand the specific Header Parameters defined by this specification that are designated as \"MUST be understood\" and process them in the manner defined in this specification.  All other Header Parameters defined by this specification that are not so designated MUST be ignored when not understood.  Unless listed as a critical Header Parameter, per   Section 4.1.11, all Header Parameters not defined by this specification MUST be ignored when not understood.\n",
+            "type": "object",
+            "properties": {
+              "alg": {
+                "$ref": "#/components/schemas/alg"
+              },
+              "jku": {
+                "$ref": "#/components/schemas/jku"
+              },
+              "jwk": {
+                "$ref": "#/components/schemas/jwk"
+              },
+              "kid": {
+                "$ref": "#/components/schemas/kid"
+              },
+              "x5u": {
+                "$ref": "#/components/schemas/x5u"
+              },
+              "x5c": {
+                "$ref": "#/components/schemas/x5c"
+              },
+              "x5t": {
+                "$ref": "#/components/schemas/x5t"
+              },
+              "x5t#S256": {
+                "$ref": "#/components/schemas/x5tS256"
+              },
+              "typ": {
+                "$ref": "#/components/schemas/typ"
+              },
+              "cty": {
+                "$ref": "#/components/schemas/cty"
+              },
+              "crit": {
+                "$ref": "#/components/schemas/crit"
+              }
+            },
+            "additionalProperties": true,
+            "example": {
+              "kid": "e9bc097a-ce51-4036-9562-d2ade882db0d"
+            }
+          },
+          "payload": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Base64Url encoded of the JWS Pyload: BASE64URL(JWS Payload).\nThe payload is the binary array that it has been signed. It is often a UTF-8 representation of a JSON object that includes the `signed` object along with some other props assigned by the signer.\n\nAn example payload could be:\n`{\"iss\":\"did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a\",\"iat\":1611076613,\"signed\":\"aTMtbWFya2V0IGlzIHdoYXQgaXQgaXMuIERvIHlvdSBrbm93IHdoYXQgaXMgaXQ_\"}`\n",
+            "example": "eyJpc3MiOiJkaWQ6ZXRocjoweGI5YzU3MTQwODk0NzhhMzI3ZjA5MTk3OTg3ZjE2ZjllNWQ5MzZlOGEiLCJpYXQiOjE2MTEwNzY2MTMsInNpZ25lZCI6ImFUTXRiV0Z5YTJWMElHbHpJSGRvWVhRZ2FYUWdhWE11SUVSdklIbHZkU0JyYm05M0lIZG9ZWFFnYVhNZ2FYUV8ifQ"
+          },
+          "signature": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "The signature or HMAC of the JWS Signing Input ASCII(BASE64URL(UTF8(JWS Protected Header)) || '.' || BASE64URL(JWS Payload)) with the algoritm `alg`\n",
+            "example": "LSOC5nsxpqs3XeRh_uhBbGlF1uqyOxFNmHfUua66Fw0iPM1plHh01V4nVrz10Hq8_6oOowtU9ePKvxPTDYZo4g"
+          }
+        },
+        "required": [
+          "protected",
+          "payload",
+          "signature"
+        ],
+        "example": {
+          "payload": "eyJpc3MiOiJqb2UiLA0KICJleHAiOjEzMDA4MTkzODAsDQogImh0dHA6Ly9leGFtcGxlLmNvbS9pc19yb290Ijp0cnVlfQ",
+          "protected": "eyJhbGciOiJFUzI1NiJ9",
+          "header": {
+            "kid": "e9bc097a-ce51-4036-9562-d2ade882db0d"
+          },
+          "signature": "DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q"
+        }
+      },
+      "did": {
+        "title": "DID",
+        "type": "string",
+        "example": "did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+      }
+    }
+  }
+}

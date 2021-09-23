@@ -1,0 +1,78 @@
+openapi: '3.0.2'
+
+info:
+  version: "{{VERSION}}"
+  title: i3M Wallet API
+  contact:
+    name: Juan Hernández Serrano
+    email: j.hernandez@upc.edu
+  license:
+    name: MIT
+  description: |
+    i3M-Wallet interface. i3M-Wallet will run as a microservice that will be called by the i3M-SDK. It is going to be developed as a desktop or mobile app.
+
+    There will be a SW implemetation of all the funcionalities and all the i3M-Wallet providers, namely the Cloud Wallet and the HW Wallet, will replace some of them.
+    
+    i3m-wallet should support the use of:
+    - *accounts*: two kinds of accounts:
+      - identity: a public-private key pair with some contextual information
+      - secrets: cryptographic keys for symmetric crypto with some contextual information
+    - *vault*: a secure storage for arbitrary objects
+
+tags:
+  - name: accounts
+    description: |
+      A wallet account refers to a cryptographic [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) with some addtional context, e.g. a name, comments, associated blockchain address.
+
+      An account can be of two types:
+      - `identity`, made of a public-private key pair (owned account) or just a public key (external account) and some contextual information.
+      
+        Identities are mainly used to prove ownership of digital resources (such as DIDs, verifiable claims, or cryptotokens) in i3M. Main funcionalities of an identity account are:
+        - `sign`: sign an arbitrary object using the account's private key. Implementation SHOULD require explicit user consent.
+        - `verify`: verify a signature using the account's public key.
+        - `encrypt`: encrypt an arbitrary object using the account's public key.
+        - `decrypt`: decrypt a ciphertext using the account's private key. Implementation SHOULD require explicit user consent.
+      
+      - `secret`, made of a cryptographic symmetric key that will be protected and operated by the wallet. 
+  
+        Secrets are mainly used in i3-market for securely managing symmetric keys that have been used to encrypt arbitrary data stored elsewhere. Main funcionalities of a `secret` account are:
+        - `sign`: generate a MAC of an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.
+        - `verify`: verify a signature (MAC) using the account's secret key. Implementation SHOULD require explicit user consent.
+        - `encrypt`: sign an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.
+        - `decrypt`: decrypt a ciphertext using the account's secret key. Implementation SHOULD require explicit user consent.
+      
+      A wallet SHOULD BE able to hold multiple accounts.
+  - name: identities
+    description: |
+      Endpoints to manage identities (DIDs).
+  - name: selectiveDisclosure
+    description: |
+      Besides identities and secrets, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request.
+
+paths:
+  /accounts:
+    $ref: './paths/accounts.yaml#/paths/~1accounts'
+
+  /accounts/sign:
+    $ref: "./paths/accounts.yaml#/paths/~1accounts~1sign"
+  
+  /accounts/verify:
+    $ref: "./paths/accounts.yaml#/paths/~1accounts~1verify"
+
+  /accounts/encrypt:
+    $ref: "./paths/accounts.yaml#/paths/~1accounts~1encrypt"
+
+  /accounts/decrypt:
+    $ref: "./paths/accounts.yaml#/paths/~1accounts~1decrypt"
+
+  /identities:
+    $ref: "./paths/identities.yaml#/paths/~1identities"
+
+  /identities/select:
+    $ref: "./paths/identities.yaml#/paths/~1identities~1select"
+
+  /resources:
+    $ref: "./paths/resources.yaml#/paths/~1resources"
+
+  /disclosure/{jwt}:
+    $ref: "./paths/disclosure.yaml#/paths/~1disclosure~1%7Bjwt%7D"

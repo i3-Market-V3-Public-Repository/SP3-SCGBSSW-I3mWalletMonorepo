@@ -1,0 +1,7 @@
+.vscode
+build/**/*
+TO-DO
+src/**/*
+tsconfig.json
+openapi/**/*
+**/*.tgz

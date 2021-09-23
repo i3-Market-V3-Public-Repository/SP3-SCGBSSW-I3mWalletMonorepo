@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "packages/wallet-desktop"
+		},
+		{
+			"path": "packages/base-wallet"
+		},
+		{
+			"path": "packages/wallet-desktop-openapi"
+		},
+		{
+			"path": "packages/sw-wallet"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": "base-wallet/node_modules/typescript/lib",
+		"liveServer.settings.multiRootWorkspaceName": "sw-wallet"
+	}
+}

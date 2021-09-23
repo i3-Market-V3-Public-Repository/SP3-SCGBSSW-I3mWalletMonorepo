@@ -1,0 +1,144 @@
+{
+  "name": "wallet-desktop",
+  "version": "0.9.0",
+  "description": "A cross-platform wallet app",
+  "main": "dist/main/index.js",
+  "scripts": {
+    "start:dev": "ts-node -r dotenv/config build/start.ts",
+    "build": "ts-node build/build.ts",
+    "build:main": "tsc -p ./src/main",
+    "build:renderer": "rollup -c build/rollup.renderer.js",
+    "watch:main": "tsc -w -p ./src/main --preserveWatchOutput",
+    "watch:renderer": "rollup -w -c build/rollup.renderer.js --no-watch.clearScreen ",
+    "clean:rel": "rimraf ./release/*",
+    "pack:dir": "npm run clean:rel && electron-builder --dir -p never",
+    "pack:lin": "npm run clean:rel && electron-builder --linux --x64 -p never",
+    "pack:mac": "npm run clean:rel && electron-builder --mac -p never",
+    "pack:win": "npm run clean:rel && electron-builder --win --x64 --arm64 --ia32 -p never -c.win.certificateSubjectName=\"i3-MARKET\"",
+    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "start": "npm run build && electron ./dist/main",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "build": {
+    "appId": "eu.i3market.wallet-desktop",
+    "directories": {
+      "buildResources": "./res",
+      "output": "./release"
+    },
+    "mac": {
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "category": "Utility",
+      "synopsis": "A smart wallet that can be used on i3-MARKET applications.",
+      "target": [
+        "deb",
+        "rpm",
+        "AppImage",
+        "snap"
+      ],
+      "desktop": {
+        "Name": "WalletDesktop",
+        "Type": "Application",
+        "GenericName": "Smart Wallet"
+      }
+    },
+    "deb": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "appImage": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "rpm": {
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "snap": {
+      "autoStart": true,
+      "confinement": "strict",
+      "plugs": [
+        "default"
+      ],
+      "stagePackages": [
+        "default"
+      ],
+      "publish": [
+        "github"
+      ]
+    }
+  },
+  "keywords": [],
+  "author": {
+    "name": "ISG UPC",
+    "email": "fernando.roman@upc.edu"
+  },
+  "homepage": "https://entel.upc.edu/en/research/sertel",
+  "license": "ISC",
+  "ts-standard": {
+    "ignore": [
+      "wallet-api"
+    ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.0.0",
+    "@rollup/plugin-node-resolve": "^11.2.0",
+    "@rollup/plugin-replace": "^2.4.1",
+    "@rollup/plugin-typescript": "^8.2.0",
+    "@types/chokidar": "^2.1.3",
+    "@types/concurrently": "^6.0.0",
+    "@types/cors": "^2.8.10",
+    "@types/express": "^4.17.11",
+    "@types/fs-extra": "^9.0.7",
+    "@types/lodash": "^4.14.168",
+    "@types/module-alias": "^2.0.0",
+    "@types/morgan": "^1.9.2",
+    "@types/nodemon": "^1.19.0",
+    "@types/react": "^17.0.2",
+    "@types/react-dom": "^17.0.1",
+    "@types/react-router": "^5.1.13",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/rimraf": "^3.0.0",
+    "@types/swagger-ui-express": "^4.1.2",
+    "@types/uuid": "^8.3.0",
+    "chokidar": "^3.5.1",
+    "concurrently": "^6.0.2",
+    "dotenv": "^8.2.0",
+    "electron": "^12.0.15",
+    "electron-builder": "^22.11.7",
+    "fs-extra": "^9.1.0",
+    "node-sass": "^6.0.1",
+    "nodemon": "^2.0.7",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.39.1",
+    "rollup-plugin-scss": "^3.0.0",
+    "ts-node": "^9.1.1",
+    "ts-standard": "^10.0.0",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.2"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.35",
+    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/react-fontawesome": "^0.1.14",
+    "@i3-market/base-wallet": "^0.9.0",
+    "@i3-market/sw-wallet": "^0.9.0",
+    "@i3-market/wallet-desktop-openapi": "^0.9.0",
+    "cors": "^2.8.5",
+    "electron-connect": "^0.6.3",
+    "electron-store": "^7.0.3",
+    "express": "^4.17.1",
+    "express-openapi-validator": "^4.11.0",
+    "jose": "^3.6.2",
+    "keytar": "^7.4.0",
+    "lodash": "^4.17.21",
+    "module-alias": "^2.2.2",
+    "morgan": "^1.10.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
+    "rxjs": "^6.6.6",
+    "swagger-ui-express": "^4.1.6",
+    "uuid": "^8.3.2",
+    "winston": "^3.3.3"
+  }
+}

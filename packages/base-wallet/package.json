@@ -1,0 +1,69 @@
+{
+  "name": "@i3-market/base-wallet",
+  "version": "0.9.0",
+  "description": "The abstract class defining an i3-market wallet",
+  "main": "dist/index.js",
+  "directories": {
+    "types": "./types",
+    "src": "./src",
+    "build": "./build"
+  },
+  "types": "./types/index.d.ts",
+  "scripts": {
+    "build:ts": "tsc --project tsconfig.build.json",
+    "build:iwallet": "ts-node build/walletInterface.ts",
+    "build:watch": "tsc -w --project tsconfig.build.json",
+    "build": "run-s build:iwallet build:ts",
+    "lint": "ts-standard --fix",
+    "postbuild": "npm run lint",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.com:i3-market/code/wp3/t3.2/i3m-wallet/base-wallet.git"
+  },
+  "keywords": [
+    "wallet",
+    "i3-market"
+  ],
+  "publishConfig": {
+    "@i3-market:registry": "https://gitlab.com/api/v4/projects/26002974/packages/npm/"
+  },
+  "author": "Juan Hernandez Serrano",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "@types/lodash": "^4.14.168",
+    "@types/node": "^14.14.41",
+    "@types/uuid": "^8.3.0",
+    "debug": "^4.3.1",
+    "npm-run-all": "^4.1.5",
+    "ts-node": "^9.1.1",
+    "ts-standard": "^10.0.0",
+    "typescript": "^4.2.4"
+  },
+  "ts-standard": {
+    "ignore": [
+      "**/*.template.ts"
+    ]
+  },
+  "dependencies": {
+    "@i3-market/wallet-desktop-openapi": "^0.8.1",
+    "@veramo/core": "^1.2.0",
+    "@veramo/credential-w3c": "^1.2.0",
+    "@veramo/did-jwt": "^1.2.0",
+    "@veramo/did-manager": "^1.2.0",
+    "@veramo/did-provider-ethr": "^1.2.0",
+    "@veramo/did-provider-web": "^1.2.0",
+    "@veramo/did-resolver": "^1.2.0",
+    "@veramo/key-manager": "^1.2.0",
+    "@veramo/message-handler": "^1.2.0",
+    "@veramo/selective-disclosure": "^1.2.0",
+    "did-resolver": "^3.1.0",
+    "ethers": "^5.1.4",
+    "ethr-did-resolver": "^4.3.3",
+    "lodash": "^4.17.21",
+    "uuid": "^8.3.2",
+    "web-did-resolver": "^2.0.4"
+  }
+}

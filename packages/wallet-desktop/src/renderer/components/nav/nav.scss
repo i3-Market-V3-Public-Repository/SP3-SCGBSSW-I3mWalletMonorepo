@@ -1,0 +1,66 @@
+// $nav-icon-color: #4BA846;
+$nav-icon-highlight: #3BBD59;
+$nav-icon-color: #4BA846;
+// $nav-icon-background: #D2D6E1;
+$nav-icon-background: #D2D6E1;
+$nav-icon-hover: #606F91;
+
+.nav {
+  // background-image: linear-gradient(to right,#303849, #202531 20%, #202531 80%, #303849);
+  background-image: linear-gradient(to right bottom, #202531, #404A61 90%);
+  // padding: 5px;
+  // padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+
+  .nav-icon-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    overflow: visible;
+
+    padding: 15px;
+    // margin: 5px;
+    width: 28px;
+    height: 28px;
+    opacity: 0.6;
+    color: $nav-icon-color;
+
+    .nav-icon {
+      z-index: 9;
+      background-color: transparent;
+    }
+
+    .nav-icon-background {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+
+      background-color: transparent;
+
+      // border-radius: 20px;
+      // border: 3px solid $nav-icon-color;
+      // background: $nav-icon-background;
+  
+    }
+
+    &.active {
+      opacity: 1;
+      color: $nav-icon-highlight;
+
+      .nav-icon-background {
+        opacity: 0.1;
+        background-color: white;
+      }
+    }
+
+    &:hover {
+      opacity: 1;
+      color: $nav-icon-highlight;
+    }
+  }
+}

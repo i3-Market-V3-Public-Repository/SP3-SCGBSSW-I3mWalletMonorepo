@@ -1,0 +1,117 @@
+
+
+.wallets {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  color: #D2D6E1;
+  background-color: #404A61;
+
+  .wallet-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .details {
+    display: flex;
+    flex-direction: column;
+    flex: 3;
+
+    .details-body {
+      padding: 10px;
+      color: #202531;
+      flex: 1;
+      font-size: 16px;
+
+      .details-param {
+        display: flex;
+        flex-direction: column;
+  
+        &.inline {
+          flex-direction: row;
+          align-items: center;
+  
+          input:disabled {
+            margin-left: 5px;          
+          }
+        }
+  
+        > * {
+          margin-bottom: 10px;
+        }
+  
+        input:disabled {
+          font-size: 16px;
+          padding: 5px;
+          cursor: pointer;
+        }
+  
+        .resources {
+          width: 100%;
+  
+          .resource::before {
+            content: "•";
+            margin-right: 10px;
+            margin-left: 20px;
+            margin-top: 4px;
+          }
+  
+          .resource {
+            display: flex;
+            flex-direction: row;
+            margin-bottom: 20px;
+          }
+        }
+      }
+    }
+
+    .identity-buttons {
+      display: flex;
+      flex-direction: row-reverse;
+    }
+
+    button {
+      font-size: 16px;
+
+      background-color: #4CAF50; /* Green */
+      border: none;
+      color: white;
+      padding: 10px 14px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      border-radius: 10px;
+      font-size: 16px;
+
+      cursor: pointer;
+    }
+  }
+
+  .wallet-form {
+    display: flex;
+    flex-direction: column;
+    padding: 30px;
+    max-width: 400px;
+
+    > input {
+      margin-bottom: 4px;
+    }
+
+    > select {
+      margin-bottom: 8px;
+    }
+  }
+
+  .resources {
+    flex-direction: column;
+  }
+
+  .section {
+    flex: 1;
+  }
+
+  .list-selector {
+    overflow: auto;
+  }
+}

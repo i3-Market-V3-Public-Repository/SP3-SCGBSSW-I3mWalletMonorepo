@@ -1,0 +1,174 @@
+
+$primary: #A6AFC4;
+$secondary: #6DC169;
+$dark-secondary: #3BBD59;
+$white: #D2D6E1;
+$gray: #A6AFC4;
+$dark-gray: #A6AFC4;
+$black: #303849;
+$input-background: #A7AEBB;
+
+body {
+  display: block;
+  font-family: sans-serif;
+}
+
+.group-form-field {
+  position: relative;
+  width: 100%;
+  padding: 15px 0 0;
+  margin: 10px 0;
+  z-index: 1;
+
+  .form-field {
+    font-family: inherit;
+    width: 100%;
+    border: 0;
+    border-bottom: 2px solid $gray;
+    outline: 0;
+    font-size: 1.3rem;
+    color: $white;
+    padding: 7px 0;
+    background: transparent;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+      color: transparent;
+    }
+
+    &:placeholder-shown ~ .form-label {
+      font-size: 1.3rem;
+      cursor: text;
+      top: 20px;
+    }
+  }
+
+  .form-label {
+    position: absolute;
+    top: 0;
+    z-index: -1;
+    display: block;
+    transition: 0.2s;
+    font-size: 1rem;
+    color: $gray;
+  }
+
+  .form-field:focus {
+    ~ .form-label {
+      position: absolute;
+      top: 0;
+      display: block;
+      transition: 0.2s;
+      font-size: 1rem;
+      color: $primary;
+      font-weight: 700;
+    }
+    padding-bottom: 6px;
+    font-weight: 700;
+    border-width: 3px;
+    border-image: linear-gradient(to right, $primary, $secondary);
+    border-image-slice: 1;
+  }
+  /* reset input */
+  .form-field {
+    &:required,&:invalid { box-shadow:none; }
+  }
+}
+
+button.modern {
+	width: 100%;
+	font-size: 14px;
+	font-weight: 800;
+	letter-spacing: 4px;
+	text-align: center;
+	text-transform: uppercase;
+  font-family: sans-serif;
+	color: $primary;
+	z-index: 100;
+  background-color: transparent;
+  padding: 10px 0px;
+  border: 1px solid $white;
+  outline: none;
+  cursor: pointer;
+
+  &:focus {
+	  color: $secondary;
+    border-color: $secondary;
+  }
+  &:hover {
+	  color: $secondary;
+    border-color: $secondary;
+  }
+  &:active {
+	  color: $dark-secondary;
+    border-color: $dark-secondary;
+  }
+}
+
+
+input.modern {
+  &::placeholder {
+    color: transparentize($black, 0.5);
+  }
+  &:focus {
+    border-color: $dark-secondary;
+  }
+
+  padding: 5px;
+  background-color: $input-background;
+  color: $black;
+  border: 2px solid transparent;
+  outline: none;
+  font-family: sans-serif;
+  font-size: 14px;
+  height: 20px;
+}
+
+select.modern {
+  &::placeholder {
+    color: $gray;
+  }
+  &:focus {
+    border-color: $dark-secondary;
+  }
+
+  > option {
+    font-size: 14px;
+  }
+
+  padding: 5px;
+  background-color: $input-background;
+  color: $black;
+  border: 2px solid transparent;
+  outline: none;
+  font-family: sans-serif;
+  font-size: 14px;
+  height: 34px;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 13px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparentize($white, $amount: 0.9);
+  border: 2px solid transparentize($white, $amount: 0.8);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: transparentize($white, $amount: 0.6);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: transparentize($white, $amount: 0.4);
+
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: transparentize($secondary, $amount: 0.2);
+}

@@ -1,0 +1,38 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  > .header {
+    padding-left: 10px;
+    background-color: #30384977;
+    border: 2px solid #1A1E27;
+    font-size: 18px;
+    font-weight: bold;
+
+    display: flex;
+    align-items: center;
+
+    .label {
+      margin: 5px 0;
+      flex: 1 1 auto;
+    }
+
+    .operation-icon {
+      height: 21px;
+      padding: 5px 3px;
+      margin: 0px 2px;
+      opacity: 0.8;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #ffffff33;
+      }
+
+      &:active {
+        opacity: 1;
+        color: #6dc169cc;
+      }
+    }
+  }
+}

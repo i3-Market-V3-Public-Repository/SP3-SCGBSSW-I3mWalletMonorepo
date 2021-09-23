@@ -1,0 +1,33 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    ListItem:
+      title: ListItem
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        comment:
+          type: string
+      additionalProperties: true
+      required:
+        - id
+
+    ListItems:
+      title: ListItems
+      type: array
+      items:
+        $ref: "#/components/schemas/ListItem"

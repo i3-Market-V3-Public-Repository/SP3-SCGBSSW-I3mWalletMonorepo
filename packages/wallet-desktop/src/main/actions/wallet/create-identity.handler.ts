@@ -1,0 +1,36 @@
+import {
+  createIdentityAction
+} from '@wallet/lib'
+import { ActionError } from '../action-error'
+import { ActionHandlerBuilder } from '../action-handler'
+
+export const createIdentity: ActionHandlerBuilder<typeof createIdentityAction> = (
+  locals
+) => {
+  return {
+    type: createIdentityAction.type,
+    async handle (action) {
+      const { sharedMemoryManager, dialog, walletFactory } = locals
+      let alias: string | undefined = action.payload.alias
+
+      if (alias === undefined) {
+        alias = await dialog.text({
+          message: 'Input an alias for the identity'
+        })
+      }
+
+      if (alias === undefined) {
+        throw new ActionError('Cannot create identity. Dialog cancelled', action)
+      }
+
+      // Create identity
+      const response = await walletFactory.wallet.identityCreate({ alias })
+
+      // Update state
+      const identities = await walletFactory.wallet.getIdentities()
+      sharedMemoryManager.update((mem) => ({ ...mem, identities }))
+
+      return { response, status: 201 }
+    }
+  }
+}

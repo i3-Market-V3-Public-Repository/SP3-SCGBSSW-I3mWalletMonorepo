@@ -1,0 +1,6 @@
+dist
+node_modules
+release
+
+.npmrc
+.env

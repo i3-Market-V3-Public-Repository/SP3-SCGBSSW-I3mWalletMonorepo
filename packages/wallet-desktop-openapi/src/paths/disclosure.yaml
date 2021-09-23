@@ -1,0 +1,54 @@
+openapi: "3.0.2"
+
+info:
+  version: 1.0.0
+  title: i3M Wallet API
+
+paths:
+  /disclosure/{jwt}:
+    get:
+      summary: Request selective disclosure of resources
+      operationId: selectiveDisclosure
+      x-eov-operation-handler: disclosure
+      tags:
+        - selectiveDisclosure
+      parameters:
+        - in: path
+          name: jwt
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+          required: true
+          description: |
+            A JWT containing a selective disclosure object. The payload MUST contain:
+
+            ```json
+            {
+              "type": "selectiveDisclosureReq", // MUST be selectiveDisclosureReq
+              "iss": "did:", // the DID of the OIDC Provider
+              "aud": "", // DID of the OIDC RP
+              "iat": 4354535,	// The time of issuance
+              "exp": 3452345, // [OPTIONAL] Expiration time of JWT
+              callback: "https://...", // Callback URL for returning the response to a request
+              resources: [
+                { "id": "id", "mandatory": true, "iss": [ { did: or url:} ], "reason": "" }
+              ]
+            }
+            ```
+      responses:
+        "200":
+          description: Disclosure ok (mandatory claims provided)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jwt:
+                    type: string
+
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
