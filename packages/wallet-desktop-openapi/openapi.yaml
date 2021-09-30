@@ -796,6 +796,11 @@ components:
           format: int32
         message:
           type: string
+    did:
+      title: DID
+      type: string
+      example: >-
+        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
     alg:
       type: string
       description: >
@@ -1405,8 +1410,3 @@ components:
           kid: e9bc097a-ce51-4036-9562-d2ade882db0d
         signature: >-
           DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q
-    did:
-      title: DID
-      type: string
-      example: >-
-        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863

@@ -1047,6 +1047,11 @@
           }
         }
       },
+      "did": {
+        "title": "DID",
+        "type": "string",
+        "example": "did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+      },
       "alg": {
         "type": "string",
         "description": "The \"alg\" (algorithm) parameter identifies the algorithm intended for use with the key. In JWE is a header parameter that identifies the cryptographic algorithm used to encrypt or determine the value of the CEK.\n\nThe values used should either be registered in the IANA \"JSON Web Signature and Encryption Algorithms\" registry established by [JWA]((http://www.rfc-editor.org/info/rfc7518)) or be a value that contains a Collision-Resistant Name. The \"alg\" value is a case-sensitive ASCII string.\n",
@@ -1360,11 +1365,6 @@
           },
           "signature": "DtEhU3ljbEg8L38VWAfUAqOyKAM6-Xx-F4GawxaepmXFCgfTjDxw5djxLa8ISlSApmWQxfKTUJqPP3-Kg6NU1Q"
         }
-      },
-      "did": {
-        "title": "DID",
-        "type": "string",
-        "example": "did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
       }
     }
   }
