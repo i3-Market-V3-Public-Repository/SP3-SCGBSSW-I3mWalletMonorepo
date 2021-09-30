@@ -1,13 +1,17 @@
 {
-  "name": "i3m-wallet",
+  "name": "i3m-wallet-monorepo",
   "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "lerna bootstrap && lerna run build",
+    "build": "lerna run build",
+    "clean": "lerna clean",
+    "start": "npx lerna run --scope wallet-desktop start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Fernando Roman Garcia",
   "license": "ISC",
   "devDependencies": {
     "lerna": "^4.0.0"
