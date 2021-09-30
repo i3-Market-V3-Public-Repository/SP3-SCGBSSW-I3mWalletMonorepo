@@ -19,53 +19,6 @@
     "start": "npm run build && electron ./dist/main",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "build": {
-    "appId": "eu.i3market.wallet-desktop",
-    "directories": {
-      "buildResources": "./res",
-      "output": "./release"
-    },
-    "mac": {
-      "category": "public.app-category.productivity"
-    },
-    "linux": {
-      "category": "Utility",
-      "synopsis": "A smart wallet that can be used on i3-MARKET applications.",
-      "target": [
-        "deb",
-        "rpm",
-        "AppImage",
-        "snap"
-      ],
-      "desktop": {
-        "Name": "WalletDesktop",
-        "Type": "Application",
-        "GenericName": "Smart Wallet"
-      }
-    },
-    "deb": {
-      "artifactName": "${productName}-${version}-${arch}.${ext}"
-    },
-    "appImage": {
-      "artifactName": "${productName}-${version}-${arch}.${ext}"
-    },
-    "rpm": {
-      "artifactName": "${productName}-${version}-${arch}.${ext}"
-    },
-    "snap": {
-      "autoStart": true,
-      "confinement": "strict",
-      "plugs": [
-        "default"
-      ],
-      "stagePackages": [
-        "default"
-      ],
-      "publish": [
-        "github"
-      ]
-    }
-  },
   "keywords": [],
   "author": {
     "name": "ISG UPC",

@@ -1,0 +1,44 @@
+# General configurations
+appId: eu.i3market.wallet-desktop
+productName: i3M Wallet
+directories:
+  buildResources: ./res
+  output: ./release
+
+# MacOS configurations
+mac:
+  target:
+    - dmg
+  category: public.app-category.productivity
+
+# Windows configurations
+
+# Linux configurations
+linux:
+  category: Utility
+  synopsis: A smart wallet that can be used on i3-MARKET applications.
+  target:
+    - deb
+    - AppImage
+    # - rpm
+    # - snap
+  desktop:
+    Name: i3M Wallet
+    Type: Application
+    GenericName: Smart Wallet
+deb:
+  artifactName: ${name}-${version}-${arch}.${ext}
+appImage:
+  artifactName: ${name}-${version}-${arch}.${ext}
+rpm:
+  artifactName: ${name}-${version}-${arch}.${ext}
+snap:
+  autoStart: true
+  artifactName: ${name}-${version}-${arch}.${ext}
+  confinement: strict
+  plugs:
+    - default
+  stagePackages:
+    - default
+  publish:
+    - github
