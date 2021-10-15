@@ -7,9 +7,14 @@ type Payload = WalletPaths.IdentityCreate.RequestBody
 type Response = WalletPaths.IdentityCreate.Responses.$201
 type Action = BaseAction<typeof type, Payload>
 
-export const createIdentityAction: ActionBuilder<Action, Response> = {
-  type: type,
-  create: (alias) => {
-    return { type, payload: { alias: alias } }
+const create = (payload?: Payload): Action => {
+  if (payload === undefined) {
+    payload = {}
   }
+  return { type, payload }
+}
+
+export const createIdentityAction: ActionBuilder<Action, Response, typeof create> = {
+  type: type,
+  create
 }

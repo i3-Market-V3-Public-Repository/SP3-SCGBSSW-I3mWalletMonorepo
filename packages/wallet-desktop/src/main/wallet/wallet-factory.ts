@@ -1,4 +1,5 @@
 import { Wallet, WalletBuilder, WalletMetadata } from '@i3-market/base-wallet'
+import { WalletMetadataMap } from '@wallet/lib'
 import {
   logger,
   Locals,
@@ -15,10 +16,6 @@ interface WalletFeatureMap {
   [name: string]: Array<Feature<any>> | undefined
 }
 
-interface WalletMetadataMap {
-  [packageName: string]: WalletMetadata
-}
-
 interface FeatureMap {
   [name: string]: FeatureHandler<any>
 }
@@ -31,25 +28,21 @@ export class WalletFactory {
   protected _wallet: Wallet | undefined
   protected _walletName: string | undefined
 
-  public walletsMetadata: WalletMetadataMap
   protected featuresByWallet: WalletFeatureMap
 
   constructor (protected locals: Locals) {
     this._walletName = undefined
-    this.walletsMetadata = {}
     this.featuresByWallet = {}
 
     // Change wallet if global state changes
-    const { sharedMemoryManager, settings } = locals
-    sharedMemoryManager.on('change', (sharedMemory) => {
-      const current = sharedMemory.settings.wallet.current
-      const { walletFactory } = locals
-
-      // Update settings
-      settings.set(sharedMemory.settings)
+    const { sharedMemoryManager } = locals
+    sharedMemoryManager.on('change', (mem, oldMem) => {
+      const current = mem.settings.wallet.current
+      const old = oldMem.settings.wallet.current
 
       // Update current wallet
-      if (current !== undefined) {
+      if (current !== undefined && current !== old) {
+        const { walletFactory } = locals
         walletFactory.changeWallet(current).catch((err) => {
           console.log(err)
         })
@@ -69,13 +62,14 @@ export class WalletFactory {
   }
 
   async loadWalletsMetadata (): Promise<void> {
+    const walletsMetadata: WalletMetadataMap = {}
     for (const walletPackage of this.walletPackages) {
       const packageJson = await import(`${walletPackage}/package.json`)
       logger.info(`Loaded metadata for wallet '${walletPackage}'`)
 
       // Store wallet metadata
       const walletMetadata: WalletMetadata = packageJson.walletMetadata
-      this.walletsMetadata[walletPackage] = walletMetadata
+      walletsMetadata[walletPackage] = walletMetadata
 
       // Initialize features
       const features: Array<Feature<any>> = []
@@ -84,6 +78,12 @@ export class WalletFactory {
       }
       this.featuresByWallet[walletPackage] = features
     }
+
+    const { sharedMemoryManager } = this.locals
+    sharedMemoryManager.update((mem) => ({
+      ...mem,
+      walletsMetadata
+    }))
   }
 
   async buildWallet (walletName: string): Promise<Wallet> {

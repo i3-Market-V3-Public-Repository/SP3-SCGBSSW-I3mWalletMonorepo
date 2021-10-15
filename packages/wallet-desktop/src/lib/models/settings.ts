@@ -16,8 +16,14 @@ export interface WalletSettings {
   packages: string[]
 }
 
+export interface Provider {
+  name: string
+  provider: string
+}
+
 export interface Settings {
   wallet: WalletSettings
+  providers: Provider[]
 }
 
 export function createDefaultSettings (): Settings {
@@ -25,6 +31,7 @@ export function createDefaultSettings (): Settings {
     wallet: {
       wallets: {},
       packages: ['@i3-market/sw-wallet']
-    }
+    },
+    providers: []
   }
 }

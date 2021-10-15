@@ -13,7 +13,7 @@ export class WindowManager {
     this.windows = new Map()
 
     const { sharedMemoryManager } = locals
-    sharedMemoryManager.on('change', (sharedMemory, emitter) => {
+    sharedMemoryManager.on('change', (sharedMemory, oldSharedMemory, emitter) => {
       for (const [, window] of this.windows) {
         window.updateSharedMemory(emitter)
       }

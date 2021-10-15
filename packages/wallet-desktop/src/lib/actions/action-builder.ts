@@ -1,11 +1,17 @@
 import { Action } from './action'
 
-export interface ActionBuilder<A extends Action = Action, R = any> {
+type BuildActionFunction<A extends Action> = (...args: any[]) => A
+
+export interface ActionBuilder<
+  A extends Action = Action,
+  R = any,
+  B extends BuildActionFunction<A> = BuildActionFunction<A>> {
+
   type: A['type']
   action?: A
   response?: R
   payload?: A['payload']
-  create: (...args: any) => A
+  create: B
 }
 
 export type GetAction<B extends ActionBuilder> =

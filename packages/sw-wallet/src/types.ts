@@ -1,4 +1,4 @@
-import { WalletOptions, BaseWalletModel } from '@i3-market/base-wallet'
+import { WalletOptionsSettings, BaseWalletModel } from '@i3-market/base-wallet'
 
 export interface HDData {
   mnemonic: string
@@ -9,6 +9,6 @@ export interface SwWalletModel extends BaseWalletModel {
   hdData: HDData
 }
 
-export interface SwWalletOptions extends WalletOptions<SwWalletModel> {
+export interface SwWalletOptions extends WalletOptionsSettings<SwWalletModel> {
 
 }

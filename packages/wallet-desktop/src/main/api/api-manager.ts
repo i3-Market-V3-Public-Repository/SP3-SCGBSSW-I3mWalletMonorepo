@@ -42,9 +42,10 @@ export class ApiManager {
   }
 
   async close (): Promise<void> {
-    await new Promise<void>((resolve) =>
+    await new Promise<void>((resolve) => {
       this.server.close(() => {
         resolve()
-      }))
+      })
+    })
   }
 }

@@ -35,12 +35,12 @@ export class ActionReducer {
     epic.bindReducer(this.action$, this.handlers, this.locals)
   }
 
-  async fromApi<B extends ActionBuilder>(
-    req: Request,
+  async fromApi<B extends Action>(
+    req: Request<any, any, any, any>,
     res: Response,
-    builder: B
+    action: B
   ): Promise<void> {
-    const action = builder.create(req.body)
+    // const action = builder.create(req.body)
     const result = await this.reduce(action)
     if (result === undefined) {
       throw new Error(`No handler fount for action type '${action.type as string}'`)

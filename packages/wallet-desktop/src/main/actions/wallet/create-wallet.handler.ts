@@ -24,13 +24,9 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
   return {
     type: createWalletAction.type,
     async handle (action) {
-      const { sharedMemoryManager, walletFactory, dialog } = locals
+      const { sharedMemoryManager, dialog } = locals
       const mem = sharedMemoryManager.memory
-      const walletPackages = walletFactory.walletsMetadata
-      const providers: Provider[] = [
-        { name: 'Rinkeby', provider: 'did:ethr:rinkeby' },
-        { name: 'i3Market', provider: 'did:ethr:i3m' }
-      ]
+      const walletPackages = mem.walletsMetadata
 
       const walletCreationForm = await dialog.form<WalletCreationForm>({
         title: 'Wallet creation',
@@ -47,7 +43,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
           provider: {
             type: 'select',
             message: 'Select a network',
-            values: providers,
+            values: mem.settings.providers,
             getText (provider) {
               return provider.name
             }

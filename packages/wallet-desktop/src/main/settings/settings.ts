@@ -2,12 +2,12 @@ import ElectronStore, { Options as ElectronStoreOptions } from 'electron-store'
 import _ from 'lodash'
 
 import { Settings as SettingsModel, createDefaultSettings } from '@wallet/lib'
-import { logger } from '@wallet/main/internal'
+import { logger, SharedMemoryManager } from '@wallet/main/internal'
 
 export type Settings = ElectronStore<SettingsModel>
 export type SettingsOptions = ElectronStoreOptions<SettingsModel>
 
-export const initSettings = (options: SettingsOptions): Settings => {
+export const initSettings = (options: SettingsOptions, sharedMemoryManager: SharedMemoryManager): Settings => {
   const fixedOptions = _.merge<SettingsOptions, SettingsOptions>({
     defaults: createDefaultSettings()
   }, options)

@@ -107,6 +107,7 @@ export function Dialog (props: DialogProps): JSX.Element {
         { text: dialogData.acceptMsg ?? 'Yes', value: true, context: 'success' },
         { text: dialogData.rejectMsg ?? 'No', value: false, context: 'danger' }
       ]
+      options = options.filter((option) => option.text !== '')
       break
 
     case 'select':
@@ -211,10 +212,18 @@ export function Dialog (props: DialogProps): JSX.Element {
 
   const dialogClick: React.MouseEventHandler<HTMLInputElement> = (ev) => {
     ev.stopPropagation()
+    const target = ev.target as HTMLInputElement
+    if (target.tagName === 'INPUT' && target !== inputRef.current) {
+      navigator.clipboard.writeText(target.value).catch(() => {
+        alert('Cannot copy to clipboard')
+      })
+    }
   }
 
   const dialogFocus: React.FocusEventHandler<HTMLDivElement> = (ev) => {
-    focusInput()
+    if (ev.target.tagName !== 'input') {
+      focusInput()
+    }
   }
 
   const highlightEnd: React.AnimationEventHandler = () => {

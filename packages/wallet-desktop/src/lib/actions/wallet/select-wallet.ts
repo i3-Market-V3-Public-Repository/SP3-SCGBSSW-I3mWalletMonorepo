@@ -6,12 +6,11 @@ type Payload = { wallet: string } | undefined
 type Response = undefined
 type Action = BaseAction<typeof type, Payload>
 
-export const selectWalletAction: ActionBuilder<Action, Response> = {
+const create = (payload?: Payload): Action => {
+  return { type, payload }
+}
+
+export const selectWalletAction: ActionBuilder<Action, Response, typeof create> = {
   type: type,
-  create: (wallet: string) => {
-    if (wallet === undefined) {
-      return { type, payload: undefined }
-    }
-    return { type, payload: { wallet } }
-  }
+  create
 }

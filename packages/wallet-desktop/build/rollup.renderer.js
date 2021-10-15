@@ -54,6 +54,9 @@ module.exports = [
       }),
       scss(),
       commonjs()
-    ]
+    ],
+    watch: {
+      exclude: ['node_modules/**']
+    }
   }
 ]

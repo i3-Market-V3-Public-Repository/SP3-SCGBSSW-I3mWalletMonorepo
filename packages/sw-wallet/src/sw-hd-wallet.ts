@@ -51,7 +51,7 @@ export class SwHdKeyWallet implements KeyWallet {
 
       const confirmation = await this.dialog.confirmation({
         title: 'Init wallet?',
-        message: `A new wallet is going to be created. Please note down to a secure place the following list of BIP39 words. It can be used to restore your wallet in the future.\n<input value="${mnemonic as string}" disabled></input>\n\n Do you want to continue?`
+        message: `A new wallet is going to be created. Please note down to a secure place the following list of BIP39 words. It can be used to restore your wallet in the future.\n<input value="${mnemonic}" disabled></input>\n\n Do you want to continue?`
       })
       if (confirmation !== true) {
         throw new SwWalletError('Initialization cancelled by the user')
@@ -132,9 +132,8 @@ export class SwHdKeyWallet implements KeyWallet {
     const signature: ethers.Signature = signingKey.signDigest(messageDigest)
     const signatureHex = ethers.utils.joinSignature(signature)
 
-    // Remove 0x and recovery parameter
-    // (ethers adds the recovery parameter at the end)
-    const fixedSignature = u8a.fromString(signatureHex.substring(2, signatureHex.length - 2), 'base16')
+    // Remove 0x
+    const fixedSignature = u8a.fromString(signatureHex.substring(2), 'base16')
 
     return fixedSignature
   }
@@ -145,18 +144,11 @@ export class SwHdKeyWallet implements KeyWallet {
   }
 
   async wipe (): Promise<void> {
-    const confirmation = await this.dialog.confirmation({
-      title: 'Delete Wallet?',
-      message: 'Are you sure you want to delete this wallet?\nIf you have not backed up the seed/mnemonic, you will not be able to restore this wallet again',
-      acceptMsg: 'Delete',
-      rejectMsg: 'Cancel'
-    })
-    if (confirmation !== true) {
-      throw new SwWalletError('Operation rejected by user')
-    }
-
     // Perform delete
     delete this._hdNode
     await this.store.delete('hdData')
+
+    // Reinitialize
+    await this.initialize()
   }
 }

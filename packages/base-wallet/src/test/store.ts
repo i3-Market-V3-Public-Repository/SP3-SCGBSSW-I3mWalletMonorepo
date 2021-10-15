@@ -11,19 +11,15 @@ export class TestStore implements Store<BaseWalletModel> {
 
   private defaultModel (): BaseWalletModel {
     return {
-      accounts: {},
       resources: {},
       identities: {}
     }
   }
 
-  get<Key extends 'accounts'>(key: Key): CanBePromise<Partial<BaseWalletModel>[Key]>;
-  get<Key extends 'accounts'>(key: Key, defaultValue: Required<BaseWalletModel>[Key]): CanBePromise<Required<BaseWalletModel>[Key]>;
   get (key: any, defaultValue?: any): any {
     return _.get(this.model, key, defaultValue)
   }
 
-  set<Key extends 'accounts'>(key: Key, value: BaseWalletModel[Key]): CanBePromise<void>;
   set (key: string, value: unknown): CanBePromise<void>;
   set (key: any, value: any): CanBePromise<void> {
     _.set(this.model, key, value)

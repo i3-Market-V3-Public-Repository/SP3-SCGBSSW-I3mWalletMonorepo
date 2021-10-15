@@ -5,9 +5,6 @@ import { CanBePromise } from '../utils'
 export type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId
 export type Identity = IIdentifier
 export interface BaseWalletModel {
-  accounts: {
-    [id: string]: WalletComponents.Schemas.Account
-  }
   resources: {
     [id: string]: Resource
   }

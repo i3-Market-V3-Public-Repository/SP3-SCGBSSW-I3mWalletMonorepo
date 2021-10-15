@@ -5,6 +5,7 @@ import * as u8a from 'uint8arrays'
 import Debug from 'debug'
 
 import { KeyWallet } from '../keywallet'
+import { WalletError } from '../errors'
 
 const debug = Debug('base-wallet:KMS')
 
@@ -59,13 +60,30 @@ export default class KeyWalletManagementSystem extends AbstractKeyManagementSyst
     const messageDigest = ethers.utils.sha256(message)
     const messageDigestBytes = ethers.utils.arrayify(messageDigest)
     const signature = await this.keyWallet.signDigest(key.kid, messageDigestBytes)
-    const signatureBase64url = u8a.toString(signature, 'base64url')
+
+    // Remove recovery parameter
+    // (ethers adds a 2 byte recovery parameter at the end )
+    const signatureBase64url = u8a.toString(signature.subarray(0, signature.length - 1), 'base64url')
 
     return signatureBase64url
   }
 
-  async signEthTX (args: { key: IKey, transaction: object }): Promise<string> {
-    const signature = await this.keyWallet.signDigest(args.key as any, args.transaction as Uint8Array)
-    return signature.toString() // TODO: Convert properly
+  async signEthTX (args: { key: IKey, transaction: any }): Promise<string> {
+    const { key, transaction } = args
+    const { v, r, s, from, ...tx } = transaction
+    const address = ethers.utils.computeAddress(`0x${key.publicKeyHex}`)
+
+    if (address.toLowerCase() !== from.toLowerCase()) {
+      throw new WalletError('Transaction from parammeter does not match the chosen key.')
+    }
+
+    const data = ethers.utils.serializeTransaction(tx)
+
+    const messageDigest = ethers.utils.keccak256(data)
+    const messageDigestBytes = ethers.utils.arrayify(messageDigest)
+    const signature = await this.keyWallet.signDigest(args.key.kid, messageDigestBytes)
+    const signedTransaction = ethers.utils.serializeTransaction(tx, signature)
+
+    return signedTransaction
   }
 }

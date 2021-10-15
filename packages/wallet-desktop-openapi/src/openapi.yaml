@@ -50,26 +50,14 @@ tags:
       Besides identities and secrets, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request.
 
 paths:
-  /accounts:
-    $ref: './paths/accounts.yaml#/paths/~1accounts'
-
-  /accounts/sign:
-    $ref: "./paths/accounts.yaml#/paths/~1accounts~1sign"
-  
-  /accounts/verify:
-    $ref: "./paths/accounts.yaml#/paths/~1accounts~1verify"
-
-  /accounts/encrypt:
-    $ref: "./paths/accounts.yaml#/paths/~1accounts~1encrypt"
-
-  /accounts/decrypt:
-    $ref: "./paths/accounts.yaml#/paths/~1accounts~1decrypt"
-
   /identities:
     $ref: "./paths/identities.yaml#/paths/~1identities"
 
   /identities/select:
     $ref: "./paths/identities.yaml#/paths/~1identities~1select"
+
+  /identities/{did}/sign:
+    $ref: "./paths/identities.yaml#/paths/~1identities~1%7Bdid%7D~1sign"
 
   /resources:
     $ref: "./paths/resources.yaml#/paths/~1resources"

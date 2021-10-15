@@ -5,6 +5,34 @@ info:
   title: i3M Wallet API
 
 paths:
+  /identities/{did}/sign:
+    post:
+      summary: Gets an identity selected by the user.
+      operationId: identitySign
+      x-eov-operation-handler: identities
+      tags:
+        - identities
+      parameters:
+        - in: path
+          name: did
+          schema:
+            $ref: "../schema/identity.yaml#/components/schemas/did"
+          required: true
+      requestBody:
+        description: Data to sign.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignInput"
+      responses:
+        "200":
+          description: Selected identity
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SignOutput"
+
   /identities/select:
     get:
       summary: Gets an identity selected by the user.
@@ -90,6 +118,44 @@ components:
           $ref: "../schema/identity.yaml#/components/schemas/did"
       required:
         - did
+
+    SignInput:
+      title: SignInput
+      oneOf:
+        - $ref: '#/components/schemas/SignTransaction'
+
+    SignTransaction:
+      title: SignTransaction
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SignTypes'
+          enum:
+            - Transaction
+        data:
+          $ref: '#/components/schemas/Transaction'
+
+    Transaction:
+      title: Transaction
+      type: object
+      properties:
+        from:
+          type: string
+
+    SignOutput:
+      title: SignOutput
+      type: object
+      properties:
+        signature:
+          type: string
+      required:
+        - signature
+
+    SignTypes:
+      title: SignTypes
+      type: string
+      enum:
+        - Transaction
 
     IdentityListInput:
       title: IdentityListInput

@@ -1,11 +1,12 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3-market/base-wallet'
 
-import { selectWalletAction, createWalletAction, createIdentityAction } from '@wallet/lib'
+import { selectWalletAction, createWalletAction, createIdentityAction, WalletInfo } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
 import { Section, ListSelector, HorizontalAccordion, Fixed, DividerOperation } from '@wallet/renderer/components'
 import { IdentityDetails } from './identity'
 import { ResourceDetails } from './resource'
+import { WalletDetails } from './wallet-details'
 
 import './wallets.scss'
 
@@ -14,6 +15,7 @@ export function Wallets (): JSX.Element {
   const dispatch = useAction()
 
   const [selectedIdentity, setSelectedIdentity] = React.useState<string | undefined>(undefined)
+  const [selectedWallet, setSelectedWallet] = React.useState<string | undefined>(undefined)
   const [selectedResource, setSelectedResource] = React.useState<string | undefined>(undefined)
 
   const wallet = sharedMemory.settings.wallet
@@ -31,6 +33,11 @@ export function Wallets (): JSX.Element {
     identity = sharedMemory.identities[selectedIdentity]
   }
 
+  let walletInfo: WalletInfo | undefined
+  if (selectedWallet !== undefined) {
+    walletInfo = wallet.wallets[selectedWallet]
+  }
+
   const identityOperations: DividerOperation[] = []
   identityOperations.push({
     icon: faPlus,
@@ -44,19 +51,21 @@ export function Wallets (): JSX.Element {
   }
 
   // Actions
-
   const selectWallet = (current: string): void => {
-    dispatch(selectWalletAction.create(current))
+    dispatch(selectWalletAction.create({ wallet: current }))
+    setSelectedWallet(current)
     setSelectedIdentity(undefined)
     setSelectedResource(undefined)
   }
 
   const selectIdentity = (current: string): void => {
+    setSelectedWallet(undefined)
     setSelectedIdentity(current)
     setSelectedResource(undefined)
   }
 
   const selectResource = (current: string): void => {
+    setSelectedWallet(undefined)
     setSelectedIdentity(undefined)
     setSelectedResource(current)
   }
@@ -65,7 +74,7 @@ export function Wallets (): JSX.Element {
     <HorizontalAccordion className='wallets'>
       <Fixed className='wallet-content'>
         <Section title='Wallets' operations={walletOperations}>
-          <ListSelector selected={wallet.current} items={wallets} onSelect={selectWallet} />
+          <ListSelector selected={selectedWallet} items={wallets} onSelect={selectWallet} />
         </Section>
         <Section title='Identities' operations={identityOperations}>
           <ListSelector
@@ -83,6 +92,7 @@ export function Wallets (): JSX.Element {
           />
         </Section>
       </Fixed>
+      {walletInfo !== undefined ? <WalletDetails wallet={walletInfo} /> : null}
       {identity !== undefined ? <IdentityDetails identity={identity} /> : null}
       {resource !== undefined ? <ResourceDetails resource={resource} /> : null}
     </HorizontalAccordion>

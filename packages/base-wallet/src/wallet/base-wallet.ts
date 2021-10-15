@@ -1,9 +1,8 @@
-import { WalletComponents, WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
-import _ from 'lodash'
-import { IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
+import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
 import { v4 as uuid } from 'uuid'
 
-import { base64url, getCredentialClaims, jwkSecret } from '../utils'
+import { getCredentialClaims } from '../utils'
 
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store } from '../app'
 import { KeyWallet } from '../keywallet'
@@ -15,12 +14,8 @@ import { Wallet } from './wallet'
 import { WalletOptions } from './wallet-options'
 import { displayDid } from '../utils/display-did'
 import { DEFAULT_PROVIDER } from '../veramo/veramo'
-
-type Account = WalletComponents.Schemas.Account
-
-interface WalletOptionsCryptoWallet {
-  keyWallet: KeyWallet
-}
+import { WalletFunctionMetadata } from './wallet-metadata'
+import { ethers } from 'ethers'
 
 interface SdrClaim {
   claimType: string
@@ -51,8 +46,15 @@ interface SelectIdentityOptions {
   reason?: string
 }
 
+interface TransactionData {
+  from: IIdentifier
+  to: string
+  value: string
+  sign: boolean
+}
+
 export class BaseWallet<
-  Options extends WalletOptions<Model> & WalletOptionsCryptoWallet,
+  Options extends WalletOptions<Model>,
   Model extends BaseWalletModel = BaseWalletModel
 > implements Wallet {
   public dialog: Dialog
@@ -78,7 +80,129 @@ export class BaseWallet<
 
   }
 
+  async executeTransaction (): Promise<void> {
+    const providerData = this.veramo.providersData[this.provider]
+    if (providerData?.rpcUrl === undefined) {
+      throw new WalletError('This provider has incomplete information, cannot execute transaction')
+    }
+
+    const transaction = await this.dialog.text({
+      title: 'Execute transaction',
+      message: 'Put the transaction. Should start with 0x'
+    })
+    if (transaction === undefined || !transaction.startsWith('0x')) {
+      throw new WalletError(`Invalid transaction ${transaction ?? '<undefined>'}`)
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    const response = await provider.sendTransaction(transaction)
+    const recipt = await response.wait()
+
+    await this.dialog.confirmation({
+      message: 'Transaction properly executed!',
+      acceptMsg: 'Continue',
+      rejectMsg: ''
+    })
+    console.log(recipt)
+  }
+
+  async queryBalance (): Promise<void> {
+    const providerData = this.veramo.providersData[this.provider]
+    if (providerData?.rpcUrl === undefined) {
+      throw new WalletError('This provider has incomplete information, cannot execute transaction')
+    }
+
+    const identities = await this.veramo.agent.didManagerFind()
+    const identity = await this.dialog.select({
+      message: 'Select an account to get its balance.',
+      values: identities,
+      getText (identity) {
+        return identity.alias ?? identity.did
+      }
+    })
+    if (identity === undefined) {
+      throw new WalletError('Query balance cancelled')
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
+    const balance = await provider.getBalance(address)
+    const ether = ethers.utils.formatEther(balance)
+
+    await this.dialog.confirmation({
+      message: `The account '${address}' current balance is ${ether} ETH.`,
+      acceptMsg: 'Continue',
+      rejectMsg: ''
+    })
+  }
+
+  async createTransaction (): Promise<void> {
+    const providerData = this.veramo.providersData[this.provider]
+    if (providerData?.rpcUrl === undefined) {
+      throw new WalletError('This provider has incomplete information, cannot execute transaction')
+    }
+
+    const identities = await this.veramo.agent.didManagerFind()
+    const transactionData = await this.dialog.form<TransactionData>({
+      title: 'Create Transaction',
+      descriptors: {
+        from: {
+          type: 'select',
+          message: 'Select the origin account',
+          values: identities,
+          getText (identity) {
+            return identity.alias ?? '<UNKNOWN>'
+          }
+        },
+        to: { type: 'text', message: 'Type the destination account' },
+        value: { type: 'text', message: 'Put the ether value' },
+        sign: { type: 'confirmation', message: 'Sign the transaction?', acceptMsg: 'Sign', rejectMsg: 'Cancel' }
+      },
+      order: ['from', 'to', 'value', 'sign']
+    })
+    if (transactionData === undefined) {
+      throw new WalletError('Create transaction cancelled')
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    const from = ethers.utils.computeAddress(`0x${transactionData.from.keys[0].publicKeyHex}`)
+    const nonce = await provider.getTransactionCount(from, 'latest')
+    const gasPrice = await provider.getGasPrice()
+
+    const tx = {
+      to: transactionData.to,
+      value: ethers.utils.parseEther(transactionData.value),
+      nonce,
+      gasLimit: ethers.utils.hexlify(100000),
+      gasPrice
+    }
+
+    let transaction: string = ''
+    if (transactionData.sign) {
+      const response = await this.identitySign({ did: transactionData.from.did }, { type: 'Transaction', data: { ...tx, from } })
+      transaction = response.signature
+    } else {
+      transaction = ethers.utils.serializeTransaction(tx)
+    }
+
+    await this.dialog.confirmation({
+      message: `Transaction created, click the input to copy its value.\n<input value="${transaction}" disabled></input>`,
+      acceptMsg: 'Continue',
+      rejectMsg: ''
+    })
+  }
+
   async wipe (): Promise<void> {
+    const confirmation = await this.dialog.confirmation({
+      title: 'Delete Wallet?',
+      message: 'Are you sure you want to delete this wallet?',
+      acceptMsg: 'Delete',
+      rejectMsg: 'Cancel'
+    })
+    if (confirmation !== true) {
+      throw new WalletError('Operation rejected by user')
+    }
+
     await Promise.all([
       this.store.clear(),
       this.keyWallet.wipe()
@@ -287,92 +411,15 @@ export class BaseWallet<
     return vp
   }
 
-  // Wallet interface abstract methods
-  async accountList (query: WalletPaths.AccountList.QueryParameters): Promise<WalletPaths.AccountList.Responses.$200> {
-    const accounts = await this.store.get('accounts', {})
-
-    // Filter params
-    // TO-DO: Add a list of protected properties tha SHOULD not be exported, e.g. "key"
-    return Object.keys(accounts).map(accountId => {
-      const account = accounts[accountId]
-      const filteredAccount = _.pick(account, _.defaults(query.props)) as Account
-      return filteredAccount
-    }).filter((account) => Object.keys(account).length !== 0)
+  getKeyWallet<T extends KeyWallet> (): T {
+    return this.keyWallet as T
   }
 
-  async accountCreate (requestBody: WalletPaths.AccountCreate.RequestBody): Promise<WalletPaths.AccountCreate.Responses.$201> {
-    const account: Account = {
-      id: '',
-      ...requestBody
-    }
-    account.type = account.type ?? 'Identity'
-
-    if (account.type === 'Identity') {
-      account.id = await this.keyWallet.createAccountKeyPair()
-    } else {
-      const secret = jwkSecret()
-      account.id = secret.kid
-      account.key = secret
-    }
-
-    await this.store.set(`accounts.${account.id}`, account)
-    return {
-      id: account.id,
-      type: account.type
-    }
+  async call (functionMetadata: WalletFunctionMetadata): Promise<void> {
+    await (this as any)[functionMetadata.call]()
   }
 
-  /**
-   *
-   * @todo JWS Support
-   * @todo Secret type signing
-   *
-   * @param requestBody
-   * @returns a base64url-encoded string of the signature or a JWS (if signing of an object is requested)
-   */
-  async accountSign (requestBody: WalletPaths.AccountSign.RequestBody): Promise<WalletPaths.AccountSign.Responses.$200> {
-    let buffer: Buffer
-    try {
-      if (typeof requestBody.messageToSign === 'string') {
-        buffer = base64url.decode(requestBody.messageToSign)
-      } else {
-        const jws = this.prepareForJWSSigning(requestBody.messageToSign)
-        buffer = Buffer.from(jws)
-      }
-    } catch (error) {
-      console.error('Message should be a valid base64url string or a plain JS object')
-      throw error
-    }
-
-    let accountId = requestBody.accountId
-    if (accountId === undefined) {
-      const account = await (this.dialog as any).selectAccount({
-        message: 'Select an account',
-        timeout: 20
-      })
-      if (account === undefined) {
-        throw new Error('The user did not select any account')
-      }
-
-      accountId = account.id
-    }
-
-    const signature = await this.keyWallet.signDigest(accountId as any, buffer)
-    return base64url.encode(Buffer.from(signature))
-  }
-
-  async accountVerify (requestBody: WalletPaths.AccountVerify.RequestBody): Promise<WalletPaths.AccountVerify.Responses.$200> {
-    throw new Error('Not implemented yet')
-  }
-
-  async accountEncrypt (requestBody: WalletPaths.AccountEncrypt.RequestBody): Promise<WalletPaths.AccountEncrypt.Responses.$200> {
-    throw new Error('Not implemented yet')
-  }
-
-  async accountDecrypt (requestBody: WalletPaths.AccountDecrypt.RequestBody): Promise<WalletPaths.AccountDecrypt.Responses.$200> {
-    throw new Error('Not implemented yet')
-  }
-
+  // API METHODS
   async getIdentities (): Promise<BaseWalletModel['identities']> {
     return await this.store.get('identities', {})
   }
@@ -395,6 +442,32 @@ export class BaseWallet<
   async identitySelect (queryParameters: WalletPaths.IdentitySelect.QueryParameters): Promise<WalletPaths.IdentitySelect.Responses.$200> {
     const { did } = await this.selectIdentity(queryParameters)
     return { did }
+  }
+
+  async identitySign (pathParameters: WalletPaths.IdentitySign.PathParameters, requestBody: WalletPaths.IdentitySign.RequestBody): Promise<WalletPaths.IdentitySign.Responses.$200> {
+    let response: WalletPaths.IdentitySign.Responses.$200
+    switch (requestBody.type) {
+      case 'Transaction': {
+        const { data: transaction } = requestBody
+        if (transaction === undefined) {
+          throw new WalletError('No transaction present on the request', { code: 400 })
+        }
+        const identity = await this.veramo.agent.didManagerGet(pathParameters)
+        // transaction.from = `0x${identity.keys[0].publicKeyHex}`
+        const signedTransaction = await this.veramo.agent.keyManagerSignEthTX({
+          kid: identity.keys[0].kid,
+          transaction
+        })
+        response = {
+          signature: signedTransaction
+        }
+        break
+      }
+      default:
+        throw new WalletError('Unknown sign data type')
+    }
+
+    return response
   }
 
   async getResources (): Promise<BaseWalletModel['resources']> {
@@ -453,7 +526,6 @@ export class BaseWallet<
       throw new WalletError('Selective disclosure request origin not defined')
     }
 
-    // TODO: Add user consent
     const vp = await this.selectCredentialsForSdr(sdrMessage)
     if (vp === undefined) {
       throw new WalletError('No verifiable credentials selected')

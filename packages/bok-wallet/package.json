@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/sw-wallet",
+  "name": "@i3-market/bok-wallet",
   "version": "0.9.0",
   "description": "",
   "main": "dist/index.js",
@@ -15,7 +15,7 @@
     "i3-market"
   ],
   "walletMetadata": {
-    "name": "HD SW Wallet",
+    "name": "Bag of keys",
     "features": {
       "store": {
         "encryption": {
@@ -25,6 +25,7 @@
     },
     "functions": [
       { "name": "Wipe", "call": "wipe" },
+      { "name": "Import", "call": "importDid" },
       { "name": "Execute Transaction", "call": "executeTransaction" },
       { "name": "Create Transaction", "call": "createTransaction" },
       { "name": "Query Balance", "call": "queryBalance" }
@@ -42,7 +43,8 @@
     "did-jwt": "^5.2.0",
     "ethers": "^5.3.0",
     "lodash": "^4.17.21",
-    "uint8arrays": "^2.1.5"
+    "uint8arrays": "^2.1.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@jest-runner/electron": "^3.0.1",
@@ -50,6 +52,7 @@
     "@types/jest": "^26.0.23",
     "@types/lodash": "^4.14.170",
     "@types/node": "^15.12.2",
+    "@types/uuid": "^8.3.1",
     "dotenv": "^8.6.0",
     "electron": "^13.1.1",
     "jest": "^27.0.4",

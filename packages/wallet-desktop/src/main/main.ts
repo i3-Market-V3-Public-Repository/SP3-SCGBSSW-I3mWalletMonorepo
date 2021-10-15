@@ -20,19 +20,43 @@ import {
 } from './internal'
 
 async function getAppSettings (locals: Locals): Promise<MainContext> {
+  const sharedMemoryManager = new SharedMemoryManager()
+  locals.sharedMemoryManager = sharedMemoryManager
+
   const settings = initSettings({
     cwd: app.getPath('userData')
+  }, sharedMemoryManager)
+  const providers = settings.get('providers')
+
+  // Setup default providers
+  if (providers === undefined || providers.length === 0) {
+    settings.set('providers', [
+      { name: 'Rinkeby', provider: 'did:ethr:rinkeby' },
+      { name: 'i3Market', provider: 'did:ethr:i3m' }
+    ])
+  }
+
+  const wallet = settings.get('wallet')
+  wallet.packages = [
+    '@i3-market/sw-wallet',
+    '@i3-market/bok-wallet'
+  ]
+  settings.set('wallet', wallet)
+
+  // Syncronize shared memory and settings
+  sharedMemoryManager.update((mem) => ({
+    ...mem,
+    settings: settings.store
+  }))
+  sharedMemoryManager.on('change', (mem) => {
+    settings.set(mem.settings)
   })
+
   locals.settings = settings
 
   const ctx = initContext<MainContext>({
     appPath: path.resolve(__dirname, '../')
   })
-
-  const sharedMemoryManager = new SharedMemoryManager({
-    settings: settings.store
-  })
-  locals.sharedMemoryManager = sharedMemoryManager
 
   return ctx
 }

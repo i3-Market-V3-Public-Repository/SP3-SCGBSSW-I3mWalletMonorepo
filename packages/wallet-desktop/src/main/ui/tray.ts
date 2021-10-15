@@ -45,7 +45,9 @@ export class Tray {
             type: 'radio',
             checked: currentWallet === walletInfo.name,
             click: async () => {
-              await actionReducer.reduce(selectWalletAction.create(walletInfo.name))
+              await actionReducer.reduce(selectWalletAction.create({
+                wallet: walletInfo.name
+              }))
             }
           }))
       },

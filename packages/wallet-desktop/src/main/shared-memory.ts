@@ -11,17 +11,17 @@ export class SharedMemoryManager extends EventEmitter {
     this._memory = createDefaultSharedMemory(values)
   }
 
-  on (event: 'change', listener: (sharedMemory: SharedMemory, emitter: BrowserWindow | undefined) => void): this
+  on (event: 'change', listener: (sharedMemory: SharedMemory, oldSharedMemory: SharedMemory, emitter: BrowserWindow | undefined) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener)
   }
 
-  once (event: 'change', listener: (mem: SharedMemory) => void): this
+  once (event: 'change', listener: (mem: SharedMemory, oldSharedMemory: SharedMemory) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.once(event, listener)
   }
 
-  emit (event: 'change', sharedMemory: SharedMemory, emitter?: BrowserWindow): boolean
+  emit (event: 'change', sharedMemory: SharedMemory, oldSharedMemory: SharedMemory, emitter?: BrowserWindow): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return super.emit(event, ...args)
   }
@@ -30,6 +30,7 @@ export class SharedMemoryManager extends EventEmitter {
   update (sharedMemory: SharedMemory, emitter?: BrowserWindow): void
   update (modifier: any, emitter?: BrowserWindow): void {
     let sharedMemory: SharedMemory | undefined
+    const oldSharedMemory = this._memory
     if (typeof modifier === 'function') {
       sharedMemory = modifier(this._memory)
     } else {
@@ -43,7 +44,7 @@ export class SharedMemoryManager extends EventEmitter {
     }
     this._memory = sharedMemory
 
-    this.emit('change', this._memory, emitter)
+    this.emit('change', this._memory, oldSharedMemory, emitter)
   }
 
   get memory (): SharedMemory {

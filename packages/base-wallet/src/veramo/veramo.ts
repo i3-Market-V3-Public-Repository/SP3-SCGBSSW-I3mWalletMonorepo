@@ -2,7 +2,7 @@
 import { createAgent, IDIDManager, IResolver, IKeyManager, IMessageHandler, TAgent } from '@veramo/core'
 
 // Core identity manager plugin
-import { DIDManager } from '@veramo/did-manager'
+import { AbstractIdentifierProvider, DIDManager } from '@veramo/did-manager'
 
 // Ethr did identity provider
 import { EthrDIDProvider } from '@veramo/did-provider-ethr'
@@ -30,6 +30,7 @@ import { KeyWallet } from '../keywallet'
 import DIDWalletStore from './did-wallet-store'
 import KeyWalletManagementSystem from './key-wallet-management-system'
 import KeyWalletStore from './key-wallet-store'
+import { WalletError } from '../errors'
 
 type PluginMap =
   IDIDManager & IKeyManager & IResolver & IMessageHandler &
@@ -37,32 +38,36 @@ type PluginMap =
 
 export const DEFAULT_PROVIDER = 'did:ethr:rinkeby'
 
+type ProviderData = ConstructorParameters<typeof EthrDIDProvider>[0]
+
 export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   public agent: TAgent<PluginMap>
+  public providers: Record<string, AbstractIdentifierProvider>
+  public defaultKms = 'keyWallet'
+  public providersData: Record<string, ProviderData>
 
   constructor (store: Store<T>, keyWallet: KeyWallet) {
-    const defaultKms = 'keyWallet'
-    const RINKEBY_PROVIDER_DATA = {
-      defaultKms,
-      network: 'rinkeby',
-      rpcUrl: 'https://rinkeby.infura.io/ethr-did'
-    }
-
-    const I3M_PROVIDER_DATA = {
-      defaultKms,
-      network: 'i3m',
-      rpcUrl: 'http://95.211.3.250:8545'
-    }
-
-    const GANACHE_PROVIDER_DATA = {
-      defaultKms,
-      network: 'ganache',
-      rpcUrl: 'http://127.0.0.1:7545'
+    this.providersData = {
+      'did:ethr:rinkeby': {
+        defaultKms: this.defaultKms,
+        network: 'rinkeby',
+        rpcUrl: 'https://rinkeby.infura.io/ethr-did'
+      },
+      'did:ethr:i3m': {
+        defaultKms: this.defaultKms,
+        network: 'i3m',
+        rpcUrl: 'http://95.211.3.250:8545'
+      },
+      'did:ethr:ganache': {
+        defaultKms: this.defaultKms,
+        network: 'ganache',
+        rpcUrl: 'http://127.0.0.1:7545'
+      }
     }
 
     const resolver = new Resolver({
       ...ethrDidResolver({
-        networks: [RINKEBY_PROVIDER_DATA, I3M_PROVIDER_DATA, GANACHE_PROVIDER_DATA]
+        networks: Object.values(this.providersData)
           .map(({ network, rpcUrl }) => ({
             name: network,
             rpcUrl
@@ -70,6 +75,13 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
       }),
       ...webDidResolver()
     })
+
+    this.providers = {
+      'did:web': new WebDIDProvider({ defaultKms: this.defaultKms })
+    }
+    for (const [key, provider] of Object.entries(this.providersData)) {
+      this.providers[key] = new EthrDIDProvider(provider)
+    }
 
     this.agent = createAgent<PluginMap>({
       plugins: [
@@ -82,12 +94,7 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
         new DIDManager({
           store: new DIDWalletStore<T>(store),
           defaultProvider: DEFAULT_PROVIDER,
-          providers: {
-            'did:ethr:rinkeby': new EthrDIDProvider(RINKEBY_PROVIDER_DATA),
-            'did:ethr:i3m': new EthrDIDProvider(I3M_PROVIDER_DATA),
-            'did:ethr:ganache': new EthrDIDProvider(GANACHE_PROVIDER_DATA),
-            'did:web': new WebDIDProvider({ defaultKms })
-          }
+          providers: this.providers
         }),
         new CredentialIssuer(),
         new SelectiveDisclosure(),
@@ -105,5 +112,11 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
         })
       ]
     })
+  }
+
+  getProvider (name: string): AbstractIdentifierProvider {
+    const provider = this.providers[name]
+    if (provider === undefined) throw new WalletError('Identifier provider does not exist: ' + name)
+    return provider
   }
 }

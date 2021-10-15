@@ -17,6 +17,8 @@ export function IdentityDetails (props: Props): JSX.Element {
       return resource.identity === identity.did
     })
 
+  const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
+
   return (
     <Extendible className='details'>
       <Section title='Details'>
@@ -27,12 +29,12 @@ export function IdentityDetails (props: Props): JSX.Element {
             <input type='text' disabled value={identity.alias} />
           </div>
           <div className='details-param'>
-            <span>Description:</span>
-            <input type='text' disabled value='' />
-          </div>
-          <div className='details-param'>
             <span>Associated DID:</span>
             <input type='text' disabled value={identity.did} />
+          </div>
+          <div className='details-param'>
+            <span>Ethereum Address:</span>
+            <input type='text' disabled value={address} />
           </div>
           <div className='details-param'>
             <span>Resources:</span>

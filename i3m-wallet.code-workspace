@@ -1,6 +1,9 @@
 {
 	"folders": [
 		{
+			"path": "."
+		},
+		{
 			"path": "packages/wallet-desktop"
 		},
 		{
@@ -13,7 +16,7 @@
 			"path": "packages/sw-wallet"
 		},
 		{
-			"path": "."
+			"path": "packages/bok-wallet"
 		}
 	],
 	"settings": {

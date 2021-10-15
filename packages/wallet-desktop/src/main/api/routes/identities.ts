@@ -1,6 +1,6 @@
 import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
 
-import { createIdentityAction } from '@wallet/lib'
+import { createIdentityAction, signAction } from '@wallet/lib'
 import { extractLocals } from '@wallet/main/locals'
 import { asyncHandler } from './async-handler'
 
@@ -18,5 +18,13 @@ export const identitySelect = asyncHandler<never, WalletPaths.IdentitySelect.Res
 
 export const identityCreate = asyncHandler<never, WalletPaths.IdentityCreate.Responses.$201, WalletPaths.IdentityCreate.RequestBody>(async (req, res) => {
   const { actionReducer } = extractLocals(req.app)
-  await actionReducer.fromApi(req, res, createIdentityAction)
+  await actionReducer.fromApi(req, res, createIdentityAction.create(req.body))
+})
+
+export const identitySign = asyncHandler<WalletPaths.IdentitySign.PathParameters, WalletPaths.IdentitySign.Responses.$200, WalletPaths.IdentitySign.RequestBody>(async (req, res) => {
+  const { actionReducer } = extractLocals(req.app)
+  await actionReducer.fromApi(req, res, signAction.create({
+    signer: req.params,
+    body: req.body
+  }))
 })
