@@ -9,4 +9,5 @@ services:
       - .env
     volumes:
       - .:/app
-    
+    command:
+      - /app/scripts/publish.sh
