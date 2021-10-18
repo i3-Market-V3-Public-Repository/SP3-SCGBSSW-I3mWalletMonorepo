@@ -9,6 +9,7 @@ directories:
 mac:
   target:
     - dmg
+  artifactName: ${name}-${version}-${arch}.${ext}
   category: public.app-category.productivity
 
 # Windows configurations
