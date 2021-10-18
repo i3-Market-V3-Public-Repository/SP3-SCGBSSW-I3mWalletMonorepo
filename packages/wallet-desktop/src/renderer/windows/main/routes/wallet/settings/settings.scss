@@ -1,0 +1,17 @@
+
+.settings {
+  .settings-group {
+    flex: 1;
+    font-size: 16px;
+
+    .settings-item {
+      padding: 5px 20px;
+
+      &.settings-checkbox {
+        label {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}

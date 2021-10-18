@@ -3,6 +3,7 @@ export interface WalletFunctionMetadata {
   name: string
   description?: string
   call: string
+  scopes?: string[]
 }
 
 export interface WalletMetadata {

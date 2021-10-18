@@ -1,9 +1,10 @@
 
-import { IconDefinition, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition, faWallet, faCog } from '@fortawesome/free-solid-svg-icons'
 import { Nav, NavIcon, Content } from '@wallet/renderer/components'
 
 import { StatusBar } from './status-bar'
-import { Wallets } from './wallets'
+import { Explorer } from './explorer'
+import { Settings } from './settings'
 
 import './wallet.scss'
 
@@ -18,7 +19,8 @@ interface WalletRoutes {
 
 export function Wallet (): JSX.Element {
   const routes: WalletRoutes[] = [
-    { icon: faWallet, path: '/wallet/wallets', title: 'Explorer', children: <Wallets /> }
+    { icon: faWallet, path: '/wallet/explorer', title: 'Explorer', children: <Explorer /> },
+    { icon: faCog, path: '/wallet/settings', title: 'Settings', children: <Settings /> }
   ]
   const defaultPath = routes[0].path
 

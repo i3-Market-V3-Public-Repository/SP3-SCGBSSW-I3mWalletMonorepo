@@ -6,11 +6,11 @@ import { useSharedMemory, useAction } from '@wallet/renderer/communication'
 import { Section, ListSelector, HorizontalAccordion, Fixed, DividerOperation } from '@wallet/renderer/components'
 import { IdentityDetails } from './identity'
 import { ResourceDetails } from './resource'
-import { WalletDetails } from './wallet-details'
+import { WalletDetails } from './wallet'
 
-import './wallets.scss'
+import './explorer.scss'
 
-export function Wallets (): JSX.Element {
+export function Explorer (): JSX.Element {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
 
@@ -71,8 +71,8 @@ export function Wallets (): JSX.Element {
   }
 
   return (
-    <HorizontalAccordion className='wallets'>
-      <Fixed className='wallet-content'>
+    <HorizontalAccordion className='explorer'>
+      <Fixed className='explorer-content'>
         <Section title='Wallets' operations={walletOperations}>
           <ListSelector selected={selectedWallet} items={wallets} onSelect={selectWallet} />
         </Section>

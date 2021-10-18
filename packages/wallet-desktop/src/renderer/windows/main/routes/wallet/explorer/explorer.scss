@@ -1,13 +1,13 @@
 
 
-.wallets {
+.explorer {
   display: flex;
   flex-direction: row;
   height: 100%;
   color: #D2D6E1;
   background-color: #404A61;
 
-  .wallet-content {
+  .explorer-content {
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -20,11 +20,11 @@
 
     .details-body {
       padding: 10px;
-      color: #202531;
       flex: 1;
       font-size: 16px;
       display: flex;
       flex-direction: column;
+      overflow: auto;
 
       .details-title {
         font-size: 20px;
@@ -94,6 +94,7 @@
       display: inline-block;
       border-radius: 2px;
       font-size: 16px;
+      margin-bottom: 5px;
       margin-right: 5px;
 
       cursor: pointer;

@@ -24,11 +24,11 @@
       }
     },
     "functions": [
-      { "name": "Wipe", "call": "wipe" },
-      { "name": "Import", "call": "importDid" },
-      { "name": "Execute Transaction", "call": "executeTransaction" },
-      { "name": "Create Transaction", "call": "createTransaction" },
-      { "name": "Query Balance", "call": "queryBalance" }
+      { "name": "Wipe", "call": "wipe", "scopes": ["wallet"] },
+      { "name": "Import", "call": "importDid", "scopes": ["wallet"] },
+      { "name": "Execute Transaction", "call": "executeTransaction", "scopes": ["developer"] },
+      { "name": "Create Transaction", "call": "createTransaction", "scopes": ["developer"] },
+      { "name": "Query Balance", "call": "queryBalance", "scopes": ["developer"] }
     ]
   },
   "publishConfig": {

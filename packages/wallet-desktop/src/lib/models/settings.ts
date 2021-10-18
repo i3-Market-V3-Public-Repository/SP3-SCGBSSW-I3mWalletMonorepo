@@ -21,9 +21,14 @@ export interface Provider {
   provider: string
 }
 
+export interface DeveloperSettings {
+  enableDeveloperFunctions: boolean
+}
+
 export interface Settings {
   wallet: WalletSettings
   providers: Provider[]
+  developer: DeveloperSettings
 }
 
 export function createDefaultSettings (): Settings {
@@ -32,6 +37,9 @@ export function createDefaultSettings (): Settings {
       wallets: {},
       packages: ['@i3-market/sw-wallet']
     },
-    providers: []
+    providers: [],
+    developer: {
+      enableDeveloperFunctions: false
+    }
   }
 }

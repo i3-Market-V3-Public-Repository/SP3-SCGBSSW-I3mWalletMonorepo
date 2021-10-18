@@ -14,6 +14,8 @@ export function WalletDetails (props: Props): JSX.Element {
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
 
   const provider = sharedMemory.settings.providers.find((provider) => provider.provider === wallet.args.provider)
+  const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
+  const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
 
   const executeWalletFunction = (walletFunction: WalletFunctionMetadata): void => {
     const action = callWalletFunctionAction.create(walletFunction)
@@ -36,12 +38,24 @@ export function WalletDetails (props: Props): JSX.Element {
             <span>Provider:</span>
             <input type='text' disabled value={provider?.name ?? 'Unknown'} />
           </div>
-          <span className='details-title'>Wallet Functions</span>
-          <div className='details-buttons'>
-            {walletMetadata.functions.map((walletFunction, i) => (
-              <button onClick={() => executeWalletFunction(walletFunction)} key={i}>{walletFunction.name}</button>
-            ))}
+          <div className='details-param'>
+            <span className='details-title'>Wallet Functions</span>
+            <div className='details-buttons'>
+              {walletFunctions.map((walletFunction, i) => (
+                <button onClick={() => executeWalletFunction(walletFunction)} key={i}>{walletFunction.name}</button>
+              ))}
+            </div>
           </div>
+          {sharedMemory.settings.developer.enableDeveloperFunctions === true ? (
+            <div className='details-param'>
+              <span className='details-title'>Developer Functions</span>
+              <div className='details-buttons'>
+                {developerFunctions.map((walletFunction, i) => (
+                  <button onClick={() => executeWalletFunction(walletFunction)} key={i}>{walletFunction.name}</button>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </div>
       </Section>
     </Extendible>

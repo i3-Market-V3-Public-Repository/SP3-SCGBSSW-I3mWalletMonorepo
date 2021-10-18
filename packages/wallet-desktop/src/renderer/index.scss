@@ -154,17 +154,17 @@ select.modern {
 /* Track */
 ::-webkit-scrollbar-track {
   background: transparentize($white, $amount: 0.9);
-  border: 2px solid transparentize($white, $amount: 0.8);
+  border: 2px solid transparentize($black, $amount: 0.8);
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: transparentize($white, $amount: 0.6);
+  background: transparentize($dark-gray, $amount: 0.6);
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: transparentize($white, $amount: 0.4);
+  background: transparentize($dark-gray, $amount: 0.2);
 
   border-radius: 2px;
 }
