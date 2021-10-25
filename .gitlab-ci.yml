@@ -12,8 +12,7 @@ build_win:
   tags:
     - "windows"
   script:
-    - echo $DEPLOY
-    - ls
+    - npm i
 
 # build_linux:
 #   stage: build
