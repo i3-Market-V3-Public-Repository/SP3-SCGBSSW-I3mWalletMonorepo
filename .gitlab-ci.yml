@@ -1,0 +1,40 @@
+stages:
+  - build
+  # - deploy
+
+variables:
+  NEXUS_REGISTRY: "***REMOVED***:8123"
+  NEXUS_IMAGE_TAG: $NEXUS_REGISTRY/auditable-accounting:latest
+  URL_DEPLOY_AA: "http://95.211.3.249:19000/api/v2/job_templates/34/launch/"
+
+build_win:
+  stage: build
+  tags:
+    - "windows"
+  script:
+    - echo $DEPLOY
+    - ls
+
+# build_linux:
+#   stage: build
+#   image:
+#     name: docker:19.03.13
+#   services:
+#       - name: docker:19.03.13-dind
+#         entrypoint: ["sh", "-c", "dockerd-entrypoint.sh --insecure-registry=$NEXUS_REGISTRY"]  
+#   before_script:
+#     - docker login $NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASSWORD
+#   script:
+#     - docker build -t $NEXUS_IMAGE_TAG --build-arg WEB3_KEY=$WEB3_KEY .
+#     - docker push $NEXUS_IMAGE_TAG
+#   after_script:
+#     - docker logout $NEXUS_REGISTRY
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master"
+
+# deploy:
+#   stage: deploy
+#   script:
+#     - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "master" && $DEPLOY == "true"
