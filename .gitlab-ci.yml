@@ -15,6 +15,17 @@ variables:
 #   script:
 #     - npm i
 
+build_mac:
+  stage: build
+  tags:
+    - "shared-macos-amd64"
+  script:
+    - npm i --unsafe-perm
+    - npm run pack:lin
+  artifacts:
+    paths:
+    - $RELEASE_ARTIFACT
+
 build_lin:
   stage: build
   image:
