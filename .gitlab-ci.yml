@@ -18,7 +18,7 @@ variables:
 build_mac:
   stage: build
   tags:
-    - "shared-macos-amd64"
+    - "macos"
   script:
     - npm i --unsafe-perm
     - npm run pack:lin
