@@ -14,29 +14,19 @@ build_win:
   script:
     - npm i
 
+# build_lin:
+#   stage: build
+#   tags:
+#     - "linux"
+#   script:
+#     - npm i
+
 build_lin:
   stage: build
-  tags:
-    - "linux"
+  image:
+    name: node:14.16.0
   script:
     - npm i
-
-# build_linux:
-#   stage: build
-#   image:
-#     name: docker:19.03.13
-#   services:
-#       - name: docker:19.03.13-dind
-#         entrypoint: ["sh", "-c", "dockerd-entrypoint.sh --insecure-registry=$NEXUS_REGISTRY"]  
-#   before_script:
-#     - docker login $NEXUS_REGISTRY -u $NEXUS_USER -p $NEXUS_PASSWORD
-#   script:
-#     - docker build -t $NEXUS_IMAGE_TAG --build-arg WEB3_KEY=$WEB3_KEY .
-#     - docker push $NEXUS_IMAGE_TAG
-#   after_script:
-#     - docker logout $NEXUS_REGISTRY
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "master"
 
 deploy:
   stage: deploy
