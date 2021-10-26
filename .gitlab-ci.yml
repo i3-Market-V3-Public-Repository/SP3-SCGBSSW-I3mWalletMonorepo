@@ -3,6 +3,7 @@ stages:
   - deploy
 
 variables:
+  NEXUS_HOST: "http://***REMOVED***:8081"
   NEXUS_REGISTRY: "***REMOVED***:8123"
   RELEASE_ARTIFACT: "packages/wallet-desktop/release"
   NEXUS_IMAGE_TAG: $NEXUS_REGISTRY/auditable-accounting:latest
