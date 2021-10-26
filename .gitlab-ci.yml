@@ -4,20 +4,14 @@ stages:
 
 variables:
   NEXUS_REGISTRY: "***REMOVED***:8123"
+  RELEASE_ARTIFACT: "packages/wallet-desktop/release"
   NEXUS_IMAGE_TAG: $NEXUS_REGISTRY/auditable-accounting:latest
   URL_DEPLOY_AA: "http://***REMOVED***:19000/api/v2/job_templates/34/launch/"
 
-build_win:
-  stage: build
-  tags:
-    - "windows"
-  script:
-    - npm i
-
-# build_lin:
+# build_win:
 #   stage: build
 #   tags:
-#     - "linux"
+#     - "windows"
 #   script:
 #     - npm i
 
@@ -27,13 +21,15 @@ build_lin:
     name: node:14.16.0
   script:
     - npm i
+    - npm run pack:lin
+  artifacts:
+    paths:
+    - $RELEASE_ARTIFACT
 
 deploy:
   stage: deploy
   script:
-    - ls
-    - ls wallet-desktop/
-    - ls wallet-desktop/release
+    - ls $RELEASE_ARTIFACT
   # script:
   #   - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
   # rules:
