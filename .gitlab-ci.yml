@@ -21,10 +21,10 @@ build_mac:
     - "macos"
   script:
     - npm i --unsafe-perm
-    - npm run pack:lin
+    - npm run pack:mac
   artifacts:
     paths:
-    - $RELEASE_ARTIFACT
+      - $RELEASE_ARTIFACT
 
 build_lin:
   stage: build
@@ -35,12 +35,14 @@ build_lin:
     - npm run pack:lin
   artifacts:
     paths:
-    - $RELEASE_ARTIFACT
+      - $RELEASE_ARTIFACT
 
 deploy:
   stage: deploy
+  image:
+    name: peterevans/curl-jq
   script:
-    - ls $RELEASE_ARTIFACT
+    - ./scripts/publish.sh
   # script:
   #   - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
   # rules:
