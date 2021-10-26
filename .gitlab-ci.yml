@@ -25,6 +25,8 @@ build_mac:
   artifacts:
     paths:
       - $RELEASE_ARTIFACT
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 build_lin:
   stage: build
@@ -35,7 +37,10 @@ build_lin:
     - npm run pack:lin
   artifacts:
     paths:
-      - $RELEASE_ARTIFACT
+      - $RELEASE_ARTIFACT  # rules:
+  #   - if: $CI_COMMIT_BRANCH == "master" && $DEPLOY == "true"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
 
 deploy:
   stage: deploy
@@ -47,3 +52,5 @@ deploy:
   #   - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
   # rules:
   #   - if: $CI_COMMIT_BRANCH == "master" && $DEPLOY == "true"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
