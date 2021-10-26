@@ -32,3 +32,11 @@ if  [[ ! -z "$UPLOAD_PATH" ]]; then
   echo Publishing dmg file: $UPLOAD_FILE
   curl -v --user $NEXUS_USER:$NEXUS_PASSWD --upload-file $UPLOAD_PATH $NEXUS_HOST/repository/i3m-raw/i3m-wallet/$VERSION/mac/$UPLOAD_FILE 2>> $LOG_FILE
 fi
+
+# UPLOAD RAR
+UPLOAD_PATH="$(find $ROOT_DIR/packages/wallet-desktop/release/ -name *.rar)"
+if  [[ ! -z "$UPLOAD_PATH" ]]; then
+  UPLOAD_FILE=${UPLOAD_PATH##*/}
+  echo Publishing rar file: $UPLOAD_FILE
+  curl -v --user $NEXUS_USER:$NEXUS_PASSWD --upload-file $UPLOAD_PATH $NEXUS_HOST/repository/i3m-raw/i3m-wallet/$VERSION/win/$UPLOAD_FILE 2>> $LOG_FILE
+fi

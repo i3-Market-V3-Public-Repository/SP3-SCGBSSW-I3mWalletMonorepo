@@ -140,6 +140,8 @@ export default async (argv: string[]): Promise<void> => {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
+  const singleInstance = app.requestSingleInstanceLock()
+  console.log(singleInstance)
   app.on('ready', () => {
     onReady().catch((err) => {
       if (err instanceof StartFeatureError && err.exit) {
