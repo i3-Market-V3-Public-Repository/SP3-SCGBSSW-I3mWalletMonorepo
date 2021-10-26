@@ -1,6 +1,6 @@
 stages:
   - build
-  # - deploy
+  - deploy
 
 variables:
   NEXUS_REGISTRY: "***REMOVED***:8123"
@@ -11,6 +11,13 @@ build_win:
   stage: build
   tags:
     - "windows"
+  script:
+    - npm i
+
+build_lin:
+  stage: build
+  tags:
+    - "linux"
   script:
     - npm i
 
@@ -31,9 +38,13 @@ build_win:
 #   rules:
 #     - if: $CI_COMMIT_BRANCH == "master"
 
-# deploy:
-#   stage: deploy
-#   script:
-#     - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
-#   rules:
-#     - if: $CI_COMMIT_BRANCH == "master" && $DEPLOY == "true"
+deploy:
+  stage: deploy
+  script:
+    - ls
+    - ls wallet-desktop/
+    - ls wallet-desktop/release
+  # script:
+  #   - 'curl --request POST --header "Authorization: Bearer $ANSIBLE_DEPLOY_TOKEN" "$URL_DEPLOY_AA"'
+  # rules:
+  #   - if: $CI_COMMIT_BRANCH == "master" && $DEPLOY == "true"
