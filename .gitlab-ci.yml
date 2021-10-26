@@ -4,6 +4,7 @@ stages:
 
 variables:
   NEXUS_REGISTRY: "***REMOVED***:8123"
+  RELEASE_ARTIFACT: "packages/wallet-desktop/release"
   NEXUS_IMAGE_TAG: $NEXUS_REGISTRY/auditable-accounting:latest
   URL_DEPLOY_AA: "http://95.211.3.249:19000/api/v2/job_templates/34/launch/"
 
@@ -27,6 +28,10 @@ build_lin:
     name: node:14.16.0
   script:
     - npm i
+    - npm run pack:lin
+  artifacts:
+    paths:
+    - $RELEASE_ARTIFACT
 
 deploy:
   stage: deploy
