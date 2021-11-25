@@ -1,0 +1,22 @@
+{
+  "name": "@i3-market/wallet-connector",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "rollup": "^2.60.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@i3-market/wallet-protocol": "^0.1.0"
+  }
+}
