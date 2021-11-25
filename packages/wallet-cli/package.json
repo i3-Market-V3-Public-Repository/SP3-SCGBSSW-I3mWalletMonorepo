@@ -1,0 +1,21 @@
+{
+  "name": "@i3-market/wallet-cli",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node --files ./src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@i3-market/wallet-protocol": "^0.1.0",
+    "base58-js": "^1.0.0"
+  }
+}

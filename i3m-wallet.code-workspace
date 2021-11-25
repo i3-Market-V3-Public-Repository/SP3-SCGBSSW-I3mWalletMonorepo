@@ -17,10 +17,19 @@
 		},
 		{
 			"path": "packages/bok-wallet"
+		},
+		{
+			"path": "packages/wallet-protocol"
+		},
+		{
+			"path": "packages/wallet-cli"
+		},
+		{
+			"path": "packages/wallet-connector"
 		}
 	],
 	"settings": {
 		"typescript.tsdk": "base-wallet/node_modules/typescript/lib",
-		"liveServer.settings.multiRootWorkspaceName": "sw-wallet"
+		"liveServer.settings.multiRootWorkspaceName": "I3M-Wallet"
 	}
 }
