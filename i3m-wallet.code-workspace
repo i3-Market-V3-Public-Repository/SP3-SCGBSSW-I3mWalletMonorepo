@@ -4,13 +4,7 @@
 			"path": "."
 		},
 		{
-			"path": "packages/wallet-desktop"
-		},
-		{
 			"path": "packages/base-wallet"
-		},
-		{
-			"path": "packages/wallet-desktop-openapi"
 		},
 		{
 			"path": "packages/sw-wallet"
@@ -22,10 +16,16 @@
 			"path": "packages/wallet-protocol"
 		},
 		{
-			"path": "packages/wallet-cli"
+			"path": "packages/wallet-protocol-modal"
 		},
 		{
-			"path": "packages/wallet-connector"
+			"path": "packages/wallet-desktop"
+		},
+		{
+			"path": "packages/wallet-desktop-openapi"
+		},
+		{
+			"path": "packages/wallet-cli"
 		}
 	],
 	"settings": {

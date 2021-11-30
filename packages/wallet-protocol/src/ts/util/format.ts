@@ -1,6 +1,14 @@
 import * as base64 from '@juanelas/base64'
 
 export const format = {
+  utf2U8Arr: (text: string): Uint8Array => {
+    return new TextEncoder().encode(text)
+  },
+
+  u8Arr2Utf: (arr: Uint8Array): string => {
+    return new TextDecoder().decode(arr)
+  },
+
   num2U8Arr: (num: number, len?: number): Uint8Array => {
     if (len === undefined) {
       len = 1
@@ -40,7 +48,7 @@ export const format = {
     return new Uint8Array(match.map(byte => parseInt(byte, 16)))
   },
 
-  u8Arr2hex: (arr: Uint8Array): string => {
+  u8Arr2Hex: (arr: Uint8Array): string => {
     return arr.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '')
   },
 
@@ -48,7 +56,7 @@ export const format = {
     return base64.encode(arr, true, false)
   },
 
-  base642u8Arr: (b64: string): Uint8Array => {
+  base642U8Arr: (b64: string): Uint8Array => {
     return base64.decode(b64, false) as Uint8Array
   }
 }

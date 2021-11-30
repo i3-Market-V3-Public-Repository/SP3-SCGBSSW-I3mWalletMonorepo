@@ -1,4 +1,27 @@
 export const bufferUtils = {
+  join: (...list: Uint8Array[]): Uint8Array => {
+    const size = list.reduce((a, b) => a + b.length, 0)
+    const buffer = new Uint8Array(size)
+    let accLen = 0
+    for (const el of list) {
+      buffer.set(el, accLen)
+      accLen += el.length
+    }
+
+    return buffer
+  },
+
+  split: (buffer: Uint8Array, ...sizes: number[]): Uint8Array[] => {
+    const list: Uint8Array[] = []
+    let start = 0
+    for (const size of sizes) {
+      list.push(buffer.slice(start, start + size))
+      start += size
+    }
+
+    return list
+  },
+
   insertBytes: (src: Uint8Array, dst: Uint8Array, fromStart: number, toStart: number, size: number) => {
     for (let i = 0; i < size; i++) {
       dst[i + toStart] = src[i + fromStart]

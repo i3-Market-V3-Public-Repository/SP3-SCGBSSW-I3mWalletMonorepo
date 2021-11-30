@@ -9,7 +9,9 @@ import {
   WindowManager,
   ApiManager,
   FeatureManager,
-  ActionReducer
+  ActionReducer,
+  ConnectManager,
+  LocalAuthentication
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -23,5 +25,7 @@ export interface Locals {
   featureContext: FeatureContext
   dialog: Dialog
   actionReducer: ActionReducer
-  password?: string
+  auth: LocalAuthentication
+  connectManager: ConnectManager
+  password: string
 }

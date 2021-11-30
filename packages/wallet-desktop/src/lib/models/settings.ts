@@ -1,4 +1,5 @@
 
+import { JWK } from 'jose'
 import { JSONObject } from './json-object'
 
 export interface WalletInfo {
@@ -23,12 +24,20 @@ export interface Provider {
 
 export interface DeveloperSettings {
   enableDeveloperFunctions: boolean
+  enableDeveloperApi: boolean
+}
+
+export interface AuthSettings {
+  localAuth: string
+  salt: string
 }
 
 export interface Settings {
   wallet: WalletSettings
   providers: Provider[]
   developer: DeveloperSettings
+  auth?: AuthSettings
+  secret?: JWK
 }
 
 export function createDefaultSettings (): Settings {
@@ -39,7 +48,8 @@ export function createDefaultSettings (): Settings {
     },
     providers: [],
     developer: {
-      enableDeveloperFunctions: false
+      enableDeveloperFunctions: false,
+      enableDeveloperApi: false
     }
   }
 }

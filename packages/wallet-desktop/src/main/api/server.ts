@@ -1,6 +1,6 @@
 import path from 'path'
 import express, { Express, ErrorRequestHandler } from 'express'
-import cors from 'cors'
+// import cors from 'cors'
 import https from 'https'
 import http from 'http'
 import { middleware as openapiValidator } from 'express-openapi-validator'
@@ -9,7 +9,13 @@ import { HttpError } from 'express-openapi-validator/dist/framework/types'
 import openapiSpec from '@i3-market/wallet-desktop-openapi'
 import { WalletError } from '@i3-market/base-wallet'
 
-import { loggerMiddleware, setLocals, Locals, ActionError } from '@wallet/main/internal'
+import {
+  loggerMiddleware,
+  setLocals,
+  Locals,
+  ActionError
+} from '@wallet/main/internal'
+import { developerApi } from './developer-api'
 
 interface ServerConfig {
   useHttps: boolean
@@ -54,9 +60,9 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
   setLocals(app, locals)
 
   // Add middlewares
-  app.use(cors())
   app.use(express.json())
   app.use(loggerMiddleware)
+  app.use(developerApi(locals))
 
   // Add default endpoint
   app.get('/', function (req, res) {

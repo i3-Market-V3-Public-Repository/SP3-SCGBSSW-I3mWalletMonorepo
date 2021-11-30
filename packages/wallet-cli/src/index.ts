@@ -6,23 +6,9 @@ import { WalletProtocol, HttpResponderTransport, constants } from '@i3-market/wa
 const PAIRING_COMMAND='pairing'
 
 const main = async () => {
-  const server = http.createServer((req, res) => {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Request-Method', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET')
-    res.setHeader('Access-Control-Allow-Headers', '*')
-    if ( req.method === 'OPTIONS' ) {
-      res.writeHead(200);
-      res.end();
-      
-      return;
-    }
+  const executor = new HttpResponderTransport({
+    port: constants.INITIAL_PORT + 12
   })
-  const port = constants.INITIAL_PORT + 12
-  server.listen(port)
-
-  const executor = new HttpResponderTransport(server, { port })
   const protocol = new WalletProtocol(executor)
   protocol.on('connString', (connString) => {
     console.log(`PIN: ${connString.toString()}`)
@@ -30,6 +16,28 @@ const main = async () => {
   protocol.on('masterKey', (masterKey) => {
     console.log(`MasterKey:`, masterKey)
   })
+
+  const server = http.createServer(async (req, res) => {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Access-Control-Request-Method', '*')
+    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET')
+    res.setHeader('Access-Control-Allow-Headers', '*')
+    if ( req.method === 'OPTIONS' ) {
+      res.writeHead(200)
+      res.end()
+      return
+    } else {
+      const forWalletProtocol = await executor.dispatchRequest(req, res)
+      if (forWalletProtocol) {
+        return
+      }
+    }
+
+    res.writeHead(404)
+    res.end()
+  })
+  await new Promise<void>((resolve) => server.listen(executor.port, resolve))
 
   const rl = readline.createInterface({
     input: stdin,

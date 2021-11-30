@@ -1,7 +1,7 @@
 import express, { Express } from 'express'
 import http from 'http'
 
-import { logger, config, Locals } from '@wallet/main/internal'
+import { logger, Locals } from '@wallet/main/internal'
 import { createServer, initServer } from './server'
 
 export class ApiManager {
@@ -13,13 +13,14 @@ export class ApiManager {
 
   constructor (locals: Locals) {
     this.app = express()
-    this.server = createServer(this.app, {
+    locals.connectManager.walletProtocolTransport.use(this.app)
+    this.server = createServer(locals.connectManager.handleRequest, {
       useHttps: false
     })
     this.locals = locals
 
     // Network settings
-    this.port = config.port
+    this.port = locals.connectManager.walletProtocolTransport.port
     this.host = 'localhost'
   }
 

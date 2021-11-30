@@ -1,125 +1,140 @@
 import http from 'http'
-import { WalletProtocol, Subject, format, ProtocolPKEData, constants, AuthData, PKEData, ProtocolAuthData } from '../../internal'
-import { ResponderTransport, ResponderOptions } from '../responder-transport'
-import { Request } from './request'
 
-interface HttpSubjectData<T extends Request = Request> {
-  req: T
-  httpRes: http.ServerResponse
+import { constants, format } from '../../internal'
+import { ResponderTransport, ResponderOptions } from '../responder-transport'
+import { HttpResponse } from './http-response'
+import { HttpRequest } from './http-initiator'
+
+export interface HttpResponderOptions extends ResponderOptions {
+  rpcUrl: string
 }
 
-export class HttpResponderTransport extends ResponderTransport {
-  rpcSubject: Subject<HttpSubjectData>
+export class HttpResponderTransport extends ResponderTransport<http.IncomingMessage, http.ServerResponse> {
+  readonly rpcUrl: string
+  protected listeners: http.RequestListener[] = []
 
-  constructor (protected server: http.Server, opts?: Partial<ResponderOptions>) {
+  constructor (opts?: Partial<HttpResponderOptions>) {
     super(opts)
-    this.rpcSubject = new Subject()
-    this.server.on('request', (req, res) => {
-      this.onRequest(req, res).catch((err) => {
-        throw err // TODO: Handle exception?
-      })
-    })
+    this.rpcUrl = opts?.rpcUrl ?? `/${constants.RPC_URL_PATH}`
   }
 
-  async onRequest (req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
-    if (this.isPairing && req.method === 'POST') {
-      switch (req.url) {
-        case `/${constants.RPC_URL_PATH}`:
-        {
-          const buffers = []
+  protected async readRequestBody (req: http.IncomingMessage): Promise<string> {
+    const buffers = []
+    for await (const chunk of req) {
+      buffers.push(chunk)
+    }
 
-          for await (const chunk of req) {
-            buffers.push(chunk)
-          }
+    return Buffer.concat(buffers).toString()
+  }
 
-          const data = Buffer.concat(buffers).toString()
-          const reqBody = JSON.parse(data)
-          this.rpcSubject.next({ req: reqBody, httpRes: res })
-          return
+  protected async dispatchProtocolMessage (req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    if (!this.isPairing) {
+      throw new Error('not in pairing mode')
+    }
+
+    const data = await this.readRequestBody(req)
+    const reqBody = JSON.parse(data)
+    this.rpcSubject.next({ req: reqBody, res: new HttpResponse(res) })
+  }
+
+  protected async dispatchEncryptedMessage (
+    req: http.IncomingMessage,
+    res: http.ServerResponse,
+    authentication: string
+  ): Promise<void> {
+    const code = format.utf2U8Arr(authentication)
+    const masterKey = await this.opts.codeGenerator.getMasterKey(code)
+
+    const ciphertextBase64 = await this.readRequestBody(req)
+    const ciphertext = format.base642U8Arr(ciphertextBase64)
+    const message = await masterKey.decrypt(ciphertext)
+    const messageJson = format.u8Arr2Utf(message)
+    const body: HttpRequest = JSON.parse(messageJson)
+    let innerBody: any = {}
+    if (body.init.body !== undefined && body.init.body !== '') {
+      innerBody = JSON.parse(body.init.body as string)
+    }
+
+    const headers = Object
+      .entries(body.init.headers ?? {})
+      .reduce((h, [key, value]) => {
+        h[key.toLocaleLowerCase()] = value
+        return h
+      }, req.headers)
+
+    const reqProxy = new Proxy<http.IncomingMessage>(req, {
+      get (target, p) {
+        switch (p) {
+          case 'url':
+            return body.url
+
+          case 'method':
+            return body.init.method
+
+          case 'headers':
+            return headers
+
+          case '_body':
+            return true
+
+          case 'body':
+            return innerBody
+
+          case 'walletProtocol':
+            return true
+
+          default:
+            return (target as any)[p]
         }
       }
-    }
+    })
 
-    res.writeHead(404)
-    res.end()
-  }
+    // TODO: Implement this in a better way??
+    res.end = new Proxy<http.ServerResponse['end']>(res.end, {
+      apply: (target: Function, thisArg, argsArray) => {
+        const chunk = argsArray[0]
+        const send = async (): Promise<void> => {
+          if (chunk instanceof Buffer) {
+            const ciphertext = await masterKey.encrypt(chunk)
+            const ciphertextBase64 = format.u8Arr2Base64(ciphertext)
+            res.setHeader('Content-Length', ciphertextBase64.length)
 
-  async waitRequest<M extends Request['method'], T extends (Request & { method: M})> (method: M): Promise<HttpSubjectData<T>> {
-    while (true) {
-      const rpcRequest = await this.rpcSubject.promise
-      if (rpcRequest.req.method !== method) {
-        continue
+            target.call(thisArg, ciphertextBase64, ...argsArray)
+            return
+          }
+
+          throw new Error('cannot manage this chunk...')
+        }
+
+        send().catch(err => { console.error(err) })
       }
-
-      return rpcRequest as HttpSubjectData<T>
-    }
-  }
-
-  async sendResponse (httpRes: http.ServerResponse, req: Request): Promise<void> {
-    httpRes.write(JSON.stringify(req))
-    httpRes.end()
-  }
-
-  async publicKeyExchange (protocol: WalletProtocol, pkeData: PKEData): Promise<ProtocolPKEData> {
-    if (this.connString === undefined) {
-      throw new Error('protocol not properly initialized')
-    }
-
-    const { req, httpRes } = await this.waitRequest('publicKeyExchange')
-    await this.sendResponse(httpRes, {
-      method: 'publicKeyExchange',
-      sender: pkeData.id,
-      publicKey: pkeData.publicKey
     })
 
-    const received: PKEData = {
-      id: req.sender,
-      publicKey: req.publicKey,
-      rx: format.base642u8Arr(req.ra ?? '')
-    }
+    await this.callListeners(reqProxy, res)
+  }
 
-    return {
-      a: received,
-      b: pkeData,
-
-      sent: pkeData,
-      received
+  async dispatchRequest (req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    if (req.url === this.rpcUrl) {
+      if (req.method !== 'POST') {
+        throw new Error('method must be POST')
+      }
+      if (req.headers.authorization !== undefined) {
+        return await this.dispatchEncryptedMessage(req, res, req.headers.authorization)
+      } else {
+        return await this.dispatchProtocolMessage(req, res)
+      }
+    } else {
+      await this.callListeners(req, res)
     }
   }
 
-  async authentication (protocol: WalletProtocol, authData: AuthData): Promise<ProtocolAuthData> {
-    const cxHttpData = await this.waitRequest('commitment')
-    await this.sendResponse(cxHttpData.httpRes, {
-      method: 'commitment',
-      cx: format.u8Arr2Base64(authData.cx)
-    })
-    const commitmentReq = cxHttpData.req
-
-    const nxHttpData = await this.waitRequest('nonce')
-    await this.sendResponse(nxHttpData.httpRes, {
-      method: 'nonce',
-      nx: format.u8Arr2Base64(authData.nx)
-    })
-    const nonceReq = nxHttpData.req
-
-    const received: AuthData = {
-      cx: format.base642u8Arr(commitmentReq.cx),
-      nx: format.base642u8Arr(nonceReq.nx),
-      r: authData.r
-    }
-
-    return {
-      a: received,
-      b: authData,
-
-      sent: authData,
-      received
+  private async callListeners (req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    for (const listener of this.listeners) {
+      listener(req, res)
     }
   }
 
-  async finish (): Promise<void> {
-    super.finish()
-    this.rpcSubject.err('Finished')
-    console.log('finish')
+  use (listener: http.RequestListener): void {
+    this.listeners.push(listener)
   }
 }

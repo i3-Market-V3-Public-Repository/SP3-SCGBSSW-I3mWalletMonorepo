@@ -1,5 +1,6 @@
 import { app, BrowserWindow, session } from 'electron'
 import path from 'path'
+import { generateSecret, exportJWK, importJWK, JWK } from 'jose'
 
 import { initContext } from '@wallet/lib'
 
@@ -16,8 +17,10 @@ import {
   WalletFactory,
   ElectronDialog,
   StartFeatureError,
-  ActionReducer
+  ActionReducer,
+  LocalAuthentication
 } from './internal'
+import { ConnectManager } from './connect'
 
 async function getAppSettings (locals: Locals): Promise<MainContext> {
   const sharedMemoryManager = new SharedMemoryManager()
@@ -42,6 +45,13 @@ async function getAppSettings (locals: Locals): Promise<MainContext> {
     '@i3-market/bok-wallet'
   ]
   settings.set('wallet', wallet)
+
+  const secret = settings.get('secret')
+  if (secret === undefined) {
+    const key = await generateSecret('HS256', { extractable: true })
+    const jwk = await exportJWK(key)
+    settings.set('secret', jwk)
+  }
 
   // Syncronize shared memory and settings
   sharedMemoryManager.update((mem) => ({
@@ -95,6 +105,13 @@ async function initUI (ctx: MainContext, locals: Locals): Promise<void> {
   })
 }
 
+async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
+  const auth = new LocalAuthentication(locals)
+  locals.auth = auth
+
+  await auth.authenticate()
+}
+
 async function initFeatureManager (ctx: MainContext, locals: Locals): Promise<void> {
   locals.featureManager = new FeatureManager()
   locals.featureContext = {}
@@ -104,6 +121,12 @@ async function initApi (
   ctx: MainContext,
   locals: Locals
 ): Promise<void> {
+  // Create and initialize connect manager
+  const jwk = locals.settings.get('secret') as JWK
+  const key = await importJWK(jwk, 'HS256')
+  locals.connectManager = new ConnectManager(locals, key)
+  await locals.connectManager.initialize()
+
   // Create and initialize api manager
   locals.apiManager = new ApiManager(locals)
   await locals.apiManager.initialize()
@@ -129,6 +152,7 @@ async function onReady (): Promise<void> {
   await initFeatureManager(ctx, locals)
   await initApi(ctx, locals)
 
+  await initAuth(ctx, locals)
   await initWalletFactory(ctx, locals)
 
   // Launch UI
@@ -141,7 +165,7 @@ export default async (argv: string[]): Promise<void> => {
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
   const singleInstance = app.requestSingleInstanceLock()
-  console.log(singleInstance)
+  logger.info(`Single instance ${singleInstance.toString()}`)
   app.on('ready', () => {
     onReady().catch((err) => {
       if (err instanceof StartFeatureError && err.exit) {

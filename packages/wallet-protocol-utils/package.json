@@ -1,0 +1,25 @@
+{
+  "name": "@i3-market/wallet-protocol-utils",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c build/rollup.config.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
+    "@rollup/plugin-typescript": "^8.3.0",
+    "rollup": "^2.60.0",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "@i3-market/wallet-protocol": "^0.1.0",
+    "rollup-plugin-import-css": "^3.0.2",
+    "rxjs": "^7.4.0"
+  }
+}
