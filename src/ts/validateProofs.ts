@@ -1,9 +1,6 @@
-import { KeyLike, JWK } from 'jose/jwk/from_key_like'
-import parseJwk from 'jose/jwk/parse'
-import compactDecrypt from 'jose/jwe/compact/decrypt'
-import compactVerify from 'jose/jws/compact/verify'
+import { compactDecrypt, compactVerify, importJWK, JWK, KeyLike } from 'jose'
 import sha from './sha'
-import { poO, poR } from './proofInterfaces'
+import { PoO, PoR } from './proofInterfaces'
 
 // TODO decide a fixed delay for the protocol
 const IAT_DELAY = 5000
@@ -12,7 +9,7 @@ const IAT_DELAY = 5000
  * Validate Proof or Request using the Provider Public Key
  */
 const validatePoR = async (publicKey: KeyLike, poR: string, poO: string): Promise<boolean> => {
-  const poRpayload: poR = await decodePor(publicKey, poR)
+  const poRpayload: PoR = await decodePor(publicKey, poR)
   const hashPooDgst: string = await sha(poO)
 
   if (hashPooDgst !== poRpayload.exchange.poo_dgst) {
@@ -27,11 +24,11 @@ const validatePoR = async (publicKey: KeyLike, poR: string, poO: string): Promis
 /**
  * Decode Proof of Reception with Consumer public key
  */
-const decodePor = async (publicKey: KeyLike, poR: string): Promise<poR> => {
+const decodePor = async (publicKey: KeyLike, poR: string): Promise<PoR> => {
   const { payload } = await compactVerify(poR, publicKey).catch((e) => {
     throw new Error(`PoR: ${String(e)}`)
   })
-  const decodedPoOPayload: poR = JSON.parse(new TextDecoder().decode(payload).toString())
+  const decodedPoOPayload: PoR = JSON.parse(new TextDecoder().decode(payload).toString())
   return decodedPoOPayload
 }
 
@@ -39,7 +36,7 @@ const decodePor = async (publicKey: KeyLike, poR: string): Promise<poR> => {
  * Validate Proof or Origin using the Consumer Public Key
  */
 const validatePoO = async (publicKey: KeyLike, poO: string, cipherblock: string): Promise<boolean> => {
-  const poOpayload: poO = await decodePoo(publicKey, poO)
+  const poOpayload: PoO = await decodePoo(publicKey, poO)
   const hashedCipherBlock: string = await sha(cipherblock)
 
   if (poOpayload.exchange.cipherblock_dgst !== hashedCipherBlock) {
@@ -54,30 +51,37 @@ const validatePoO = async (publicKey: KeyLike, poO: string, cipherblock: string)
 /**
  * Decode Proof of Origin with Provider public key
  */
-const decodePoo = async (publicKey: KeyLike, poO: string): Promise<poO> => {
+const decodePoo = async (publicKey: KeyLike, poO: string): Promise<PoO> => {
   const { payload } = await compactVerify(poO, publicKey).catch((e) => {
     throw new Error('PoO ' + String(e))
   })
-  const decodedPoOPayload: poO = JSON.parse(new TextDecoder().decode(payload).toString())
+  const decodedPoOPayload: PoO = JSON.parse(new TextDecoder().decode(payload).toString())
   return decodedPoOPayload
 }
 
 /**
  * Validate Proof of Publication using the Backplain Public Key
  */
-const validatePoP = async (publicKeyBackplain: KeyLike, publicKeyProvider: KeyLike, poP: string, jwk: JWK, poO: string): Promise<boolean> => {
-  await compactVerify(poP, publicKeyBackplain).catch((e) => {
-    throw new Error('PoP ' + String(e))
+const validatePoP = (publicKeyBackplain: KeyLike, publicKeyProvider: KeyLike, poP: string, jwk: JWK, poO: string): Promise<boolean> => { // eslint-disable-line @typescript-eslint/promise-function-async
+  return new Promise((resolve, reject) => {
+    compactVerify(poP, publicKeyBackplain).catch((e) => {
+      reject(new Error('PoP ' + String(e)))
+    })
+
+    decodePoo(publicKeyProvider, poO)
+      .then((poOPayload: PoO) => {
+        sha(JSON.stringify(jwk))
+          .then(hashedJwk => {
+            if (poOPayload.exchange.key_commitment === hashedJwk) {
+              resolve(true)
+            } else {
+              reject(new Error('hashed key not correspond to poO key_commitment parameter'))
+            }
+          })
+          .catch(reason => reject(reason))
+      })
+      .catch(reason => reject(reason))
   })
-
-  const poOPayload: poO = await decodePoo(publicKeyProvider, poO)
-  const hashedJwk: string = await sha(JSON.stringify(jwk))
-
-  if (poOPayload.exchange.key_commitment === hashedJwk) {
-    return true
-  } else {
-    throw new Error('hashed key not correspond to poO key_commitment parameter')
-  }
 }
 
 /**
@@ -85,7 +89,7 @@ const validatePoP = async (publicKeyBackplain: KeyLike, publicKeyProvider: KeyLi
  */
 const decryptCipherblock = async (chiperblock: string, jwk: JWK): Promise<string> => {
   const decoder = new TextDecoder()
-  const key: KeyLike = await parseJwk(jwk, 'A256GCM') // TODO: ENC_ALG
+  const key = await importJWK(jwk, 'A256GCM') // TODO: ENC_ALG
 
   const { plaintext } = await compactDecrypt(chiperblock, key)
   return decoder.decode(plaintext)
@@ -94,7 +98,7 @@ const decryptCipherblock = async (chiperblock: string, jwk: JWK): Promise<string
 /**
  * Validate the cipherblock
  */
-const validateCipherblock = async (publicKey: KeyLike, chiperblock: string, jwk: JWK, poO: poO): Promise<boolean> => {
+const validateCipherblock = async (publicKey: KeyLike, chiperblock: string, jwk: JWK, poO: PoO): Promise<boolean> => {
   const decodedCipherBlock = await decryptCipherblock(chiperblock, jwk)
   const hashedDecodedCipherBlock: string = await sha(decodedCipherBlock)
 

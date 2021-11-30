@@ -1,11 +1,6 @@
-import generateSecret from 'jose/util/generate_secret'
-import fromKeyLike, { KeyLike, JWK } from 'jose/jwk/from_key_like'
-import CompactEncrypt from 'jose/jwe/compact/encrypt'
-import calculateThumbprint from 'jose/jwk/thumbprint'
-import parseJwk from 'jose/jwk/parse'
-import CompactSign from 'jose/jws/compact/sign'
+import { calculateJwkThumbprint, CompactEncrypt, CompactSign, JWK, KeyLike, generateSecret, importJWK, exportJWK } from 'jose'
 import sha from './sha'
-import { account, poO, poR } from './proofInterfaces'
+import { account, PoO, PoR } from './proofInterfaces'
 import { decodePoo } from './validateProofs'
 
 export const SIGNING_ALG = 'ES256'
@@ -27,7 +22,7 @@ export const ENC_ALG_KEY_LENGTH = 256
  */
 const createPoO = async (privateKey: KeyLike, block: ArrayBufferLike | string, providerId: string, consumerId: string, exchangeId: number, blockId: number, jwk: JWK): Promise<{ cipherblock: string, poO: string }> => {
   const input: Uint8Array = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
-  const key: KeyLike = await parseJwk(jwk)
+  const key = await importJWK(jwk)
   const cipherblock: string = await new CompactEncrypt(input)
     .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
     .encrypt(key)
@@ -36,7 +31,7 @@ const createPoO = async (privateKey: KeyLike, block: ArrayBufferLike | string, p
   const hashBlock: string = await sha(input)
   const hashKey: string = await sha(JSON.stringify(jwk))
 
-  const proof: poO = {
+  const proof: PoO = {
     iss: providerId,
     sub: consumerId,
     iat: Date.now(),
@@ -58,7 +53,7 @@ const createPoO = async (privateKey: KeyLike, block: ArrayBufferLike | string, p
 }
 
 /**
- * Create random (high entropy)\none time symmetric JWK secret
+ * Create a random (high entropy) symmetric JWK secret
  *
  * @returns a promise that resolves to a JWK
  */
@@ -75,10 +70,10 @@ const createJwk = async (): Promise<JWK> => {
     )
   } else {
     // TODO: get algo from ENC_ALG
-    key = await generateSecret('A256GCM')
+    key = await generateSecret('A256GCM') as KeyLike
   }
-  const jwk: JWK = await fromKeyLike(key)
-  const thumbprint: string = await calculateThumbprint(jwk)
+  const jwk: JWK = await exportJWK(key)
+  const thumbprint: string = await calculateJwkThumbprint(jwk)
   jwk.kid = thumbprint
   jwk.alg = 'A256GCM'
 
@@ -103,7 +98,7 @@ const signProof = async (privateKey: KeyLike, proof: any): Promise<string> => {
 const createPoR = async (privateKey: KeyLike, poO: string, providerId: string, consumerId: string, exchangeId: number): Promise<string> => {
   const hashPooDgst: string = await sha(poO)
 
-  const proof: poR = {
+  const proof: PoR = {
     iss: providerId,
     sub: consumerId,
     iat: Date.now(),
@@ -123,7 +118,7 @@ const createPoR = async (privateKey: KeyLike, poO: string, providerId: string, c
  * Prepare block to be send to the Backplain API
  */
 const createBlockchainProof = async (publicKey: KeyLike, poO: string, poR: string, jwk: JWK): Promise<account> => {
-  const decodedPoO: poO = await decodePoo(publicKey, poO)
+  const decodedPoO: PoO = await decodePoo(publicKey, poO)
 
   const privateStorage = {
     availability: 'privateStorage',

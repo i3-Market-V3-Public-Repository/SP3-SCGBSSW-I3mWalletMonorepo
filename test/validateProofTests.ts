@@ -1,8 +1,4 @@
-import generateKeyPair from 'jose/util/generate_key_pair'
-import { KeyLike } from 'jose/webcrypto/types'
-import CompactSign from 'jose/jws/compact/sign'
-import CompactEncrypt from 'jose/jwe/compact/encrypt'
-import parseJwk from 'jose/jwk/parse'
+import { CompactEncrypt, CompactSign, generateKeyPair, importJWK, KeyLike } from 'jose'
 import chaiAsPromised from 'chai-as-promised'
 
 chai.use(chaiAsPromised)
@@ -38,7 +34,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
         const hashCipherBlock: string = await _pkg.sha(cipherblock)
 
-        const poO: _pkgTypes.poO = {
+        const poO: _pkgTypes.PoO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
@@ -68,7 +64,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
         const hashCipherBlock: string = await _pkg.sha(cipherblock)
 
-        const poO: _pkgTypes.poO = {
+        const poO: _pkgTypes.PoO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
@@ -96,7 +92,7 @@ describe('unit tests on non repudiable protocol functions', function () {
       it('should not validate a proof of Origin with wrong iat', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
         const hashCipherBlock: string = await _pkg.sha(cipherblock)
-        const poO: _pkgTypes.poO = {
+        const poO: _pkgTypes.PoO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: 1614607746,
@@ -126,7 +122,7 @@ describe('unit tests on non repudiable protocol functions', function () {
       it('should not validate a proof of Origin, when the hashed CipherBlock received is different from the one saved in the poO cipherblock_dgst parameter', async function () {
         const cipherblock: string = 'eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..iGBwDtGeYus_82ma.NHuFqetSBzQ0.gISeRgIszus0FPZ_TuNyvA'
 
-        const poO: _pkgTypes.poO = {
+        const poO: _pkgTypes.PoO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: 1614607746,
@@ -157,7 +153,7 @@ describe('unit tests on non repudiable protocol functions', function () {
     describe('test proof or Receipt validation function', function () {
       it('should validate a proof of Receipt', async function () {
         const providerPoO: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
-        const poR: _pkgTypes.poR = {
+        const poR: _pkgTypes.PoR = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
@@ -179,7 +175,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
       it('should not validate a proof of Receipt with wrong iat', async function () {
         const providerPoO: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
-        const poR: _pkgTypes.poR = {
+        const poR: _pkgTypes.PoR = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now() - 560000,
@@ -200,7 +196,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
       it('should not validate a proof of Receipt with wrong key', async function () {
         const providerPoO: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
-        const poR: _pkgTypes.poR = {
+        const poR: _pkgTypes.PoR = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
@@ -221,7 +217,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
       it('should not validate a consumer poR that contains an hashed poO different from the one created by the provider', async function () {
         const providerPoO: string = 'DeyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
-        const poR: _pkgTypes.poR = {
+        const poR: _pkgTypes.PoR = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
@@ -250,7 +246,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
-        const key = await parseJwk(jwk)
+        const key = await importJWK(jwk)
 
         /* TO-DO: Fix. It cannot be any ! */
         const poO: any = {
@@ -280,7 +276,7 @@ describe('unit tests on non repudiable protocol functions', function () {
           k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
           kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
         }
-        const key = await parseJwk(jwk)
+        const key = await importJWK(jwk)
 
         const poO: any = {
           iss: 'urn:example:issuer',
@@ -365,7 +361,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         await expect(_pkg.validatePoP(publicKeyProvider, publicKeyProvider, jwsPop, jwk, jwsPoO)).to.be.rejected
       })
 
-      it('should not validate the poP verification function, if the hash of the key received is different from the one stored in the PoO ', async function () {
+      it('should not validate the PoP verification function, if the hash of the key received is different from the one stored in the PoO ', async function () {
         const jwk = {
           kty: 'oct',
           alg: 'A256GCM',

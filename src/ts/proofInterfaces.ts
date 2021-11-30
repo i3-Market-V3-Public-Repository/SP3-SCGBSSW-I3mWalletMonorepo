@@ -1,6 +1,18 @@
-import types from 'jose/types'
+import types from 'jose'
 
-export interface poO {
+export interface DataExchange {
+  id: number
+  orig?: string
+  dest?: string
+  block_id?: number
+  block_desc?: string
+  hash_alg: string
+  cipherblock_dgst: string
+  block_commitment: string
+  key_commitment: string
+}
+
+export interface PoO {
   iss: string
   sub: string
   iat: number
@@ -16,7 +28,7 @@ export interface poO {
     key_commitment: string
   }
 }
-export interface poR {
+export interface PoR {
   iss: string
   sub: string
   iat: number

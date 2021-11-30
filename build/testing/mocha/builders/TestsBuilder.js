@@ -28,8 +28,26 @@ module.exports = class TestsBuilder extends Builder {
       const fileStr = fs.readFileSync(path, 'utf8')
       const config = JSON5.parse(fileStr)
       if (config.file) delete config.file
-      config.include.push('node_modules/**/*.d.ts')
+
+      /* We need to add multiple globs here:
+         - All the declarations of the modules (just in case a test invoke one). ***for some reason they are not included by default***
+         - Our specific build typings
+         - The test files
+      */
+      config.include = ['node_modules/**/*.d.ts', 'build/typings/**/*.d.ts', 'test/**/*.ts', 'src/ts/**/*.spec.ts']
+
+      // no excluded files
+      config.exclude = undefined
+
+      // we don't need declaration files
+      config.compilerOptions.declaration = false
+
+      // source mapping eases debuging
+      config.compilerOptions.sourceMap = true
+
+      // This prevents SyntaxError: Cannot use import statement outside a module
       config.compilerOptions.module = 'commonjs'
+
       return JSON.stringify(config)
     }
     const configFile = ts.readJsonConfigFile(configPath, readFileAndMangle)
@@ -70,7 +88,6 @@ module.exports = class TestsBuilder extends Builder {
         rootDir,
         outDir: this.tempDir,
         noEmit: false,
-        noResolve: true,
         sourceMap: true
       },
       ts.sys,

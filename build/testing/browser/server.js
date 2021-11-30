@@ -9,7 +9,7 @@ const rollup = require('rollup')
 const resolve = require('@rollup/plugin-node-resolve').nodeResolve
 const replace = require('@rollup/plugin-replace')
 const multi = require('@rollup/plugin-multi-entry')
-const typescript = require('@rollup/plugin-typescript')
+const typescriptPlugin = require('@rollup/plugin-typescript')
 const commonjs = require('@rollup/plugin-commonjs')
 
 const rootDir = path.join(__dirname, '..', '..', '..')
@@ -41,10 +41,18 @@ const indexHtml = `<!DOCTYPE html>
     <script type="module">
       import * as _pkg from './${name}.esm.js'
       self._pkg = _pkg
+    </script>
+    <script type="module">
       import './tests.js'
       window._mocha = mocha.run()
     </script>
   </html>`
+
+const tsBundleOptions = {
+  tsconfig: path.join(rootDir, 'tsconfig.json'),
+  outDir: undefined, // ignore outDir in tsconfig.json
+  exclude: ['test-vectors/**/*']
+}
 
 async function buildTests () {
   // create a bundle
@@ -56,13 +64,14 @@ async function buildTests () {
         IS_BROWSER: true,
         preventAssignment: true
       }),
-      typescript(),
+      typescriptPlugin(tsBundleOptions),
       resolve({
         browser: true,
         exportConditions: ['browser', 'module', 'import', 'default']
       }),
       commonjs()
-    ]
+    ],
+    external: [pkgJson.name]
   }
   const bundle = await rollup.rollup(inputOptions)
   const { output } = await bundle.generate({ format: 'esm' })
@@ -79,7 +88,7 @@ class TestServer {
     const tests = await buildTests()
     this.server.on('request', function (req, res) {
       if (req.url === `/${name}.esm.js`) {
-        fs.readFile(path.join(rootDir, pkgJson.directories.dist, `bundles/${name}.esm.js`), function (err, data) {
+        fs.readFile(path.join(rootDir, pkgJson.directories.dist, 'bundles/esm.js'), function (err, data) {
           if (err) {
             res.writeHead(404)
             res.end(JSON.stringify(err))

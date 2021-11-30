@@ -1,8 +1,4 @@
-import generateKeyPair from 'jose/util/generate_key_pair'
-import { KeyLike } from 'jose/webcrypto/types'
-import { JWK } from 'jose/jwk/from_key_like'
-import compactVerify from 'jose/jws/compact/verify'
-import CompactSign from 'jose/jws/compact/sign'
+import { CompactSign, compactVerify, generateKeyPair, JWK, KeyLike } from 'jose'
 
 describe('unit tests on non repudiable protocol functions', function () {
   let publicKeyConsumer: KeyLike
@@ -31,7 +27,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const { payload } = await compactVerify(result.poO, publicKeyProvider)
 
         const hashCipherBlock = await _pkg.sha(result.cipherblock)
-        const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
+        const poO: _pkgTypes.PoO = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
         chai.expect(poO.iss).to.equal('urn:example:issuer')
         chai.expect(poO.sub).to.equal('urn:example:subject')
@@ -49,7 +45,7 @@ describe('unit tests on non repudiable protocol functions', function () {
         const { payload } = await compactVerify(result.poO, publicKeyProvider)
 
         const hashCipherBlock: string = await _pkg.sha(result.cipherblock)
-        const poO: _pkgTypes.poO = JSON.parse(new TextDecoder().decode(payload).toString())
+        const poO: _pkgTypes.PoO = JSON.parse(new TextDecoder().decode(payload).toString())
         chai.expect(hashCipherBlock).to.equal(poO.exchange.cipherblock_dgst)
         chai.expect(poO.iss).to.equal('urn:example:issuer')
         chai.expect(poO.sub).to.equal('urn:example:subject')
@@ -85,7 +81,7 @@ describe('unit tests on non repudiable protocol functions', function () {
 
     describe('create account object for backplain API', function () {
       it('should create a valid json object', async function () {
-        const poO: _pkgTypes.poO = {
+        const poO: _pkgTypes.PoO = {
           iss: 'urn:example:issuer',
           sub: 'urn:example:subject',
           iat: Date.now(),
