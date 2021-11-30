@@ -3,3 +3,4 @@
 node_modules
 publish.log
 .env
+lerna-debug.log

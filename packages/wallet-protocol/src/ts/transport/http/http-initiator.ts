@@ -1,18 +1,27 @@
-import { WalletProtocol, format, ProtocolPKEData, constants, AuthData, PKEData, ProtocolAuthData } from '../../internal'
+import { constants, format, MasterKey } from '../../internal'
 import { InitiatorTransport } from '../initiator-transport'
-import { Request } from './request'
+import { Request } from '../request'
 
-export class HttpInitiatorTransport extends InitiatorTransport {
-  get rpcUrl (): string {
+export interface HttpRequest {
+  url: string
+  init: RequestInit
+}
+
+export type HttpResponse = Response
+
+export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, HttpResponse> {
+  buildRpcUrl (port: number): string {
+    return `http://${this.opts.host}:${port}/${constants.RPC_URL_PATH}`
+  }
+
+  async sendRequest<T extends Request> (request: Request): Promise<T> {
     if (this.connString === undefined) {
       throw new Error('cannot connect to the rpc yet: port missing')
     }
 
-    return `http://${this.opts.host}:${this.connString.extractPort()}/${constants.RPC_URL_PATH}`
-  }
-
-  async sendRequest<T extends Request> (request: T): Promise<T> {
-    const resp = await fetch(this.rpcUrl, {
+    const port = this.connString.extractPort()
+    const rpcUrl = this.buildRpcUrl(port)
+    const resp = await fetch(rpcUrl, {
       method: 'POST',
       body: JSON.stringify(request)
     })
@@ -21,59 +30,37 @@ export class HttpInitiatorTransport extends InitiatorTransport {
     return body
   }
 
-  async publicKeyExchange (protocol: WalletProtocol, pkeData: PKEData): Promise<ProtocolPKEData> {
-    if (this.connString === undefined) {
-      throw new Error('missing connection string')
-    }
+  async send (masterKey: MasterKey, code: Uint8Array, req: HttpRequest): Promise<HttpResponse> {
+    const headers = new Headers()
+    headers.append('Authorization', format.u8Arr2Utf(code))
 
-    const response = await this.sendRequest({
-      method: 'publicKeyExchange',
-      sender: this.opts.id,
-      publicKey: pkeData.publicKey,
-      ra: format.u8Arr2Base64(pkeData.rx)
+    const message = format.utf2U8Arr(JSON.stringify(req))
+    const ciphertext = await masterKey.encrypt(message)
+    const rpcUrl = this.buildRpcUrl(29170)
+
+    const resp = await fetch(rpcUrl, {
+      method: 'POST',
+      headers: headers,
+      body: format.u8Arr2Base64(ciphertext)
     })
 
-    const received: PKEData = {
-      id: response.sender,
-      publicKey: response.publicKey,
-      rx: this.connString.extractRb()
-    }
+    return new Proxy<HttpResponse>(resp, {
+      get: (resp, p) => {
+        switch (p) {
+          case 'json':
+            return async () => {
+              const ciphertextBase64 = await resp.text()
+              const ciphertext = format.base642U8Arr(ciphertextBase64)
+              const jsonBuffer = await masterKey.decrypt(ciphertext)
+              const json = format.u8Arr2Utf(jsonBuffer)
 
-    return {
-      a: pkeData,
-      b: received,
+              return JSON.parse(json)
+            }
 
-      sent: pkeData,
-      received
-    }
-  }
-
-  async authentication (protocol: WalletProtocol, authData: AuthData): Promise<ProtocolAuthData> {
-    const commitmentReq = await this.sendRequest({
-      method: 'commitment',
-      cx: format.u8Arr2Base64(authData.cx)
+          default:
+            return (resp as any)[p]
+        }
+      }
     })
-
-    const nonceReq = await this.sendRequest({
-      method: 'nonce',
-      nx: format.u8Arr2Base64(authData.nx)
-    })
-    const received: AuthData = {
-      cx: format.base642u8Arr(commitmentReq.cx),
-      nx: format.base642u8Arr(nonceReq.nx),
-      r: authData.r
-    }
-
-    return {
-      a: authData,
-      b: {
-        cx: format.base642u8Arr(commitmentReq.cx),
-        nx: format.base642u8Arr(nonceReq.nx),
-        r: authData.r
-      },
-
-      sent: authData,
-      received
-    }
   }
 }

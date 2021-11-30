@@ -11,6 +11,11 @@ export function Settings (): JSX.Element {
         label: 'Developer Functions',
         type: 'checkbox',
         key: 'developer.enableDeveloperFunctions'
+      },
+      {
+        label: 'Developer API',
+        type: 'checkbox',
+        key: 'developer.enableDeveloperApi'
       }
     ]
   }

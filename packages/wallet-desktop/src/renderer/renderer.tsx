@@ -21,11 +21,7 @@ export default (windowArgs: WindowArgs): void => {
       {
         windowArgs.name === 'Main'
           ? <Windows.Main {...windowArgs} />
-          : windowArgs.name === 'Sign'
-            ? <Windows.Sign {...windowArgs} />
-            : windowArgs.name === 'Password'
-              ? <Windows.Password {...windowArgs} />
-              : <div>View not found</div>
+          : <div>View not found</div>
       }
     </SharedMemoryProvider>
   )

@@ -35,6 +35,6 @@ export class ConnectionString {
   }
 
   static fromString (connString: string, l: number): ConnectionString {
-    return new ConnectionString(format.base642u8Arr(connString), l)
+    return new ConnectionString(format.base642U8Arr(connString), l)
   }
 }

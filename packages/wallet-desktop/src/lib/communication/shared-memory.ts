@@ -1,5 +1,5 @@
 import { Resource, Identity, WalletMetadata } from '@i3-market/base-wallet'
-import { Settings, createDefaultSettings, DialogData } from '../internal'
+import { Settings, createDefaultSettings, DialogData, ConnectData } from '../internal'
 
 export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
@@ -21,6 +21,7 @@ export interface SharedMemory {
     }
   }
   walletsMetadata: WalletMetadataMap
+  connectData: ConnectData
 }
 
 export function createDefaultSharedMemory (values?: Partial<SharedMemory>): SharedMemory {
@@ -36,6 +37,9 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
       data: {}
     },
     walletsMetadata: {},
+    connectData: {
+      walletProtocol: {}
+    },
 
     ...values
   }

@@ -1,4 +1,5 @@
 export * from './action'
 export * from './wallet'
+export * from './connect'
 export * from './handle-action'
 export * from './action-builder'

@@ -1,7 +1,11 @@
 
 .settings {
-  .settings-group {
+  .settings-list {
     flex: 1;
+  }
+
+  .settings-group {
+    flex: 3;
     font-size: 16px;
 
     .settings-item {

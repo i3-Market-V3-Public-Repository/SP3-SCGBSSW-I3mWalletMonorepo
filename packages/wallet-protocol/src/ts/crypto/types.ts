@@ -28,10 +28,23 @@ export class BaseRandom {
   }
 }
 
-export type HashAlgorithms = 'sha256'
-export const NODE_TO_BROWSER_HASH_ALGORITHMS: Record<HashAlgorithms, string> = {
-  sha256: 'SHA-256'
+export type CipherAlgorithms = 'aes-256-gcm'
+export class BaseCipher {
+  constructor (
+    public readonly algorithm: CipherAlgorithms,
+    public readonly key: Uint8Array
+  ) { }
+
+  async encrypt (payload: Uint8Array): Promise<Uint8Array> {
+    throw new Error('not implemented')
+  }
+
+  async decrypt (ciphertext: Uint8Array): Promise<Uint8Array> {
+    throw new Error('not implemented')
+  }
 }
+
+export type HashAlgorithms = 'sha256'
 
 export class BaseDigest {
   async digest (algorithm: HashAlgorithms, input: Uint8Array): Promise<Uint8Array> {

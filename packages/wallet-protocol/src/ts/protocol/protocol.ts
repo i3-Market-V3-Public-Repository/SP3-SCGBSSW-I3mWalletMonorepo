@@ -1,13 +1,23 @@
 import pbkdf2Hmac from 'pbkdf2-hmac'
 import * as objectSha from 'object-sha'
 
-import { Transport, ECDH, ConnectionString, random, constants, format, digest, bufferUtils } from '../internal'
+import {
+  Transport,
+  ECDH,
+  ConnectionString,
+  random,
+  constants,
+  format,
+  digest,
+  bufferUtils
+} from '../internal'
 import { EventEmitter } from './event-emitter'
 import { AuthData, ProtocolAuthData, ProtocolPKEData } from './state'
 import { MasterKey } from './master-key'
+import { Session } from './session'
 
-export class WalletProtocol extends EventEmitter {
-  constructor (protected executor: Transport) {
+export class WalletProtocol<T extends Transport = Transport> extends EventEmitter {
+  constructor (public transport: T) {
     super()
   }
 
@@ -91,26 +101,28 @@ export class WalletProtocol extends EventEmitter {
 
     // Compute master key
     const secret = await pbkdf2Hmac(secretWithContext, salt, 1, 32)
-    return {
-      a: aHash,
-      b: bHash,
-
-      secret: new Uint8Array(secret)
-    }
+    const masterKey = await MasterKey.fromSecret(
+      fullPkeData.sent.id,
+      fullPkeData.received.id,
+      fullAuthData.a.nx,
+      fullAuthData.b.nx,
+      new Uint8Array(secret)
+    )
+    return masterKey
   }
 
-  async run (): Promise<void> {
-    const _run = async (): Promise<void> => {
+  async run (): Promise<Session<T>> {
+    const _run = async (): Promise<Session<T>> => {
       // Initial protocol preparation
       const ecdh = new ECDH()
       await ecdh.generateKeys()
       const publicKey = await ecdh.getPublicKey()
 
       // Prepare public key exchange
-      const pkeData = await this.executor.prepare(this, publicKey)
+      const pkeData = await this.transport.prepare(this, publicKey)
 
       // Perform public key exchange
-      const fullPkeData = await this.executor.publicKeyExchange(this, pkeData)
+      const fullPkeData = await this.transport.publicKeyExchange(this, pkeData)
 
       // Prepare authenticate
       const r = await this.computeR(fullPkeData.a.rx, fullPkeData.b.rx)
@@ -119,29 +131,37 @@ export class WalletProtocol extends EventEmitter {
       const authData: AuthData = { r, nx, cx }
 
       // Perform authenticate
-      const fullAuthData = await this.executor.authentication(this, authData)
+      const fullAuthData = await this.transport.authentication(this, authData)
 
       // Verify authentication
       await this.validateAuthData(fullPkeData, fullAuthData)
 
       // Generate master key
       const masterKey = await this.computeMasterKey(ecdh, fullPkeData, fullAuthData)
+      const code = await this.transport.verification(this, masterKey)
+
+      //
+      const session = new Session(this.transport, masterKey, code)
       this.emit('masterKey', masterKey)
+
+      return session
     }
 
-    await _run().finally(() => {
-      this.executor.finish()
+    return await _run().finally(() => {
+      this.transport.finish(this)
     })
   }
 
   on (event: 'connString', listener: (connString: ConnectionString) => void): this
   on (event: 'masterKey', listener: (masterKey: MasterKey) => void): this
+  on (event: 'finished', listener: () => void): this
   on (event: string, listener: (...args: any[]) => void): this {
     return super.on(event, listener)
   }
 
   emit (event: 'connString', connString: ConnectionString): boolean
   emit (event: 'masterKey', masterKey: MasterKey): boolean
+  emit (event: 'finished'): boolean
   emit (event: string, ...args: any[]): boolean {
     return super.emit(event, ...args)
   }
