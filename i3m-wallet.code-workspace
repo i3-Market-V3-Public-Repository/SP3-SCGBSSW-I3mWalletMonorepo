@@ -16,7 +16,7 @@
 			"path": "packages/wallet-protocol"
 		},
 		{
-			"path": "packages/wallet-protocol-modal"
+			"path": "packages/wallet-protocol-utils"
 		},
 		{
 			"path": "packages/wallet-desktop"
