@@ -1,226 +1,204 @@
 # @i3-market/non-repudiation-proofs - v0.9.1
 
-My module description. Please update with your module data.
-
-**`remarks`**
-This module runs perfectly in node.js and browsers
+i3-Market implementation of the non-repudiation proofs of a data exchange
 
 ## Table of contents
 
+### Classes
+
+- [NonRepudiationDest](classes/NonRepudiationDest.md)
+- [NonRepudiationOrig](classes/NonRepudiationOrig.md)
+
 ### Interfaces
 
-- [PoO](interfaces/PoO.md)
-- [PoR](interfaces/PoR.md)
-- [account](interfaces/account.md)
+- [CompactDecryptResult](interfaces/CompactDecryptResult.md)
+- [DataExchange](interfaces/DataExchange.md)
+- [DataExchangeInit](interfaces/DataExchangeInit.md)
+- [DateTolerance](interfaces/DateTolerance.md)
+- [JWK](interfaces/JWK.md)
+- [JWTVerifyResult](interfaces/JWTVerifyResult.md)
+- [JwkPair](interfaces/JwkPair.md)
+- [PoOPayload](interfaces/PoOPayload.md)
+- [PoPPayload](interfaces/PoPPayload.md)
+- [PoRPayload](interfaces/PoRPayload.md)
+
+### Type aliases
+
+- [ProofInputPayload](API.md#proofinputpayload)
+- [ProofPayload](API.md#proofpayload)
 
 ### Variables
 
+- [ENC\_ALG](API.md#enc_alg)
+- [HASH\_ALG](API.md#hash_alg)
 - [SIGNING\_ALG](API.md#signing_alg)
 
 ### Functions
 
-- [createBlockchainProof](API.md#createblockchainproof)
-- [createJwk](API.md#createjwk)
-- [createPoO](API.md#createpoo)
-- [createPoR](API.md#createpor)
-- [decodePoo](API.md#decodepoo)
-- [decodePor](API.md#decodepor)
-- [decryptCipherblock](API.md#decryptcipherblock)
+- [createProof](API.md#createproof)
+- [jweDecrypt](API.md#jwedecrypt)
+- [jweEncrypt](API.md#jweencrypt)
+- [oneTimeSecret](API.md#onetimesecret)
 - [sha](API.md#sha)
-- [signProof](API.md#signproof)
-- [validateCipherblock](API.md#validatecipherblock)
-- [validatePoO](API.md#validatepoo)
-- [validatePoP](API.md#validatepop)
-- [validatePoR](API.md#validatepor)
+- [verifyKeyPair](API.md#verifykeypair)
+- [verifyProof](API.md#verifyproof)
+
+## Type aliases
+
+### ProofInputPayload
+
+Ƭ **ProofInputPayload**: [`PoOPayload`](interfaces/PoOPayload.md) \| [`PoRPayload`](interfaces/PoRPayload.md) \| [`PoPPayload`](interfaces/PoPPayload.md)
+
+#### Defined in
+
+src/ts/types.ts:58
+
+___
+
+### ProofPayload
+
+Ƭ **ProofPayload**: [`ProofInputPayload`](API.md#proofinputpayload) & { `iat`: `number`  }
+
+#### Defined in
+
+src/ts/types.ts:60
 
 ## Variables
 
-### SIGNING\_ALG
+### ENC\_ALG
 
-• **SIGNING\_ALG**: ``"ES256"``
+• **ENC\_ALG**: ``"A128GCM"`` \| ``"A192GCM"`` \| ``"A256GCM"`` = `'A256GCM'`
 
 #### Defined in
 
-[createProofs.ts:6](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L6)
+src/ts/constants.ts:3
+
+___
+
+### HASH\_ALG
+
+• **HASH\_ALG**: ``"SHA-256"``
+
+#### Defined in
+
+src/ts/constants.ts:1
+
+___
+
+### SIGNING\_ALG
+
+• **SIGNING\_ALG**: ``"RS256"``
+
+#### Defined in
+
+src/ts/constants.ts:2
 
 ## Functions
 
-### createBlockchainProof
+### createProof
 
-▸ `Const` **createBlockchainProof**(`publicKey`, `poO`, `poR`, `jwk`): `Promise`<[`account`](interfaces/account.md)\>
+▸ **createProof**(`payload`, `privateJwk`): `Promise`<`string`\>
 
-Prepare block to be send to the Backplain API
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `poO` | `string` |
-| `poR` | `string` |
-| `jwk` | `JWK` |
-
-#### Returns
-
-`Promise`<[`account`](interfaces/account.md)\>
-
-#### Defined in
-
-[createProofs.ts:120](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L120)
-
-___
-
-### createJwk
-
-▸ `Const` **createJwk**(): `Promise`<`JWK`\>
-
-Create a random (high entropy) symmetric JWK secret
-
-#### Returns
-
-`Promise`<`JWK`\>
-
-a promise that resolves to a JWK
-
-#### Defined in
-
-[createProofs.ts:60](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L60)
-
-___
-
-### createPoO
-
-▸ `Const` **createPoO**(`privateKey`, `block`, `providerId`, `consumerId`, `exchangeId`, `blockId`, `jwk`): `Promise`<{ `cipherblock`: `string` ; `poO`: `string`  }\>
-
-Create Proof of Origin and sign with Provider private key
+Creates a non-repudiable proof for a given data exchange
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `privateKey` | `KeyLike` | private key of the signer/issuer |
-| `block` | `string` \| `ArrayBufferLike` | the blocks asdfsdfsd |
-| `providerId` | `string` |  |
-| `consumerId` | `string` |  |
-| `exchangeId` | `number` |  |
-| `blockId` | `number` |  |
-| `jwk` | `JWK` |  |
-
-#### Returns
-
-`Promise`<{ `cipherblock`: `string` ; `poO`: `string`  }\>
-
-#### Defined in
-
-[createProofs.ts:23](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L23)
-
-___
-
-### createPoR
-
-▸ `Const` **createPoR**(`privateKey`, `poO`, `providerId`, `consumerId`, `exchangeId`): `Promise`<`string`\>
-
-Create Proof of Receipt and sign with Consumer private key
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `privateKey` | `KeyLike` |
-| `poO` | `string` |
-| `providerId` | `string` |
-| `consumerId` | `string` |
-| `exchangeId` | `number` |
+| `payload` | [`ProofInputPayload`](API.md#proofinputpayload) | it must contain a 'dataExchange' the issuer 'iss' (either point to the origin 'orig' or the destination 'dest' of the data exchange) of the proof and any specific proof key-values |
+| `privateJwk` | [`JWK`](interfaces/JWK.md) | The private key in JWK that will sign the proof |
 
 #### Returns
 
 `Promise`<`string`\>
 
+a proof as a compact JWS formatted JWT string
+
 #### Defined in
 
-[createProofs.ts:98](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L98)
+src/ts/createProof.ts:14
 
 ___
 
-### decodePoo
+### jweDecrypt
 
-▸ `Const` **decodePoo**(`publicKey`, `poO`): `Promise`<[`PoO`](interfaces/PoO.md)\>
+▸ **jweDecrypt**(`jwe`, `secret`): `Promise`<[`CompactDecryptResult`](interfaces/CompactDecryptResult.md)\>
 
-Decode Proof of Origin with Provider public key
+Decrypts jwe
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `poO` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `jwe` | `string` | a JWE |
+| `secret` | [`JWK`](interfaces/JWK.md) | a JWK with the secret to decrypt this jwe |
 
 #### Returns
 
-`Promise`<[`PoO`](interfaces/PoO.md)\>
+`Promise`<[`CompactDecryptResult`](interfaces/CompactDecryptResult.md)\>
+
+the plaintext
 
 #### Defined in
 
-[validateProofs.ts:54](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L54)
+src/ts/jwe.ts:29
 
 ___
 
-### decodePor
+### jweEncrypt
 
-▸ `Const` **decodePor**(`publicKey`, `poR`): `Promise`<[`PoR`](interfaces/PoR.md)\>
+▸ **jweEncrypt**(`exchangeId`, `block`, `secret`): `Promise`<`string`\>
 
-Decode Proof of Reception with Consumer public key
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `poR` | `string` |
-
-#### Returns
-
-`Promise`<[`PoR`](interfaces/PoR.md)\>
-
-#### Defined in
-
-[validateProofs.ts:27](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L27)
-
-___
-
-### decryptCipherblock
-
-▸ `Const` **decryptCipherblock**(`chiperblock`, `jwk`): `Promise`<`string`\>
-
-Decrypt the cipherblock received
+Encrypts block to JWE
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `chiperblock` | `string` |
-| `jwk` | `JWK` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `exchangeId` | `string` | the id of the data exchange |
+| `block` | `Uint8Array` | the actual block of data |
+| `secret` | [`JWK`](interfaces/JWK.md) | a one-time secret for encrypting this block |
 
 #### Returns
 
 `Promise`<`string`\>
 
+a Compact JWE
+
 #### Defined in
 
-[validateProofs.ts:90](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L90)
+src/ts/jwe.ts:15
+
+___
+
+### oneTimeSecret
+
+▸ **oneTimeSecret**(): `Promise`<[`JWK`](interfaces/JWK.md)\>
+
+Create a random (high entropy) symmetric JWK secret for AES-256-GCM
+
+#### Returns
+
+`Promise`<[`JWK`](interfaces/JWK.md)\>
+
+a promise that resolves to a JWK
+
+#### Defined in
+
+src/ts/oneTimeSecret.ts:10
 
 ___
 
 ### sha
 
-▸ `Const` **sha**(`input`, `algorithm?`): `Promise`<`string`\>
+▸ **sha**(`input`, `algorithm?`): `Promise`<`string`\>
 
 #### Parameters
 
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `input` | `string` \| `Uint8Array` | `undefined` |
-| `algorithm` | `string` | `'SHA-256'` |
+| `algorithm` | `string` | `HASH_ALG` |
 
 #### Returns
 
@@ -228,126 +206,53 @@ ___
 
 #### Defined in
 
-[sha.ts:1](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/sha.ts#L1)
+[src/ts/sha.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/aa9b704/src/ts/sha.ts#L3)
 
 ___
 
-### signProof
+### verifyKeyPair
 
-▸ `Const` **signProof**(`privateKey`, `proof`): `Promise`<`string`\>
-
-Sign a proof with private key
+▸ **verifyKeyPair**(`pubJWK`, `privJWK`, `alg?`): `Promise`<`void`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `privateKey` | `KeyLike` |
-| `proof` | `any` |
+| `pubJWK` | [`JWK`](interfaces/JWK.md) |
+| `privJWK` | [`JWK`](interfaces/JWK.md) |
+| `alg?` | `string` |
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<`void`\>
 
 #### Defined in
 
-[createProofs.ts:86](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/createProofs.ts#L86)
+src/ts/verifyKeyPair.ts:5
 
 ___
 
-### validateCipherblock
+### verifyProof
 
-▸ `Const` **validateCipherblock**(`publicKey`, `chiperblock`, `jwk`, `poO`): `Promise`<`boolean`\>
+▸ **verifyProof**(`proof`, `publicJwk`, `expectedPayloadClaims`, `dateTolerance?`): `Promise`<[`JWTVerifyResult`](interfaces/JWTVerifyResult.md)\>
 
-Validate the cipherblock
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `chiperblock` | `string` |
-| `jwk` | `JWK` |
-| `poO` | [`PoO`](interfaces/PoO.md) |
-
-#### Returns
-
-`Promise`<`boolean`\>
-
-#### Defined in
-
-[validateProofs.ts:101](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L101)
-
-___
-
-### validatePoO
-
-▸ `Const` **validatePoO**(`publicKey`, `poO`, `cipherblock`): `Promise`<`boolean`\>
-
-Validate Proof or Origin using the Consumer Public Key
+Verify a proof
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `poO` | `string` |
-| `cipherblock` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `proof` | `string` | a non-repudiable proof in Compact JWS formatted JWT string |
+| `publicJwk` | [`JWK`](interfaces/JWK.md) | the publicKey as a JWK to use for verifying the signature. If MUST match either orig or dest (the one pointed on the iss field) |
+| `expectedPayloadClaims` | [`ProofInputPayload`](API.md#proofinputpayload) | The expected values of the proof's payload claims. An example could be: {   proofType: 'PoO',   iss: 'orig',   dateExchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
+| `dateTolerance?` | [`DateTolerance`](interfaces/DateTolerance.md) | specifies a time window to accept the proof. An example could be {   currentDate: new Date('2021-10-17T03:24:00'), // Date to use when comparing NumericDate claims, defaults to new Date().   clockTolerance: 10  // string\|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours") } |
 
 #### Returns
 
-`Promise`<`boolean`\>
+`Promise`<[`JWTVerifyResult`](interfaces/JWTVerifyResult.md)\>
+
+The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-[validateProofs.ts:38](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L38)
-
-___
-
-### validatePoP
-
-▸ `Const` **validatePoP**(`publicKeyBackplain`, `publicKeyProvider`, `poP`, `jwk`, `poO`): `Promise`<`boolean`\>
-
-Validate Proof of Publication using the Backplain Public Key
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `publicKeyBackplain` | `KeyLike` |
-| `publicKeyProvider` | `KeyLike` |
-| `poP` | `string` |
-| `jwk` | `JWK` |
-| `poO` | `string` |
-
-#### Returns
-
-`Promise`<`boolean`\>
-
-#### Defined in
-
-[validateProofs.ts:65](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L65)
-
-___
-
-### validatePoR
-
-▸ `Const` **validatePoR**(`publicKey`, `poR`, `poO`): `Promise`<`boolean`\>
-
-Validate Proof or Request using the Provider Public Key
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `publicKey` | `KeyLike` |
-| `poR` | `string` |
-| `poO` | `string` |
-
-#### Returns
-
-`Promise`<`boolean`\>
-
-#### Defined in
-
-[validateProofs.ts:11](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/a3055d8/src/ts/validateProofs.ts#L11)
+src/ts/verifyProof.ts:36

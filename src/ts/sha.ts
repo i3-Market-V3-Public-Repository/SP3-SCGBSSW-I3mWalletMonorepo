@@ -1,4 +1,6 @@
-const sha = async function (input: string|Uint8Array, algorithm = 'SHA-256'): Promise<string> {
+import { HASH_ALG } from './constants'
+
+export async function sha (input: string|Uint8Array, algorithm = HASH_ALG): Promise<string> {
   const algorithms = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512']
   if (!algorithms.includes(algorithm)) {
     throw new RangeError(`Valid hash algorith values are any of ${JSON.stringify(algorithms)}`)
@@ -20,5 +22,3 @@ const sha = async function (input: string|Uint8Array, algorithm = 'SHA-256'): Pr
   }
   return digest
 }
-export { sha }
-export default sha

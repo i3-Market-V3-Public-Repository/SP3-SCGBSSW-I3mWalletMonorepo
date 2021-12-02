@@ -1,6 +1,145 @@
-import { compactVerify, importJWK, compactDecrypt, CompactEncrypt, generateSecret, exportJWK, calculateJwkThumbprint, CompactSign } from 'jose';
+import { importJWK, GeneralSign, generalVerify, SignJWT, jwtVerify, CompactEncrypt, compactDecrypt, generateSecret, exportJWK, calculateJwkThumbprint } from 'jose';
+import { randBytes } from 'bigint-crypto-utils';
+import { bufToHex } from 'bigint-conversion';
+import { hashable } from 'object-sha';
 
-const sha = async function (input, algorithm = 'SHA-256') {
+async function verifyKeyPair(pubJWK, privJWK, alg) {
+    const pubKey = await importJWK(pubJWK, alg);
+    const privKey = await importJWK(privJWK, alg);
+    const nonce = await randBytes(16);
+    const jws = await new GeneralSign(nonce)
+        .addSignature(privKey)
+        .setProtectedHeader({ alg: privJWK.alg })
+        .sign();
+    const { payload } = await generalVerify(jws, pubKey);
+    if (bufToHex(payload) !== bufToHex(nonce)) {
+        throw new Error(`verified nonce ${bufToHex(payload)} does not meet the one challenged ${bufToHex(nonce)}`);
+    }
+}
+
+/**
+ * Creates a non-repudiable proof for a given data exchange
+ * @param issuer - if the issuer of the proof is the origin 'orig' or the destination 'dest' of the data exchange
+ * @param payload - it must contain a 'dataExchange' the issuer 'iss' (either point to the origin 'orig' or the destination 'dest' of the data exchange) of the proof and any specific proof key-values
+ * @param privateJwk - The private key in JWK that will sign the proof
+ * @returns a proof as a compact JWS formatted JWT string
+ */
+async function createProof(payload, privateJwk) {
+    // Check that that the privateKey is the complement to the public key of the issuer
+    const publicJwk = JSON.parse(payload.dataExchange[payload.iss]);
+    await verifyKeyPair(publicJwk, privateJwk); // if verification fails it throws an error and the following is not executed
+    const privateKey = await importJWK(privateJwk);
+    const alg = privateJwk.alg;
+    if (alg === undefined) {
+        throw new Error('Private key does not have the alg property:\n' + JSON.stringify(privateJwk, undefined, 2));
+    }
+    return await new SignJWT(payload)
+        .setProtectedHeader({ alg })
+        .setIssuedAt()
+        .sign(privateKey);
+}
+
+/**
+ * Verify a proof
+ * @param proof - a non-repudiable proof in Compact JWS formatted JWT string
+ *
+ * @param publicJwk - the publicKey as a JWK to use for verifying the signature. If MUST match either orig or dest (the one pointed on the iss field)
+ *
+ * @param expectedPayloadClaims - The expected values of the proof's payload claims. An example could be:
+ * {
+ *   proofType: 'PoO',
+ *   iss: 'orig',
+ *   dateExchange: {
+ *     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+ *     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)
+ *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
+ *     hash_alg: 'SHA-256',
+ *     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding
+ *     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding
+ *     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding
+ *   }
+ * }
+ *
+ * @param dateTolerance - specifies a time window to accept the proof. An example could be
+ * {
+ *   currentDate: new Date('2021-10-17T03:24:00'), // Date to use when comparing NumericDate claims, defaults to new Date().
+ *   clockTolerance: 10  // string|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours")
+ * }
+ *
+ * @returns The JWT protected header and payload if the proof is validated
+ */
+async function verifyProof(proof, publicJwk, expectedPayloadClaims, dateTolerance) {
+    const pubKey = await importJWK(publicJwk);
+    const verification = await jwtVerify(proof, pubKey, dateTolerance);
+    const payload = verification.payload;
+    // Check that that the publicKey is the public key of the issuer
+    const issuer = payload.dataExchange[payload.iss];
+    if (hashable(publicJwk) !== hashable(JSON.parse(issuer))) {
+        throw new Error(`The proof is issued by ${issuer} instead of ${JSON.stringify(publicJwk)}`);
+    }
+    for (const key in expectedPayloadClaims) {
+        if (payload[key] === undefined)
+            throw new Error(`Expected key '${key}' not found in proof`);
+        if (key === 'dataExchange') {
+            const expectedDataExchange = expectedPayloadClaims.dataExchange;
+            const dataExchange = payload.dataExchange;
+            checkDataExchange(dataExchange, expectedDataExchange);
+        }
+        else {
+            if (hashable(expectedPayloadClaims[key]) !== hashable(payload[key])) {
+                throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`);
+            }
+        }
+    }
+    return (verification);
+}
+function checkDataExchange(dataExchange, expectedDataExchange) {
+    // First, let us check that the dataExchange is complete
+    const claims = ['id', 'orig', 'dest', 'hashAlg', 'cipherblockDgst', 'blockCommitment', 'blockCommitment', 'secretCommitment', 'schema'];
+    for (const claim of claims) {
+        if (claim !== 'schema' && (dataExchange[claim] === undefined || dataExchange[claim] === '')) {
+            throw new Error(`${claim} is missing on dataExchange.\ndataExchange: ${JSON.stringify(dataExchange, undefined, 2)}`);
+        }
+    }
+    // And now let's check the expected values
+    for (const key in expectedDataExchange) {
+        if (hashable(expectedDataExchange[key]) !== hashable(dataExchange[key])) {
+            throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key], undefined, 2)}`);
+        }
+    }
+}
+
+const HASH_ALG = 'SHA-256'; // 'SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'
+const SIGNING_ALG = 'RS256';
+const ENC_ALG = 'A256GCM';
+
+/**
+ * Encrypts block to JWE
+ *
+ * @param exchangeId - the id of the data exchange
+ * @param block - the actual block of data
+ * @param secret - a one-time secret for encrypting this block
+ * @returns a Compact JWE
+ */
+async function jweEncrypt(exchangeId, block, secret) {
+    // const input: Uint8Array = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
+    const key = await importJWK(secret);
+    return await new CompactEncrypt(block)
+        .setProtectedHeader({ alg: 'dir', enc: ENC_ALG, exchangeId, kid: secret.kid })
+        .encrypt(key);
+}
+/**
+ * Decrypts jwe
+ * @param jwe - a JWE
+ * @param secret - a JWK with the secret to decrypt this jwe
+ * @returns the plaintext
+ */
+async function jweDecrypt(jwe, secret) {
+    const key = await importJWK(secret);
+    return await compactDecrypt(jwe, key, { contentEncryptionAlgorithms: [ENC_ALG] });
+}
+
+async function sha(input, algorithm = HASH_ALG) {
     const algorithms = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
     if (!algorithms.includes(algorithm)) {
         throw new RangeError(`Valid hash algorith values are any of ${JSON.stringify(algorithms)}`);
@@ -13,219 +152,193 @@ const sha = async function (input, algorithm = 'SHA-256') {
         digest = require('crypto').createHash(nodeAlg).update(Buffer.from(hashInput)).digest('hex'); // eslint-disable-line
     }
     return digest;
-};
+}
 
-// TODO decide a fixed delay for the protocol
-const IAT_DELAY = 5000;
 /**
- * Validate Proof or Request using the Provider Public Key
- */
-const validatePoR = async (publicKey, poR, poO) => {
-    const poRpayload = await decodePor(publicKey, poR);
-    const hashPooDgst = await sha(poO);
-    if (hashPooDgst !== poRpayload.exchange.poo_dgst) {
-        throw new Error('the hashed proof of origin received does not correspond to the poo_dgst parameter in the proof of origin');
-    }
-    else if (Date.now() - poRpayload.iat > IAT_DELAY) {
-        throw new Error('timestamp error');
-    }
-    else {
-        return true;
-    }
-};
-/**
- * Decode Proof of Reception with Consumer public key
- */
-const decodePor = async (publicKey, poR) => {
-    const { payload } = await compactVerify(poR, publicKey).catch((e) => {
-        throw new Error(`PoR: ${String(e)}`);
-    });
-    const decodedPoOPayload = JSON.parse(new TextDecoder().decode(payload).toString());
-    return decodedPoOPayload;
-};
-/**
- * Validate Proof or Origin using the Consumer Public Key
- */
-const validatePoO = async (publicKey, poO, cipherblock) => {
-    const poOpayload = await decodePoo(publicKey, poO);
-    const hashedCipherBlock = await sha(cipherblock);
-    if (poOpayload.exchange.cipherblock_dgst !== hashedCipherBlock) {
-        throw new Error('the cipherblock_dgst parameter in the proof of origin does not correspond to hash of the cipherblock received by the provider');
-    }
-    else if (Date.now() - poOpayload.iat > IAT_DELAY) {
-        throw new Error('timestamp error');
-    }
-    else {
-        return true;
-    }
-};
-/**
- * Decode Proof of Origin with Provider public key
- */
-const decodePoo = async (publicKey, poO) => {
-    const { payload } = await compactVerify(poO, publicKey).catch((e) => {
-        throw new Error('PoO ' + String(e));
-    });
-    const decodedPoOPayload = JSON.parse(new TextDecoder().decode(payload).toString());
-    return decodedPoOPayload;
-};
-/**
- * Validate Proof of Publication using the Backplain Public Key
- */
-const validatePoP = (publicKeyBackplain, publicKeyProvider, poP, jwk, poO) => {
-    return new Promise((resolve, reject) => {
-        compactVerify(poP, publicKeyBackplain).catch((e) => {
-            reject(new Error('PoP ' + String(e)));
-        });
-        decodePoo(publicKeyProvider, poO)
-            .then((poOPayload) => {
-            sha(JSON.stringify(jwk))
-                .then(hashedJwk => {
-                if (poOPayload.exchange.key_commitment === hashedJwk) {
-                    resolve(true);
-                }
-                else {
-                    reject(new Error('hashed key not correspond to poO key_commitment parameter'));
-                }
-            })
-                .catch(reason => reject(reason));
-        })
-            .catch(reason => reject(reason));
-    });
-};
-/**
- * Decrypt the cipherblock received
- */
-const decryptCipherblock = async (chiperblock, jwk) => {
-    const decoder = new TextDecoder();
-    const key = await importJWK(jwk, 'A256GCM'); // TODO: ENC_ALG
-    const { plaintext } = await compactDecrypt(chiperblock, key);
-    return decoder.decode(plaintext);
-};
-/**
- * Validate the cipherblock
- */
-const validateCipherblock = async (publicKey, chiperblock, jwk, poO) => {
-    const decodedCipherBlock = await decryptCipherblock(chiperblock, jwk);
-    const hashedDecodedCipherBlock = await sha(decodedCipherBlock);
-    if (hashedDecodedCipherBlock === poO.exchange.block_commitment) {
-        // TODO check also block_description
-        return true;
-    }
-    else {
-        throw new Error('hashed CipherBlock not correspond to block_commitment parameter included in the proof of origin');
-    }
-};
-
-const SIGNING_ALG = 'ES256';
-/**
- *
- * Create Proof of Origin and sign with Provider private key
- *
- * @param privateKey - private key of the signer/issuer
- * @param block - the blocks asdfsdfsd
- * @param providerId
- * @param consumerId
- * @param exchangeId
- * @param blockId
- * @param jwk
- * @returns
- */
-const createPoO = async (privateKey, block, providerId, consumerId, exchangeId, blockId, jwk) => {
-    const input = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block);
-    const key = await importJWK(jwk);
-    const cipherblock = await new CompactEncrypt(input)
-        .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
-        .encrypt(key);
-    const hashCipherblock = await sha(cipherblock);
-    const hashBlock = await sha(input);
-    const hashKey = await sha(JSON.stringify(jwk));
-    const proof = {
-        iss: providerId,
-        sub: consumerId,
-        iat: Date.now(),
-        exchange: {
-            id: exchangeId,
-            orig: providerId,
-            dest: consumerId,
-            block_id: blockId,
-            block_desc: 'description',
-            hash_alg: 'sha256',
-            cipherblock_dgst: hashCipherblock,
-            block_commitment: hashBlock,
-            key_commitment: hashKey
-        }
-    };
-    const signedProof = await signProof(privateKey, proof);
-    return { cipherblock: cipherblock, poO: signedProof };
-};
-/**
- * Create a random (high entropy) symmetric JWK secret
+ * Create a random (high entropy) symmetric JWK secret for AES-256-GCM
  *
  * @returns a promise that resolves to a JWK
  */
-const createJwk = async () => {
-    let key;
-    {
-        // TODO: get algo from ENC_ALG
-        key = await generateSecret('A256GCM');
-    }
+async function oneTimeSecret() {
+    const key = await generateSecret(ENC_ALG, { extractable: true });
     const jwk = await exportJWK(key);
     const thumbprint = await calculateJwkThumbprint(jwk);
     jwk.kid = thumbprint;
-    jwk.alg = 'A256GCM';
+    jwk.alg = ENC_ALG;
     return jwk;
-};
-/**
- * Sign a proof with private key
- */
-const signProof = async (privateKey, proof) => {
-    const jwt = new TextEncoder().encode(JSON.stringify(proof));
-    const jws = await new CompactSign(jwt)
-        .setProtectedHeader({ alg: SIGNING_ALG })
-        .sign(privateKey);
-    return jws;
-};
-/**
- * Create Proof of Receipt and sign with Consumer private key
- */
-const createPoR = async (privateKey, poO, providerId, consumerId, exchangeId) => {
-    const hashPooDgst = await sha(poO);
-    const proof = {
-        iss: providerId,
-        sub: consumerId,
-        iat: Date.now(),
-        exchange: {
-            poo_dgst: hashPooDgst,
-            hash_alg: 'sha256',
-            exchangeId: exchangeId
-        }
-    };
-    const signedProof = await signProof(privateKey, proof);
-    return signedProof;
-};
-/**
- *
- * Prepare block to be send to the Backplain API
- */
-const createBlockchainProof = async (publicKey, poO, poR, jwk) => {
-    const decodedPoO = await decodePoo(publicKey, poO);
-    const privateStorage = {
-        availability: 'privateStorage',
-        permissions: {
-            view: [decodedPoO.exchange.orig, decodedPoO.exchange.dest]
-        },
-        type: 'dict',
-        id: decodedPoO.exchange.id,
-        content: { [decodedPoO.exchange.block_id]: { poO: poO, poR: poR } }
-    };
-    const blockchain = {
-        availability: 'blockchain',
-        type: 'jwk',
-        content: { [jwk.kid]: jwk } // eslint-disable-line
-    };
-    return { privateStorage, blockchain };
-};
+}
 
-export { SIGNING_ALG, createBlockchainProof, createJwk, createPoO, createPoR, decodePoo, decodePor, decryptCipherblock, sha, signProof, validateCipherblock, validatePoO, validatePoP, validatePoR };
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL3NoYS50cyIsIi4uLy4uL3NyYy90cy92YWxpZGF0ZVByb29mcy50cyIsIi4uLy4uL3NyYy90cy9jcmVhdGVQcm9vZnMudHMiXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O01BQU0sR0FBRyxHQUFHLGdCQUFnQixLQUF3QixFQUFFLFNBQVMsR0FBRyxTQUFTO0lBQ3pFLE1BQU0sVUFBVSxHQUFHLENBQUMsT0FBTyxFQUFFLFNBQVMsRUFBRSxTQUFTLEVBQUUsU0FBUyxDQUFDLENBQUE7SUFDN0QsSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLENBQUMsU0FBUyxDQUFDLEVBQUU7UUFDbkMsTUFBTSxJQUFJLFVBQVUsQ0FBQyx5Q0FBeUMsSUFBSSxDQUFDLFNBQVMsQ0FBQyxVQUFVLENBQUMsRUFBRSxDQUFDLENBQUE7S0FDNUY7SUFFRCxNQUFNLE9BQU8sR0FBRyxJQUFJLFdBQVcsRUFBRSxDQUFBO0lBQ2pDLE1BQU0sU0FBUyxHQUFHLENBQUMsT0FBTyxLQUFLLEtBQUssUUFBUSxJQUFJLE9BQU8sQ0FBQyxNQUFNLENBQUMsS0FBSyxDQUFDLENBQUMsTUFBTSxHQUFHLEtBQUssQ0FBQTtJQUVwRixJQUFJLE1BQU0sR0FBRyxFQUFFLENBQUE7SUFPUjtRQUNMLE1BQU0sT0FBTyxHQUFHLFNBQVMsQ0FBQyxXQUFXLEVBQUUsQ0FBQyxPQUFPLENBQUMsR0FBRyxFQUFFLEVBQUUsQ0FBQyxDQUFBO1FBQ3hELE1BQU0sR0FBRyxPQUFPLENBQUMsUUFBUSxDQUFDLENBQUMsVUFBVSxDQUFDLE9BQU8sQ0FBQyxDQUFDLE1BQU0sQ0FBQyxNQUFNLENBQUMsSUFBSSxDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDLEtBQUssQ0FBQyxDQUFBO0tBQzVGO0lBQ0QsT0FBTyxNQUFNLENBQUE7QUFDZjs7QUNqQkE7QUFDQSxNQUFNLFNBQVMsR0FBRyxJQUFJ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
+class NonRepudiationOrig {
+    constructor(dataExchangeId, jwkPairOrig, publicJwkDest, block, alg) {
+        this.jwkPairOrig = jwkPairOrig;
+        this.publicJwkDest = publicJwkDest;
+        if (alg !== undefined) {
+            this.jwkPairOrig.privateJwk.alg = alg;
+            this.jwkPairOrig.publicJwk.alg = alg;
+            this.publicJwkDest.alg = alg;
+        }
+        else if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
+            throw new TypeError('"alg" argument is required when "jwk.alg" is not present');
+        }
+        this.dataExchange = {
+            id: dataExchangeId,
+            orig: JSON.stringify(this.jwkPairOrig.publicJwk),
+            dest: JSON.stringify(this.publicJwkDest),
+            hashAlg: HASH_ALG
+        };
+        this.block = {
+            raw: block
+        };
+        this.checked = false;
+    }
+    async init() {
+        await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk);
+        this.block.secret = await oneTimeSecret();
+        const secretStr = JSON.stringify(this.block.secret);
+        this.block.jwe = await jweEncrypt(this.dataExchange.id, this.block.raw, this.block.secret);
+        this.dataExchange = {
+            ...this.dataExchange,
+            cipherblockDgst: await sha(this.block.jwe, this.dataExchange.hashAlg),
+            blockCommitment: await sha(this.block.raw, this.dataExchange.hashAlg),
+            secretCommitment: await sha(secretStr, this.dataExchange.hashAlg)
+        };
+        this.checked = true;
+    }
+    /**
+     * Creates the proof of origin (PoO) as a compact JWS for the block of data. Besides returning its value, it is also stored in this.block.poo
+     *
+     */
+    async generatePoO() {
+        this._checkInit();
+        const payload = {
+            proofType: 'PoO',
+            iss: 'orig',
+            dataExchange: this.dataExchange
+        };
+        this.block.poo = await createProof(payload, this.jwkPairOrig.privateJwk);
+        return this.block.poo;
+    }
+    async verifyPoR(por) {
+        this._checkInit();
+        if (this.block?.poo === undefined) {
+            throw new Error('Cannot verify a PoR if not even a PoO have been created');
+        }
+        const expectedPayloadClaims = {
+            proofType: 'PoR',
+            iss: 'dest',
+            dataExchange: this.dataExchange,
+            pooDgst: await sha(this.block.poo, this.dataExchange.hashAlg)
+        };
+        const verified = await verifyProof(por, this.publicJwkDest, expectedPayloadClaims);
+        this.block.por = por;
+        return verified;
+    }
+    async generatePoP(verificationCode) {
+        this._checkInit();
+        if (this.block?.por === undefined) {
+            throw new Error('Before computing a PoP, you have first to receive a verify a PoR');
+        }
+        const payload = {
+            proofType: 'PoP',
+            iss: 'orig',
+            dataExchange: this.dataExchange,
+            porDgst: await sha(this.block.por, this.dataExchange.hashAlg),
+            secret: JSON.stringify(this.block.secret),
+            verificationCode: verificationCode
+        };
+        this.block.pop = await createProof(payload, this.jwkPairOrig.privateJwk);
+        return this.block.pop;
+    }
+    _checkInit() {
+        if (!this.checked) {
+            throw new Error('NOT INITIALIZED. Before calling any other method, initialize this instance of NonRepudiationOrig calling async method init()');
+        }
+    }
+}
+
+class NonRepudiationDest {
+    constructor(dataExchangeId, jwkPairDest, publicJwkOrig) {
+        this.jwkPairDest = jwkPairDest;
+        this.publicJwkOrig = publicJwkOrig;
+        this.dataExchange = {
+            id: dataExchangeId,
+            orig: JSON.stringify(this.publicJwkOrig),
+            dest: JSON.stringify(this.jwkPairDest.publicJwk),
+            hashAlg: HASH_ALG
+        };
+        this.checked = false;
+    }
+    async init() {
+        await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk);
+        this.checked = true;
+    }
+    async verifyPoO(poo, cipherblock) {
+        this._checkInit();
+        const dataExchange = {
+            ...this.dataExchange,
+            cipherblockDgst: await sha(cipherblock, this.dataExchange.hashAlg)
+        };
+        const expectedPayloadClaims = {
+            proofType: 'PoO',
+            iss: 'orig',
+            dataExchange
+        };
+        const verified = await verifyProof(poo, this.publicJwkOrig, expectedPayloadClaims);
+        this.block = {
+            jwe: cipherblock,
+            poo: poo
+        };
+        this.dataExchange = verified.payload.dataExchange;
+        return verified;
+    }
+    /**
+     * Creates the proof of reception (PoR) as a compact JWS for the block of data. Besides returning its value, it is also stored in this.block.por
+     *
+     */
+    async generatePoR() {
+        this._checkInit();
+        if (this.block?.poo === undefined) {
+            throw new Error('Before computing a PoR, you have first to receive a valid cipherblock with a PoO and validate the PoO');
+        }
+        const payload = {
+            proofType: 'PoR',
+            iss: 'dest',
+            dataExchange: this.dataExchange,
+            pooDgst: await sha(this.block.poo)
+        };
+        this.block.por = await createProof(payload, this.jwkPairDest.privateJwk);
+        return this.block.por;
+    }
+    async verifyPoPAndDecrypt(pop, secret, verificationCode) {
+        this._checkInit();
+        if (this.block?.por === undefined) {
+            throw new Error('Cannot verify a PoP if not even a PoR have been created');
+        }
+        const decryptedBlock = (await jweDecrypt(this.block.jwe, JSON.parse(secret))).plaintext;
+        const decryptedDgst = await sha(decryptedBlock);
+        if (decryptedDgst !== this.dataExchange.blockCommitment) {
+            throw new Error('Decrypted block does not meet the committed one');
+        }
+        this.block.secret = JSON.parse(secret);
+        this.block.decrypted = decryptedBlock;
+        const expectedPayloadClaims = {
+            proofType: 'PoP',
+            iss: 'orig',
+            dataExchange: this.dataExchange,
+            porDgst: await sha(this.block.por),
+            secret,
+            verificationCode
+        };
+        const verified = await verifyProof(pop, this.publicJwkOrig, expectedPayloadClaims);
+        this.block.pop = pop;
+        return { verified, decryptedBlock };
+    }
+    _checkInit() {
+        if (!this.checked) {
+            throw new Error('NOT INITIALIZED. Before calling any other method, initialize this instance of NonRepudiationOrig calling async method init()');
+        }
+    }
+}
+
+export { ENC_ALG, HASH_ALG, NonRepudiationDest, NonRepudiationOrig, SIGNING_ALG, createProof, jweDecrypt, jweEncrypt, oneTimeSecret, sha, verifyKeyPair, verifyProof };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL3ZlcmlmeUtleVBhaXIudHMiLCIuLi8uLi9zcmMvdHMvY3JlYXRlUHJvb2YudHMiLCIuLi8uLi9zcmMvdHMvdmVyaWZ5UHJvb2YudHMiLCIuLi8uLi9zcmMvdHMvY29uc3RhbnRzLnRzIiwiLi4vLi4vc3JjL3RzL2p3ZS50cyIsIi4uLy4uL3NyYy90cy9zaGEudHMiLCIuLi8uLi9zcmMvdHMvb25lVGltZVNlY3JldC50cyIsIi4uLy4uL3NyYy90cy9Ob25SZXB1ZGlhdGlvbk9yaWcudHMiLCIuLi8uLi9zcmMvdHMvTm9uUmVwdWRpYXRpb25EZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpudWxsLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7OztBQUlPLGVBQWUsYUFBYSxDQUFFLE1BQVcsRUFBRSxPQUFZLEVBQUUsR0FBWTtJQUMxRSxNQUFNLE1BQU0sR0FBRyxNQUFNLFNBQVMsQ0FBQyxNQUFNLEVBQUUsR0FBRyxDQUFDLENBQUE7SUFDM0MsTUFBTSxPQUFPLEdBQUcsTUFBTSxTQUFTLENBQUMsT0FBTyxFQUFFLEdBQUcsQ0FBQyxDQUFBO0lBQzdDLE1BQU0sS0FBSyxHQUFHLE1BQU0sU0FBUyxDQUFDLEVBQUUsQ0FBQyxDQUFBO0lBQ2pDLE1BQU0sR0FBRyxHQUFHLE1BQU0sSUFBSSxXQUFXLENBQUMsS0FBSyxDQUFDO1NBQ3JDLFlBQVksQ0FBQyxPQUFPLENBQUM7U0FDckIsa0JBQWtCLENBQUMsRUFBRSxHQUFHLEVBQUUsT0FBTyxDQUFDLEdBQUcsRUFBRSxDQUFDO1NBQ3hDLElBQUksRUFBRSxDQUFBO0lBRVQsTUFBTSxFQUFFLE9BQU8sRUFBRSxHQUFHLE1BQU0sYUFBYSxDQUFDLEdBQUcsRUFBRSxNQUFNLENBQUMsQ0FBQTtJQUNwRCxJQUFJLFFBQVEsQ0FBQyxPQUFPLENBQUMsS0FBSyxRQUFRLENBQUMsS0FBSyxDQUFDLEVBQUU7UUFDekMsTUFBTSxJQUFJLEtBQUssQ0FBQyxr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

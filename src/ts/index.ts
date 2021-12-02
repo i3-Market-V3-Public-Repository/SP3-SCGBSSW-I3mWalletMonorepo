@@ -1,13 +1,16 @@
 /**
- * My module description. Please update with your module data.
- *
- * @remarks
- * This module runs perfectly in node.js and browsers
+ * i3-Market implementation of the non-repudiation proofs of a data exchange
  *
  * @packageDocumentation
  */
-
-export { SIGNING_ALG, createJwk, createPoO, signProof, createPoR, createBlockchainProof } from './createProofs'
-export { account, PoO, PoR } from './proofInterfaces'
-export { validatePoR, validatePoO, validatePoP, decryptCipherblock, validateCipherblock, decodePoo, decodePor } from './validateProofs'
-export { sha } from './sha'
+export * from './types'
+export * from './createProof'
+export * from './verifyProof'
+export * from './jwe'
+export * from './sha'
+export * from './constants'
+export * from './NonRepudiationOrig'
+export * from './NonRepudiationDest'
+export * from './oneTimeSecret'
+export * from './verifyKeyPair'
+export * from './verifyProof'
