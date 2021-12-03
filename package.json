@@ -107,6 +107,7 @@
   "dependencies": {
     "bigint-conversion": "^2.2.1",
     "bigint-crypto-utils": "^3.0.21",
+    "ethers": "^5.5.2",
     "jose": "^4.3.7",
     "object-sha": "^2.0.6"
   }

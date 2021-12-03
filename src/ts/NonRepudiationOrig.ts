@@ -1,12 +1,16 @@
+import { ethers } from 'ethers'
 import { JWK, JWTVerifyResult } from 'jose'
+
 import { jweEncrypt } from './jwe'
 import { HASH_ALG } from './constants'
 import { createProof } from './createProof'
 import { oneTimeSecret } from './oneTimeSecret'
-import { DataExchange, DataExchangeInit, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload } from './types'
+import { ContractConfig, DataExchange, DataExchangeInit, DltConfig, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
+
+import contractConfigDefault from '../besu/NonRepudiation'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -18,6 +22,8 @@ export class NonRepudiationOrig {
   jwkPairOrig: JwkPair
   publicJwkDest: JWK
   block: OrigBlock
+  dltConfig: DltConfig
+  dltContract: ethers.Contract
   checked: boolean
 
   /**
@@ -25,17 +31,13 @@ export class NonRepudiationOrig {
    * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
    * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
    * @param block - the block of data to transmit in this data exchange
-   * @param alg - the enc alg, if not already in the JWKs
+   * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, alg?: string) {
+  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig: DltConfig) {
     this.jwkPairOrig = jwkPairOrig
     this.publicJwkDest = publicJwkDest
-    if (alg !== undefined) {
-      this.jwkPairOrig.privateJwk.alg = alg
-      this.jwkPairOrig.publicJwk.alg = alg
-      this.publicJwkDest.alg = alg
-    } else if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
-      throw new TypeError('"alg" argument is required when "jwk.alg" is not present')
+    if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
+      throw new TypeError('"alg" argument is required, please add it to your JWKs first')
     }
 
     this.exchange = {
@@ -47,7 +49,25 @@ export class NonRepudiationOrig {
     this.block = {
       raw: block
     }
+
+    this.dltConfig = {
+      gasLimit: 12500000,
+      ...dltConfig
+    }
+    this.dltContract = _dltSetup(dltConfig)
+
     this.checked = false
+
+    function _dltSetup (dltConfig: DltConfig): ethers.Contract {
+      const contractConfig: ContractConfig = (dltConfig.contract === undefined) ? contractConfigDefault : dltConfig.contract
+      const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
+
+      /** TODO: it should be jwkPairDest.privateJwk */
+      const privKeyHex = '***REMOVED***'
+
+      const signer = new ethers.Wallet(privKeyHex, rpcProvider)
+      return new ethers.Contract(contractConfig.address, contractConfig.abi, signer)
+    }
   }
 
   /**
@@ -129,8 +149,16 @@ export class NonRepudiationOrig {
 
     /**
      * TO-DO: obtain verification code from the blockchain
+     * TO-DO: Pass secret to raw hex
      */
-    const verificationCode = 'verificationCode'
+    const secretHex = '1234567890'
+
+    const setRegistryTx = await this.dltContract.setRegistry(this.exchange.id, secretHex, { gasLimit: this.dltConfig.gasLimit })
+
+    await setRegistryTx.wait()
+
+    const address = await this.dltContract.signer.getAddress()
+    const verificationCode = await this.dltContract.registry(address, this.exchange.id)
 
     const payload: PoPPayload = {
       proofType: 'PoP',

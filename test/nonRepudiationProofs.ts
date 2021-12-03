@@ -6,6 +6,9 @@ describe('Non-repudiation protocol', function () {
 
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
+  const dltConfig: _pkg.DltConfig = {
+    rpcProviderUrl: '***REMOVED***'
+  }
 
   this.beforeAll(async () => {
     const block = new Uint8Array([0, 2, 0, 1, 0])
@@ -35,8 +38,8 @@ describe('Non-repudiation protocol', function () {
       }
     }
 
-    npProvider = new _pkg.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block)
-    npConsumer = new _pkg.NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk)
+    npProvider = new _pkg.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block, dltConfig)
+    npConsumer = new _pkg.NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk, dltConfig)
 
     await npProvider.init()
     await npConsumer.init()
@@ -234,7 +237,7 @@ describe('Non-repudiation protocol', function () {
 
   describe('Actions when not initialized', function () {
     it('npOrig should fail and throw error', async function () {
-      const npProv = new _pkg.NonRepudiationOrig('asfddsaf', npProvider.jwkPairOrig, npProvider.publicJwkDest, npProvider.block.raw, _pkg.SIGNING_ALG)
+      const npProv = new _pkg.NonRepudiationOrig('asfddsaf', npProvider.jwkPairOrig, npProvider.publicJwkDest, npProvider.block.raw, dltConfig)
       let err
       try {
         await npProv.generatePoO()
@@ -244,7 +247,7 @@ describe('Non-repudiation protocol', function () {
       chai.expect(err).to.not.be.undefined // eslint-disable-line
     })
     it('npDest should fail and throw error', async function () {
-      const npCons = new _pkg.NonRepudiationDest('asfddsaf', npConsumer.jwkPairDest, npConsumer.publicJwkOrig)
+      const npCons = new _pkg.NonRepudiationDest('asfddsaf', npConsumer.jwkPairDest, npConsumer.publicJwkOrig, dltConfig)
       let err
       try {
         await npCons.generatePoR()

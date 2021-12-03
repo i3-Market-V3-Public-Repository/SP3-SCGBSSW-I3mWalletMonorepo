@@ -1,11 +1,15 @@
+import { ethers } from 'ethers'
 import { JWK, JWTVerifyResult } from 'jose'
+
 import { jweDecrypt } from './jwe'
 import { HASH_ALG } from './constants'
 import { createProof } from './createProof'
-import { DataExchange, DataExchangeInit, DestBlock, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
+import { ContractConfig, DataExchange, DataExchangeInit, DestBlock, DltConfig, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
+
+import contractConfigDefault from '../besu/NonRepudiation'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -17,6 +21,8 @@ export class NonRepudiationDest {
   jwkPairDest: JwkPair
   publicJwkOrig: JWK
   block?: DestBlock
+  dltConfig: DltConfig
+  dltContract: ethers.Contract
   checked: boolean
 
   /**
@@ -24,8 +30,9 @@ export class NonRepudiationDest {
    * @param exchangeId - the id of this data exchange. It MUST be unique for the same origin and destination
    * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
    * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
+   * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK) {
+  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig: DltConfig) {
     this.jwkPairDest = jwkPairDest
     this.publicJwkOrig = publicJwkOrig
     this.exchange = {
@@ -34,7 +41,18 @@ export class NonRepudiationDest {
       dest: JSON.stringify(this.jwkPairDest.publicJwk),
       hashAlg: HASH_ALG
     }
+    this.dltConfig = {
+      gasLimit: 12500000,
+      ...dltConfig
+    }
+    this.dltContract = _dltSetup(dltConfig)
     this.checked = false
+
+    function _dltSetup (dltConfig: DltConfig): ethers.Contract {
+      const contractConfig: ContractConfig = (dltConfig.contract === undefined) ? contractConfigDefault : dltConfig.contract
+      const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
+      return new ethers.Contract(contractConfig.address, contractConfig.abi, rpcProvider)
+    }
   }
 
   /**
@@ -105,7 +123,6 @@ export class NonRepudiationDest {
    * Verifies a received Proof of Publication (PoP) with the received secret and verificationCode
    * @param pop - a PoP in compact JWS
    * @param secret - the JWK secret that was used to encrypt the block
-   * @param verificationCode - the verification code
    * @returns the verified payload and protected header
    */
   async verifyPoP (pop: string, secret: JWK): Promise<JWTVerifyResult> {
@@ -117,8 +134,16 @@ export class NonRepudiationDest {
 
     /**
      * TO-DO: obtain verification code from the blockchain
+     * TO-DO: Pass secret to raw hex
      */
-    const verificationCode = 'verificationCode'
+    const signerAddress = '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903'
+    const verificationCode: string = await new Promise((resolve, reject) => {
+      this.dltContract.on('Registration', (sender, dataExchangeId, secret) => {
+        if (sender === signerAddress) {
+          resolve((secret as ethers.BigNumber).toHexString())
+        }
+      })
+    })
 
     const expectedPayloadClaims: PoPPayload = {
       proofType: 'PoP',
