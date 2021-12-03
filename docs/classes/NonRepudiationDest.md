@@ -38,7 +38,7 @@
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:26
+[src/ts/NonRepudiationDest.ts:26](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L26)
 
 ## Properties
 
@@ -48,7 +48,7 @@ src/ts/NonRepudiationDest.ts:26
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:23
+[src/ts/NonRepudiationDest.ts:23](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L23)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:24
+[src/ts/NonRepudiationDest.ts:24](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L24)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:20
+[src/ts/NonRepudiationDest.ts:20](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L20)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:21
+[src/ts/NonRepudiationDest.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L21)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:22
+[src/ts/NonRepudiationDest.ts:22](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L22)
 
 ## Methods
 
@@ -102,7 +102,7 @@ src/ts/NonRepudiationDest.ts:22
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:117
+[src/ts/NonRepudiationDest.ts:117](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L117)
 
 ___
 
@@ -118,7 +118,7 @@ Creates the proof of reception (PoR) as a compact JWS for the block of data. Bes
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:71
+[src/ts/NonRepudiationDest.ts:71](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L71)
 
 ___
 
@@ -132,7 +132,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:38
+[src/ts/NonRepudiationDest.ts:38](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L38)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:43
+[src/ts/NonRepudiationDest.ts:43](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L43)
 
 ___
 
@@ -175,4 +175,4 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationDest.ts:88
+[src/ts/NonRepudiationDest.ts:88](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationDest.ts#L88)

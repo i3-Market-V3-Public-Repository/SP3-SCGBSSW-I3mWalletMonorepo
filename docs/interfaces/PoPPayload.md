@@ -49,7 +49,7 @@ ProofCommonPayload.dataExchange
 
 #### Defined in
 
-src/ts/types.ts:36
+[src/ts/types.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L36)
 
 ___
 
@@ -91,7 +91,7 @@ ProofCommonPayload.iss
 
 #### Defined in
 
-src/ts/types.ts:51
+[src/ts/types.ts:51](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L51)
 
 ___
 
@@ -129,7 +129,7 @@ ___
 
 #### Defined in
 
-src/ts/types.ts:53
+[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L53)
 
 ___
 
@@ -139,7 +139,7 @@ ___
 
 #### Defined in
 
-src/ts/types.ts:52
+[src/ts/types.ts:52](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L52)
 
 ___
 
@@ -149,7 +149,7 @@ ___
 
 #### Defined in
 
-src/ts/types.ts:54
+[src/ts/types.ts:54](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L54)
 
 ___
 
@@ -173,4 +173,4 @@ ___
 
 #### Defined in
 
-src/ts/types.ts:55
+[src/ts/types.ts:55](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L55)

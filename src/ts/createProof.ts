@@ -19,10 +19,7 @@ export async function createProof (payload: ProofInputPayload, privateJwk: JWK):
 
   const privateKey = await importJWK(privateJwk)
 
-  const alg = privateJwk.alg
-  if (alg === undefined) {
-    throw new Error('Private key does not have the alg property:\n' + JSON.stringify(privateJwk, undefined, 2))
-  }
+  const alg = privateJwk.alg as string // if alg wer undefined the previous import throws error
 
   return await new SignJWT(payload)
     .setProtectedHeader({ alg })

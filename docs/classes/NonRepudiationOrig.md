@@ -40,7 +40,7 @@
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:27
+[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L27)
 
 ## Properties
 
@@ -50,7 +50,7 @@ src/ts/NonRepudiationOrig.ts:27
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:24
+[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L24)
 
 ___
 
@@ -60,7 +60,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:25
+[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L25)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:21
+[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L21)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:22
+[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L22)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:23
+[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L23)
 
 ## Methods
 
@@ -104,7 +104,7 @@ src/ts/NonRepudiationOrig.ts:23
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:121
+[src/ts/NonRepudiationOrig.ts:121](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L121)
 
 ___
 
@@ -120,7 +120,7 @@ Creates the proof of origin (PoO) as a compact JWS for the block of data. Beside
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:71
+[src/ts/NonRepudiationOrig.ts:71](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L71)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:102
+[src/ts/NonRepudiationOrig.ts:102](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L102)
 
 ___
 
@@ -154,7 +154,7 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:50
+[src/ts/NonRepudiationOrig.ts:50](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L50)
 
 ___
 
@@ -174,4 +174,4 @@ ___
 
 #### Defined in
 
-src/ts/NonRepudiationOrig.ts:83
+[src/ts/NonRepudiationOrig.ts:83](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L83)

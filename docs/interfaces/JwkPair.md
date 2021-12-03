@@ -15,7 +15,7 @@
 
 #### Defined in
 
-src/ts/types.ts:32
+[src/ts/types.ts:32](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L32)
 
 ___
 
@@ -25,4 +25,4 @@ ___
 
 #### Defined in
 
-src/ts/types.ts:31
+[src/ts/types.ts:31](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L31)

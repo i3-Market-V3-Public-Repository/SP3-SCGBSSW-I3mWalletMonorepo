@@ -1,6 +1,5 @@
 import { GeneralSign, generalVerify, importJWK, JWK } from 'jose'
 import { randBytes } from 'bigint-crypto-utils'
-import { bufToHex } from 'bigint-conversion'
 
 export async function verifyKeyPair (pubJWK: JWK, privJWK: JWK, alg?: string): Promise<void> {
   const pubKey = await importJWK(pubJWK, alg)
@@ -11,8 +10,5 @@ export async function verifyKeyPair (pubJWK: JWK, privJWK: JWK, alg?: string): P
     .setProtectedHeader({ alg: privJWK.alg })
     .sign()
 
-  const { payload } = await generalVerify(jws, pubKey)
-  if (bufToHex(payload) !== bufToHex(nonce)) {
-    throw new Error(`verified nonce ${bufToHex(payload)} does not meet the one challenged ${bufToHex(nonce)}`)
-  }
+  await generalVerify(jws, pubKey) // if verification fails, it throws JWSSignatureVerificationFailed: signature verification failed
 }
