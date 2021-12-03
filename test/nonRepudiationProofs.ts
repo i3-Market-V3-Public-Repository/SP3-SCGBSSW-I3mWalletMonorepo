@@ -7,7 +7,8 @@ describe('Non-repudiation protocol', function () {
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
   const dltConfig: _pkg.DltConfig = {
-    rpcProviderUrl: '***REMOVED***'
+    rpcProviderUrl: '***REMOVED***',
+    disable: true
   }
 
   this.beforeAll(async () => {

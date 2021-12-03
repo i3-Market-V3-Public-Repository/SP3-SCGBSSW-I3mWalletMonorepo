@@ -22,17 +22,16 @@ export class NonRepudiationDest {
   publicJwkOrig: JWK
   block?: DestBlock
   dltConfig: DltConfig
-  dltContract: ethers.Contract
   checked: boolean
 
   /**
    *
-   * @param exchangeId - the id of this data exchange. It MUST be unique for the same origin and destination
+   * @param exchangeId - the id of this data exchange. It MUST be unique
    * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
    * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig: DltConfig) {
+  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig?: DltConfig) {
     this.jwkPairDest = jwkPairDest
     this.publicJwkOrig = publicJwkOrig
     this.exchange = {
@@ -41,18 +40,25 @@ export class NonRepudiationDest {
       dest: JSON.stringify(this.jwkPairDest.publicJwk),
       hashAlg: HASH_ALG
     }
-    this.dltConfig = {
-      gasLimit: 12500000,
-      ...dltConfig
-    }
-    this.dltContract = _dltSetup(dltConfig)
+    this.dltConfig = this._dltSetup(dltConfig)
     this.checked = false
+  }
 
-    function _dltSetup (dltConfig: DltConfig): ethers.Contract {
-      const contractConfig: ContractConfig = (dltConfig.contract === undefined) ? contractConfigDefault : dltConfig.contract
-      const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
-      return new ethers.Contract(contractConfig.address, contractConfig.abi, rpcProvider)
+  private _dltSetup (providedDltConfig?: DltConfig): DltConfig {
+    const dltConfig = {
+      gasLimit: 12500000,
+      rpcProviderUrl: '***REMOVED***',
+      disable: false,
+      ...providedDltConfig
     }
+    if (!dltConfig.disable) {
+      dltConfig.contractConfig = dltConfig.contractConfig ?? (contractConfigDefault as ContractConfig)
+      const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
+
+      dltConfig.contract = new ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, rpcProvider)
+    }
+
+    return dltConfig
   }
 
   /**
@@ -136,14 +142,18 @@ export class NonRepudiationDest {
      * TO-DO: obtain verification code from the blockchain
      * TO-DO: Pass secret to raw hex
      */
-    const signerAddress = '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903'
-    const verificationCode: string = await new Promise((resolve, reject) => {
-      this.dltContract.on('Registration', (sender, dataExchangeId, secret) => {
-        if (sender === signerAddress) {
-          resolve((secret as ethers.BigNumber).toHexString())
-        }
+    let verificationCode = 'verificationCode'
+
+    if (this.dltConfig.disable !== true) {
+      const signerAddress = '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903'
+      verificationCode = await new Promise((resolve, reject) => {
+        this.dltConfig.contract?.on('Registration', (sender, dataExchangeId, secret) => {
+          if (sender === signerAddress) {
+            resolve((secret as ethers.BigNumber).toHexString())
+          }
+        })
       })
-    })
+    }
 
     const expectedPayloadClaims: PoPPayload = {
       proofType: 'PoP',

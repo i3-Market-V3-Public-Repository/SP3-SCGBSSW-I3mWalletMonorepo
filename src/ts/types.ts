@@ -1,5 +1,6 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { JWK, JWTPayload } from 'jose'
+import { Contract } from 'ethers'
 
 export interface ContractConfig {
   address: string
@@ -7,9 +8,11 @@ export interface ContractConfig {
 }
 
 export interface DltConfig {
-  rpcProviderUrl: string // http://<host>:<port>
+  rpcProviderUrl?: string // http://<host>:<port>
   gasLimit?: number
-  contract?: ContractConfig
+  contractConfig?: ContractConfig
+  contract?: Contract
+  disable?: boolean
 }
 
 export interface Block {

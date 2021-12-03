@@ -23,17 +23,16 @@ export class NonRepudiationOrig {
   publicJwkDest: JWK
   block: OrigBlock
   dltConfig: DltConfig
-  dltContract: ethers.Contract
   checked: boolean
 
   /**
-   * @param exchangeId - the id of this data exchange. It MUST be unique for the same origin and destination
+   * @param exchangeId - the id of this data exchange. It MUST be unique for the sender
    * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
    * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
    * @param block - the block of data to transmit in this data exchange
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig: DltConfig) {
+  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: DltConfig) {
     this.jwkPairOrig = jwkPairOrig
     this.publicJwkDest = publicJwkDest
     if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
@@ -50,24 +49,30 @@ export class NonRepudiationOrig {
       raw: block
     }
 
-    this.dltConfig = {
-      gasLimit: 12500000,
-      ...dltConfig
-    }
-    this.dltContract = _dltSetup(dltConfig)
+    this.dltConfig = this._dltSetup(dltConfig)
 
     this.checked = false
+  }
 
-    function _dltSetup (dltConfig: DltConfig): ethers.Contract {
-      const contractConfig: ContractConfig = (dltConfig.contract === undefined) ? contractConfigDefault : dltConfig.contract
+  private _dltSetup (providedDltConfig?: DltConfig): DltConfig {
+    const dltConfig = {
+      gasLimit: 12500000,
+      rpcProviderUrl: '***REMOVED***',
+      disable: false,
+      ...providedDltConfig
+    }
+    if (!dltConfig.disable) {
+      dltConfig.contractConfig = dltConfig.contractConfig ?? (contractConfigDefault as ContractConfig)
       const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
 
       /** TODO: it should be jwkPairDest.privateJwk */
       const privKeyHex = '***REMOVED***'
 
       const signer = new ethers.Wallet(privKeyHex, rpcProvider)
-      return new ethers.Contract(contractConfig.address, contractConfig.abi, signer)
+      dltConfig.contract = new ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, signer)
     }
+
+    return dltConfig
   }
 
   /**
@@ -151,14 +156,17 @@ export class NonRepudiationOrig {
      * TO-DO: obtain verification code from the blockchain
      * TO-DO: Pass secret to raw hex
      */
-    const secretHex = '1234567890'
+    let verificationCode = 'verificationCode'
+    if (this.dltConfig.disable !== true) {
+      const secretHex = '1234567890'
 
-    const setRegistryTx = await this.dltContract.setRegistry(this.exchange.id, secretHex, { gasLimit: this.dltConfig.gasLimit })
+      const setRegistryTx = await this.dltConfig.contract?.setRegistry(this.exchange.id, secretHex, { gasLimit: this.dltConfig.gasLimit })
 
-    await setRegistryTx.wait()
+      await setRegistryTx.wait()
 
-    const address = await this.dltContract.signer.getAddress()
-    const verificationCode = await this.dltContract.registry(address, this.exchange.id)
+      const address = await this.dltConfig.contract?.signer.getAddress()
+      verificationCode = await this.dltConfig.contract?.registry(address, this.exchange.id)
+    }
 
     const payload: PoPPayload = {
       proofType: 'PoP',
