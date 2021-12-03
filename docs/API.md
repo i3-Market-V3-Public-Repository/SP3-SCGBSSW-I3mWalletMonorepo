@@ -54,7 +54,7 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 
 #### Defined in
 
-[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L75)
+[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/types.ts#L75)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L77)
+[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/types.ts#L77)
 
 ## Variables
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L3)
+[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/constants.ts#L3)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L1)
+[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/constants.ts#L1)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L2)
+[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/constants.ts#L2)
 
 ## Functions
 
@@ -119,7 +119,7 @@ a proof as a compact JWS formatted JWT string
 
 #### Defined in
 
-[src/ts/createProof.ts:16](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/createProof.ts#L16)
+[src/ts/createProof.ts:16](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/createProof.ts#L16)
 
 ___
 
@@ -144,7 +144,7 @@ the plaintext
 
 #### Defined in
 
-[src/ts/jwe.ts:29](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/jwe.ts#L29)
+[src/ts/jwe.ts:29](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/jwe.ts#L29)
 
 ___
 
@@ -170,7 +170,7 @@ a Compact JWE
 
 #### Defined in
 
-[src/ts/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/jwe.ts#L15)
+[src/ts/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/jwe.ts#L15)
 
 ___
 
@@ -188,7 +188,7 @@ a promise that resolves to a JWK
 
 #### Defined in
 
-[src/ts/oneTimeSecret.ts:10](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/oneTimeSecret.ts#L10)
+[src/ts/oneTimeSecret.ts:10](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/oneTimeSecret.ts#L10)
 
 ___
 
@@ -209,7 +209,7 @@ ___
 
 #### Defined in
 
-[src/ts/sha.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/sha.ts#L3)
+[src/ts/sha.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/sha.ts#L3)
 
 ___
 
@@ -231,7 +231,7 @@ ___
 
 #### Defined in
 
-[src/ts/verifyKeyPair.ts:4](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/verifyKeyPair.ts#L4)
+[src/ts/verifyKeyPair.ts:4](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/verifyKeyPair.ts#L4)
 
 ___
 
@@ -258,4 +258,4 @@ The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-[src/ts/verifyProof.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/verifyProof.ts#L36)
+[src/ts/verifyProof.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/verifyProof.ts#L36)

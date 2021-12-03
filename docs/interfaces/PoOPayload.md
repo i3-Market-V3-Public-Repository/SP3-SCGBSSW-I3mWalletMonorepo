@@ -46,7 +46,7 @@ ProofCommonPayload.exchange
 
 #### Defined in
 
-[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L53)
+[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/types.ts#L53)
 
 ___
 
@@ -88,7 +88,7 @@ ProofCommonPayload.iss
 
 #### Defined in
 
-[src/ts/types.ts:57](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L57)
+[src/ts/types.ts:57](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/types.ts#L57)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L58)
+[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/types.ts#L58)
 
 ___
 

@@ -44,7 +44,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:30](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L30)
+[src/ts/NonRepudiationOrig.ts:30](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L30)
 
 ## Properties
 
@@ -54,7 +54,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L20)
+[src/ts/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L20)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L21)
+[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L21)
 
 ___
 
@@ -74,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L17)
+[src/ts/NonRepudiationOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L17)
 
 ___
 
@@ -84,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:18](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L18)
+[src/ts/NonRepudiationOrig.ts:18](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L18)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L19)
+[src/ts/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L19)
 
 ## Methods
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:147](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L147)
+[src/ts/NonRepudiationOrig.ts:147](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L147)
 
 ___
 
@@ -127,7 +127,7 @@ a compact JWS with the PoO
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:79](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L79)
+[src/ts/NonRepudiationOrig.ts:79](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L79)
 
 ___
 
@@ -146,7 +146,7 @@ a compact JWS with the PoP
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:123](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L123)
+[src/ts/NonRepudiationOrig.ts:123](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L123)
 
 ___
 
@@ -162,7 +162,7 @@ Initialize this instance. It MUST be invoked before calling any other method.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:56](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L56)
+[src/ts/NonRepudiationOrig.ts:56](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L56)
 
 ___
 
@@ -187,4 +187,4 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:98](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L98)
+[src/ts/NonRepudiationOrig.ts:98](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/cd48614/src/ts/NonRepudiationOrig.ts#L98)
