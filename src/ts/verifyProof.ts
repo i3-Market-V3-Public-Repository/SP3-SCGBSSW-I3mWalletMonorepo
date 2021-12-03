@@ -14,7 +14,7 @@ export { JWK, JWTVerifyResult }
  * {
  *   proofType: 'PoO',
  *   iss: 'orig',
- *   dateExchange: {
+ *   exchange: {
  *     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
  *     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)
  *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
@@ -39,16 +39,16 @@ export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloa
   const payload = verification.payload as ProofPayload
 
   // Check that that the publicKey is the public key of the issuer
-  const issuer = payload.dataExchange[payload.iss]
+  const issuer = payload.exchange[payload.iss]
   if (hashable(publicJwk) !== hashable(JSON.parse(issuer))) {
     throw new Error(`The proof is issued by ${issuer} instead of ${JSON.stringify(publicJwk)}`)
   }
 
   for (const key in expectedPayloadClaims) {
     if (payload[key] === undefined) throw new Error(`Expected key '${key}' not found in proof`)
-    if (key === 'dataExchange') {
-      const expectedDataExchange = expectedPayloadClaims.dataExchange
-      const dataExchange = payload.dataExchange as DataExchange
+    if (key === 'exchange') {
+      const expectedDataExchange = expectedPayloadClaims.exchange
+      const dataExchange = payload.exchange as DataExchange
       checkDataExchange(dataExchange, expectedDataExchange)
     } else {
       if (hashable(expectedPayloadClaims[key] as object) !== hashable(payload[key] as object)) {
@@ -59,6 +59,9 @@ export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloa
   return (verification)
 }
 
+/**
+ * Checks whether a dataExchange claims meet the expected ones
+ */
 function checkDataExchange (dataExchange: DataExchange, expectedDataExchange: DataExchangeInit): void {
   // First, let us check that the dataExchange is complete
   const claims: Array<keyof DataExchange> = ['id', 'orig', 'dest', 'hashAlg', 'cipherblockDgst', 'blockCommitment', 'blockCommitment', 'secretCommitment', 'schema']

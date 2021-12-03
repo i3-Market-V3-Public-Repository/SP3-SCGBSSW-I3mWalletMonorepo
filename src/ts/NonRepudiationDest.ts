@@ -2,32 +2,34 @@ import { JWK, JWTVerifyResult } from 'jose'
 import { jweDecrypt } from './jwe'
 import { HASH_ALG } from './constants'
 import { createProof } from './createProof'
-import { DataExchange, DataExchangeInit, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
+import { DataExchange, DataExchangeInit, DestBlock, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
 
-interface Block {
-  jwe: string
-  decrypted?: Uint8Array
-  secret?: JWK
-  poo?: string
-  por?: string
-  pop?: string
-}
-
+/**
+ * The base class that should be instantiated by the destination of a data
+ * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
+ * likely to be a Consumer.
+ */
 export class NonRepudiationDest {
-  dataExchange: DataExchangeInit
+  exchange: DataExchangeInit
   jwkPairDest: JwkPair
   publicJwkOrig: JWK
-  block?: Block
+  block?: DestBlock
   checked: boolean
 
-  constructor (dataExchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK) {
+  /**
+   *
+   * @param exchangeId - the id of this data exchange. It MUST be unique for the same origin and destination
+   * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
+   * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
+   */
+  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK) {
     this.jwkPairDest = jwkPairDest
     this.publicJwkOrig = publicJwkOrig
-    this.dataExchange = {
-      id: dataExchangeId,
+    this.exchange = {
+      id: exchangeId,
       orig: JSON.stringify(this.publicJwkOrig),
       dest: JSON.stringify(this.jwkPairDest.publicJwk),
       hashAlg: HASH_ALG
@@ -35,22 +37,34 @@ export class NonRepudiationDest {
     this.checked = false
   }
 
+  /**
+   * Initialize this instance. It MUST be invoked before calling any other method.
+   */
   async init (): Promise<void> {
     await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk)
     this.checked = true
   }
 
+  /**
+   * Verifies a proof of origin against the received cipherblock.
+   * If verification passes, `pop` and `cipherblock` are added to this.block
+   *
+   * @param poo - a Proof of Origin (PoO) in compact JWS format
+   * @param cipherblock - a cipherblock as a JWE
+   * @returns the verified payload and protected header
+   *
+   */
   async verifyPoO (poo: string, cipherblock: string): Promise<JWTVerifyResult> {
     this._checkInit()
 
     const dataExchange: DataExchangeInit = {
-      ...this.dataExchange,
-      cipherblockDgst: await sha(cipherblock, this.dataExchange.hashAlg)
+      ...this.exchange,
+      cipherblockDgst: await sha(cipherblock, this.exchange.hashAlg)
     }
     const expectedPayloadClaims: PoOPayload = {
       proofType: 'PoO',
       iss: 'orig',
-      dataExchange
+      exchange: dataExchange
     }
     const verified = await verifyProof(poo, this.publicJwkOrig, expectedPayloadClaims)
 
@@ -59,14 +73,16 @@ export class NonRepudiationDest {
       poo: poo
     }
 
-    this.dataExchange = (verified.payload as PoOPayload).dataExchange
+    this.exchange = (verified.payload as PoOPayload).exchange
 
     return verified
   }
 
   /**
-   * Creates the proof of reception (PoR) as a compact JWS for the block of data. Besides returning its value, it is also stored in this.block.por
+   * Creates the proof of reception (PoR).
+   * Besides returning its value, it is also stored in `this.block.por`
    *
+   * @returns a compact JWS with the PoR
    */
   async generatePoR (): Promise<string> {
     this._checkInit()
@@ -78,40 +94,68 @@ export class NonRepudiationDest {
     const payload: PoRPayload = {
       proofType: 'PoR',
       iss: 'dest',
-      dataExchange: this.dataExchange,
+      exchange: this.exchange,
       pooDgst: await sha(this.block.poo)
     }
     this.block.por = await createProof(payload, this.jwkPairDest.privateJwk)
     return this.block.por
   }
 
-  async verifyPoPAndDecrypt (pop: string, secret: string, verificationCode: string): Promise<{verified: JWTVerifyResult, decryptedBlock: Uint8Array}> {
+  /**
+   * Verifies a received Proof of Publication (PoP) with the received secret and verificationCode
+   * @param pop - a PoP in compact JWS
+   * @param secret - the JWK secret that was used to encrypt the block
+   * @param verificationCode - the verification code
+   * @returns the verified payload and protected header
+   */
+  async verifyPoP (pop: string, secret: JWK): Promise<JWTVerifyResult> {
     this._checkInit()
 
     if (this.block?.por === undefined) {
       throw new Error('Cannot verify a PoP if not even a PoR have been created')
     }
 
-    const decryptedBlock = (await jweDecrypt(this.block.jwe, JSON.parse(secret))).plaintext
-    const decryptedDgst = await sha(decryptedBlock)
-    if (decryptedDgst !== this.dataExchange.blockCommitment) {
-      throw new Error('Decrypted block does not meet the committed one')
-    }
-    this.block.secret = JSON.parse(secret)
-    this.block.decrypted = decryptedBlock
+    /**
+     * TO-DO: obtain verification code from the blockchain
+     */
+    const verificationCode = 'verificationCode'
 
     const expectedPayloadClaims: PoPPayload = {
       proofType: 'PoP',
       iss: 'orig',
-      dataExchange: this.dataExchange,
+      exchange: this.exchange,
       porDgst: await sha(this.block.por),
-      secret,
+      secret: JSON.stringify(secret),
       verificationCode
     }
     const verified = await verifyProof(pop, this.publicJwkOrig, expectedPayloadClaims)
+    this.block.secret = secret
     this.block.pop = pop
 
-    return { verified, decryptedBlock }
+    return verified
+  }
+
+  /**
+   * Decrypts the cipherblock once all the previous proofs have been verified
+   * @returns the decrypted block
+   *
+   * @throws Error if the previous proofs have not been verified or the decrypted block does not meet the committed one
+   */
+  async decrypt (): Promise<Uint8Array> {
+    this._checkInit()
+
+    if (this.block?.pop === undefined || this.block?.secret === undefined) {
+      throw new Error('Cannot decrypt if the PoP/secret has not been verified ')
+    }
+
+    const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret)).plaintext
+    const decryptedDgst = await sha(decryptedBlock)
+    if (decryptedDgst !== this.exchange.blockCommitment) {
+      throw new Error('Decrypted block does not meet the committed one')
+    }
+    this.block.raw = decryptedBlock
+
+    return decryptedBlock
   }
 
   private _checkInit (): void {

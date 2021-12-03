@@ -1,5 +1,22 @@
 import { JWK, JWTPayload } from 'jose'
 
+export interface Block {
+  raw?: Uint8Array
+  jwe?: string
+  secret?: JWK
+  poo?: string
+  por?: string
+  pop?: string
+}
+
+export interface DestBlock extends Block {
+  jwe: string
+}
+
+export interface OrigBlock extends Block {
+  raw: Uint8Array
+}
+
 export interface DateTolerance {
   clockTolerance: string | number // Date to use when comparing NumericDate claims,
   currentDate: Date // string|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours")
@@ -33,7 +50,7 @@ export interface JwkPair {
 }
 
 interface ProofCommonPayload extends JWTPayload {
-  dataExchange: DataExchangeInit
+  exchange: DataExchangeInit
 }
 
 export interface PoOPayload extends ProofCommonPayload {

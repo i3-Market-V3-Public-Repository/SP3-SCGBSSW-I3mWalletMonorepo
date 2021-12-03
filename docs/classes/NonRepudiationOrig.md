@@ -1,5 +1,9 @@
 # Class: NonRepudiationOrig
 
+The base class that should be instantiated by the origin of a data
+exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
+likely to be a Provider.
+
 ## Table of contents
 
 ### Constructors
@@ -10,7 +14,7 @@
 
 - [block](NonRepudiationOrig.md#block)
 - [checked](NonRepudiationOrig.md#checked)
-- [dataExchange](NonRepudiationOrig.md#dataexchange)
+- [exchange](NonRepudiationOrig.md#exchange)
 - [jwkPairOrig](NonRepudiationOrig.md#jwkpairorig)
 - [publicJwkDest](NonRepudiationOrig.md#publicjwkdest)
 
@@ -26,31 +30,31 @@
 
 ### constructor
 
-• **new NonRepudiationOrig**(`dataExchangeId`, `jwkPairOrig`, `publicJwkDest`, `block`, `alg?`)
+• **new NonRepudiationOrig**(`exchangeId`, `jwkPairOrig`, `publicJwkDest`, `block`, `alg?`)
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `dataExchangeId` | `string` |
-| `jwkPairOrig` | [`JwkPair`](../interfaces/JwkPair.md) |
-| `publicJwkDest` | [`JWK`](../interfaces/JWK.md) |
-| `block` | `Uint8Array` |
-| `alg?` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `exchangeId` | `string` | the id of this data exchange. It MUST be unique for the same origin and destination |
+| `jwkPairOrig` | [`JwkPair`](../interfaces/JwkPair.md) | a pair of private and public keys owned by this entity (non-repudiation orig) |
+| `publicJwkDest` | [`JWK`](../interfaces/JWK.md) | the public key as a JWK of the other peer (non-repudiation dest) |
+| `block` | `Uint8Array` | the block of data to transmit in this data exchange |
+| `alg?` | `string` | the enc alg, if not already in the JWKs |
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L27)
+[src/ts/NonRepudiationOrig.ts:30](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L30)
 
 ## Properties
 
 ### block
 
-• **block**: `Block`
+• **block**: [`OrigBlock`](../interfaces/OrigBlock.md)
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L24)
+[src/ts/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L20)
 
 ___
 
@@ -60,17 +64,17 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L25)
+[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L21)
 
 ___
 
-### dataExchange
+### exchange
 
-• **dataExchange**: [`DataExchangeInit`](../interfaces/DataExchangeInit.md)
+• **exchange**: [`DataExchangeInit`](../interfaces/DataExchangeInit.md)
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L21)
+[src/ts/NonRepudiationOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L17)
 
 ___
 
@@ -80,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L22)
+[src/ts/NonRepudiationOrig.ts:18](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L18)
 
 ___
 
@@ -90,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L23)
+[src/ts/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L19)
 
 ## Methods
 
@@ -104,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:121](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L121)
+[src/ts/NonRepudiationOrig.ts:147](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L147)
 
 ___
 
@@ -112,35 +116,37 @@ ___
 
 ▸ **generatePoO**(): `Promise`<`string`\>
 
-Creates the proof of origin (PoO) as a compact JWS for the block of data. Besides returning its value, it is also stored in this.block.poo
+Creates the proof of origin (PoO).
+Besides returning its value, it is also stored in this.block.poo
 
 #### Returns
 
 `Promise`<`string`\>
 
+a compact JWS with the PoO
+
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:71](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L71)
+[src/ts/NonRepudiationOrig.ts:79](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L79)
 
 ___
 
 ### generatePoP
 
-▸ **generatePoP**(`verificationCode`): `Promise`<`string`\>
+▸ **generatePoP**(): `Promise`<`string`\>
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `verificationCode` | `string` |
+Creates the proof of publication (PoP).
+Besides returning its value, it is also stored in `this.block.pop`
 
 #### Returns
 
 `Promise`<`string`\>
 
+a compact JWS with the PoP
+
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:102](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L102)
+[src/ts/NonRepudiationOrig.ts:123](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L123)
 
 ___
 
@@ -148,13 +154,15 @@ ___
 
 ▸ **init**(): `Promise`<`void`\>
 
+Initialize this instance. It MUST be invoked before calling any other method.
+
 #### Returns
 
 `Promise`<`void`\>
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:50](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L50)
+[src/ts/NonRepudiationOrig.ts:56](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L56)
 
 ___
 
@@ -162,16 +170,21 @@ ___
 
 ▸ **verifyPoR**(`por`): `Promise`<[`JWTVerifyResult`](../interfaces/JWTVerifyResult.md)\>
 
+Verifies a proof of reception.
+If verification passes, `por` is added to `this.block`
+
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `por` | `string` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `por` | `string` | A PoR in caompact JWS format |
 
 #### Returns
 
 `Promise`<[`JWTVerifyResult`](../interfaces/JWTVerifyResult.md)\>
 
+the verified payload and protected header
+
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:83](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/NonRepudiationOrig.ts#L83)
+[src/ts/NonRepudiationOrig.ts:98](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/NonRepudiationOrig.ts#L98)

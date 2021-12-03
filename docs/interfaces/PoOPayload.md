@@ -11,7 +11,7 @@
 ### Properties
 
 - [aud](PoOPayload.md#aud)
-- [dataExchange](PoOPayload.md#dataexchange)
+- [exchange](PoOPayload.md#exchange)
 - [exp](PoOPayload.md#exp)
 - [iat](PoOPayload.md#iat)
 - [iss](PoOPayload.md#iss)
@@ -36,17 +36,17 @@ node_modules/jose/dist/types/types.d.ts:215
 
 ___
 
-### dataExchange
+### exchange
 
-• **dataExchange**: [`DataExchangeInit`](DataExchangeInit.md)
+• **exchange**: [`DataExchangeInit`](DataExchangeInit.md)
 
 #### Inherited from
 
-ProofCommonPayload.dataExchange
+ProofCommonPayload.exchange
 
 #### Defined in
 
-[src/ts/types.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L36)
+[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L53)
 
 ___
 
@@ -88,7 +88,7 @@ ProofCommonPayload.iss
 
 #### Defined in
 
-[src/ts/types.ts:40](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L40)
+[src/ts/types.ts:57](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L57)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L41)
+[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L58)
 
 ___
 

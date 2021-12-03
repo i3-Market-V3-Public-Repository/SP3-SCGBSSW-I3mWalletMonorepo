@@ -1,4 +1,4 @@
-# @i3-market/non-repudiation-proofs - v0.9.1
+# @i3-market/non-repudiation-protocol - v0.9.1
 
 i3-Market implementation of the non-repudiation proofs of a data exchange
 
@@ -11,13 +11,16 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 
 ### Interfaces
 
+- [Block](interfaces/Block.md)
 - [CompactDecryptResult](interfaces/CompactDecryptResult.md)
 - [DataExchange](interfaces/DataExchange.md)
 - [DataExchangeInit](interfaces/DataExchangeInit.md)
 - [DateTolerance](interfaces/DateTolerance.md)
+- [DestBlock](interfaces/DestBlock.md)
 - [JWK](interfaces/JWK.md)
 - [JWTVerifyResult](interfaces/JWTVerifyResult.md)
 - [JwkPair](interfaces/JwkPair.md)
+- [OrigBlock](interfaces/OrigBlock.md)
 - [PoOPayload](interfaces/PoOPayload.md)
 - [PoPPayload](interfaces/PoPPayload.md)
 - [PoRPayload](interfaces/PoRPayload.md)
@@ -51,7 +54,7 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 
 #### Defined in
 
-[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L58)
+[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L75)
 
 ___
 
@@ -61,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:60](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/types.ts#L60)
+[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/types.ts#L77)
 
 ## Variables
 
@@ -71,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/constants.ts#L3)
+[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L3)
 
 ___
 
@@ -81,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/constants.ts#L1)
+[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L1)
 
 ___
 
@@ -91,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/constants.ts#L2)
+[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/constants.ts#L2)
 
 ## Functions
 
@@ -105,7 +108,7 @@ Creates a non-repudiable proof for a given data exchange
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `payload` | [`ProofInputPayload`](API.md#proofinputpayload) | it must contain a 'dataExchange' the issuer 'iss' (either point to the origin 'orig' or the destination 'dest' of the data exchange) of the proof and any specific proof key-values |
+| `payload` | [`ProofInputPayload`](API.md#proofinputpayload) | the payload to be added to the proof.                  `payload.iss` must be either the origin 'orig' or the destination 'dest' of the data exchange                  `payload.iat` should be ommitted since it will be automatically added when signing (`Date.now()`) |
 | `privateJwk` | [`JWK`](interfaces/JWK.md) | The private key in JWK that will sign the proof |
 
 #### Returns
@@ -116,7 +119,7 @@ a proof as a compact JWS formatted JWT string
 
 #### Defined in
 
-[src/ts/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/createProof.ts#L14)
+[src/ts/createProof.ts:16](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/createProof.ts#L16)
 
 ___
 
@@ -141,7 +144,7 @@ the plaintext
 
 #### Defined in
 
-[src/ts/jwe.ts:29](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/jwe.ts#L29)
+[src/ts/jwe.ts:29](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/jwe.ts#L29)
 
 ___
 
@@ -167,7 +170,7 @@ a Compact JWE
 
 #### Defined in
 
-[src/ts/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/jwe.ts#L15)
+[src/ts/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/jwe.ts#L15)
 
 ___
 
@@ -185,7 +188,7 @@ a promise that resolves to a JWK
 
 #### Defined in
 
-[src/ts/oneTimeSecret.ts:10](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/oneTimeSecret.ts#L10)
+[src/ts/oneTimeSecret.ts:10](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/oneTimeSecret.ts#L10)
 
 ___
 
@@ -206,7 +209,7 @@ ___
 
 #### Defined in
 
-[src/ts/sha.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/sha.ts#L3)
+[src/ts/sha.ts:3](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/sha.ts#L3)
 
 ___
 
@@ -228,7 +231,7 @@ ___
 
 #### Defined in
 
-[src/ts/verifyKeyPair.ts:4](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/verifyKeyPair.ts#L4)
+[src/ts/verifyKeyPair.ts:4](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/verifyKeyPair.ts#L4)
 
 ___
 
@@ -244,7 +247,7 @@ Verify a proof
 | :------ | :------ | :------ |
 | `proof` | `string` | a non-repudiable proof in Compact JWS formatted JWT string |
 | `publicJwk` | [`JWK`](interfaces/JWK.md) | the publicKey as a JWK to use for verifying the signature. If MUST match either orig or dest (the one pointed on the iss field) |
-| `expectedPayloadClaims` | [`ProofInputPayload`](API.md#proofinputpayload) | The expected values of the proof's payload claims. An example could be: {   proofType: 'PoO',   iss: 'orig',   dateExchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
+| `expectedPayloadClaims` | [`ProofInputPayload`](API.md#proofinputpayload) | The expected values of the proof's payload claims. An example could be: {   proofType: 'PoO',   iss: 'orig',   exchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
 | `dateTolerance?` | [`DateTolerance`](interfaces/DateTolerance.md) | specifies a time window to accept the proof. An example could be {   currentDate: new Date('2021-10-17T03:24:00'), // Date to use when comparing NumericDate claims, defaults to new Date().   clockTolerance: 10  // string\|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours") } |
 
 #### Returns
@@ -255,4 +258,4 @@ The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-[src/ts/verifyProof.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/d1778d3/src/ts/verifyProof.ts#L36)
+[src/ts/verifyProof.ts:36](https://gitlab.com/i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs/-/blob/1cd8e09/src/ts/verifyProof.ts#L36)

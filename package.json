@@ -1,11 +1,12 @@
 {
-  "name": "@i3-market/non-repudiation-proofs",
+  "name": "@i3-market/non-repudiation-protocol",
   "version": "0.9.1",
-  "description": "Library for the i3-market non-repudiation proofs",
+  "description": "Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data",
   "keywords": [
-    "non-repudiation",
-    "non-repudiable",
-    "jws"
+    "non-repudiation protocol",
+    "jws",
+    "i3m",
+    "i3-MARKET"
   ],
   "license": "EUPL-1.2",
   "repository": "gitlab:i3-market/code/wp3/t3.3/non-repudiable-exchange/non-repudiable-proofs",

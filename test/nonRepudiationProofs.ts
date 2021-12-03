@@ -1,7 +1,7 @@
 import { exportJWK, generateKeyPair } from 'jose'
 import { hashable } from 'object-sha'
 
-describe('unit tests on non-repudiation protocol', function () {
+describe('Non-repudiation protocol', function () {
   this.timeout(20000)
 
   let npProvider: _pkg.NonRepudiationOrig
@@ -44,10 +44,9 @@ describe('unit tests on non-repudiation protocol', function () {
 
   describe('create proof of publication (PoP)', function () {
     it('should fail since there are not previous PoR', async function () {
-      const verificationCode = 'code'
       let err
       try {
-        await npProvider.generatePoP(verificationCode)
+        await npProvider.generatePoP()
       } catch (error) {
         err = error
       }
@@ -85,11 +84,63 @@ describe('unit tests on non-repudiation protocol', function () {
 
   describe('create/verify proof of publication (PoP)', function () {
     it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
-      const verificationCode = 'code'
-      const pop = await npProvider.generatePoP(verificationCode)
-      const { verified, decryptedBlock } = await npConsumer.verifyPoPAndDecrypt(pop, JSON.stringify(npProvider.block.secret), verificationCode)
+      const pop = await npProvider.generatePoP()
+      let verified
+      try {
+        verified = await npConsumer.verifyPoP(pop, npProvider.block.secret as _pkg.JWK)
+      } catch (error) {
+      }
       chai.expect(verified).to.not.equal(undefined)
-      chai.expect(hashable(npProvider.block.raw)).to.equal(hashable(decryptedBlock))
+    })
+    it('verification should throw error if there is no PoR', async function () {
+      const block = npConsumer.block as _pkg.OrigBlock
+      const por = block.por
+      delete block.por
+      let err
+      try {
+        await npConsumer.verifyPoP(block.pop as string, block.secret as _pkg.JWK)
+      } catch (error) {
+        err = error
+      }
+      block.por = por
+      chai.expect(err).to.not.be.undefined // eslint-disable-line
+    })
+  })
+
+  describe('decrypt and verify decrypted cipherblock', function () {
+    it('consumer should be able to decrypt and hash(decrypted block) should be equal to the dataExchange.blockCommitment', async function () {
+      const decryptedBlock = await npConsumer.decrypt()
+      chai.expect(hashable(npProvider.block.raw)).to.equal((decryptedBlock !== undefined) ? hashable(decryptedBlock) : '')
+    })
+    it('should throw error if PoP has not been previously verified', async function () {
+      const block = npConsumer.block as _pkg.DestBlock
+      const pop = block.pop as string
+      block.pop = undefined
+
+      let err
+      try {
+        await npConsumer.decrypt()
+      } catch (error) {
+        err = error
+      }
+
+      block.pop = pop
+
+      chai.expect(err).to.not.be.undefined // eslint-disable-line
+    })
+    it('it should throw error if hash(decrypted block) != committed block digest', async function () {
+      const str = '123'
+      npConsumer.exchange.blockCommitment = npConsumer.exchange.blockCommitment as string + str
+      let err
+      try {
+        await npConsumer.decrypt()
+      } catch (error) {
+        err = error
+      }
+      // restore the block commitment
+      npConsumer.exchange.blockCommitment = npConsumer.exchange.blockCommitment.substring(0, npConsumer.exchange.blockCommitment.length - str.length)
+
+      chai.expect(err).to.not.be.undefined // eslint-disable-line
     })
   })
 
@@ -97,7 +148,7 @@ describe('unit tests on non-repudiation protocol', function () {
     it('using \'issr\' instead of \'iss\' should throw error', async function () {
       const expectedPayload = {
         issr: 'orig',
-        dataExchange: npConsumer.dataExchange
+        exchange: npConsumer.exchange
       }
       let err
       try {
@@ -111,7 +162,7 @@ describe('unit tests on non-repudiation protocol', function () {
       const expectedPayload = {
         iss: 'orig',
         x: 'afasf',
-        dataExchange: npConsumer.dataExchange
+        exchange: npConsumer.exchange
       }
       let err
       try {
@@ -124,8 +175,8 @@ describe('unit tests on non-repudiation protocol', function () {
     it('property in expectedDataExchange different that in the dataExchange should throw error', async function () {
       const expectedPayload = {
         iss: 'orig',
-        dataExchange: {
-          ...npConsumer.dataExchange,
+        exchange: {
+          ...npConsumer.exchange,
           dest: 'asdfdgdg'
         }
       }
@@ -143,7 +194,7 @@ describe('unit tests on non-repudiation protocol', function () {
     it('should throw error', async function () {
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.jwkPairDest.publicJwk, npConsumer.dataExchange as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.jwkPairDest.publicJwk, npConsumer.exchange as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
@@ -157,7 +208,7 @@ describe('unit tests on non-repudiation protocol', function () {
       try {
         const jwk = { ...npProvider.publicJwkDest }
         delete jwk.alg
-        await _pkg.verifyProof(npConsumer.block?.poo as string, jwk, npProvider.dataExchange as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo as string, jwk, npProvider.exchange as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
@@ -171,7 +222,7 @@ describe('unit tests on non-repudiation protocol', function () {
         const payload: _pkg.PoOPayload = {
           proofType: 'PoO',
           iss: 'orig',
-          dataExchange: npProvider.dataExchange
+          exchange: npProvider.exchange
         }
         await _pkg.createProof(payload, jwk)
       } catch (error) {
@@ -204,66 +255,3 @@ describe('unit tests on non-repudiation protocol', function () {
     })
   })
 })
-
-// describe('testing on createProof functions', function () {
-// describe('create proof or Receipt', function () {
-//   it('should create a proof of Receipt signed with the consumer private key that can be validated using the consumer public key', async function () {
-//     const poOProof: string = 'eyJhbGciOiJFZERTQSJ9.eyJpc3MiOiJ1cm46ZXhhbXBsZTppc3N1ZXIiLCJzdWIiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiaWF0IjoxNjEzNzQ5MTAzMTU0LCJleGNoYW5nZSI6eyJpZCI6Mywib3JpZyI6InVybjpleGFtcGxlOmlzc3VlciIsImRlc3QiOiJ1cm46ZXhhbXBsZTpzdWJqZWN0IiwiYmxvY2tfaWQiOjQsImJsb2NrX2Rlc2MiOiJkZXNjcmlwdGlvbiIsImhhc2hfYWxnIjoic2hhMjU2IiwiY2lwaGVyYmxvY2tfZGdzdCI6IjljNTMxNjhjOWRiN2U3OTRkMGZiNTcyM2JiZGE1NjEzMGM3MGZjZWY4ZTFmMjFhMTRkMGEwMzNmYzRlNmYzYjciLCJibG9ja19jb21taXRtZW50IjoiZDhhNzNhYjY3NmMwYjFiZDMxYWQzODMxZGE1ZDhiZWE3NjhkNTg5MzVmZmQ3MzY5YWVjYTJkZWE4YTYxNTgwYSIsImtleV9jb21taXRtZW50IjoiYjI4Yzk0YjIxOTVjOGVkMjU5ZjBiNDE1YWFlZTNmMzliMGIyOTIwYTQ1Mzc2MTE0OTlmYTA0NDk1NjkxN2EyMSJ9fQ.NRpGSnnK3O_gwuTbD6A-dnOXy2M3fS6n0WYlPX2Eo2OWG_Y_Gqf86lp6ENepwEa_vaFhwkkNwovTyjv2uSFvDw'
-//     const responsePoR = await _pkg.createPoR(privateKeyConsumer, poOProof, 'urn:example:issuer', 'urn:example:subject', 3)
-//     const { payload } = await compactVerify(responsePoR, publicKeyConsumer)
-
-//     const hashPoO: string = await _pkg.sha(poOProof)
-//     const decodedPayload = JSON.parse(new TextDecoder().decode(payload).toString())
-//     chai.expect(hashPoO).to.equal(decodedPayload.exchange.poo_dgst)
-//     chai.expect(decodedPayload.iss).to.equal('urn:example:issuer')
-//     chai.expect(decodedPayload.sub).to.equal('urn:example:subject')
-//   })
-// })
-
-// describe('sign a proof', function () {
-//   it('should create a valid jws of the jwt proof', async function () {
-//     const proof = { test: 'example' }
-//     const signedProof = await _pkg.signProof(privateKeyConsumer, proof)
-//     const { payload } = await compactVerify(signedProof, publicKeyConsumer)
-//     chai.expect(JSON.stringify(proof)).to.equal((new TextDecoder().decode(payload)))
-//   })
-// })
-
-// describe('create account object for backplain API', function () {
-//   it('should create a valid json object', async function () {
-//     const poO: _pkg.PoO = {
-//       iss: 'urn:example:issuer',
-//       sub: 'urn:example:subject',
-//       iat: Date.now(),
-//       exchange: {
-//         id: 3,
-//         orig: 'urn:example:issuer',
-//         dest: 'urn:example:subject',
-//         block_id: 4,
-//         block_desc: 'description',
-//         hash_alg: 'sha256',
-//         cipherblock_dgst: 'fc766e56ad7f0d9ccd9b98af742468a0f58bbaba3e45e6b452c4357845bc450d',
-//         block_commitment: 'd8a73ab676c0b1bd31ad3831da5d8bea768d58935ffd7369aeca2dea8a61580a',
-//         key_commitment: 'b28c94b2195c8ed259f0b415aaee3f39b0b2920a4537611499fa044956917a21'
-//       }
-//     }
-//     const jwt: Uint8Array = new TextEncoder().encode(JSON.stringify(poO))
-//     const jwsPoO = await new CompactSign(jwt)
-//       .setProtectedHeader({ alg: _pkg.SIGNING_ALG })
-//       .sign(privateKeyProvider)
-
-//     const poRProof: string = 'null'
-//     const jwk: JWK = {
-//       kty: 'oct',
-//       alg: 'HS256',
-//       k: 'dVOgj6K8cpTctejWonQ58oVwSlIwFU5PaRWnYO_ep_8',
-//       kid: 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og'
-//     }
-//     const sendblockchainJson: any = await _pkg.createBlockchainProof(publicKeyProvider, jwsPoO, poRProof, jwk)
-
-//     chai.expect(sendblockchainJson.privateStorage).to.have.property('availability', 'privateStorage')
-//     chai.expect(sendblockchainJson.blockchain).to.have.property('availability', 'blockchain')
-//     chai.expect(sendblockchainJson.blockchain.content).to.have.deep.include({ 'RUTNQtuuAJRN10314exvBpkO9v-Pp2-Bjbr21mbE0Og': jwk })
-//   })
-// })
-// })

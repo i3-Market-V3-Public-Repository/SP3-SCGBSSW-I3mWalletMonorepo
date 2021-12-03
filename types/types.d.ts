@@ -1,4 +1,18 @@
 import { JWK, JWTPayload } from 'jose';
+export interface Block {
+    raw?: Uint8Array;
+    jwe?: string;
+    secret?: JWK;
+    poo?: string;
+    por?: string;
+    pop?: string;
+}
+export interface DestBlock extends Block {
+    jwe: string;
+}
+export interface OrigBlock extends Block {
+    raw: Uint8Array;
+}
 export interface DateTolerance {
     clockTolerance: string | number;
     currentDate: Date;
@@ -28,7 +42,7 @@ export interface JwkPair {
     privateJwk: JWK;
 }
 interface ProofCommonPayload extends JWTPayload {
-    dataExchange: DataExchangeInit;
+    exchange: DataExchangeInit;
 }
 export interface PoOPayload extends ProofCommonPayload {
     iss: 'orig';

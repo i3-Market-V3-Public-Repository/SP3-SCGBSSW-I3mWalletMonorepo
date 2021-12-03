@@ -11,7 +11,7 @@ export { JWK, JWTVerifyResult };
  * {
  *   proofType: 'PoO',
  *   iss: 'orig',
- *   dateExchange: {
+ *   exchange: {
  *     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
  *     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)
  *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
