@@ -4,7 +4,7 @@ import { exportJWK, generateKeyPair } from 'jose'
 
 describe('verifyKeyPair for different signing algorithms', function () {
   this.timeout(20000)
-  const signingAlgsToTest: _pkg.SigningAlg[] = ['RS256', 'ES256', 'ES512', 'PS256']
+  const signingAlgsToTest: _pkg.SigningAlg[] = ['ES256', 'ES512', 'PS256']
 
   for (const signingAlg of signingAlgsToTest) {
     let privJwk: _pkg.JWK

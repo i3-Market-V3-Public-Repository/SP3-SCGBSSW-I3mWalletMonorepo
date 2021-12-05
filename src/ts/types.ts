@@ -3,7 +3,7 @@ import { JWK, JWTPayload } from 'jose'
 import { Contract, Wallet } from 'ethers'
 
 export type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512'
-export type SigningAlg = 'RS256' | 'ES256' | 'ES512' | 'PS256' // 'ES256K' is only supported in Node.js
+export type SigningAlg = 'ES256' | 'ES512' | 'PS256' // 'ES256K' is only supported in Node.js
 export type EncryptionAlg = 'A128GCM' | 'A192GCM' | 'A256GCM'
 
 export interface Algs {

@@ -2,7 +2,7 @@ import { ContractInterface } from '@ethersproject/contracts';
 import { JWK, JWTPayload } from 'jose';
 import { Contract, Wallet } from 'ethers';
 export declare type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512';
-export declare type SigningAlg = 'RS256' | 'ES256' | 'ES512' | 'PS256';
+export declare type SigningAlg = 'ES256' | 'ES512' | 'PS256';
 export declare type EncryptionAlg = 'A128GCM' | 'A192GCM' | 'A256GCM';
 export interface Algs {
     hashAlg?: HashAlg;

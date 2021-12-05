@@ -47,7 +47,7 @@ likely to be a Consumer.
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L36)
+[src/ts/NonRepudiationDest.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L36)
 
 ## Properties
 
@@ -57,7 +57,7 @@ likely to be a Consumer.
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L24)
+[src/ts/NonRepudiationDest.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L24)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L25)
+[src/ts/NonRepudiationDest.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L25)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L21)
+[src/ts/NonRepudiationDest.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L21)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L26)
+[src/ts/NonRepudiationDest.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L26)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L22)
+[src/ts/NonRepudiationDest.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L22)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L23)
+[src/ts/NonRepudiationDest.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L23)
 
 ## Methods
 
@@ -127,7 +127,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L61)
+[src/ts/NonRepudiationDest.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L61)
 
 ___
 
@@ -147,7 +147,7 @@ the decrypted block
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L205)
+[src/ts/NonRepudiationDest.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L205)
 
 ___
 
@@ -166,7 +166,7 @@ a compact JWS with the PoR
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L122)
+[src/ts/NonRepudiationDest.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L122)
 
 ___
 
@@ -190,7 +190,7 @@ the secret
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:180](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L180)
+[src/ts/NonRepudiationDest.ts:180](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L180)
 
 ___
 
@@ -206,7 +206,7 @@ Initialize this instance. It MUST be invoked before calling any other method.
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L79)
+[src/ts/NonRepudiationDest.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L79)
 
 ___
 
@@ -232,7 +232,7 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L92)
+[src/ts/NonRepudiationDest.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L92)
 
 ___
 
@@ -256,4 +256,4 @@ the verified payload (that includes the secret that can be used to decrypt the c
 
 #### Defined in
 
-[src/ts/NonRepudiationDest.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/64711e2/src/ts/NonRepudiationDest.ts#L145)
+[src/ts/NonRepudiationDest.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/499e4cb/src/ts/NonRepudiationDest.ts#L145)

@@ -3,7 +3,7 @@ import { hashable } from 'object-sha'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
-  const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
+  const SIGNING_ALG: _pkg.SigningAlg = 'PS256'
 
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
@@ -145,7 +145,7 @@ describe('Non-repudiation protocol', function () {
     this.timeout(30000)
     it('should be the same secret as the one obtained in the PoP', async function () {
       const secret = { ...npConsumer.block.secret }
-      const secretFromLedger = await npConsumer.getSecretFromLedger()
+      const secretFromLedger = await npConsumer.getSecretFromLedger(8)
       chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
       npConsumer.block.secret = secret as _pkg.Block['secret']
     })
