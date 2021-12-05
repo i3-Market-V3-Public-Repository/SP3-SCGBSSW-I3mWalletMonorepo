@@ -1,35 +1,55 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { JWK, JWTPayload } from 'jose'
-import { Contract } from 'ethers'
+import { Contract, Wallet } from 'ethers'
+
+export type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512'
+export type SigningAlg = 'RS256' | 'ES256' | 'ES512' | 'PS256' // 'ES256K' is only supported in Node.js
+export type EncryptionAlg = 'A128GCM' | 'A192GCM' | 'A256GCM'
+
+export interface Algs {
+  hashAlg?: HashAlg
+  SigningAlg?: SigningAlg
+  EncAlg?: EncryptionAlg
+}
 
 export interface ContractConfig {
   address: string
   abi: ContractInterface
 }
 
+export interface Signer {
+  address: string
+  signer?: Wallet
+}
+
 export interface DltConfig {
-  rpcProviderUrl?: string // http://<host>:<port>
-  gasLimit?: number
-  contractConfig?: ContractConfig
-  contract?: Contract
-  disable?: boolean
+  rpcProviderUrl: string // http://<host>:<port>
+  gasLimit: number
+  contractConfig: ContractConfig
+  contract: Contract
+  signer?: Signer
+  disable: boolean
 }
 
 export interface Block {
   raw?: Uint8Array
   jwe?: string
-  secret?: JWK
+  secret?: {
+    jwk: JWK
+    hex: string
+  }
   poo?: string
   por?: string
   pop?: string
 }
 
-export interface DestBlock extends Block {
-  jwe: string
-}
-
 export interface OrigBlock extends Block {
   raw: Uint8Array
+  jwe: string
+  secret: {
+    jwk: JWK
+    hex: string
+  }
 }
 
 export interface DateTolerance {
@@ -37,26 +57,25 @@ export interface DateTolerance {
   currentDate: Date // string|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours")
 }
 
-export interface DataExchange {
-  id: string // unique identifier of this exchange
-  orig: string // Public key in JSON.stringify(JWK) of the block origin (sender)
-  dest: string // Public key in JSON.stringify(JWK) of the block destination (receiver)
-  hashAlg: string
-  cipherblockDgst: string // hash of the cipherblock in base64url with no padding
-  blockCommitment: string // hash of the plaintext block in base64url with no padding
-  secretCommitment: string // hash of the secret that can be used to decrypt the block in base64url with no padding
-  schema?: string // an optional schema. In the future it will be used to check the decrypted data
-}
-
 export interface DataExchangeInit {
   id: string // unique identifier of this exchange
   orig: string // Public key in JSON.stringify(JWK) of the block origin (sender)
   dest: string // Public key in JSON.stringify(JWK) of the block destination (receiver)
-  hashAlg: string
+  hashAlg: HashAlg
+  encAlg: EncryptionAlg
+  signingAlg: SigningAlg
+  ledgerContract: string // contract address
+  ledgerSignerAddress: string // address of the orig in the ledger
   cipherblockDgst?: string // hash of the cipherblock in base64url with no padding
   blockCommitment?: string // hash of the plaintext block in base64url with no padding
   secretCommitment?: string // hash of the secret that can be used to decrypt the block in base64url with no padding
   schema?: string // an optional schema. In the future it will be used to check the decrypted data
+}
+
+export interface DataExchange extends DataExchangeInit{
+  cipherblockDgst: string // hash of the cipherblock in base64url with no padding
+  blockCommitment: string // hash of the plaintext block in base64url with no padding
+  secretCommitment: string // hash of the secret that can be used to decrypt the block in base64url with no padding
 }
 
 export interface JwkPair {

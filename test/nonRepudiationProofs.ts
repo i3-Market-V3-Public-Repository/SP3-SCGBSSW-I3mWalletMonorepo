@@ -3,39 +3,39 @@ import { hashable } from 'object-sha'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
+  const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
-  const dltConfig: _pkg.DltConfig = {
-    rpcProviderUrl: '***REMOVED***',
-    disable: true
+  const dltConfig: Partial<_pkg.DltConfig> = {
+    rpcProviderUrl: '***REMOVED***'
   }
 
   this.beforeAll(async () => {
     const block = new Uint8Array([0, 2, 0, 1, 0])
     const dataExchangeId = '231412432'
 
-    const consumerKeys = await generateKeyPair(_pkg.SIGNING_ALG, { extractable: true })
+    const consumerKeys = await generateKeyPair(SIGNING_ALG, { extractable: true })
     const consumerJwks: _pkg.JwkPair = {
       privateJwk: {
         ...await exportJWK(consumerKeys.privateKey),
-        alg: _pkg.SIGNING_ALG
+        alg: SIGNING_ALG
       },
       publicJwk: {
         ...await exportJWK(consumerKeys.publicKey),
-        alg: _pkg.SIGNING_ALG
+        alg: SIGNING_ALG
       }
     }
 
-    const providerKeys = await generateKeyPair(_pkg.SIGNING_ALG, { extractable: true })
+    const providerKeys = await generateKeyPair(SIGNING_ALG, { extractable: true })
     const providerJwks: _pkg.JwkPair = {
       privateJwk: {
         ...await exportJWK(providerKeys.privateKey),
-        alg: _pkg.SIGNING_ALG
+        alg: SIGNING_ALG
       },
       publicJwk: {
         ...await exportJWK(providerKeys.publicKey),
-        alg: _pkg.SIGNING_ALG
+        alg: SIGNING_ALG
       }
     }
 
@@ -73,7 +73,7 @@ describe('Non-repudiation protocol', function () {
   describe('create/verify proof of origin (PoO)', function () {
     it('provider should create a valid signed PoO that is properly verified by the consumer', async function () {
       const poo = await npProvider.generatePoO()
-      const verification = await npConsumer.verifyPoO(poo, npProvider.block.jwe as string)
+      const verification = await npConsumer.verifyPoO(poo, npProvider.block.jwe)
       chai.expect(verification).to.not.equal(undefined)
     })
   })
@@ -89,11 +89,7 @@ describe('Non-repudiation protocol', function () {
   describe('create/verify proof of publication (PoP)', function () {
     it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
       const pop = await npProvider.generatePoP()
-      let verified
-      try {
-        verified = await npConsumer.verifyPoP(pop, npProvider.block.secret as _pkg.JWK)
-      } catch (error) {
-      }
+      const verified = await npConsumer.verifyPoP(pop)
       chai.expect(verified).to.not.equal(undefined)
     })
     it('verification should throw error if there is no PoR', async function () {
@@ -102,12 +98,12 @@ describe('Non-repudiation protocol', function () {
       delete block.por
       let err
       try {
-        await npConsumer.verifyPoP(block.pop as string, block.secret as _pkg.JWK)
+        await npConsumer.verifyPoP(block.pop as string)
       } catch (error) {
         err = error
       }
       block.por = por
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 
@@ -116,10 +112,9 @@ describe('Non-repudiation protocol', function () {
       const decryptedBlock = await npConsumer.decrypt()
       chai.expect(hashable(npProvider.block.raw)).to.equal((decryptedBlock !== undefined) ? hashable(decryptedBlock) : '')
     })
-    it('should throw error if PoP has not been previously verified', async function () {
-      const block = npConsumer.block as _pkg.DestBlock
-      const pop = block.pop as string
-      block.pop = undefined
+    it('should throw error if there is no secret yet', async function () {
+      const secret = npConsumer.block.secret
+      delete npConsumer.block.secret
 
       let err
       try {
@@ -127,10 +122,8 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-
-      block.pop = pop
-
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      npConsumer.block.secret = secret
+      chai.expect(err).to.not.equal(undefined)
     })
     it('it should throw error if hash(decrypted block) != committed block digest', async function () {
       const str = '123'
@@ -144,7 +137,17 @@ describe('Non-repudiation protocol', function () {
       // restore the block commitment
       npConsumer.exchange.blockCommitment = npConsumer.exchange.blockCommitment.substring(0, npConsumer.exchange.blockCommitment.length - str.length)
 
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
+    })
+  })
+
+  describe('get secret from ledger', function () {
+    this.timeout(30000)
+    it('should be the same secret as the one obtained in the PoP', async function () {
+      const secret = { ...npConsumer.block.secret }
+      const secretFromLedger = await npConsumer.getSecretFromLedger()
+      chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
+      npConsumer.block.secret = secret as _pkg.Block['secret']
     })
   })
 
@@ -160,7 +163,7 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
     it('adding unknown property \'x\' to expectedDataExchange claims should throw error', async function () {
       const expectedPayload = {
@@ -174,7 +177,7 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
     it('property in expectedDataExchange different that in the dataExchange should throw error', async function () {
       const expectedPayload = {
@@ -190,7 +193,7 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 
@@ -202,21 +205,21 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 
   describe('testing with a jwk with no \'alg\'', function () {
     it('verifyProof should throw error', async function () {
+      const jwk = { ...npProvider.publicJwkDest }
+      delete jwk.alg
       let err
       try {
-        const jwk = { ...npProvider.publicJwkDest }
-        delete jwk.alg
         await _pkg.verifyProof(npConsumer.block?.poo as string, jwk, npProvider.exchange as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
     it('createProof should throw error', async function () {
       let err
@@ -232,30 +235,7 @@ describe('Non-repudiation protocol', function () {
       } catch (error) {
         err = error
       }
-      chai.expect(err).to.be.an.instanceOf(TypeError)
-    })
-  })
-
-  describe('Actions when not initialized', function () {
-    it('npOrig should fail and throw error', async function () {
-      const npProv = new _pkg.NonRepudiationOrig('asfddsaf', npProvider.jwkPairOrig, npProvider.publicJwkDest, npProvider.block.raw, dltConfig)
-      let err
-      try {
-        await npProv.generatePoO()
-      } catch (error) {
-        err = error
-      }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
-    })
-    it('npDest should fail and throw error', async function () {
-      const npCons = new _pkg.NonRepudiationDest('asfddsaf', npConsumer.jwkPairDest, npConsumer.publicJwkOrig, dltConfig)
-      let err
-      try {
-        await npCons.generatePoR()
-      } catch (error) {
-        err = error
-      }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 })

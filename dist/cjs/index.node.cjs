@@ -6,10 +6,35 @@ var jose = require('jose');
 var bigintCryptoUtils = require('bigint-crypto-utils');
 var objectSha = require('object-sha');
 var ethers = require('ethers');
+var bigintConversion = require('bigint-conversion');
+var base64 = require('@juanelas/base64');
 
-async function verifyKeyPair(pubJWK, privJWK, alg) {
-    const pubKey = await jose.importJWK(pubJWK, alg);
-    const privKey = await jose.importJWK(privJWK, alg);
+function _interopNamespace(e) {
+    if (e && e.__esModule) return e;
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n["default"] = e;
+    return Object.freeze(n);
+}
+
+var base64__namespace = /*#__PURE__*/_interopNamespace(base64);
+
+async function verifyKeyPair(pubJWK, privJWK) {
+    if (pubJWK.alg === undefined || privJWK.alg === undefined || pubJWK.alg !== privJWK.alg) {
+        throw new Error('alg no present in either pubJwk or privJwk, or pubJWK.alg != privJWK.alg');
+    }
+    const pubKey = await jose.importJWK(pubJWK);
+    const privKey = await jose.importJWK(privJWK);
     const nonce = await bigintCryptoUtils.randBytes(16);
     const jws = await new jose.GeneralSign(nonce)
         .addSignature(privKey)
@@ -45,7 +70,7 @@ async function createProof(payload, privateJwk) {
  *
  * @param publicJwk - the publicKey as a JWK to use for verifying the signature. If MUST match either orig or dest (the one pointed on the iss field)
  *
- * @param expectedPayloadClaims - The expected values of the proof's payload claims. An example could be:
+ * @param expectedPayloadClaims - The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
  * {
  *   proofType: 'PoO',
  *   iss: 'orig',
@@ -55,8 +80,8 @@ async function createProof(payload, privateJwk) {
  *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
  *     hash_alg: 'SHA-256',
  *     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding
- *     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding
- *     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding
+ *     block_commitment: '', // hash of the plaintext block in base64url with no padding
+ *     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding
  *   }
  * }
  *
@@ -85,10 +110,8 @@ async function verifyProof(proof, publicJwk, expectedPayloadClaims, dateToleranc
             const dataExchange = payload.exchange;
             checkDataExchange(dataExchange, expectedDataExchange);
         }
-        else {
-            if (objectSha.hashable(expectedPayloadClaims[key]) !== objectSha.hashable(payload[key])) {
-                throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`);
-            }
+        else if (expectedPayloadClaims[key] !== '' && objectSha.hashable(expectedPayloadClaims[key]) !== objectSha.hashable(payload[key])) {
+            throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`);
         }
     }
     return (verification);
@@ -106,15 +129,11 @@ function checkDataExchange(dataExchange, expectedDataExchange) {
     }
     // And now let's check the expected values
     for (const key in expectedDataExchange) {
-        if (objectSha.hashable(expectedDataExchange[key]) !== objectSha.hashable(dataExchange[key])) {
+        if (expectedDataExchange[key] !== '' && objectSha.hashable(expectedDataExchange[key]) !== objectSha.hashable(dataExchange[key])) {
             throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key], undefined, 2)}`);
         }
     }
 }
-
-const HASH_ALG = 'SHA-256'; // 'SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'
-const SIGNING_ALG = 'RS256';
-const ENC_ALG = 'A256GCM';
 
 /**
  * Encrypts block to JWE
@@ -122,28 +141,30 @@ const ENC_ALG = 'A256GCM';
  * @param exchangeId - the id of the data exchange
  * @param block - the actual block of data
  * @param secret - a one-time secret for encrypting this block
+ * @param encAlg - the algorithm for encryption
  * @returns a Compact JWE
  */
-async function jweEncrypt(exchangeId, block, secret) {
+async function jweEncrypt(exchangeId, block, secret, encAlg) {
     // const input: Uint8Array = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
     const key = await jose.importJWK(secret);
     return await new jose.CompactEncrypt(block)
-        .setProtectedHeader({ alg: 'dir', enc: ENC_ALG, exchangeId, kid: secret.kid })
+        .setProtectedHeader({ alg: 'dir', enc: encAlg, exchangeId, kid: secret.kid })
         .encrypt(key);
 }
 /**
  * Decrypts jwe
  * @param jwe - a JWE
  * @param secret - a JWK with the secret to decrypt this jwe
+ * @param encAlg - the algorithm for encryption
  * @returns the plaintext
  */
-async function jweDecrypt(jwe, secret) {
+async function jweDecrypt(jwe, secret, encAlg = 'A256GCM') {
     const key = await jose.importJWK(secret);
-    return await jose.compactDecrypt(jwe, key, { contentEncryptionAlgorithms: [ENC_ALG] });
+    return await jose.compactDecrypt(jwe, key, { contentEncryptionAlgorithms: [encAlg] });
 }
 
-async function sha(input, algorithm = HASH_ALG) {
-    const algorithms = ['SHA-1', 'SHA-256', 'SHA-384', 'SHA-512'];
+async function sha(input, algorithm) {
+    const algorithms = ['SHA-256', 'SHA-384', 'SHA-512'];
     if (!algorithms.includes(algorithm)) {
         throw new RangeError(`Valid hash algorith values are any of ${JSON.stringify(algorithms)}`);
     }
@@ -158,17 +179,17 @@ async function sha(input, algorithm = HASH_ALG) {
 }
 
 /**
- * Create a random (high entropy) symmetric JWK secret for AES-256-GCM
+ * Create a random (high entropy) symmetric secret for AES-256-GCM
  *
- * @returns a promise that resolves to a JWK
+ * @returns a promise that resolves to the secret in JWK and raw hex string
  */
-async function oneTimeSecret() {
-    const key = await jose.generateSecret(ENC_ALG, { extractable: true });
+async function oneTimeSecret(encAlg) {
+    const key = await jose.generateSecret(encAlg, { extractable: true });
     const jwk = await jose.exportJWK(key);
     const thumbprint = await jose.calculateJwkThumbprint(jwk);
     jwk.kid = thumbprint;
-    jwk.alg = ENC_ALG;
-    return jwk;
+    jwk.alg = encAlg;
+    return { jwk, hex: bigintConversion.bufToHex(base64.decode(jwk.k)) };
 }
 
 var contractConfigDefault = {
@@ -325,8 +346,9 @@ class NonRepudiationOrig {
      * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
      * @param block - the block of data to transmit in this data exchange
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
+     * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
      */
-    constructor(exchangeId, jwkPairOrig, publicJwkDest, block, dltConfig) {
+    constructor(exchangeId, jwkPairOrig, publicJwkDest, block, dltConfig, algs) {
         this.jwkPairOrig = jwkPairOrig;
         this.publicJwkDest = publicJwkDest;
         if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
@@ -336,46 +358,71 @@ class NonRepudiationOrig {
             id: exchangeId,
             orig: JSON.stringify(this.jwkPairOrig.publicJwk),
             dest: JSON.stringify(this.publicJwkDest),
-            hashAlg: HASH_ALG
+            hashAlg: 'SHA-256',
+            signingAlg: 'ES256',
+            encAlg: 'A256GCM',
+            ledgerSignerAddress: '',
+            ledgerContract: '',
+            ...algs
         };
+        // @ts-expect-error I will end assigning the complete Block in the async init()
         this.block = {
             raw: block
         };
-        this.dltConfig = this._dltSetup(dltConfig);
-        this.checked = false;
-    }
-    _dltSetup(providedDltConfig) {
-        const dltConfig = {
-            gasLimit: 12500000,
-            rpcProviderUrl: '***REMOVED***',
-            disable: false,
-            ...providedDltConfig
-        };
-        if (!dltConfig.disable) {
-            dltConfig.contractConfig = dltConfig.contractConfig ?? contractConfigDefault;
-            const rpcProvider = new ethers.ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl);
-            /** TODO: it should be jwkPairDest.privateJwk */
-            const privKeyHex = '***REMOVED***';
-            const signer = new ethers.ethers.Wallet(privKeyHex, rpcProvider);
-            dltConfig.contract = new ethers.ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, signer);
-        }
-        return dltConfig;
+        // @ts-expect-error I will end assigning the complete Block in the async init()
+        this.dltConfig = dltConfig;
+        this.initialized = new Promise((resolve, reject) => {
+            this.init().then(() => {
+                resolve(true);
+            }).catch((error) => {
+                throw error;
+            });
+        });
     }
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
      */
     async init() {
         await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk);
-        this.block.secret = await oneTimeSecret();
-        const secretStr = JSON.stringify(this.block.secret);
-        this.block.jwe = await jweEncrypt(this.exchange.id, this.block.raw, this.block.secret);
+        const secret = await oneTimeSecret(this.exchange.encAlg);
+        this.block = {
+            ...this.block,
+            secret,
+            jwe: await jweEncrypt(this.exchange.id, this.block.raw, secret.jwk, this.exchange.encAlg)
+        };
         this.exchange = {
             ...this.exchange,
             cipherblockDgst: await sha(this.block.jwe, this.exchange.hashAlg),
             blockCommitment: await sha(this.block.raw, this.exchange.hashAlg),
-            secretCommitment: await sha(secretStr, this.exchange.hashAlg)
+            secretCommitment: await sha(new Uint8Array(bigintConversion.hexToBuf(this.block.secret.hex)), this.exchange.hashAlg)
         };
-        this.checked = true;
+        await this._dltSetup();
+    }
+    async _dltSetup() {
+        const dltConfig = {
+            // @ts-expect-error I will end assigning the complete Block in the async init()
+            gasLimit: 12500000,
+            // @ts-expect-error I will end assigning the complete Block in the async init()
+            rpcProviderUrl: '***REMOVED***',
+            // @ts-expect-error I will end assigning the complete Block in the async init()
+            disable: false,
+            ...this.dltConfig
+        };
+        if (!dltConfig.disable) {
+            dltConfig.contractConfig = dltConfig.contractConfig ?? contractConfigDefault;
+            const rpcProvider = new ethers.ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl);
+            if (this.jwkPairOrig.privateJwk.d === undefined) {
+                throw new Error('INVALID SIGNING ALGORITHM: No d property found on private key');
+            }
+            const privateKey = base64__namespace.decode(this.jwkPairOrig.privateJwk.d);
+            const signingKey = new ethers.ethers.utils.SigningKey(privateKey);
+            const signer = new ethers.ethers.Wallet(signingKey, rpcProvider);
+            dltConfig.signer = { address: await signer.getAddress(), signer };
+            dltConfig.contract = new ethers.ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, signer);
+            this.exchange.ledgerSignerAddress = dltConfig.signer.address;
+            this.exchange.ledgerContract = dltConfig.contractConfig.address;
+        }
+        this.dltConfig = dltConfig;
     }
     /**
      * Creates the proof of origin (PoO).
@@ -384,7 +431,7 @@ class NonRepudiationOrig {
      * @returns a compact JWS with the PoO
      */
     async generatePoO() {
-        this._checkInit();
+        await this.initialized;
         const payload = {
             proofType: 'PoO',
             iss: 'orig',
@@ -401,7 +448,7 @@ class NonRepudiationOrig {
      * @returns the verified payload and protected header
      */
     async verifyPoR(por) {
-        this._checkInit();
+        await this.initialized;
         if (this.block?.poo === undefined) {
             throw new Error('Cannot verify a PoR if not even a PoO have been created');
         }
@@ -422,37 +469,31 @@ class NonRepudiationOrig {
      * @returns a compact JWS with the PoP
      */
     async generatePoP() {
-        this._checkInit();
-        if (this.block?.por === undefined) {
-            throw new Error('Before computing a PoP, you have first to receive a verify a PoR');
+        await this.initialized;
+        if (this.block.por === undefined) {
+            throw new Error('Before computing a PoP, you have first to have received and verified the PoR');
         }
-        /**
-         * TO-DO: obtain verification code from the blockchain
-         * TO-DO: Pass secret to raw hex
-         */
         let verificationCode = 'verificationCode';
-        if (this.dltConfig.disable !== true) {
-            const secretHex = '1234567890';
-            const setRegistryTx = await this.dltConfig.contract?.setRegistry(this.exchange.id, secretHex, { gasLimit: this.dltConfig.gasLimit });
+        if (!this.dltConfig.disable) {
+            const secret = ethers.ethers.BigNumber.from(`0x${this.block.secret.hex}`);
+            // TO-DO: it fails because the account hasn't got any funds (ether). Do we have a faucet? Set gas prize to 0?
+            const setRegistryTx = await this.dltConfig.contract?.setRegistry(this.exchange.id, secret, { gasLimit: this.dltConfig.gasLimit });
+            verificationCode = JSON.stringify(setRegistryTx);
+            // TO-DO: I would say that we can remove the next wait
             await setRegistryTx.wait();
-            const address = await this.dltConfig.contract?.signer.getAddress();
-            verificationCode = await this.dltConfig.contract?.registry(address, this.exchange.id);
+            // TO-DO: Next line is completely useless. Here for testing but we could remove it.
+            await this.dltConfig.contract?.registry(this.dltConfig.signer?.address, this.exchange.id);
         }
         const payload = {
             proofType: 'PoP',
             iss: 'orig',
             exchange: this.exchange,
             porDgst: await sha(this.block.por, this.exchange.hashAlg),
-            secret: JSON.stringify(this.block.secret),
+            secret: JSON.stringify(this.block.secret.jwk),
             verificationCode
         };
         this.block.pop = await createProof(payload, this.jwkPairOrig.privateJwk);
         return this.block.pop;
-    }
-    _checkInit() {
-        if (!this.checked) {
-            throw new Error('NOT INITIALIZED. Before calling any other method, initialize this instance of NonRepudiationOrig calling async method init()');
-        }
     }
 }
 
@@ -468,18 +509,31 @@ class NonRepudiationDest {
      * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
      * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
+     * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GM)
      */
-    constructor(exchangeId, jwkPairDest, publicJwkOrig, dltConfig) {
+    constructor(exchangeId, jwkPairDest, publicJwkOrig, dltConfig, algs) {
         this.jwkPairDest = jwkPairDest;
         this.publicJwkOrig = publicJwkOrig;
         this.exchange = {
             id: exchangeId,
             orig: JSON.stringify(this.publicJwkOrig),
             dest: JSON.stringify(this.jwkPairDest.publicJwk),
-            hashAlg: HASH_ALG
+            hashAlg: 'SHA-256',
+            signingAlg: 'ES256',
+            encAlg: 'A256GCM',
+            ledgerContract: '',
+            ledgerSignerAddress: '',
+            ...algs
         };
+        this.block = {};
         this.dltConfig = this._dltSetup(dltConfig);
-        this.checked = false;
+        this.initialized = new Promise((resolve, reject) => {
+            this.init().then(() => {
+                resolve(true);
+            }).catch((error) => {
+                throw error;
+            });
+        });
     }
     _dltSetup(providedDltConfig) {
         const dltConfig = {
@@ -500,7 +554,6 @@ class NonRepudiationDest {
      */
     async init() {
         await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk);
-        this.checked = true;
     }
     /**
      * Verifies a proof of origin against the received cipherblock.
@@ -512,7 +565,7 @@ class NonRepudiationDest {
      *
      */
     async verifyPoO(poo, cipherblock) {
-        this._checkInit();
+        await this.initialized;
         const dataExchange = {
             ...this.exchange,
             cipherblockDgst: await sha(cipherblock, this.exchange.hashAlg)
@@ -537,57 +590,71 @@ class NonRepudiationDest {
      * @returns a compact JWS with the PoR
      */
     async generatePoR() {
-        this._checkInit();
-        if (this.block?.poo === undefined) {
+        await this.initialized;
+        if (this.block.poo === undefined) {
             throw new Error('Before computing a PoR, you have first to receive a valid cipherblock with a PoO and validate the PoO');
         }
         const payload = {
             proofType: 'PoR',
             iss: 'dest',
             exchange: this.exchange,
-            pooDgst: await sha(this.block.poo)
+            pooDgst: await sha(this.block.poo, this.exchange.hashAlg)
         };
         this.block.por = await createProof(payload, this.jwkPairDest.privateJwk);
         return this.block.por;
     }
     /**
-     * Verifies a received Proof of Publication (PoP) with the received secret and verificationCode
+     * Verifies a received Proof of Publication (PoP) and returns the secret
      * @param pop - a PoP in compact JWS
      * @param secret - the JWK secret that was used to encrypt the block
-     * @returns the verified payload and protected header
+     * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
      */
-    async verifyPoP(pop, secret) {
-        this._checkInit();
-        if (this.block?.por === undefined) {
+    async verifyPoP(pop) {
+        await this.initialized;
+        if (this.block.por === undefined) {
             throw new Error('Cannot verify a PoP if not even a PoR have been created');
-        }
-        /**
-         * TO-DO: obtain verification code from the blockchain
-         * TO-DO: Pass secret to raw hex
-         */
-        let verificationCode = 'verificationCode';
-        if (this.dltConfig.disable !== true) {
-            const signerAddress = '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903';
-            verificationCode = await new Promise((resolve, reject) => {
-                this.dltConfig.contract?.on('Registration', (sender, dataExchangeId, secret) => {
-                    if (sender === signerAddress) {
-                        resolve(secret.toHexString());
-                    }
-                });
-            });
         }
         const expectedPayloadClaims = {
             proofType: 'PoP',
             iss: 'orig',
             exchange: this.exchange,
-            porDgst: await sha(this.block.por),
-            secret: JSON.stringify(secret),
-            verificationCode
+            porDgst: await sha(this.block.por, this.exchange.hashAlg),
+            secret: '',
+            verificationCode: ''
         };
         const verified = await verifyProof(pop, this.publicJwkOrig, expectedPayloadClaims);
-        this.block.secret = secret;
+        const secret = JSON.parse(verified.payload.secret);
+        this.block.secret = {
+            hex: bigintConversion.bufToHex(base64__namespace.decode(secret.k)),
+            jwk: secret
+        };
         this.block.pop = pop;
         return verified;
+    }
+    /**
+     * Just in case the PoP is not received, the secret can be downloaded from the ledger
+     *
+     * @param timeout - the time in seconds to wait for the query to get the value
+     *
+     * @returns the secret
+     */
+    async getSecretFromLedger(timeout = 20) {
+        let secretBn = ethers.ethers.BigNumber.from(0);
+        let counter = 0;
+        do {
+            secretBn = await this.dltConfig.contract.registry(this.exchange.ledgerSignerAddress, this.exchange.id);
+            if (secretBn.isZero()) {
+                counter++;
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+        } while (secretBn.isZero() && counter < timeout);
+        if (secretBn.isZero()) {
+            throw new Error(`timeout of ${timeout}s exceeded when querying the ledger`);
+        }
+        const secretHex = secretBn.toHexString();
+        const jwk = await jose.exportJWK(new Uint8Array(bigintConversion.hexToBuf(secretHex)));
+        this.block.secret = { hex: secretHex, jwk };
+        return this.block.secret;
     }
     /**
      * Decrypts the cipherblock once all the previous proofs have been verified
@@ -596,30 +663,25 @@ class NonRepudiationDest {
      * @throws Error if the previous proofs have not been verified or the decrypted block does not meet the committed one
      */
     async decrypt() {
-        this._checkInit();
-        if (this.block?.pop === undefined || this.block?.secret === undefined) {
-            throw new Error('Cannot decrypt if the PoP/secret has not been verified ');
+        await this.initialized;
+        if (this.block.secret?.jwk === undefined) {
+            throw new Error('Cannot decrypt without the secret');
         }
-        const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret)).plaintext;
-        const decryptedDgst = await sha(decryptedBlock);
+        if (this.block.jwe === undefined) {
+            throw new Error('No cipherblock to decrypt');
+        }
+        const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret.jwk)).plaintext;
+        const decryptedDgst = await sha(decryptedBlock, this.exchange.hashAlg);
         if (decryptedDgst !== this.exchange.blockCommitment) {
             throw new Error('Decrypted block does not meet the committed one');
         }
         this.block.raw = decryptedBlock;
         return decryptedBlock;
     }
-    _checkInit() {
-        if (!this.checked) {
-            throw new Error('NOT INITIALIZED. Before calling any other method, initialize this instance of NonRepudiationOrig calling async method init()');
-        }
-    }
 }
 
-exports.ENC_ALG = ENC_ALG;
-exports.HASH_ALG = HASH_ALG;
 exports.NonRepudiationDest = NonRepudiationDest;
 exports.NonRepudiationOrig = NonRepudiationOrig;
-exports.SIGNING_ALG = SIGNING_ALG;
 exports.createProof = createProof;
 exports.jweDecrypt = jweDecrypt;
 exports.jweEncrypt = jweEncrypt;
@@ -627,4 +689,4 @@ exports.oneTimeSecret = oneTimeSecret;
 exports.sha = sha;
 exports.verifyKeyPair = verifyKeyPair;
 exports.verifyProof = verifyProof;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5janMiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy90cy92ZXJpZnlLZXlQYWlyLnRzIiwiLi4vLi4vc3JjL3RzL2NyZWF0ZVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmlmeVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL2NvbnN0YW50cy50cyIsIi4uLy4uL3NyYy90cy9qd2UudHMiLCIuLi8uLi9zcmMvdHMvc2hhLnRzIiwiLi4vLi4vc3JjL3RzL29uZVRpbWVTZWNyZXQudHMiLCIuLi8uLi9zcmMvYmVzdS9Ob25SZXB1ZGlhdGlvbi50cyIsIi4uLy4uL3NyYy90cy9Ob25SZXB1ZGlhdGlvbk9yaWcudHMiLCIuLi8uLi9zcmMvdHMvTm9uUmVwdWRpYXRpb25EZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpudWxsLCJuYW1lcyI6WyJpbXBvcnRKV0siLCJyYW5kQnl0ZXMiLCJHZW5lcmFsU2lnbiIsImdlbmVyYWxWZXJpZnkiLCJTaWduSldUIiwiand0VmVyaWZ5IiwiaGFzaGFibGUiLCJDb21wYWN0RW5jcnlwdCIsImNvbXBhY3REZWNyeXB0IiwiZ2VuZXJhdGVTZWNyZXQiLCJleHBvcnRKV0siLCJjYWxjdWxhdGVKd2tUaHVtYnByaW50IiwiZXRoZXJzIl0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7QUFHTyxlQUFlLGFBQWEsQ0FBRSxNQUFXLEVBQUUsT0FBWSxFQUFFLEdBQVk7SUFDMUUsTUFBTSxNQUFNLEdBQUcsTUFBTUEsY0FBUyxDQUFDLE1BQU0sRUFBRSxHQUFHLENBQUMsQ0FBQTtJQUMzQyxNQUFNLE9BQU8sR0FBRyxNQUFNQSxjQUFTLENBQUMsT0FBTyxFQUFFLEdBQUcsQ0FBQyxDQUFBO0lBQzdDLE1BQU0sS0FBSyxHQUFHLE1BQU1DLDJCQUFTLENBQUMsRUFBRSxDQUFDLENBQUE7SUFDakMsTUFBTSxHQUFHLEdBQUcsTUFBTSxJQUFJQyxnQkFBVyxDQUFDLEtBQUssQ0FBQztTQUNyQyxZQUFZLENBQUMsT0FBTyxDQUFDO1NBQ3JCLGtC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
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5janMiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy90cy92ZXJpZnlLZXlQYWlyLnRzIiwiLi4vLi4vc3JjL3RzL2NyZWF0ZVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmlmeVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL2p3ZS50cyIsIi4uLy4uL3NyYy90cy9zaGEudHMiLCIuLi8uLi9zcmMvdHMvb25lVGltZVNlY3JldC50cyIsIi4uLy4uL3NyYy9iZXN1L05vblJlcHVkaWF0aW9uLnRzIiwiLi4vLi4vc3JjL3RzL05vblJlcHVkaWF0aW9uT3JpZy50cyIsIi4uLy4uL3NyYy90cy9Ob25SZXB1ZGlhdGlvbkRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm5hbWVzIjpbImltcG9ydEpXSyIsInJhbmRCeXRlcyIsIkdlbmVyYWxTaWduIiwiZ2VuZXJhbFZlcmlmeSIsIlNpZ25KV1QiLCJqd3RWZXJpZnkiLCJoYXNoYWJsZSIsIkNvbXBhY3RFbmNyeXB0IiwiY29tcGFjdERlY3J5cHQiLCJnZW5lcmF0ZVNlY3JldCIsImV4cG9ydEpXSyIsImNhbGN1bGF0ZUp3a1RodW1icHJpbnQiLCJidWZUb0hleCIsImJhc2U2NGRlY29kZSIsImhleFRvQnVmIiwiZXRoZXJzIiwiYmFzZTY0Il0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBR08sZUFBZSxhQUFhLENBQUUsTUFBVyxFQUFFLE9BQVk7SUFDNUQsSUFBSSxNQUFNLENBQUMsR0FBRyxLQUFLLFNBQVMsSUFBSSxPQUFPLENBQUMsR0FBRyxLQUFLLFNBQVMsSUFBSSxNQUFNLENBQUMsR0FBRyxLQUFLLE9BQU8sQ0FBQyxHQUFHLEVBQUU7UUFDdkYsTUFBTSxJQUFJLEtBQUssQ0FBQywwRUFBMEUsQ0FBQyxDQUFBO0tBQzVGO0lBQ0QsTUFBTSxNQUFNLEdBQUcsTUFBTUEsY0FBUyxDQUFDLE1BQU0sQ0FBQyxDQUFBO0lBQ3RDLE1BQU0sT0FBTyxHQUFHLE1B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

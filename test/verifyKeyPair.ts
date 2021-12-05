@@ -1,49 +1,51 @@
 import { exportJWK, generateKeyPair } from 'jose'
 
-describe('verifyKeyPair', function () {
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
+describe('verifyKeyPair for different signing algorithms', function () {
   this.timeout(20000)
+  const signingAlgsToTest: _pkg.SigningAlg[] = ['RS256', 'ES256', 'ES512', 'PS256']
 
-  let privJwk: _pkg.JWK
-  let pubJwk: _pkg.JWK
-  let privJwk2: _pkg.JWK
-  let pubJwk2: _pkg.JWK
+  for (const signingAlg of signingAlgsToTest) {
+    let privJwk: _pkg.JWK
+    let pubJwk: _pkg.JWK
+    let privJwk2: _pkg.JWK
 
-  this.beforeAll(async () => {
-    const keyPair = await generateKeyPair(_pkg.SIGNING_ALG, { extractable: true })
-    privJwk = {
-      ...await exportJWK(keyPair.privateKey),
-      alg: _pkg.SIGNING_ALG
-    }
-    pubJwk = {
-      ...await exportJWK(keyPair.publicKey),
-      alg: _pkg.SIGNING_ALG
-    }
+    this.beforeAll(async () => {
+      const keyPair = await generateKeyPair(signingAlg, { extractable: true })
+      privJwk = {
+        ...await exportJWK(keyPair.privateKey),
+        alg: signingAlg
+      }
+      pubJwk = {
+        ...await exportJWK(keyPair.publicKey),
+        alg: signingAlg
+      }
 
-    const keyPair2 = await generateKeyPair(_pkg.SIGNING_ALG, { extractable: true })
-    privJwk2 = {
-      ...await exportJWK(keyPair2.privateKey),
-      alg: _pkg.SIGNING_ALG
-    }
-    pubJwk2 = {
-      ...await exportJWK(keyPair2.publicKey),
-      alg: _pkg.SIGNING_ALG
-    }
-  })
-
-  describe('verify with non complementary public-private keys', function () {
-    it('verifyKeyPair(pubJwk, privJwk2) should throw an error', async function () {
-      try {
-        await _pkg.verifyKeyPair(pubJwk, privJwk2)
-      } catch (error) {
-        chai.expect(error)
+      const keyPair2 = await generateKeyPair(signingAlg, { extractable: true })
+      privJwk2 = {
+        ...await exportJWK(keyPair2.privateKey),
+        alg: signingAlg
       }
     })
-    it('verifyKeyPair(pubJwk2, privJwk) should throw an error', async function () {
-      try {
-        await _pkg.verifyKeyPair(pubJwk2, privJwk)
-      } catch (error) {
-        chai.expect(error)
-      }
+
+    describe(`${signingAlg}: verifyKeyPair(pubJwk, privJwk)`, function () {
+      it('should succeed', async function () {
+        let err
+        try {
+          await _pkg.verifyKeyPair(pubJwk, privJwk)
+        } catch (error) {
+          err = error
+        }
+        chai.expect(err).to.be.undefined
+      })
+      it('should throw an error with non-complementary keys', async function () {
+        try {
+          await _pkg.verifyKeyPair(pubJwk, privJwk2)
+        } catch (error) {
+          chai.expect(error)
+        }
+      })
     })
-  })
+  }
 })

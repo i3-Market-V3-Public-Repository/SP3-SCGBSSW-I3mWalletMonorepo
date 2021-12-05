@@ -63,6 +63,9 @@ async nrp() => {
 
   // Create proof of publication. It connects to the ledger and publishes the secret that can be used to decrypt the cipherblock
   const pop = await npProvider.generatePoP()
+
+  // Send pop to the consumer. The PoP includes the secret to decrypt the cipherblock; although the consumer could also get the secret from the smart contract
+  ...
 )
 nrp()
 ```
@@ -95,10 +98,13 @@ async nrp() => {
   // Receive (or retrieve from ledger) secret in JWJ and proof of publication (PoR) and stored them in secret and pop.
   ...
 
-  // Verify PoP. If verification passes the pop is added to npConsumer.block.pop; otherwise it throws an error.
-  await npConsumer.verifyPoP(pop, secret)
+  // Verify PoP. If verification passes the pop is added to npConsumer.block.pop, and the secret to npConsumer.block.secret; otherwise it throws an error.
+  await npConsumer.verifyPoP(pop)
 
-  // Decrypt cipherblock (it is already stored in npConsumer.block.jwe) and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). If verification fails, it throws an error.
+  // Just in case the PoP is not received, the secret can be downloaded from the ledger. The function downloads the secret and stores it to npConsumer.block.secret
+  await npConsumer.getSecretFromLedger()
+
+  // Decrypt cipherblock and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). It is assumed must have been obtained first, either inside the PoP or from the ledger. If verification fails, it throws an error.
   const decryptedBlock = await npConsumer.decrypt()
 )
 nrp()

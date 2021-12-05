@@ -1,10 +1,11 @@
+import * as base64 from '@juanelas/base64'
+import { bufToHex, hexToBuf } from 'bigint-conversion'
 import { ethers } from 'ethers'
-import { JWK, JWTVerifyResult } from 'jose'
+import { exportJWK, JWK, JWTVerifyResult } from 'jose'
 
 import { jweDecrypt } from './jwe'
-import { HASH_ALG } from './constants'
 import { createProof } from './createProof'
-import { ContractConfig, DataExchange, DataExchangeInit, DestBlock, DltConfig, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
+import { Algs, Block, ContractConfig, DataExchange, DataExchangeInit, DltConfig, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
@@ -20,9 +21,9 @@ export class NonRepudiationDest {
   exchange: DataExchangeInit
   jwkPairDest: JwkPair
   publicJwkOrig: JWK
-  block?: DestBlock
+  block: Block
   dltConfig: DltConfig
-  checked: boolean
+  initialized: Promise<boolean>
 
   /**
    *
@@ -30,21 +31,34 @@ export class NonRepudiationDest {
    * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
    * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
+   * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GM)
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig?: DltConfig) {
+  constructor (exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig?: Partial<DltConfig>, algs?: Algs) {
     this.jwkPairDest = jwkPairDest
     this.publicJwkOrig = publicJwkOrig
     this.exchange = {
       id: exchangeId,
       orig: JSON.stringify(this.publicJwkOrig),
       dest: JSON.stringify(this.jwkPairDest.publicJwk),
-      hashAlg: HASH_ALG
+      hashAlg: 'SHA-256',
+      signingAlg: 'ES256',
+      encAlg: 'A256GCM',
+      ledgerContract: '',
+      ledgerSignerAddress: '',
+      ...algs
     }
+    this.block = {}
     this.dltConfig = this._dltSetup(dltConfig)
-    this.checked = false
+    this.initialized = new Promise((resolve, reject) => {
+      this.init().then(() => {
+        resolve(true)
+      }).catch((error) => {
+        throw error
+      })
+    })
   }
 
-  private _dltSetup (providedDltConfig?: DltConfig): DltConfig {
+  private _dltSetup (providedDltConfig?: Partial<DltConfig>): DltConfig {
     const dltConfig = {
       gasLimit: 12500000,
       rpcProviderUrl: '***REMOVED***',
@@ -54,11 +68,9 @@ export class NonRepudiationDest {
     if (!dltConfig.disable) {
       dltConfig.contractConfig = dltConfig.contractConfig ?? (contractConfigDefault as ContractConfig)
       const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
-
       dltConfig.contract = new ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, rpcProvider)
     }
-
-    return dltConfig
+    return dltConfig as DltConfig
   }
 
   /**
@@ -66,7 +78,6 @@ export class NonRepudiationDest {
    */
   async init (): Promise<void> {
     await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk)
-    this.checked = true
   }
 
   /**
@@ -79,7 +90,7 @@ export class NonRepudiationDest {
    *
    */
   async verifyPoO (poo: string, cipherblock: string): Promise<JWTVerifyResult> {
-    this._checkInit()
+    await this.initialized
 
     const dataExchange: DataExchangeInit = {
       ...this.exchange,
@@ -109,9 +120,9 @@ export class NonRepudiationDest {
    * @returns a compact JWS with the PoR
    */
   async generatePoR (): Promise<string> {
-    this._checkInit()
+    await this.initialized
 
-    if (this.block?.poo === undefined) {
+    if (this.block.poo === undefined) {
       throw new Error('Before computing a PoR, you have first to receive a valid cipherblock with a PoO and validate the PoO')
     }
 
@@ -119,55 +130,70 @@ export class NonRepudiationDest {
       proofType: 'PoR',
       iss: 'dest',
       exchange: this.exchange,
-      pooDgst: await sha(this.block.poo)
+      pooDgst: await sha(this.block.poo, this.exchange.hashAlg)
     }
     this.block.por = await createProof(payload, this.jwkPairDest.privateJwk)
     return this.block.por
   }
 
   /**
-   * Verifies a received Proof of Publication (PoP) with the received secret and verificationCode
+   * Verifies a received Proof of Publication (PoP) and returns the secret
    * @param pop - a PoP in compact JWS
    * @param secret - the JWK secret that was used to encrypt the block
-   * @returns the verified payload and protected header
+   * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
    */
-  async verifyPoP (pop: string, secret: JWK): Promise<JWTVerifyResult> {
-    this._checkInit()
+  async verifyPoP (pop: string): Promise<JWTVerifyResult> {
+    await this.initialized
 
-    if (this.block?.por === undefined) {
+    if (this.block.por === undefined) {
       throw new Error('Cannot verify a PoP if not even a PoR have been created')
-    }
-
-    /**
-     * TO-DO: obtain verification code from the blockchain
-     * TO-DO: Pass secret to raw hex
-     */
-    let verificationCode = 'verificationCode'
-
-    if (this.dltConfig.disable !== true) {
-      const signerAddress = '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903'
-      verificationCode = await new Promise((resolve, reject) => {
-        this.dltConfig.contract?.on('Registration', (sender, dataExchangeId, secret) => {
-          if (sender === signerAddress) {
-            resolve((secret as ethers.BigNumber).toHexString())
-          }
-        })
-      })
     }
 
     const expectedPayloadClaims: PoPPayload = {
       proofType: 'PoP',
       iss: 'orig',
       exchange: this.exchange,
-      porDgst: await sha(this.block.por),
-      secret: JSON.stringify(secret),
-      verificationCode
+      porDgst: await sha(this.block.por, this.exchange.hashAlg),
+      secret: '',
+      verificationCode: ''
     }
     const verified = await verifyProof(pop, this.publicJwkOrig, expectedPayloadClaims)
-    this.block.secret = secret
+
+    const secret: JWK = JSON.parse((verified.payload as PoPPayload).secret)
+
+    this.block.secret = {
+      hex: bufToHex(base64.decode(secret.k as string) as Uint8Array),
+      jwk: secret
+    }
     this.block.pop = pop
 
     return verified
+  }
+
+  /**
+   * Just in case the PoP is not received, the secret can be downloaded from the ledger
+   *
+   * @param timeout - the time in seconds to wait for the query to get the value
+   *
+   * @returns the secret
+   */
+  async getSecretFromLedger (timeout: number = 20): Promise<{hex: string, jwk: JWK}> {
+    let secretBn = ethers.BigNumber.from(0)
+    let counter = 0
+    do {
+      secretBn = await this.dltConfig.contract.registry(this.exchange.ledgerSignerAddress, this.exchange.id)
+      if (secretBn.isZero()) {
+        counter++
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+    } while (secretBn.isZero() && counter < timeout)
+    if (secretBn.isZero()) {
+      throw new Error(`timeout of ${timeout}s exceeded when querying the ledger`)
+    }
+    const secretHex = secretBn.toHexString()
+    const jwk: JWK = await exportJWK(new Uint8Array(hexToBuf(secretHex)))
+    this.block.secret = { hex: secretHex, jwk }
+    return this.block.secret
   }
 
   /**
@@ -177,25 +203,22 @@ export class NonRepudiationDest {
    * @throws Error if the previous proofs have not been verified or the decrypted block does not meet the committed one
    */
   async decrypt (): Promise<Uint8Array> {
-    this._checkInit()
+    await this.initialized
 
-    if (this.block?.pop === undefined || this.block?.secret === undefined) {
-      throw new Error('Cannot decrypt if the PoP/secret has not been verified ')
+    if (this.block.secret?.jwk === undefined) {
+      throw new Error('Cannot decrypt without the secret')
+    }
+    if (this.block.jwe === undefined) {
+      throw new Error('No cipherblock to decrypt')
     }
 
-    const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret)).plaintext
-    const decryptedDgst = await sha(decryptedBlock)
+    const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret.jwk)).plaintext
+    const decryptedDgst = await sha(decryptedBlock, this.exchange.hashAlg)
     if (decryptedDgst !== this.exchange.blockCommitment) {
       throw new Error('Decrypted block does not meet the committed one')
     }
     this.block.raw = decryptedBlock
 
     return decryptedBlock
-  }
-
-  private _checkInit (): void {
-    if (!this.checked) {
-      throw new Error('NOT INITIALIZED. Before calling any other method, initialize this instance of NonRepudiationOrig calling async method init()')
-    }
   }
 }

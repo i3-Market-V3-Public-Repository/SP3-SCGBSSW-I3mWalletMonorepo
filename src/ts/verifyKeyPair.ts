@@ -1,9 +1,12 @@
 import { GeneralSign, generalVerify, importJWK, JWK } from 'jose'
 import { randBytes } from 'bigint-crypto-utils'
 
-export async function verifyKeyPair (pubJWK: JWK, privJWK: JWK, alg?: string): Promise<void> {
-  const pubKey = await importJWK(pubJWK, alg)
-  const privKey = await importJWK(privJWK, alg)
+export async function verifyKeyPair (pubJWK: JWK, privJWK: JWK): Promise<void> {
+  if (pubJWK.alg === undefined || privJWK.alg === undefined || pubJWK.alg !== privJWK.alg) {
+    throw new Error('alg no present in either pubJwk or privJwk, or pubJWK.alg != privJWK.alg')
+  }
+  const pubKey = await importJWK(pubJWK)
+  const privKey = await importJWK(privJWK)
   const nonce = await randBytes(16)
   const jws = await new GeneralSign(nonce)
     .addSignature(privKey)

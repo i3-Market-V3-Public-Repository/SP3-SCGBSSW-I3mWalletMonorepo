@@ -10,7 +10,7 @@ export { JWK, JWTVerifyResult }
  *
  * @param publicJwk - the publicKey as a JWK to use for verifying the signature. If MUST match either orig or dest (the one pointed on the iss field)
  *
- * @param expectedPayloadClaims - The expected values of the proof's payload claims. An example could be:
+ * @param expectedPayloadClaims - The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
  * {
  *   proofType: 'PoO',
  *   iss: 'orig',
@@ -20,8 +20,8 @@ export { JWK, JWTVerifyResult }
  *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
  *     hash_alg: 'SHA-256',
  *     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding
- *     block_commitment: 'iHAdgHDQVo6qaD0KqJ9ZMlVmVA3f3AI6uZG0jFqeu14', // hash of the plaintext block in base64url with no padding
- *     secret_commitment: 'svipVfsi6vsoj3Zk_6LWi3k6mMdQOSSY1OrHGnaM5eA' // hash of the secret that can be used to decrypt the block in base64url with no padding
+ *     block_commitment: '', // hash of the plaintext block in base64url with no padding
+ *     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding
  *   }
  * }
  *
@@ -50,10 +50,8 @@ export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloa
       const expectedDataExchange = expectedPayloadClaims.exchange
       const dataExchange = payload.exchange as DataExchange
       checkDataExchange(dataExchange, expectedDataExchange)
-    } else {
-      if (hashable(expectedPayloadClaims[key] as object) !== hashable(payload[key] as object)) {
-        throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`)
-      }
+    } else if (expectedPayloadClaims[key] !== '' && hashable(expectedPayloadClaims[key] as object) !== hashable(payload[key] as object)) {
+      throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`)
     }
   }
   return (verification)
@@ -73,7 +71,7 @@ function checkDataExchange (dataExchange: DataExchange, expectedDataExchange: Da
 
   // And now let's check the expected values
   for (const key in expectedDataExchange) {
-    if (hashable(expectedDataExchange[key as keyof DataExchangeInit] as unknown as object) !== hashable(dataExchange[key as keyof DataExchangeInit] as unknown as object)) {
+    if (expectedDataExchange[key as keyof DataExchangeInit] !== '' && hashable(expectedDataExchange[key as keyof DataExchangeInit] as unknown as object) !== hashable(dataExchange[key as keyof DataExchangeInit] as unknown as object)) {
       throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key as keyof DataExchange], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key as keyof DataExchangeInit], undefined, 2)}`)
     }
   }
