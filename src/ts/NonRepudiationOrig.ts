@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { JWK, JWTVerifyResult } from 'jose'
 import { hexToBuf } from 'bigint-conversion'
-import * as base64 from '@juanelas/base64'
+import * as b64 from '@juanelas/base64'
 
 import { jweEncrypt } from './jwe'
 import { createProof } from './createProof'
@@ -27,14 +27,15 @@ export class NonRepudiationOrig {
   initialized: Promise<boolean>
 
   /**
-   * @param exchangeId - the id of this data exchange. It MUST be unique for the sender
+   * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
    * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
    * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
    * @param block - the block of data to transmit in this data exchange
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-   * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
+   * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal strin used to sign transactions to the ledger. If not provided, it defaults to jwkPairOrig.publicJwk
+   * @param algs - ca be used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, algs?: Algs) {
+  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string, algs?: Algs) {
     this.jwkPairOrig = jwkPairOrig
     this.publicJwkDest = publicJwkDest
     if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
@@ -62,7 +63,7 @@ export class NonRepudiationOrig {
     this.dltConfig = dltConfig
 
     this.initialized = new Promise((resolve, reject) => {
-      this.init().then(() => {
+      this.init(privateLedgerKeyHex).then(() => {
         resolve(true)
       }).catch((error) => {
         throw error
@@ -73,7 +74,7 @@ export class NonRepudiationOrig {
   /**
    * Initialize this instance. It MUST be invoked before calling any other method.
    */
-  async init (): Promise<void> {
+  async init (privateLedgerKeyHex?: string): Promise<void> {
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 
     const secret = await oneTimeSecret(this.exchange.encAlg)
@@ -90,10 +91,10 @@ export class NonRepudiationOrig {
       secretCommitment: await sha(new Uint8Array(hexToBuf(this.block.secret.hex)), this.exchange.hashAlg)
     }
 
-    await this._dltSetup()
+    await this._dltSetup(privateLedgerKeyHex)
   }
 
-  private async _dltSetup (): Promise<void> {
+  private async _dltSetup (privateLedgerKeyHex?: string): Promise<void> {
     const dltConfig = {
       // @ts-expect-error I will end assigning the complete Block in the async init()
       gasLimit: 12500000,
@@ -109,7 +110,9 @@ export class NonRepudiationOrig {
       if (this.jwkPairOrig.privateJwk.d === undefined) {
         throw new Error('INVALID SIGNING ALGORITHM: No d property found on private key')
       }
-      const privateKey: Uint8Array = base64.decode(this.jwkPairOrig.privateJwk.d) as Uint8Array
+      const privateKey: Uint8Array = (privateLedgerKeyHex !== undefined)
+        ? new Uint8Array(hexToBuf(privateLedgerKeyHex))
+        : b64.decode(this.jwkPairOrig.privateJwk.d) as Uint8Array
       const signingKey = new ethers.utils.SigningKey(privateKey)
       const signer = new ethers.Wallet(signingKey, rpcProvider)
       dltConfig.signer = { address: await signer.getAddress(), signer }
@@ -181,15 +184,12 @@ export class NonRepudiationOrig {
     if (!this.dltConfig.disable) {
       const secret = ethers.BigNumber.from(`0x${this.block.secret.hex}`)
 
-      // TO-DO: it fails because the account hasn't got any funds (ether). Do we have a faucet? Set gas prize to 0?
-      const setRegistryTx = await this.dltConfig.contract?.setRegistry(this.exchange.id, secret, { gasLimit: this.dltConfig.gasLimit })
+      // TO-DO: it fails with a random account since it hasn't got any funds (ethers). Do we have a faucet? Set gas prize to 0?
+      const setRegistryTx = await this.dltConfig.contract?.setRegistry(b64.decode(this.exchange.id), secret, { gasLimit: this.dltConfig.gasLimit })
       verificationCode = JSON.stringify(setRegistryTx)
 
       // TO-DO: I would say that we can remove the next wait
-      await setRegistryTx.wait()
-
-      // TO-DO: Next line is completely useless. Here for testing but we could remove it.
-      await this.dltConfig.contract?.registry(this.dltConfig.signer?.address, this.exchange.id)
+      // await setRegistryTx.wait()
     }
 
     const payload: PoPPayload = {

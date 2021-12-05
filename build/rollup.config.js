@@ -5,6 +5,7 @@ import replace from '@rollup/plugin-replace'
 import { terser } from 'rollup-plugin-terser'
 import typescriptPlugin from '@rollup/plugin-typescript'
 import commonjs from '@rollup/plugin-commonjs'
+import json from '@rollup/plugin-json'
 
 import { join } from 'path'
 import { existsSync } from 'fs-extra'
@@ -78,7 +79,8 @@ export default [
         preventAssignment: true
       }),
       typescriptPlugin(tsBundleOptions),
-      compileDts()
+      compileDts(),
+      json()
     ],
     external
   },
@@ -126,7 +128,8 @@ export default [
           elliptic: ['ec'],
           'scrypt-js': ['scrypt', 'syncScrypt']
         }
-      })
+      }),
+      json()
     ]
   },
   { // Node
@@ -150,7 +153,8 @@ export default [
         preventAssignment: true
       }),
       typescriptPlugin(tsBundleOptions),
-      commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }) // the ".ts" extension is required
+      commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }), // the ".ts" extension is required
+      json()
     ],
     external
   }

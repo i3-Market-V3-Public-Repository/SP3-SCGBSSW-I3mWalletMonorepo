@@ -1,10 +1,8 @@
-import { exportJWK, generateKeyPair } from 'jose'
-
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 describe('verifyKeyPair for different signing algorithms', function () {
   this.timeout(20000)
-  const signingAlgsToTest: _pkg.SigningAlg[] = ['ES256', 'ES512', 'PS256']
+  const signingAlgsToTest: _pkg.SigningAlg[] = ['ES256', 'ES384', 'ES512']
 
   for (const signingAlg of signingAlgsToTest) {
     let privJwk: _pkg.JWK
@@ -12,21 +10,12 @@ describe('verifyKeyPair for different signing algorithms', function () {
     let privJwk2: _pkg.JWK
 
     this.beforeAll(async () => {
-      const keyPair = await generateKeyPair(signingAlg, { extractable: true })
-      privJwk = {
-        ...await exportJWK(keyPair.privateKey),
-        alg: signingAlg
-      }
-      pubJwk = {
-        ...await exportJWK(keyPair.publicKey),
-        alg: signingAlg
-      }
+      ({ publicJwk: pubJwk, privateJwk: privJwk } = await _pkg.generateKeys(signingAlg));
+      // console.log({ pub1: pubJwk })
+      // console.log({ priv1: privJwk });
 
-      const keyPair2 = await generateKeyPair(signingAlg, { extractable: true })
-      privJwk2 = {
-        ...await exportJWK(keyPair2.privateKey),
-        alg: signingAlg
-      }
+      ({ privateJwk: privJwk2 } = await _pkg.generateKeys(signingAlg))
+      // console.log({ priv2: privJwk2 })
     })
 
     describe(`${signingAlg}: verifyKeyPair(pubJwk, privJwk)`, function () {

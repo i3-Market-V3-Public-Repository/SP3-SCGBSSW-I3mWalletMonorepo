@@ -13,18 +13,19 @@ export declare class NonRepudiationOrig {
     dltConfig: DltConfig;
     initialized: Promise<boolean>;
     /**
-     * @param exchangeId - the id of this data exchange. It MUST be unique for the sender
+     * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
      * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
      * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
      * @param block - the block of data to transmit in this data exchange
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-     * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
+     * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal strin used to sign transactions to the ledger. If not provided, it defaults to jwkPairOrig.publicJwk
+     * @param algs - ca be used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
      */
-    constructor(exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, algs?: Algs);
+    constructor(exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string, algs?: Algs);
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
      */
-    init(): Promise<void>;
+    init(privateLedgerKeyHex?: string): Promise<void>;
     private _dltSetup;
     /**
      * Creates the proof of origin (PoO).

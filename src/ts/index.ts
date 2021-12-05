@@ -3,13 +3,13 @@
  *
  * @packageDocumentation
  */
-export * from './types'
 export * from './createProof'
-export * from './verifyProof'
+export * from './generateKeys'
 export * from './jwe'
-export * from './sha'
 export * from './NonRepudiationOrig'
 export * from './NonRepudiationDest'
 export * from './oneTimeSecret'
+export * from './sha'
+export * from './types'
 export * from './verifyKeyPair'
 export * from './verifyProof'

@@ -47,7 +47,7 @@ async nrp() => {
    *  - the consumer's public key in JWK
    *  - the block of data to send as a Uint8Array
    */
-  const npProvider = new NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block)
+  const npProvider = new nonRepudiationProtocol.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block)
 
   // Create the proof of origin (PoO)
   const poo = await npProvider.generatePoO()
@@ -74,14 +74,23 @@ nrp()
 
 ```typescript
 async nrp() => {
+  /** you need a pair of public-private keys as JWK in one of the EC supported 
+   * curves (P-256, P-384, P-521).
+   * If you already have a random private key in hex, base64 or Uint8Array, you
+   * can easily create the key pair with the generateKeys utility function.
+   * An example with a key in hex format would be
+   */
+  const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
+  const consumerJwks = await nonRepudiationProtocol.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+  
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
    * You need:
-   *  - the id of this data exchange
+   *  - the id of this data exchange. A base64url-no-padding encoding of a uint256
    *  - a pair of public private JWK (the consumer's one for this data exchange)
    *  - the provider's public key in JWK
    */
-  const npConsumer = new NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk)
+  const npConsumer = new NonRepudiationDest(dataExchangeId, consumerJwks, providerPublicJwk)
 
   // Receive poo and cipherblock (in JWE string format)
   ...

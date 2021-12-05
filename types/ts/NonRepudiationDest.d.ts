@@ -14,7 +14,7 @@ export declare class NonRepudiationDest {
     initialized: Promise<boolean>;
     /**
      *
-     * @param exchangeId - the id of this data exchange. It MUST be unique
+     * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
      * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
      * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT

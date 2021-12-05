@@ -1,5 +1,6 @@
-import { exportJWK, generateKeyPair } from 'jose'
 import { hashable } from 'object-sha'
+import { randBytes } from 'bigint-crypto-utils'
+import * as b64 from '@juanelas/base64'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
@@ -12,32 +13,15 @@ describe('Non-repudiation protocol', function () {
   }
 
   this.beforeAll(async () => {
-    const block = new Uint8Array([0, 2, 0, 1, 0])
-    const dataExchangeId = '231412432'
+    const block = new Uint8Array(await randBytes(256))
+    const dataExchangeId: string = b64.encode(await randBytes(32), true, false) // is a bse64 representation of a uint256
 
-    const consumerKeys = await generateKeyPair(SIGNING_ALG, { extractable: true })
-    const consumerJwks: _pkg.JwkPair = {
-      privateJwk: {
-        ...await exportJWK(consumerKeys.privateKey),
-        alg: SIGNING_ALG
-      },
-      publicJwk: {
-        ...await exportJWK(consumerKeys.publicKey),
-        alg: SIGNING_ALG
-      }
-    }
+    const consumerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG)
+    console.log(JSON.stringify({ consumerKeys: consumerJwks }, undefined, 2))
 
-    const providerKeys = await generateKeyPair(SIGNING_ALG, { extractable: true })
-    const providerJwks: _pkg.JwkPair = {
-      privateJwk: {
-        ...await exportJWK(providerKeys.privateKey),
-        alg: SIGNING_ALG
-      },
-      publicJwk: {
-        ...await exportJWK(providerKeys.publicKey),
-        alg: SIGNING_ALG
-      }
-    }
+    const providerPrivKeyHex = '***REMOVED***'
+    const providerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+    console.log({ providerKeys: providerJwks })
 
     npProvider = new _pkg.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block, dltConfig)
     npConsumer = new _pkg.NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk, dltConfig)
@@ -87,9 +71,11 @@ describe('Non-repudiation protocol', function () {
   })
 
   describe('create/verify proof of publication (PoP)', function () {
+    this.timeout(120000)
     it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
       const pop = await npProvider.generatePoP()
       const verified = await npConsumer.verifyPoP(pop)
+      console.log(JSON.stringify(verified.payload, undefined, 2))
       chai.expect(verified).to.not.equal(undefined)
     })
     it('verification should throw error if there is no PoR', async function () {
@@ -142,10 +128,11 @@ describe('Non-repudiation protocol', function () {
   })
 
   describe('get secret from ledger', function () {
-    this.timeout(30000)
+    const timeout = 150000 // 2.5 minutes (we currently have one block every 2 minutes)
+    this.timeout(timeout)
     it('should be the same secret as the one obtained in the PoP', async function () {
       const secret = { ...npConsumer.block.secret }
-      const secretFromLedger = await npConsumer.getSecretFromLedger(8)
+      const secretFromLedger = await npConsumer.getSecretFromLedger(timeout / 1000 - 2)
       chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
       npConsumer.block.secret = secret as _pkg.Block['secret']
     })

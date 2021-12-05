@@ -1,7 +1,7 @@
-import * as base64 from '@juanelas/base64'
-import { bufToHex, hexToBuf } from 'bigint-conversion'
+import * as b64 from '@juanelas/base64'
+import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
-import { exportJWK, JWK, JWTVerifyResult } from 'jose'
+import { JWK, JWTVerifyResult } from 'jose'
 
 import { jweDecrypt } from './jwe'
 import { createProof } from './createProof'
@@ -11,6 +11,7 @@ import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
 
 import contractConfigDefault from '../besu/NonRepudiation'
+import { oneTimeSecret } from './oneTimeSecret'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -27,7 +28,7 @@ export class NonRepudiationDest {
 
   /**
    *
-   * @param exchangeId - the id of this data exchange. It MUST be unique
+   * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
    * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
    * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
@@ -162,7 +163,7 @@ export class NonRepudiationDest {
     const secret: JWK = JSON.parse((verified.payload as PoPPayload).secret)
 
     this.block.secret = {
-      hex: bufToHex(base64.decode(secret.k as string) as Uint8Array),
+      hex: bufToHex(b64.decode(secret.k as string) as Uint8Array),
       jwk: secret
     }
     this.block.pop = pop
@@ -181,7 +182,7 @@ export class NonRepudiationDest {
     let secretBn = ethers.BigNumber.from(0)
     let counter = 0
     do {
-      secretBn = await this.dltConfig.contract.registry(this.exchange.ledgerSignerAddress, this.exchange.id)
+      secretBn = await this.dltConfig.contract.registry(this.exchange.ledgerSignerAddress, ethers.BigNumber.from(b64.decode(this.exchange.id)))
       if (secretBn.isZero()) {
         counter++
         await new Promise(resolve => setTimeout(resolve, 1000))
@@ -191,8 +192,8 @@ export class NonRepudiationDest {
       throw new Error(`timeout of ${timeout}s exceeded when querying the ledger`)
     }
     const secretHex = secretBn.toHexString()
-    const jwk: JWK = await exportJWK(new Uint8Array(hexToBuf(secretHex)))
-    this.block.secret = { hex: secretHex, jwk }
+
+    this.block.secret = await oneTimeSecret(this.exchange.encAlg, secretHex)
     return this.block.secret
   }
 
