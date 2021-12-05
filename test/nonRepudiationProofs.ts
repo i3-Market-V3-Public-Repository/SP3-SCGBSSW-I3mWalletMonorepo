@@ -3,7 +3,7 @@ import { hashable } from 'object-sha'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
-  const SIGNING_ALG: _pkg.SigningAlg = 'PS256'
+  const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
