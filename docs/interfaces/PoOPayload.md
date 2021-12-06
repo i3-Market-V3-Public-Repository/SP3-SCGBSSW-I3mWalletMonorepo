@@ -46,7 +46,7 @@ ProofCommonPayload.exchange
 
 #### Defined in
 
-[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/db9e1a9/src/ts/types.ts#L87)
+[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L87)
 
 ___
 
@@ -88,7 +88,7 @@ ProofCommonPayload.iss
 
 #### Defined in
 
-[src/ts/types.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/db9e1a9/src/ts/types.ts#L91)
+[src/ts/types.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L91)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/db9e1a9/src/ts/types.ts#L92)
+[src/ts/types.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L92)
 
 ___
 
