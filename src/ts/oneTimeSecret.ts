@@ -15,6 +15,18 @@ import { Block, EncryptionAlg } from './types'
 
 export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean): Promise<Exclude<Block['secret'], undefined>> {
   let key: Uint8Array | KeyLike
+
+  let secretLength: number
+  switch (encAlg) {
+    case 'A128GCM':
+      secretLength = 16
+      break
+    case 'A256GCM':
+      secretLength = 32
+      break
+    default:
+      throw new Error(`Invalid encAlg '${encAlg as string}'. Supported values are: ${(['A128GCM', 'A256GCM'] as EncryptionAlg[]).toString()}`)
+  }
   if (secret !== undefined) {
     if (typeof secret === 'string') {
       if (base64 === true) {
@@ -24,6 +36,9 @@ export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|
       }
     } else {
       key = secret
+    }
+    if (key.length !== secretLength) {
+      throw new RangeError(`Expected secret length ${secretLength} does not meet provided one ${key.length}`)
     }
   } else {
     key = await generateSecret(encAlg, { extractable: true })

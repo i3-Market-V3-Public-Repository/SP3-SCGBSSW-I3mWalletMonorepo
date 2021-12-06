@@ -50,6 +50,7 @@ module.exports = class TestsBuilder extends Builder {
 
       // This prevents SyntaxError: Cannot use import statement outside a module
       config.compilerOptions.module = 'commonjs'
+      config.compilerOptions.typeRoots = undefined
 
       return JSON.stringify(config)
     }

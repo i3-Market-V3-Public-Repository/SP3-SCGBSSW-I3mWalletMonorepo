@@ -11,7 +11,8 @@ import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
 
-import contractConfigDefault from '../besu/NonRepudiation'
+/** TO-DO: Could the json be imported from an npm package? */
+import contractConfigDefault from '../besu/NonRepudiation.json'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -66,7 +67,7 @@ export class NonRepudiationOrig {
       this.init(privateLedgerKeyHex).then(() => {
         resolve(true)
       }).catch((error) => {
-        throw error
+        reject(error)
       })
     })
   }
@@ -159,7 +160,7 @@ export class NonRepudiationOrig {
       proofType: 'PoR',
       iss: 'dest',
       exchange: this.exchange,
-      pooDgst: await sha(this.block.poo, this.exchange.hashAlg)
+      poo: this.block.poo
     }
     const verified = await verifyProof(por, this.publicJwkDest, expectedPayloadClaims)
     this.block.por = por
@@ -186,7 +187,7 @@ export class NonRepudiationOrig {
 
       // TO-DO: it fails with a random account since it hasn't got any funds (ethers). Do we have a faucet? Set gas prize to 0?
       const setRegistryTx = await this.dltConfig.contract?.setRegistry(b64.decode(this.exchange.id), secret, { gasLimit: this.dltConfig.gasLimit })
-      verificationCode = JSON.stringify(setRegistryTx)
+      verificationCode = setRegistryTx.hash
 
       // TO-DO: I would say that we can remove the next wait
       // await setRegistryTx.wait()
@@ -196,7 +197,7 @@ export class NonRepudiationOrig {
       proofType: 'PoP',
       iss: 'orig',
       exchange: this.exchange,
-      porDgst: await sha(this.block.por, this.exchange.hashAlg),
+      por: this.block.por,
       secret: JSON.stringify(this.block.secret.jwk),
       verificationCode
     }

@@ -4,7 +4,7 @@ import { Contract, Wallet } from 'ethers'
 
 export type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512'
 export type SigningAlg = 'ES256' | 'ES384' | 'ES512' // ECDSA with secp256k1 (ES256K) Edwards Curve DSA are not supported in browsers
-export type EncryptionAlg = 'A128GCM' | 'A192GCM' | 'A256GCM'
+export type EncryptionAlg = 'A128GCM' | 'A256GCM' // A192GCM is not supported in browsers
 
 export interface Algs {
   hashAlg?: HashAlg
@@ -95,15 +95,15 @@ export interface PoOPayload extends ProofCommonPayload {
 export interface PoRPayload extends ProofCommonPayload {
   iss: 'dest' // it points to 'orig' or 'dest' of the DataExchange
   proofType: 'PoR'
-  pooDgst: string // hash of the received PoO in base64url with no padding base64url(hash(poo in compact JWT))
+  poo: string // // the received PoR as compact JWS
 }
 
 export interface PoPPayload extends ProofCommonPayload {
   iss: 'orig' // it points to 'orig' or 'dest' of the DataExchange
   proofType: 'PoP'
-  porDgst: string // hash of the received PoR in base64url with no padding base64url(hash(poo in compact JWT))
+  por: string // the received PoR as compact JWS
   secret: string // Compact JWK of the secret to decrypt the ciphertext
-  verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger (e.g. tx_id, block id)
+  verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
 
 export type ProofInputPayload = PoOPayload | PoRPayload | PoPPayload

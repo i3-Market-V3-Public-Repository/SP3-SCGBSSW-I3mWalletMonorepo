@@ -21,7 +21,7 @@ describe('Non-repudiation protocol', function () {
 
     const providerPrivKeyHex = '***REMOVED***'
     const providerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG, providerPrivKeyHex)
-    console.log({ providerKeys: providerJwks })
+    console.log(JSON.stringify({ providerKeys: providerJwks }, undefined, 2))
 
     npProvider = new _pkg.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block, dltConfig)
     npConsumer = new _pkg.NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk, dltConfig)

@@ -3,7 +3,7 @@
 const path = require('path')
 
 const chai = require('chai')
-// const rimraf = require('rimraf')
+const rimraf = require('rimraf')
 
 const RollupBuilder = require('./builders/RollupBuilder.js')
 const TestsBuilder = require('./builders/TestsBuilder.js')
@@ -57,7 +57,7 @@ exports.mochaGlobalTeardown = async function () {
   // I use the sync version of rimraf precisely because it blocks the
   // main thread and thus the mocha watcher, which otherwise would complain
   // about files being deleted
-  // rimraf.sync(tempDir, { disableGlob: true })
+  rimraf.sync(tempDir, { disableGlob: true })
 }
 
 function loadPkgToGlobal () {

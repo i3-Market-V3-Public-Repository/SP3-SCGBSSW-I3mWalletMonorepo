@@ -5,13 +5,14 @@ import { JWK, JWTVerifyResult } from 'jose'
 
 import { jweDecrypt } from './jwe'
 import { createProof } from './createProof'
+import { oneTimeSecret } from './oneTimeSecret'
 import { Algs, Block, ContractConfig, DataExchange, DataExchangeInit, DltConfig, JwkPair, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
 
-import contractConfigDefault from '../besu/NonRepudiation'
-import { oneTimeSecret } from './oneTimeSecret'
+/** TO-DO: Could the json be imported from an npm package? */
+import contractConfigDefault from '../besu/NonRepudiation.json'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -54,7 +55,7 @@ export class NonRepudiationDest {
       this.init().then(() => {
         resolve(true)
       }).catch((error) => {
-        throw error
+        reject(error)
       })
     })
   }
@@ -131,7 +132,7 @@ export class NonRepudiationDest {
       proofType: 'PoR',
       iss: 'dest',
       exchange: this.exchange,
-      pooDgst: await sha(this.block.poo, this.exchange.hashAlg)
+      poo: this.block.poo
     }
     this.block.por = await createProof(payload, this.jwkPairDest.privateJwk)
     return this.block.por
@@ -154,7 +155,7 @@ export class NonRepudiationDest {
       proofType: 'PoP',
       iss: 'orig',
       exchange: this.exchange,
-      porDgst: await sha(this.block.por, this.exchange.hashAlg),
+      por: this.block.por,
       secret: '',
       verificationCode: ''
     }

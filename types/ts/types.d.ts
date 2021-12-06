@@ -3,7 +3,7 @@ import { JWK, JWTPayload } from 'jose';
 import { Contract, Wallet } from 'ethers';
 export declare type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512';
 export declare type SigningAlg = 'ES256' | 'ES384' | 'ES512';
-export declare type EncryptionAlg = 'A128GCM' | 'A192GCM' | 'A256GCM';
+export declare type EncryptionAlg = 'A128GCM' | 'A256GCM';
 export interface Algs {
     hashAlg?: HashAlg;
     SigningAlg?: SigningAlg;
@@ -81,12 +81,12 @@ export interface PoOPayload extends ProofCommonPayload {
 export interface PoRPayload extends ProofCommonPayload {
     iss: 'dest';
     proofType: 'PoR';
-    pooDgst: string;
+    poo: string;
 }
 export interface PoPPayload extends ProofCommonPayload {
     iss: 'orig';
     proofType: 'PoP';
-    porDgst: string;
+    por: string;
     secret: string;
     verificationCode: string;
 }
