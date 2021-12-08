@@ -9,7 +9,8 @@ describe('Non-repudiation protocol', function () {
   let npProvider: _pkg.NonRepudiationOrig
   let npConsumer: _pkg.NonRepudiationDest
   const dltConfig: Partial<_pkg.DltConfig> = {
-    rpcProviderUrl: '***REMOVED***'
+    rpcProviderUrl: '***REMOVED***',
+    disable: false
   }
   let dataExchangeAgreement: _pkg.DataExchangeAgreement
 
@@ -29,18 +30,17 @@ describe('Non-repudiation protocol', function () {
       encAlg: 'A256GCM',
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
-      ledgerContractAddress: '0x7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
-      ledgerSignerAddress: '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
+      ledgerContractAddress: '7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
+      ledgerSignerAddress: '17bd12c2134afc1f6e9302a532efe30c19b9e903',
       pooToPorDelay: 10000,
       pooToPopDelay: 20000,
       pooToSecretDelay: 150000
     }
 
+    console.log(dataExchangeAgreement)
+
     npProvider = new _pkg.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig)
     npConsumer = new _pkg.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
-
-    await npProvider.init()
-    await npConsumer.init()
   })
 
   describe('create/verify proof of origin (PoO)', function () {

@@ -37,17 +37,59 @@ You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDL
 
 ### Example for an i3-MARKET Provider
 
+Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the generateKeys utility function. For example, if you already have a random private key in hex:
+
+```typescript
+  /** you need a pair of public-private keys as JWK in one of the EC supported 
+   * curves (P-256, P-384, P-521).
+   * If you already have a random private key in hex, base64 or Uint8Array, you
+   * can easily create the key pair with the generateKeys utility function.
+   * An example with a key in hex format would be
+   */
+  const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
+  const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+```
+
+And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
+
 ```typescript
 async nrp() => {
   /**
+   * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
+   */
+  const dataExchangeAgreement: {{PKG_CAMELCASE}}.DataExchangeAgreement = {
+    // Public key of the origin (data provider)
+    orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
+    // Public key of the destination (data consumer)
+    dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
+    // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
+    encAlg: 'A256GCM',
+    // Signing algorithm used to sign the proofs. It'e ECDSA secp256r1 with key lengths: either 'ES256', 'ES384', or 'ES512' 
+    signingAlg: 'ES256',
+    // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
+    hashAlg: 'SHA-256',
+    // The ledger smart contract address (hexadecimal) on the DLT
+    ledgerContractAddress: '7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
+    // The orig (data provider) address in the DLT (hexadecimal). It can use a different keypair for signing proofs and signing transactions to the DLT) 
+    ledgerSignerAddress: '17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
+    // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
+    pooToPorDelay: 10000,
+    // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
+    pooToPopDelay: 20000,
+    // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
+    pooToSecretDelay: 150000
+  }
+
+  /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted.
    * You need:
-   *  - the id of this data exchange
-   *  - a pair of public private JWK (the provider's one for this data exchange)
-   *  - the consumer's public key in JWK
+   *  - the data agreement
+   *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
    *  - the block of data to send as a Uint8Array
+   *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
+   *  - [optional] a private key in hex for the DLT, just in case the private key used to sign transactions on the ledger is different than the one for signing the proofs
    */
-  const npProvider = new {{PKG_CAMELCASE}}.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block)
+  const npProvider = new {{PKG_CAMELCASE}}.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block)
 
   // Create the proof of origin (PoO)
   const poo = await npProvider.generatePoO()
@@ -72,25 +114,50 @@ nrp()
 
 ### Example for an i3-MARKET Consumer
 
+Before starting the agreement you need a pair of public private keys. You can easily create the key pair with the generateKeys utility function:
+
+```typescript
+  const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256', providerPrivKeyHex)
+```
+
+And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
+
 ```typescript
 async nrp() => {
-  /** you need a pair of public-private keys as JWK in one of the EC supported 
-   * curves (P-256, P-384, P-521).
-   * If you already have a random private key in hex, base64 or Uint8Array, you
-   * can easily create the key pair with the generateKeys utility function.
-   * An example with a key in hex format would be
+  /**
+   * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
    */
-  const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
-  const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+  const dataExchangeAgreement: {{PKG_CAMELCASE}}.DataExchangeAgreement = {
+    // Public key of the origin (data provider)
+    orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
+    // Public key of the destination (data consumer)
+    dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
+    // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
+    encAlg: 'A256GCM',
+    // Signing algorithm used to sign the proofs. It'e ECDSA secp256r1 with key lengths: either 'ES256', 'ES384', or 'ES512' 
+    signingAlg: 'ES256',
+    // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
+    hashAlg: 'SHA-256',
+    // The ledger smart contract address on the DLT (hexadecimal)
+    ledgerContractAddress: '7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
+    // The orig (data provider) address in the DLT (hexadecimal). It can use a different keypair for signing proofs and signing transactions to the DLT) 
+    ledgerSignerAddress: '17bd12c2134afc1f6e9302a532efe30c19b9e903',
+    // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
+    pooToPorDelay: 10000,
+    // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
+    pooToPopDelay: 20000,
+    // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
+    pooToSecretDelay: 150000
+  }
   
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
    * You need:
-   *  - the id of this data exchange. A base64url-no-padding encoding of a uint256
-   *  - a pair of public private JWK (the consumer's one for this data exchange)
-   *  - the provider's public key in JWK
+   *  - the data agreement
+   *  - the private key of the consumer (to sign proofs)
+   *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
    */
-  const npConsumer = new NonRepudiationDest(dataExchangeId, consumerJwks, providerPublicJwk)
+  const npConsumer = new {{PKG_CAMELCASE}}NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk)
 
   // Receive poo and cipherblock (in JWE string format)
   ...
@@ -110,10 +177,10 @@ async nrp() => {
   // Verify PoP. If verification passes the pop is added to npConsumer.block.pop, and the secret to npConsumer.block.secret; otherwise it throws an error.
   await npConsumer.verifyPoP(pop)
 
-  // Just in case the PoP is not received, the secret can be downloaded from the ledger. The function downloads the secret and stores it to npConsumer.block.secret
+  // Just in case the PoP is not received, the secret can be downloaded from the ledger. The next function downloads the secret and stores it to npConsumer.block.secret
   await npConsumer.getSecretFromLedger()
 
-  // Decrypt cipherblock and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). It is assumed must have been obtained first, either inside the PoP or from the ledger. If verification fails, it throws an error.
+  // Decrypt cipherblock and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). If verification fails, it throws an error.
   const decryptedBlock = await npConsumer.decrypt()
 )
 nrp()

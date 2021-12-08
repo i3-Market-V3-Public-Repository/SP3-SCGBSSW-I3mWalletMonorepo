@@ -2,15 +2,16 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { ethers } from 'ethers'
 import { hashable } from 'object-sha'
-import { ProofPayload } from '.'
+import { } from '.'
 import { createProof } from './createProof'
 import { defaultDltConfig } from './defaultDltConfig'
 import { jweEncrypt } from './jwe'
 import { oneTimeSecret } from './oneTimeSecret'
 import { sha } from './sha'
-import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOInputPayload, PoPInputPayload, PoRInputPayload, StoredProof, TimestampVerifyOptions } from './types'
+import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOInputPayload, PoPInputPayload, PoRInputPayload, ProofPayload, StoredProof, TimestampVerifyOptions } from './types'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
+import { parseHex } from './utils'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -41,7 +42,11 @@ export class NonRepudiationOrig {
     }
     this.publicJwkDest = JSON.parse(agreement.dest) as JWK
 
-    this.agreement = agreement
+    this.agreement = {
+      ...agreement,
+      ledgerContractAddress: parseHex(agreement.ledgerContractAddress),
+      ledgerSignerAddress: parseHex(agreement.ledgerSignerAddress)
+    }
 
     // @ts-expect-error I will end assigning the complete Block in the async init()
     this.block = {
@@ -53,8 +58,9 @@ export class NonRepudiationOrig {
       ...dltConfig
     }
 
+    const privDltKeyHex = (privateLedgerKeyHex !== undefined) ? parseHex(privateLedgerKeyHex) : undefined
     this.initialized = new Promise((resolve, reject) => {
-      this.init(privateLedgerKeyHex).then(() => {
+      this.init(privDltKeyHex).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -100,13 +106,13 @@ export class NonRepudiationOrig {
         : b64.decode(this.jwkPairOrig.privateJwk.d) as Uint8Array
       const signingKey = new ethers.utils.SigningKey(privateKey)
       const signer = new ethers.Wallet(signingKey, rpcProvider)
-      const signerAddress: string = await signer.getAddress()
+      const signerAddress: string = parseHex(await signer.getAddress())
 
       if (signerAddress !== this.exchange.ledgerSignerAddress) {
         throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address associated to the provided private key ${signerAddress}`)
       }
 
-      if (this.agreement.ledgerContractAddress !== this.dltConfig.contract.address) {
+      if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
         throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 

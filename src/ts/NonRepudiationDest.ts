@@ -9,6 +9,7 @@ import { jweDecrypt } from './jwe'
 import { oneTimeSecret } from './oneTimeSecret'
 import { sha } from './sha'
 import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, JWTVerifyResult, PoOInputPayload, PoPInputPayload, PoPPayload, PoRInputPayload, ProofPayload, StoredProof, TimestampVerifyOptions } from './types'
+import { parseHex } from './utils'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
 
@@ -39,7 +40,11 @@ export class NonRepudiationDest {
     }
     this.publicJwkOrig = JSON.parse(agreement.orig) as JWK
 
-    this.agreement = agreement
+    this.agreement = {
+      ...agreement,
+      ledgerContractAddress: parseHex(agreement.ledgerContractAddress),
+      ledgerSignerAddress: parseHex(agreement.ledgerSignerAddress)
+    }
 
     this.block = {}
 
@@ -62,7 +67,7 @@ export class NonRepudiationDest {
     if (!this.dltConfig.disable) {
       const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
 
-      if (this.agreement.ledgerContractAddress !== this.dltConfig.contract.address) {
+      if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
         throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 
