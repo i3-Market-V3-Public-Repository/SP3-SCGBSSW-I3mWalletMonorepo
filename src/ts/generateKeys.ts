@@ -1,8 +1,7 @@
 import { randBytes } from 'bigint-crypto-utils'
 import { hexToBuf } from 'bigint-conversion'
 import * as b64 from '@juanelas/base64'
-import { JwkPair, SigningAlg } from './types'
-import { JWK } from 'jose'
+import { JwkPair, JWK, SigningAlg } from './types'
 import { ec as Ec } from 'elliptic'
 
 /**

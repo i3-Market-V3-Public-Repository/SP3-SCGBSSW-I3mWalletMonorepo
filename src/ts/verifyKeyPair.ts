@@ -1,5 +1,6 @@
-import { GeneralSign, generalVerify, importJWK, JWK } from 'jose'
 import { randBytes } from 'bigint-crypto-utils'
+import { GeneralSign, generalVerify, importJWK } from 'jose'
+import { JWK } from './types'
 
 export async function verifyKeyPair (pubJWK: JWK, privJWK: JWK): Promise<void> {
   if (pubJWK.alg === undefined || privJWK.alg === undefined || pubJWK.alg !== privJWK.alg) {

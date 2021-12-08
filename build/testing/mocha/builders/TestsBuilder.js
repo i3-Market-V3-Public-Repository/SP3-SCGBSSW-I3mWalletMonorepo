@@ -24,39 +24,46 @@ module.exports = class TestsBuilder extends Builder {
 
     this.tempDir = tempDir
 
-    const readFileAndMangle = (path) => { // We need to change the include or file in the original file to only compile the tests
-      const fileStr = fs.readFileSync(path, 'utf8')
-      const config = JSON5.parse(fileStr)
-      if (config.file) delete config.file
+    const tsConfig = JSON5.parse(fs.readFileSync(configPath, 'utf8'))
 
-      /* We need to add multiple globs here:
-         - All the declarations of the modules (just in case a test invoke one). ***for some reason they are not included by default***
-         - Our specific build typings
-         - The test files
-      */
-      config.include = ['node_modules/**/*.d.ts', 'build/typings/**/*.d.ts', 'test/**/*.ts', 'src/ts/**/*.spec.ts']
+    tsConfig.file = undefined
 
-      // no excluded files
-      config.exclude = undefined
-
-      // "noResolve": true
-      config.compilerOptions.noResolve = true
-
-      // we don't need declaration files
-      config.compilerOptions.declaration = false
-
-      // source mapping eases debuging
-      config.compilerOptions.sourceMap = true
-
-      // This prevents SyntaxError: Cannot use import statement outside a module
-      config.compilerOptions.module = 'commonjs'
-      config.compilerOptions.typeRoots = undefined
-
-      return JSON.stringify(config)
+    if (!tsConfig.include.includes('node_modules/**/*.d.ts')) {
+      tsConfig.include = [
+        ...tsConfig.include,
+        'node_modules/**/*.d.ts'
+      ]
     }
-    const configFile = ts.readJsonConfigFile(configPath, readFileAndMangle)
 
-    const parsedTsConfig = ts.parseJsonSourceFileConfigFileContent(configFile, ts.sys, path.dirname(configPath))
+    // Exclude already transpiled files in src
+    tsConfig.exclude = ['src/ts/**/!(*.spec).ts']
+
+    // "noResolve": true
+    tsConfig.compilerOptions.noResolve = true
+
+    // we don't need declaration files
+    tsConfig.compilerOptions.declaration = false
+
+    // we need to emit files
+    tsConfig.compilerOptions.noEmit = false
+
+    // source mapping eases debuging
+    tsConfig.compilerOptions.sourceMap = true
+
+    // This prevents SyntaxError: Cannot use import statement outside a module
+    tsConfig.compilerOptions.module = 'commonjs'
+
+    // typeroots should also include testing ones
+    tsConfig.compilerOptions.typeRoots = [
+      ...tsConfig.compilerOptions.typeRoots,
+      'build/testing/types/'
+    ]
+
+    tsConfig.compilerOptions.outDir = path.isAbsolute(tempDir) ? path.relative(rootDir, tempDir) : tempDir
+
+    this.tempTsConfigPath = path.join(rootDir, '.tsconfig.json')
+
+    fs.writeFileSync(this.tempTsConfigPath, JSON.stringify(tsConfig, undefined, 2))
 
     const createProgram = ts.createSemanticDiagnosticsBuilderProgram
 
@@ -86,14 +93,8 @@ module.exports = class TestsBuilder extends Builder {
     // Note that there is another overload for `createWatchCompilerHost` that takes
     // a set of root files.
     this.host = ts.createWatchCompilerHost(
-      parsedTsConfig.fileNames,
-      {
-        ...parsedTsConfig.options,
-        rootDir,
-        outDir: this.tempDir,
-        noEmit: false,
-        sourceMap: true
-      },
+      this.tempTsConfigPath,
+      {},
       ts.sys,
       createProgram,
       reportDiagnostic,
@@ -112,5 +113,6 @@ module.exports = class TestsBuilder extends Builder {
   async close () {
     await super.close()
     this.watcher.close()
+    fs.unlinkSync(this.tempTsConfigPath)
   }
 }

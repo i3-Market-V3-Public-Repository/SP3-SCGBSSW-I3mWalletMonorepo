@@ -1,7 +1,5 @@
-import { DataExchange, EncryptionAlg } from './types'
 import { compactDecrypt, CompactDecryptResult, CompactEncrypt, importJWK, JWK } from 'jose'
-
-export { CompactDecryptResult }
+import { EncryptionAlg } from './types'
 
 /**
  * Encrypts block to JWE
@@ -12,11 +10,11 @@ export { CompactDecryptResult }
  * @param encAlg - the algorithm for encryption
  * @returns a Compact JWE
  */
-export async function jweEncrypt (exchangeId: DataExchange['id'], block: Uint8Array, secret: JWK, encAlg: EncryptionAlg): Promise<string> {
+export async function jweEncrypt (block: Uint8Array, secret: JWK, encAlg: EncryptionAlg): Promise<string> {
   // const input: Uint8Array = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
   const key = await importJWK(secret)
   return await new CompactEncrypt(block)
-    .setProtectedHeader({ alg: 'dir', enc: encAlg, exchangeId, kid: secret.kid })
+    .setProtectedHeader({ alg: 'dir', enc: encAlg, kid: secret.kid })
     .encrypt(key)
 }
 

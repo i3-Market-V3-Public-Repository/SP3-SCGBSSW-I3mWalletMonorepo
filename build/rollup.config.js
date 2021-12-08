@@ -33,8 +33,8 @@ if (existsSync(input) !== true) throw new Error('The entry point should be index
 const tsBundleOptions = {
   tsconfig: join(rootDir, 'tsconfig.json'),
   outDir: undefined, // ignore outDir in tsconfig.json
-  include: ['src/ts/**/*', 'build/typings/**/*'],
-  exclude: ['src/**/*.spec.ts', './build/typings/global-this-pkg.d.ts']
+  include: ['src/ts/**/*', 'build/typings/is-browser.d.ts'],
+  exclude: ['src/**/*.spec.ts']
 }
 
 const external = [...Object.keys(dependencies || {}), ...Object.keys(peerDependencies || {})]

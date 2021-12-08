@@ -1,6 +1,5 @@
 import { JWK, JWTVerifyResult } from 'jose';
-import { DateTolerance, ProofInputPayload } from './types';
-export { JWK, JWTVerifyResult };
+import { ProofInputPayload, TimestampVerifyOptions } from './types';
 /**
  * Verify a proof
  * @param proof - a non-repudiable proof in Compact JWS formatted JWT string
@@ -22,13 +21,9 @@ export { JWK, JWTVerifyResult };
  *   }
  * }
  *
- * @param dateTolerance - specifies a time window to accept the proof. An example could be
- * {
- *   currentDate: new Date('2021-10-17T03:24:00'), // Date to use when comparing NumericDate claims, defaults to new Date().
- *   clockTolerance: 10  // string|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours")
- * }
+ * @param timestampVerifyOptions - specifies a time window to accept the proof
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export declare function verifyProof(proof: string, publicJwk: JWK, expectedPayloadClaims: ProofInputPayload, dateTolerance?: DateTolerance): Promise<JWTVerifyResult>;
+export declare function verifyProof(proof: string, publicJwk: JWK, expectedPayloadClaims: ProofInputPayload, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JWTVerifyResult>;
 //# sourceMappingURL=verifyProof.d.ts.map

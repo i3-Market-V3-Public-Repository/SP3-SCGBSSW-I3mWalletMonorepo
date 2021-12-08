@@ -1,6 +1,5 @@
-import { DataExchange, EncryptionAlg } from './types';
 import { CompactDecryptResult, JWK } from 'jose';
-export { CompactDecryptResult };
+import { EncryptionAlg } from './types';
 /**
  * Encrypts block to JWE
  *
@@ -10,7 +9,7 @@ export { CompactDecryptResult };
  * @param encAlg - the algorithm for encryption
  * @returns a Compact JWE
  */
-export declare function jweEncrypt(exchangeId: DataExchange['id'], block: Uint8Array, secret: JWK, encAlg: EncryptionAlg): Promise<string>;
+export declare function jweEncrypt(block: Uint8Array, secret: JWK, encAlg: EncryptionAlg): Promise<string>;
 /**
  * Decrypts jwe
  * @param jwe - a JWE

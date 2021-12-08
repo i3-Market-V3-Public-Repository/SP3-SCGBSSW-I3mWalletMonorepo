@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-
 describe('verifyKeyPair for different signing algorithms', function () {
   this.timeout(20000)
   const signingAlgsToTest: _pkg.SigningAlg[] = ['ES256', 'ES384', 'ES512']
@@ -26,7 +24,7 @@ describe('verifyKeyPair for different signing algorithms', function () {
         } catch (error) {
           err = error
         }
-        chai.expect(err).to.be.undefined
+        chai.expect(err).to.equal(undefined)
       })
       it('should throw an error with non-complementary keys', async function () {
         try {

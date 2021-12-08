@@ -1,18 +1,16 @@
-import { ethers } from 'ethers'
-import { JWK, JWTVerifyResult } from 'jose'
-import { hexToBuf } from 'bigint-conversion'
 import * as b64 from '@juanelas/base64'
-
-import { jweEncrypt } from './jwe'
+import { hexToBuf } from 'bigint-conversion'
+import { ethers } from 'ethers'
+import { hashable } from 'object-sha'
+import { ProofPayload } from '.'
 import { createProof } from './createProof'
+import { defaultDltConfig } from './defaultDltConfig'
+import { jweEncrypt } from './jwe'
 import { oneTimeSecret } from './oneTimeSecret'
-import { Algs, ContractConfig, DataExchange, DataExchangeInit, DltConfig, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload } from './types'
 import { sha } from './sha'
+import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOInputPayload, PoPInputPayload, PoRInputPayload, StoredProof, TimestampVerifyOptions } from './types'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
-
-/** TO-DO: Could the json be imported from an npm package? */
-import contractConfigDefault from '../besu/NonRepudiation.json'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -20,48 +18,40 @@ import contractConfigDefault from '../besu/NonRepudiation.json'
  * likely to be a Provider.
  */
 export class NonRepudiationOrig {
-  exchange: DataExchangeInit
+  agreement: DataExchangeAgreement
+  exchange!: DataExchange
   jwkPairOrig: JwkPair
   publicJwkDest: JWK
   block: OrigBlock
   dltConfig: DltConfig
+  dltContract!: ethers.Contract
   initialized: Promise<boolean>
 
   /**
-   * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
-   * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
-   * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
+   * @param agreement - a DataExchangeAgreement
+   * @param privateJwk - the private key that will be used to sign the proofs
    * @param block - the block of data to transmit in this data exchange
    * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-   * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal strin used to sign transactions to the ledger. If not provided, it defaults to jwkPairOrig.publicJwk
-   * @param algs - ca be used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
+   * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that is the same as privateJwk
    */
-  constructor (exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string, algs?: Algs) {
-    this.jwkPairOrig = jwkPairOrig
-    this.publicJwkDest = publicJwkDest
-    if (this.jwkPairOrig.privateJwk.alg === undefined || this.jwkPairOrig.publicJwk.alg === undefined || this.publicJwkDest.alg === undefined) {
-      throw new TypeError('"alg" argument is required, please add it to your JWKs first')
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string) {
+    this.jwkPairOrig = {
+      privateJwk: privateJwk,
+      publicJwk: JSON.parse(agreement.orig) as JWK
     }
+    this.publicJwkDest = JSON.parse(agreement.dest) as JWK
 
-    this.exchange = {
-      id: exchangeId,
-      orig: JSON.stringify(this.jwkPairOrig.publicJwk),
-      dest: JSON.stringify(this.publicJwkDest),
-      hashAlg: 'SHA-256',
-      signingAlg: 'ES256',
-      encAlg: 'A256GCM',
-      ledgerSignerAddress: '',
-      ledgerContract: '',
-      ...algs
-    }
+    this.agreement = agreement
 
     // @ts-expect-error I will end assigning the complete Block in the async init()
     this.block = {
       raw: block
     }
 
-    // @ts-expect-error I will end assigning the complete Block in the async init()
-    this.dltConfig = dltConfig
+    this.dltConfig = {
+      ...defaultDltConfig,
+      ...dltConfig
+    }
 
     this.initialized = new Promise((resolve, reject) => {
       this.init(privateLedgerKeyHex).then(() => {
@@ -78,36 +68,30 @@ export class NonRepudiationOrig {
   async init (privateLedgerKeyHex?: string): Promise<void> {
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 
-    const secret = await oneTimeSecret(this.exchange.encAlg)
+    const secret = await oneTimeSecret(this.agreement.encAlg)
     this.block = {
       ...this.block,
       secret,
-      jwe: await jweEncrypt(this.exchange.id, this.block.raw, secret.jwk, this.exchange.encAlg)
+      jwe: await jweEncrypt(this.block.raw, secret.jwk, this.agreement.encAlg)
     }
+    const cipherblockDgst = await sha(this.block.jwe, this.agreement.hashAlg)
+
+    const id = await sha(hashable({ ...this.agreement, cipherblockDgst }), 'SHA-256')
 
     this.exchange = {
-      ...this.exchange,
-      cipherblockDgst: await sha(this.block.jwe, this.exchange.hashAlg),
-      blockCommitment: await sha(this.block.raw, this.exchange.hashAlg),
-      secretCommitment: await sha(new Uint8Array(hexToBuf(this.block.secret.hex)), this.exchange.hashAlg)
+      ...this.agreement,
+      id,
+      cipherblockDgst,
+      blockCommitment: await sha(this.block.raw, this.agreement.hashAlg),
+      secretCommitment: await sha(new Uint8Array(hexToBuf(this.block.secret.hex)), this.agreement.hashAlg)
     }
 
     await this._dltSetup(privateLedgerKeyHex)
   }
 
   private async _dltSetup (privateLedgerKeyHex?: string): Promise<void> {
-    const dltConfig = {
-      // @ts-expect-error I will end assigning the complete Block in the async init()
-      gasLimit: 12500000,
-      // @ts-expect-error I will end assigning the complete Block in the async init()
-      rpcProviderUrl: '***REMOVED***',
-      // @ts-expect-error I will end assigning the complete Block in the async init()
-      disable: false,
-      ...this.dltConfig
-    }
-    if (!dltConfig.disable) {
-      dltConfig.contractConfig = dltConfig.contractConfig ?? (contractConfigDefault as ContractConfig)
-      const rpcProvider = new ethers.providers.JsonRpcProvider(dltConfig.rpcProviderUrl)
+    if (!this.dltConfig.disable) {
+      const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
       if (this.jwkPairOrig.privateJwk.d === undefined) {
         throw new Error('INVALID SIGNING ALGORITHM: No d property found on private key')
       }
@@ -116,24 +100,30 @@ export class NonRepudiationOrig {
         : b64.decode(this.jwkPairOrig.privateJwk.d) as Uint8Array
       const signingKey = new ethers.utils.SigningKey(privateKey)
       const signer = new ethers.Wallet(signingKey, rpcProvider)
-      dltConfig.signer = { address: await signer.getAddress(), signer }
-      dltConfig.contract = new ethers.Contract(dltConfig.contractConfig.address, dltConfig.contractConfig.abi, signer)
-      this.exchange.ledgerSignerAddress = dltConfig.signer.address
-      this.exchange.ledgerContract = dltConfig.contractConfig.address
+      const signerAddress: string = await signer.getAddress()
+
+      if (signerAddress !== this.exchange.ledgerSignerAddress) {
+        throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address associated to the provided private key ${signerAddress}`)
+      }
+
+      if (this.agreement.ledgerContractAddress !== this.dltConfig.contract.address) {
+        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+      }
+
+      this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, signer)
     }
-    this.dltConfig = dltConfig
   }
 
   /**
    * Creates the proof of origin (PoO).
    * Besides returning its value, it is also stored in this.block.poo
    *
-   * @returns a compact JWS with the PoO
+   * @returns a compact JWS with the PoO along with its decoded payload
    */
-  async generatePoO (): Promise<string> {
+  async generatePoO (): Promise<StoredProof> {
     await this.initialized
 
-    const payload: PoOPayload = {
+    const payload: PoOInputPayload = {
       proofType: 'PoO',
       iss: 'orig',
       exchange: this.exchange
@@ -147,25 +137,41 @@ export class NonRepudiationOrig {
    * If verification passes, `por` is added to `this.block`
    *
    * @param por - A PoR in caompact JWS format
+   * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
+   * @param currentDate - check the proof as it were checked in this date
    * @returns the verified payload and protected header
    */
-  async verifyPoR (por: string): Promise<JWTVerifyResult> {
+  async verifyPoR (por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof> {
     await this.initialized
 
     if (this.block?.poo === undefined) {
       throw new Error('Cannot verify a PoR if not even a PoO have been created')
     }
 
-    const expectedPayloadClaims: PoRPayload = {
+    const expectedPayloadClaims: PoRInputPayload = {
       proofType: 'PoR',
       iss: 'dest',
       exchange: this.exchange,
-      poo: this.block.poo
+      poo: this.block.poo.jws
     }
-    const verified = await verifyProof(por, this.publicJwkDest, expectedPayloadClaims)
-    this.block.por = por
 
-    return verified
+    const proofVerifyOptions: TimestampVerifyOptions = {
+      expectedTimestampInterval: {
+        min: this.block.poo?.payload.iat * 1000,
+        max: this.block.poo?.payload.iat * 1000 + this.exchange.pooToPopDelay
+      }
+    }
+    if (clockToleranceMs !== undefined) proofVerifyOptions.clockToleranceMs = clockToleranceMs
+    if (currentDate !== undefined) proofVerifyOptions.currentTimestamp = currentDate.valueOf()
+
+    const verified = await verifyProof(por, this.publicJwkDest, expectedPayloadClaims, proofVerifyOptions)
+
+    this.block.por = {
+      jws: por,
+      payload: verified.payload as ProofPayload
+    }
+
+    return this.block.por
   }
 
   /**
@@ -174,7 +180,7 @@ export class NonRepudiationOrig {
    *
    * @returns a compact JWS with the PoP
    */
-  async generatePoP (): Promise<string> {
+  async generatePoP (): Promise<StoredProof> {
     await this.initialized
 
     if (this.block.por === undefined) {
@@ -186,18 +192,18 @@ export class NonRepudiationOrig {
       const secret = ethers.BigNumber.from(`0x${this.block.secret.hex}`)
 
       // TO-DO: it fails with a random account since it hasn't got any funds (ethers). Do we have a faucet? Set gas prize to 0?
-      const setRegistryTx = await this.dltConfig.contract?.setRegistry(b64.decode(this.exchange.id), secret, { gasLimit: this.dltConfig.gasLimit })
+      const setRegistryTx = await this.dltContract.setRegistry(`0x${this.exchange.id}`, secret, { gasLimit: this.dltConfig.gasLimit })
       verificationCode = setRegistryTx.hash
 
       // TO-DO: I would say that we can remove the next wait
       // await setRegistryTx.wait()
     }
 
-    const payload: PoPPayload = {
+    const payload: PoPInputPayload = {
       proofType: 'PoP',
       iss: 'orig',
       exchange: this.exchange,
-      por: this.block.por,
+      por: this.block.por.jws,
       secret: JSON.stringify(this.block.secret.jwk),
       verificationCode
     }

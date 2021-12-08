@@ -1,8 +1,7 @@
 import { importJWK, JWK, jwtVerify, JWTVerifyResult } from 'jose'
 import { hashable } from 'object-sha'
-import { DataExchange, DataExchangeInit, DateTolerance, ProofPayload, ProofInputPayload } from './types'
-
-export { JWK, JWTVerifyResult }
+import { checkIssuedAt } from './checkTimestamp'
+import { DataExchange, ProofInputPayload, ProofPayload, TimestampVerifyOptions } from './types'
 
 /**
  * Verify a proof
@@ -25,20 +24,27 @@ export { JWK, JWTVerifyResult }
  *   }
  * }
  *
- * @param dateTolerance - specifies a time window to accept the proof. An example could be
- * {
- *   currentDate: new Date('2021-10-17T03:24:00'), // Date to use when comparing NumericDate claims, defaults to new Date().
- *   clockTolerance: 10  // string|number Expected clock tolerance in seconds when number (e.g. 5), or parsed as seconds when a string (e.g. "5 seconds", "10 minutes", "2 hours")
- * }
+ * @param timestampVerifyOptions - specifies a time window to accept the proof
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloadClaims: ProofInputPayload, dateTolerance?: DateTolerance): Promise<JWTVerifyResult> {
+export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloadClaims: ProofInputPayload, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JWTVerifyResult> {
   const pubKey = await importJWK(publicJwk)
-  const verification = await jwtVerify(proof, pubKey, dateTolerance)
+
+  const verification = await jwtVerify(proof, pubKey)
+
+  if (verification.payload.iss === undefined) {
+    throw new Error('Property "iss" missing')
+  }
+  if (verification.payload.iat === undefined) {
+    throw new Error('Property claim iat missing')
+  }
+
+  checkIssuedAt(verification.payload.iat, timestampVerifyOptions)
+
   const payload = verification.payload as ProofPayload
 
-  // Check that that the publicKey is the public key of the issuer
+  // Check that the publicKey is the public key of the issuer
   const issuer = payload.exchange[payload.iss]
   if (hashable(publicJwk) !== hashable(JSON.parse(issuer))) {
     throw new Error(`The proof is issued by ${issuer} instead of ${JSON.stringify(publicJwk)}`)
@@ -48,7 +54,7 @@ export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloa
     if (payload[key] === undefined) throw new Error(`Expected key '${key}' not found in proof`)
     if (key === 'exchange') {
       const expectedDataExchange = expectedPayloadClaims.exchange
-      const dataExchange = payload.exchange as DataExchange
+      const dataExchange = payload.exchange
       checkDataExchange(dataExchange, expectedDataExchange)
     } else if (expectedPayloadClaims[key] !== '' && hashable(expectedPayloadClaims[key] as object) !== hashable(payload[key] as object)) {
       throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`)
@@ -60,7 +66,7 @@ export async function verifyProof (proof: string, publicJwk: JWK, expectedPayloa
 /**
  * Checks whether a dataExchange claims meet the expected ones
  */
-function checkDataExchange (dataExchange: DataExchange, expectedDataExchange: DataExchangeInit): void {
+function checkDataExchange (dataExchange: DataExchange, expectedDataExchange: DataExchange): void {
   // First, let us check that the dataExchange is complete
   const claims: Array<keyof DataExchange> = ['id', 'orig', 'dest', 'hashAlg', 'cipherblockDgst', 'blockCommitment', 'blockCommitment', 'secretCommitment', 'schema']
   for (const claim of claims) {
@@ -71,8 +77,8 @@ function checkDataExchange (dataExchange: DataExchange, expectedDataExchange: Da
 
   // And now let's check the expected values
   for (const key in expectedDataExchange) {
-    if (expectedDataExchange[key as keyof DataExchangeInit] !== '' && hashable(expectedDataExchange[key as keyof DataExchangeInit] as unknown as object) !== hashable(dataExchange[key as keyof DataExchangeInit] as unknown as object)) {
-      throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key as keyof DataExchange], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key as keyof DataExchangeInit], undefined, 2)}`)
+    if (expectedDataExchange[key as keyof DataExchange] !== '' && hashable(expectedDataExchange[key as keyof DataExchange] as unknown as object) !== hashable(dataExchange[key as keyof DataExchange] as unknown as object)) {
+      throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key as keyof DataExchange], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key as keyof DataExchange], undefined, 2)}`)
     }
   }
 }

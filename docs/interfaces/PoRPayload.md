@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- `ProofCommonPayload`
+- [`PoRInputPayload`](PoRInputPayload.md)
 
   ↳ **`PoRPayload`**
 
@@ -10,72 +10,42 @@
 
 ### Properties
 
-- [aud](PoRPayload.md#aud)
 - [exchange](PoRPayload.md#exchange)
-- [exp](PoRPayload.md#exp)
 - [iat](PoRPayload.md#iat)
 - [iss](PoRPayload.md#iss)
-- [jti](PoRPayload.md#jti)
-- [nbf](PoRPayload.md#nbf)
 - [poo](PoRPayload.md#poo)
+- [por](PoRPayload.md#por)
 - [proofType](PoRPayload.md#prooftype)
-- [sub](PoRPayload.md#sub)
+- [secret](PoRPayload.md#secret)
+- [verificationCode](PoRPayload.md#verificationcode)
 
 ## Properties
 
-### aud
-
-• `Optional` **aud**: `string` \| `string`[]
-
-#### Inherited from
-
-ProofCommonPayload.aud
-
-#### Defined in
-
-node_modules/jose/dist/types/types.d.ts:215
-
-___
-
 ### exchange
 
-• **exchange**: [`DataExchangeInit`](DataExchangeInit.md)
+• **exchange**: [`DataExchange`](DataExchange.md)
 
 #### Inherited from
 
-ProofCommonPayload.exchange
+[PoRInputPayload](PoRInputPayload.md).[exchange](PoRInputPayload.md#exchange)
 
 #### Defined in
 
-[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L87)
-
-___
-
-### exp
-
-• `Optional` **exp**: `number`
-
-#### Inherited from
-
-ProofCommonPayload.exp
-
-#### Defined in
-
-node_modules/jose/dist/types/types.d.ts:218
+[src/ts/types.ts:97](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L97)
 
 ___
 
 ### iat
 
-• `Optional` **iat**: `number`
+• **iat**: `number`
 
-#### Inherited from
+#### Overrides
 
-ProofCommonPayload.iat
+[PoRInputPayload](PoRInputPayload.md).[iat](PoRInputPayload.md#iat)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:219
+[src/ts/types.ts:126](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L126)
 
 ___
 
@@ -83,41 +53,13 @@ ___
 
 • **iss**: ``"dest"``
 
-#### Overrides
-
-ProofCommonPayload.iss
-
-#### Defined in
-
-[src/ts/types.ts:96](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L96)
-
-___
-
-### jti
-
-• `Optional` **jti**: `string`
-
 #### Inherited from
 
-ProofCommonPayload.jti
+[PoRInputPayload](PoRInputPayload.md).[iss](PoRInputPayload.md#iss)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:216
-
-___
-
-### nbf
-
-• `Optional` **nbf**: `number`
-
-#### Inherited from
-
-ProofCommonPayload.nbf
-
-#### Defined in
-
-node_modules/jose/dist/types/types.d.ts:217
+[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L121)
 
 ___
 
@@ -125,9 +67,27 @@ ___
 
 • **poo**: `string`
 
+#### Inherited from
+
+[PoRInputPayload](PoRInputPayload.md).[poo](PoRInputPayload.md#poo)
+
 #### Defined in
 
-[src/ts/types.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L98)
+[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L123)
+
+___
+
+### por
+
+• `Optional` **por**: `string`
+
+#### Inherited from
+
+[PoRInputPayload](PoRInputPayload.md).[por](PoRInputPayload.md#por)
+
+#### Defined in
+
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L102)
 
 ___
 
@@ -135,20 +95,38 @@ ___
 
 • **proofType**: ``"PoR"``
 
+#### Inherited from
+
+[PoRInputPayload](PoRInputPayload.md).[proofType](PoRInputPayload.md#prooftype)
+
 #### Defined in
 
-[src/ts/types.ts:97](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L97)
+[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L122)
 
 ___
 
-### sub
+### secret
 
-• `Optional` **sub**: `string`
+• `Optional` **secret**: `string`
 
 #### Inherited from
 
-ProofCommonPayload.sub
+[PoRInputPayload](PoRInputPayload.md).[secret](PoRInputPayload.md#secret)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:214
+[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L103)
+
+___
+
+### verificationCode
+
+• `Optional` **verificationCode**: `string`
+
+#### Inherited from
+
+[PoRInputPayload](PoRInputPayload.md).[verificationCode](PoRInputPayload.md#verificationcode)
+
+#### Defined in
+
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L104)

@@ -5,31 +5,19 @@
 ### Properties
 
 - [contract](DltConfig.md#contract)
-- [contractConfig](DltConfig.md#contractconfig)
 - [disable](DltConfig.md#disable)
 - [gasLimit](DltConfig.md#gaslimit)
 - [rpcProviderUrl](DltConfig.md#rpcproviderurl)
-- [signer](DltConfig.md#signer)
 
 ## Properties
 
 ### contract
 
-• **contract**: `Contract`
+• **contract**: [`ContractConfig`](ContractConfig.md)
 
 #### Defined in
 
-[src/ts/types.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L29)
-
-___
-
-### contractConfig
-
-• **contractConfig**: [`ContractConfig`](ContractConfig.md)
-
-#### Defined in
-
-[src/ts/types.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L28)
+[src/ts/types.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L29)
 
 ___
 
@@ -39,7 +27,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L31)
+[src/ts/types.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L30)
 
 ___
 
@@ -49,7 +37,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L27)
+[src/ts/types.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L28)
 
 ___
 
@@ -59,14 +47,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L26)
-
-___
-
-### signer
-
-• `Optional` **signer**: [`Signer`](Signer.md)
-
-#### Defined in
-
-[src/ts/types.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L30)
+[src/ts/types.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L27)

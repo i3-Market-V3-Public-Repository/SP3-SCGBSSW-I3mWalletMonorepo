@@ -1,8 +1,10 @@
 # Interface: JWK
 
-## Indexable
+## Hierarchy
 
-▪ [propName: `string`]: `unknown`
+- `JWKjose`
+
+  ↳ **`JWK`**
 
 ## Table of contents
 
@@ -36,17 +38,25 @@
 
 ### alg
 
-• `Optional` **alg**: `string`
+• **alg**: [`SigningAlg`](../API.md#signingalg) \| [`EncryptionAlg`](../API.md#encryptionalg)
+
+#### Overrides
+
+JWKjose.alg
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:91
+[src/ts/types.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L18)
 
 ___
 
 ### crv
 
 • `Optional` **crv**: `string`
+
+#### Inherited from
+
+JWKjose.crv
 
 #### Defined in
 
@@ -58,6 +68,10 @@ ___
 
 • `Optional` **d**: `string`
 
+#### Inherited from
+
+JWKjose.d
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:93
@@ -67,6 +81,10 @@ ___
 ### dp
 
 • `Optional` **dp**: `string`
+
+#### Inherited from
+
+JWKjose.dp
 
 #### Defined in
 
@@ -78,6 +96,10 @@ ___
 
 • `Optional` **dq**: `string`
 
+#### Inherited from
+
+JWKjose.dq
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:95
@@ -87,6 +109,10 @@ ___
 ### e
 
 • `Optional` **e**: `string`
+
+#### Inherited from
+
+JWKjose.e
 
 #### Defined in
 
@@ -98,6 +124,10 @@ ___
 
 • `Optional` **ext**: `boolean`
 
+#### Inherited from
+
+JWKjose.ext
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:97
@@ -107,6 +137,10 @@ ___
 ### k
 
 • `Optional` **k**: `string`
+
+#### Inherited from
+
+JWKjose.k
 
 #### Defined in
 
@@ -118,6 +152,10 @@ ___
 
 • `Optional` **key\_ops**: `string`[]
 
+#### Inherited from
+
+JWKjose.key\_ops
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:99
@@ -127,6 +165,10 @@ ___
 ### kid
 
 • `Optional` **kid**: `string`
+
+#### Inherited from
+
+JWKjose.kid
 
 #### Defined in
 
@@ -138,6 +180,10 @@ ___
 
 • `Optional` **kty**: `string`
 
+#### Inherited from
+
+JWKjose.kty
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:101
@@ -147,6 +193,10 @@ ___
 ### n
 
 • `Optional` **n**: `string`
+
+#### Inherited from
+
+JWKjose.n
 
 #### Defined in
 
@@ -158,6 +208,10 @@ ___
 
 • `Optional` **oth**: { `d?`: `string` ; `r?`: `string` ; `t?`: `string`  }[]
 
+#### Inherited from
+
+JWKjose.oth
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:103
@@ -167,6 +221,10 @@ ___
 ### p
 
 • `Optional` **p**: `string`
+
+#### Inherited from
+
+JWKjose.p
 
 #### Defined in
 
@@ -178,6 +236,10 @@ ___
 
 • `Optional` **q**: `string`
 
+#### Inherited from
+
+JWKjose.q
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:109
@@ -187,6 +249,10 @@ ___
 ### qi
 
 • `Optional` **qi**: `string`
+
+#### Inherited from
+
+JWKjose.qi
 
 #### Defined in
 
@@ -198,6 +264,10 @@ ___
 
 • `Optional` **use**: `string`
 
+#### Inherited from
+
+JWKjose.use
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:111
@@ -207,6 +277,10 @@ ___
 ### x
 
 • `Optional` **x**: `string`
+
+#### Inherited from
+
+JWKjose.x
 
 #### Defined in
 
@@ -218,6 +292,10 @@ ___
 
 • `Optional` **x5c**: `string`[]
 
+#### Inherited from
+
+JWKjose.x5c
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:114
@@ -227,6 +305,10 @@ ___
 ### x5t
 
 • `Optional` **x5t**: `string`
+
+#### Inherited from
+
+JWKjose.x5t
 
 #### Defined in
 
@@ -238,6 +320,10 @@ ___
 
 • `Optional` **x5t#S256**: `string`
 
+#### Inherited from
+
+JWKjose.x5t#S256
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:116
@@ -248,6 +334,10 @@ ___
 
 • `Optional` **x5u**: `string`
 
+#### Inherited from
+
+JWKjose.x5u
+
 #### Defined in
 
 node_modules/jose/dist/types/types.d.ts:117
@@ -257,6 +347,10 @@ ___
 ### y
 
 • `Optional` **y**: `string`
+
+#### Inherited from
+
+JWKjose.y
 
 #### Defined in
 

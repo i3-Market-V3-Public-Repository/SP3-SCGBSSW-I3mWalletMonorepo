@@ -1,26 +1,25 @@
-import { JWK, JWTVerifyResult } from 'jose';
-import { Algs, Block, DataExchange, DataExchangeInit, DltConfig, JwkPair } from './types';
+import { ethers } from 'ethers';
+import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, JWTVerifyResult, StoredProof } from './types';
 /**
  * The base class that should be instantiated by the destination of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
  * likely to be a Consumer.
  */
 export declare class NonRepudiationDest {
-    exchange: DataExchangeInit;
+    agreement: DataExchangeAgreement;
+    exchange?: DataExchange;
     jwkPairDest: JwkPair;
     publicJwkOrig: JWK;
     block: Block;
     dltConfig: DltConfig;
+    dltContract: ethers.Contract;
     initialized: Promise<boolean>;
     /**
-     *
-     * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
-     * @param jwkPairDest - a pair of private and public keys owned by this entity (non-repudiation dest)
-     * @param publicJwkOrig - the public key as a JWK of the other peer (non-repudiation orig)
+     * @param agreement - a DataExchangeAgreement
+     * @param privateJwk - the private key that will be used to sign the proofs
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-     * @param algs - is used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GM)
      */
-    constructor(exchangeId: DataExchange['id'], jwkPairDest: JwkPair, publicJwkOrig: JWK, dltConfig?: Partial<DltConfig>, algs?: Algs);
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, dltConfig?: Partial<DltConfig>);
     private _dltSetup;
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
@@ -32,32 +31,34 @@ export declare class NonRepudiationDest {
      *
      * @param poo - a Proof of Origin (PoO) in compact JWS format
      * @param cipherblock - a cipherblock as a JWE
+     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
+     * @param currentDate - check the PoO as it were checked in this date
      * @returns the verified payload and protected header
      *
      */
-    verifyPoO(poo: string, cipherblock: string): Promise<JWTVerifyResult>;
+    verifyPoO(poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<JWTVerifyResult>;
     /**
      * Creates the proof of reception (PoR).
      * Besides returning its value, it is also stored in `this.block.por`
      *
-     * @returns a compact JWS with the PoR
+     * @returns the PoR as a compact JWS along with its decoded payload
      */
-    generatePoR(): Promise<string>;
+    generatePoR(): Promise<StoredProof>;
     /**
      * Verifies a received Proof of Publication (PoP) and returns the secret
      * @param pop - a PoP in compact JWS
-     * @param secret - the JWK secret that was used to encrypt the block
+     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
+     * @param currentDate - check the proof as it were checked in this date
      * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
      */
-    verifyPoP(pop: string): Promise<JWTVerifyResult>;
+    verifyPoP(pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<JWTVerifyResult>;
     /**
-     * Just in case the PoP is not received, the secret can be downloaded from the ledger
-     *
-     * @param timeout - the time in seconds to wait for the query to get the value
+     * Just in case the PoP is not received, the secret can be downloaded from the ledger.
+     * The secret should be downloaded before poo.iat + pooTopop max delay.
      *
      * @returns the secret
      */
-    getSecretFromLedger(timeout?: number): Promise<{
+    getSecretFromLedger(): Promise<{
         hex: string;
         jwk: JWK;
     }>;

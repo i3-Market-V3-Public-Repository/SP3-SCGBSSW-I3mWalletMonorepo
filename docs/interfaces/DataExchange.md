@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- [`DataExchangeInit`](DataExchangeInit.md)
+- [`DataExchangeAgreement`](DataExchangeAgreement.md)
 
   ↳ **`DataExchange`**
 
@@ -16,9 +16,12 @@
 - [encAlg](DataExchange.md#encalg)
 - [hashAlg](DataExchange.md#hashalg)
 - [id](DataExchange.md#id)
-- [ledgerContract](DataExchange.md#ledgercontract)
+- [ledgerContractAddress](DataExchange.md#ledgercontractaddress)
 - [ledgerSignerAddress](DataExchange.md#ledgersigneraddress)
 - [orig](DataExchange.md#orig)
+- [pooToPopDelay](DataExchange.md#pootopopdelay)
+- [pooToPorDelay](DataExchange.md#pootopordelay)
+- [pooToSecretDelay](DataExchange.md#pootosecretdelay)
 - [schema](DataExchange.md#schema)
 - [secretCommitment](DataExchange.md#secretcommitment)
 - [signingAlg](DataExchange.md#signingalg)
@@ -27,15 +30,11 @@
 
 ### blockCommitment
 
-• **blockCommitment**: `string`
-
-#### Overrides
-
-[DataExchangeInit](DataExchangeInit.md).[blockCommitment](DataExchangeInit.md#blockcommitment)
+• `Optional` **blockCommitment**: `string`
 
 #### Defined in
 
-[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L77)
+[src/ts/types.ts:86](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L86)
 
 ___
 
@@ -43,13 +42,9 @@ ___
 
 • **cipherblockDgst**: `string`
 
-#### Overrides
-
-[DataExchangeInit](DataExchangeInit.md).[cipherblockDgst](DataExchangeInit.md#cipherblockdgst)
-
 #### Defined in
 
-[src/ts/types.ts:76](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L76)
+[src/ts/types.ts:85](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L85)
 
 ___
 
@@ -59,11 +54,11 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[dest](DataExchangeInit.md#dest)
+[DataExchangeAgreement](DataExchangeAgreement.md).[dest](DataExchangeAgreement.md#dest)
 
 #### Defined in
 
-[src/ts/types.ts:63](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L63)
+[src/ts/types.ts:71](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L71)
 
 ___
 
@@ -73,11 +68,11 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[encAlg](DataExchangeInit.md#encalg)
+[DataExchangeAgreement](DataExchangeAgreement.md).[encAlg](DataExchangeAgreement.md#encalg)
 
 #### Defined in
 
-[src/ts/types.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L65)
+[src/ts/types.ts:73](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L73)
 
 ___
 
@@ -87,11 +82,11 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[hashAlg](DataExchangeInit.md#hashalg)
+[DataExchangeAgreement](DataExchangeAgreement.md).[hashAlg](DataExchangeAgreement.md#hashalg)
 
 #### Defined in
 
-[src/ts/types.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L64)
+[src/ts/types.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L72)
 
 ___
 
@@ -99,27 +94,23 @@ ___
 
 • **id**: `string`
 
-#### Inherited from
-
-[DataExchangeInit](DataExchangeInit.md).[id](DataExchangeInit.md#id)
-
 #### Defined in
 
-[src/ts/types.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L61)
+[src/ts/types.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L84)
 
 ___
 
-### ledgerContract
+### ledgerContractAddress
 
-• **ledgerContract**: `string`
+• **ledgerContractAddress**: `string`
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[ledgerContract](DataExchangeInit.md#ledgercontract)
+[DataExchangeAgreement](DataExchangeAgreement.md).[ledgerContractAddress](DataExchangeAgreement.md#ledgercontractaddress)
 
 #### Defined in
 
-[src/ts/types.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L67)
+[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L75)
 
 ___
 
@@ -129,11 +120,11 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[ledgerSignerAddress](DataExchangeInit.md#ledgersigneraddress)
+[DataExchangeAgreement](DataExchangeAgreement.md).[ledgerSignerAddress](DataExchangeAgreement.md#ledgersigneraddress)
 
 #### Defined in
 
-[src/ts/types.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L68)
+[src/ts/types.ts:76](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L76)
 
 ___
 
@@ -143,11 +134,53 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[orig](DataExchangeInit.md#orig)
+[DataExchangeAgreement](DataExchangeAgreement.md).[orig](DataExchangeAgreement.md#orig)
 
 #### Defined in
 
-[src/ts/types.ts:62](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L62)
+[src/ts/types.ts:70](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L70)
+
+___
+
+### pooToPopDelay
+
+• **pooToPopDelay**: `number`
+
+#### Inherited from
+
+[DataExchangeAgreement](DataExchangeAgreement.md).[pooToPopDelay](DataExchangeAgreement.md#pootopopdelay)
+
+#### Defined in
+
+[src/ts/types.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L78)
+
+___
+
+### pooToPorDelay
+
+• **pooToPorDelay**: `number`
+
+#### Inherited from
+
+[DataExchangeAgreement](DataExchangeAgreement.md).[pooToPorDelay](DataExchangeAgreement.md#pootopordelay)
+
+#### Defined in
+
+[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L77)
+
+___
+
+### pooToSecretDelay
+
+• **pooToSecretDelay**: `number`
+
+#### Inherited from
+
+[DataExchangeAgreement](DataExchangeAgreement.md).[pooToSecretDelay](DataExchangeAgreement.md#pootosecretdelay)
+
+#### Defined in
+
+[src/ts/types.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L79)
 
 ___
 
@@ -157,25 +190,21 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[schema](DataExchangeInit.md#schema)
+[DataExchangeAgreement](DataExchangeAgreement.md).[schema](DataExchangeAgreement.md#schema)
 
 #### Defined in
 
-[src/ts/types.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L72)
+[src/ts/types.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L80)
 
 ___
 
 ### secretCommitment
 
-• **secretCommitment**: `string`
-
-#### Overrides
-
-[DataExchangeInit](DataExchangeInit.md).[secretCommitment](DataExchangeInit.md#secretcommitment)
+• `Optional` **secretCommitment**: `string`
 
 #### Defined in
 
-[src/ts/types.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L78)
+[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L87)
 
 ___
 
@@ -185,8 +214,8 @@ ___
 
 #### Inherited from
 
-[DataExchangeInit](DataExchangeInit.md).[signingAlg](DataExchangeInit.md#signingalg)
+[DataExchangeAgreement](DataExchangeAgreement.md).[signingAlg](DataExchangeAgreement.md#signingalg)
 
 #### Defined in
 
-[src/ts/types.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L66)
+[src/ts/types.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L74)

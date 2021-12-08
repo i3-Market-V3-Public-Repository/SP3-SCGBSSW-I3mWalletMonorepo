@@ -1,8 +1,8 @@
-import { exportJWK, generateSecret, JWK, KeyLike } from 'jose'
-import { bufToHex, hexToBuf } from 'bigint-conversion'
 import * as b64 from '@juanelas/base64'
 import { decode as base64decode } from '@juanelas/base64'
-import { Block, EncryptionAlg } from './types'
+import { bufToHex, hexToBuf } from 'bigint-conversion'
+import { exportJWK, generateSecret, KeyLike } from 'jose'
+import { Block, EncryptionAlg, JWK } from './types'
 
 /**
  * Create a JWK random (high entropy) symmetric secret
@@ -43,10 +43,10 @@ export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|
   } else {
     key = await generateSecret(encAlg, { extractable: true })
   }
-  const jwk: JWK = await exportJWK(key)
+  const jwk = await exportJWK(key)
   // const thumbprint: string = await calculateJwkThumbprint(jwk)
   // jwk.kid = thumbprint
   jwk.alg = encAlg
 
-  return { jwk, hex: bufToHex(base64decode(jwk.k as string) as Uint8Array) }
+  return { jwk: jwk as JWK, hex: bufToHex(base64decode(jwk.k as string) as Uint8Array) }
 }

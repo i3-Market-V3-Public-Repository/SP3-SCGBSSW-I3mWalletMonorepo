@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- `ProofCommonPayload`
+- [`PoOInputPayload`](PoOInputPayload.md)
 
   ↳ **`PoOPayload`**
 
@@ -10,71 +10,42 @@
 
 ### Properties
 
-- [aud](PoOPayload.md#aud)
 - [exchange](PoOPayload.md#exchange)
-- [exp](PoOPayload.md#exp)
 - [iat](PoOPayload.md#iat)
 - [iss](PoOPayload.md#iss)
-- [jti](PoOPayload.md#jti)
-- [nbf](PoOPayload.md#nbf)
+- [poo](PoOPayload.md#poo)
+- [por](PoOPayload.md#por)
 - [proofType](PoOPayload.md#prooftype)
-- [sub](PoOPayload.md#sub)
+- [secret](PoOPayload.md#secret)
+- [verificationCode](PoOPayload.md#verificationcode)
 
 ## Properties
 
-### aud
-
-• `Optional` **aud**: `string` \| `string`[]
-
-#### Inherited from
-
-ProofCommonPayload.aud
-
-#### Defined in
-
-node_modules/jose/dist/types/types.d.ts:215
-
-___
-
 ### exchange
 
-• **exchange**: [`DataExchangeInit`](DataExchangeInit.md)
+• **exchange**: [`DataExchange`](DataExchange.md)
 
 #### Inherited from
 
-ProofCommonPayload.exchange
+[PoOInputPayload](PoOInputPayload.md).[exchange](PoOInputPayload.md#exchange)
 
 #### Defined in
 
-[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L87)
-
-___
-
-### exp
-
-• `Optional` **exp**: `number`
-
-#### Inherited from
-
-ProofCommonPayload.exp
-
-#### Defined in
-
-node_modules/jose/dist/types/types.d.ts:218
+[src/ts/types.ts:97](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L97)
 
 ___
 
 ### iat
 
-• `Optional` **iat**: `number`
+• **iat**: `number`
 
-#### Inherited from
+#### Overrides
 
-ProofCommonPayload.iat
+[PoOInputPayload](PoOInputPayload.md).[iat](PoOInputPayload.md#iat)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:219
+[src/ts/types.ts:117](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L117)
 
 ___
 
@@ -82,41 +53,41 @@ ___
 
 • **iss**: ``"orig"``
 
-#### Overrides
+#### Inherited from
 
-ProofCommonPayload.iss
+[PoOInputPayload](PoOInputPayload.md).[iss](PoOInputPayload.md#iss)
 
 #### Defined in
 
-[src/ts/types.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L91)
+[src/ts/types.ts:113](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L113)
 
 ___
 
-### jti
+### poo
 
-• `Optional` **jti**: `string`
+• `Optional` **poo**: `string`
 
 #### Inherited from
 
-ProofCommonPayload.jti
+[PoOInputPayload](PoOInputPayload.md).[poo](PoOInputPayload.md#poo)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:216
+[src/ts/types.ts:101](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L101)
 
 ___
 
-### nbf
+### por
 
-• `Optional` **nbf**: `number`
+• `Optional` **por**: `string`
 
 #### Inherited from
 
-ProofCommonPayload.nbf
+[PoOInputPayload](PoOInputPayload.md).[por](PoOInputPayload.md#por)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:217
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L102)
 
 ___
 
@@ -124,20 +95,38 @@ ___
 
 • **proofType**: ``"PoO"``
 
+#### Inherited from
+
+[PoOInputPayload](PoOInputPayload.md).[proofType](PoOInputPayload.md#prooftype)
+
 #### Defined in
 
-[src/ts/types.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/types.ts#L92)
+[src/ts/types.ts:114](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L114)
 
 ___
 
-### sub
+### secret
 
-• `Optional` **sub**: `string`
+• `Optional` **secret**: `string`
 
 #### Inherited from
 
-ProofCommonPayload.sub
+[PoOInputPayload](PoOInputPayload.md).[secret](PoOInputPayload.md#secret)
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:214
+[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L103)
+
+___
+
+### verificationCode
+
+• `Optional` **verificationCode**: `string`
+
+#### Inherited from
+
+[PoOInputPayload](PoOInputPayload.md).[verificationCode](PoOInputPayload.md#verificationcode)
+
+#### Defined in
+
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/types.ts#L104)

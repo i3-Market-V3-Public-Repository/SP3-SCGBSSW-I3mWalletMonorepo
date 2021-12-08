@@ -12,8 +12,10 @@ likely to be a Provider.
 
 ### Properties
 
+- [agreement](NonRepudiationOrig.md#agreement)
 - [block](NonRepudiationOrig.md#block)
 - [dltConfig](NonRepudiationOrig.md#dltconfig)
+- [dltContract](NonRepudiationOrig.md#dltcontract)
 - [exchange](NonRepudiationOrig.md#exchange)
 - [initialized](NonRepudiationOrig.md#initialized)
 - [jwkPairOrig](NonRepudiationOrig.md#jwkpairorig)
@@ -31,25 +33,33 @@ likely to be a Provider.
 
 ### constructor
 
-• **new NonRepudiationOrig**(`exchangeId`, `jwkPairOrig`, `publicJwkDest`, `block`, `dltConfig?`, `privateLedgerKeyHex?`, `algs?`)
+• **new NonRepudiationOrig**(`agreement`, `privateJwk`, `block`, `dltConfig?`, `privateLedgerKeyHex?`)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `exchangeId` | `string` | the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256 |
-| `jwkPairOrig` | [`JwkPair`](../interfaces/JwkPair.md) | a pair of private and public keys owned by this entity (non-repudiation orig) |
-| `publicJwkDest` | [`JWK`](../interfaces/JWK.md) | the public key as a JWK of the other peer (non-repudiation dest) |
+| `agreement` | [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md) | a DataExchangeAgreement |
+| `privateJwk` | [`JWK`](../interfaces/JWK.md) | the private key that will be used to sign the proofs |
 | `block` | `Uint8Array` | the block of data to transmit in this data exchange |
 | `dltConfig?` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> | an object with the necessary configuration for the (Ethereum-like) DLT |
-| `privateLedgerKeyHex?` | `string` | the private key (d parameter) as a hexadecimal strin used to sign transactions to the ledger. If not provided, it defaults to jwkPairOrig.publicJwk |
-| `algs?` | [`Algs`](../interfaces/Algs.md) | ca be used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM) |
+| `privateLedgerKeyHex?` | `string` | the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that is the same as privateJwk |
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L39)
+[src/ts/NonRepudiationOrig.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L37)
 
 ## Properties
+
+### agreement
+
+• **agreement**: [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md)
+
+#### Defined in
+
+[src/ts/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L21)
+
+___
 
 ### block
 
@@ -57,7 +67,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L26)
+[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L25)
 
 ___
 
@@ -67,17 +77,27 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L27)
+[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L26)
+
+___
+
+### dltContract
+
+• **dltContract**: `Contract`
+
+#### Defined in
+
+[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L27)
 
 ___
 
 ### exchange
 
-• **exchange**: [`DataExchangeInit`](../interfaces/DataExchangeInit.md)
+• **exchange**: [`DataExchange`](../interfaces/DataExchange.md)
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L23)
+[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L22)
 
 ___
 
@@ -87,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L28)
+[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L28)
 
 ___
 
@@ -97,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L24)
+[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L23)
 
 ___
 
@@ -107,7 +127,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L25)
+[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L24)
 
 ## Methods
 
@@ -127,45 +147,45 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L98)
+[src/ts/NonRepudiationOrig.ts:92](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L92)
 
 ___
 
 ### generatePoO
 
-▸ **generatePoO**(): `Promise`<`string`\>
+▸ **generatePoO**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
 Creates the proof of origin (PoO).
 Besides returning its value, it is also stored in this.block.poo
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
-a compact JWS with the PoO
+a compact JWS with the PoO along with its decoded payload
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:133](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L133)
+[src/ts/NonRepudiationOrig.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L123)
 
 ___
 
 ### generatePoP
 
-▸ **generatePoP**(): `Promise`<`string`\>
+▸ **generatePoP**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
 Creates the proof of publication (PoP).
 Besides returning its value, it is also stored in `this.block.pop`
 
 #### Returns
 
-`Promise`<`string`\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
 a compact JWS with the PoP
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:177](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L177)
+[src/ts/NonRepudiationOrig.ts:183](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L183)
 
 ___
 
@@ -187,13 +207,13 @@ Initialize this instance. It MUST be invoked before calling any other method.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L78)
+[src/ts/NonRepudiationOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L68)
 
 ___
 
 ### verifyPoR
 
-▸ **verifyPoR**(`por`): `Promise`<[`JWTVerifyResult`](../interfaces/JWTVerifyResult.md)\>
+▸ **verifyPoR**(`por`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
 Verifies a proof of reception.
 If verification passes, `por` is added to `this.block`
@@ -203,13 +223,15 @@ If verification passes, `por` is added to `this.block`
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `por` | `string` | A PoR in caompact JWS format |
+| `clockToleranceMs?` | `number` | expected clock tolerance in milliseconds when comparing Dates |
+| `currentDate?` | `Date` | check the proof as it were checked in this date |
 
 #### Returns
 
-`Promise`<[`JWTVerifyResult`](../interfaces/JWTVerifyResult.md)\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
 
 the verified payload and protected header
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:152](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/b9ca89b/src/ts/NonRepudiationOrig.ts#L152)
+[src/ts/NonRepudiationOrig.ts:144](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/edf0692/src/ts/NonRepudiationOrig.ts#L144)

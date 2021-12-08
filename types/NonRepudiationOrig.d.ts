@@ -1,27 +1,27 @@
-import { JWK, JWTVerifyResult } from 'jose';
-import { Algs, DataExchange, DataExchangeInit, DltConfig, JwkPair, OrigBlock } from './types';
+import { ethers } from 'ethers';
+import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, StoredProof } from './types';
 /**
  * The base class that should be instantiated by the origin of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
  * likely to be a Provider.
  */
 export declare class NonRepudiationOrig {
-    exchange: DataExchangeInit;
+    agreement: DataExchangeAgreement;
+    exchange: DataExchange;
     jwkPairOrig: JwkPair;
     publicJwkDest: JWK;
     block: OrigBlock;
     dltConfig: DltConfig;
+    dltContract: ethers.Contract;
     initialized: Promise<boolean>;
     /**
-     * @param exchangeId - the id of this data exchange. It is a unique identifier as the base64url-no-padding encoding of a uint256
-     * @param jwkPairOrig - a pair of private and public keys owned by this entity (non-repudiation orig)
-     * @param publicJwkDest - the public key as a JWK of the other peer (non-repudiation dest)
+     * @param agreement - a DataExchangeAgreement
+     * @param privateJwk - the private key that will be used to sign the proofs
      * @param block - the block of data to transmit in this data exchange
      * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-     * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal strin used to sign transactions to the ledger. If not provided, it defaults to jwkPairOrig.publicJwk
-     * @param algs - ca be used to overwrite the default algorithms for hash (SHA-256), signing (ES256) and encryption (A256GCM)
+     * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that is the same as privateJwk
      */
-    constructor(exchangeId: DataExchange['id'], jwkPairOrig: JwkPair, publicJwkDest: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string, algs?: Algs);
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string);
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
      */
@@ -31,23 +31,25 @@ export declare class NonRepudiationOrig {
      * Creates the proof of origin (PoO).
      * Besides returning its value, it is also stored in this.block.poo
      *
-     * @returns a compact JWS with the PoO
+     * @returns a compact JWS with the PoO along with its decoded payload
      */
-    generatePoO(): Promise<string>;
+    generatePoO(): Promise<StoredProof>;
     /**
      * Verifies a proof of reception.
      * If verification passes, `por` is added to `this.block`
      *
      * @param por - A PoR in caompact JWS format
+     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
+     * @param currentDate - check the proof as it were checked in this date
      * @returns the verified payload and protected header
      */
-    verifyPoR(por: string): Promise<JWTVerifyResult>;
+    verifyPoR(por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof>;
     /**
      * Creates the proof of publication (PoP).
      * Besides returning its value, it is also stored in `this.block.pop`
      *
      * @returns a compact JWS with the PoP
      */
-    generatePoP(): Promise<string>;
+    generatePoP(): Promise<StoredProof>;
 }
 //# sourceMappingURL=NonRepudiationOrig.d.ts.map

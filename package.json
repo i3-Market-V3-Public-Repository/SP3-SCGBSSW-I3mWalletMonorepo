@@ -72,7 +72,8 @@
     "project": "./tsconfig.json",
     "ignore": [
       "dist/**/*",
-      "types/**/*"
+      "types/**/*",
+      "build/testing/types/**/*"
     ]
   },
   "devDependencies": {

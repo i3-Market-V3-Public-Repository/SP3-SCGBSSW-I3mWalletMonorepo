@@ -1,6 +1,6 @@
 import { hashable } from 'object-sha'
 import { randBytes } from 'bigint-crypto-utils'
-import * as b64 from '@juanelas/base64'
+import { DataExchange } from '../src/ts'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
@@ -11,10 +11,10 @@ describe('Non-repudiation protocol', function () {
   const dltConfig: Partial<_pkg.DltConfig> = {
     rpcProviderUrl: '***REMOVED***'
   }
+  let dataExchangeAgreement: _pkg.DataExchangeAgreement
 
   this.beforeAll(async () => {
     const block = new Uint8Array(await randBytes(256))
-    const dataExchangeId: string = b64.encode(await randBytes(32), true, false) // is a bse64 representation of a uint256
 
     const consumerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG)
     console.log(JSON.stringify({ consumerKeys: consumerJwks }, undefined, 2))
@@ -23,72 +23,118 @@ describe('Non-repudiation protocol', function () {
     const providerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG, providerPrivKeyHex)
     console.log(JSON.stringify({ providerKeys: providerJwks }, undefined, 2))
 
-    npProvider = new _pkg.NonRepudiationOrig(dataExchangeId, providerJwks, consumerJwks.publicJwk, block, dltConfig)
-    npConsumer = new _pkg.NonRepudiationDest(dataExchangeId, consumerJwks, providerJwks.publicJwk, dltConfig)
+    dataExchangeAgreement = {
+      orig: JSON.stringify(providerJwks.publicJwk),
+      dest: JSON.stringify(consumerJwks.publicJwk),
+      encAlg: 'A256GCM',
+      signingAlg: SIGNING_ALG,
+      hashAlg: 'SHA-256',
+      ledgerContractAddress: '0x7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
+      ledgerSignerAddress: '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
+      pooToPorDelay: 10000,
+      pooToPopDelay: 20000,
+      pooToSecretDelay: 150000
+    }
+
+    npProvider = new _pkg.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig)
+    npConsumer = new _pkg.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
 
     await npProvider.init()
     await npConsumer.init()
   })
 
-  describe('create proof of publication (PoP)', function () {
-    it('should fail since there are not previous PoR', async function () {
-      let err
-      try {
-        await npProvider.generatePoP()
-      } catch (error) {
-        err = error
-      }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
-    })
-  })
-
-  describe('create proof of reception (PoR)', function () {
-    it('should fail since there are not previous PoO', async function () {
-      let err
-      try {
-        await npConsumer.generatePoR()
-      } catch (error) {
-        err = error
-      }
-      chai.expect(err).to.not.be.undefined // eslint-disable-line
-    })
-  })
-
   describe('create/verify proof of origin (PoO)', function () {
+    let poo: _pkg.StoredProof
+    this.beforeAll(async function () {
+      poo = await npProvider.generatePoO()
+    })
     it('provider should create a valid signed PoO that is properly verified by the consumer', async function () {
-      const poo = await npProvider.generatePoO()
-      const verification = await npConsumer.verifyPoO(poo, npProvider.block.jwe)
+      const verification = await npConsumer.verifyPoO(poo.jws, npProvider.block.jwe)
       chai.expect(verification).to.not.equal(undefined)
+    })
+    it('verification should throw error if the PoO is not within date tolerance', async function () {
+      const currentDate = new Date(Date.now() - 60 * 3600 * 1000) // 1 hour before
+
+      let err
+      try {
+        await npConsumer.verifyPoO(poo.jws, npProvider.block.jwe, undefined, currentDate)
+      } catch (error) {
+        err = error
+      }
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 
   describe('create/verify proof of reception (PoR)', function () {
+    let por: _pkg.StoredProof
+    this.beforeAll(async function () {
+      por = await npConsumer.generatePoR()
+    })
     it('consumer should create a valid signed PoR that is properly verified by the provider', async function () {
-      const por = await npConsumer.generatePoR()
-      const verification = await npProvider.verifyPoR(por)
+      const verification = await npProvider.verifyPoR(por.jws)
       chai.expect(verification).to.not.equal(undefined)
+    })
+    it('verification should throw error if there is no previously generated PoO', async function () {
+      const block = npProvider.block
+      const poo = block.poo
+      delete block.poo
+      let err
+      try {
+        await npProvider.verifyPoR(por.jws)
+      } catch (error) {
+        err = error
+      }
+      block.poo = poo
+      chai.expect(err).to.not.equal(undefined)
+    })
+    it('verification should throw error if the PoR is not within date tolerance', async function () {
+      const currentDate = new Date(Date.now() + 1 * 3600 * 1000) // 1 hour after
+      const clockToleranceMs = 1000
+
+      let err
+      try {
+        await npProvider.verifyPoR(por.jws, clockToleranceMs, currentDate)
+      } catch (error) {
+        err = error
+      }
+      chai.expect(err).to.not.equal(undefined)
     })
   })
 
   describe('create/verify proof of publication (PoP)', function () {
     this.timeout(120000)
+    let pop: _pkg.StoredProof
+    this.beforeAll(async function () {
+      pop = await npProvider.generatePoP()
+    })
     it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
-      const pop = await npProvider.generatePoP()
-      const verified = await npConsumer.verifyPoP(pop)
+      const verified = await npConsumer.verifyPoP(pop.jws)
       console.log(JSON.stringify(verified.payload, undefined, 2))
       chai.expect(verified).to.not.equal(undefined)
     })
     it('verification should throw error if there is no PoR', async function () {
-      const block = npConsumer.block as _pkg.OrigBlock
+      const block = npConsumer.block
       const por = block.por
       delete block.por
       let err
       try {
-        await npConsumer.verifyPoP(block.pop as string)
+        await npConsumer.verifyPoP(pop.jws)
       } catch (error) {
         err = error
       }
       block.por = por
+      chai.expect(err).to.not.equal(undefined)
+    })
+    it('verification should throw error if the PoP is not within date tolerance', async function () {
+      const currentDate = new Date(Date.now() + 60 * 3600 * 1000) // 1 hour after
+      const clockToleranceMs = 1
+
+      let err
+      try {
+        await npConsumer.verifyPoP(pop.jws, clockToleranceMs, currentDate)
+      } catch (error) {
+        err = error
+      }
       chai.expect(err).to.not.equal(undefined)
     })
   })
@@ -112,8 +158,9 @@ describe('Non-repudiation protocol', function () {
       chai.expect(err).to.not.equal(undefined)
     })
     it('it should throw error if hash(decrypted block) != committed block digest', async function () {
-      const str = '123'
-      npConsumer.exchange.blockCommitment = npConsumer.exchange.blockCommitment as string + str
+      const append = '123'
+      const exchange = npConsumer.exchange as _pkg.DataExchange
+      exchange.blockCommitment = npConsumer.exchange?.blockCommitment as string + append
       let err
       try {
         await npConsumer.decrypt()
@@ -121,22 +168,24 @@ describe('Non-repudiation protocol', function () {
         err = error
       }
       // restore the block commitment
-      npConsumer.exchange.blockCommitment = npConsumer.exchange.blockCommitment.substring(0, npConsumer.exchange.blockCommitment.length - str.length)
+      exchange.blockCommitment = exchange.blockCommitment.substring(0, exchange.blockCommitment.length - append.length)
 
       chai.expect(err).to.not.equal(undefined)
     })
   })
 
-  describe('get secret from ledger', function () {
-    const timeout = 150000 // 2.5 minutes (we currently have one block every 2 minutes)
-    this.timeout(timeout)
-    it('should be the same secret as the one obtained in the PoP', async function () {
-      const secret = { ...npConsumer.block.secret }
-      const secretFromLedger = await npConsumer.getSecretFromLedger(timeout / 1000 - 2)
-      chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
-      npConsumer.block.secret = secret as _pkg.Block['secret']
+  if (dltConfig.disable !== true) {
+    describe('get secret from ledger', function () {
+      const timeout = 150000 // 2.5 minutes (we currently have one block every 2 minutes)
+      this.timeout(timeout)
+      it('should be the same secret as the one obtained in the PoP', async function () {
+        const secret = { ...npConsumer.block.secret }
+        const secretFromLedger = await npConsumer.getSecretFromLedger()
+        chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
+        npConsumer.block.secret = secret as _pkg.Block['secret']
+      })
     })
-  })
+  }
 
   describe('testing with invalid claims', function () {
     it('using \'issr\' instead of \'iss\' should throw error', async function () {
@@ -146,7 +195,7 @@ describe('Non-repudiation protocol', function () {
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.publicJwkOrig, expectedPayload as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, npConsumer.publicJwkOrig, expectedPayload as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
@@ -160,23 +209,24 @@ describe('Non-repudiation protocol', function () {
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.publicJwkOrig, expectedPayload as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, npConsumer.publicJwkOrig, expectedPayload as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
       chai.expect(err).to.not.equal(undefined)
     })
     it('property in expectedDataExchange different that in the dataExchange should throw error', async function () {
-      const expectedPayload = {
+      const expectedPayload: _pkg.ProofInputPayload = {
         iss: 'orig',
+        proofType: 'por',
         exchange: {
-          ...npConsumer.exchange,
+          ...npConsumer.exchange as DataExchange,
           dest: 'asdfdgdg'
         }
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.publicJwkOrig, expectedPayload as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, npConsumer.publicJwkOrig, expectedPayload)
       } catch (error) {
         err = error
       }
@@ -186,9 +236,17 @@ describe('Non-repudiation protocol', function () {
 
   describe('testing with invalid key', function () {
     it('should throw error', async function () {
+      const expectedPayload: _pkg.ProofInputPayload = {
+        iss: 'orig',
+        proofType: 'por',
+        exchange: {
+          ...npConsumer.exchange as DataExchange,
+          dest: 'asdfdgdg'
+        }
+      }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, npConsumer.jwkPairDest.publicJwk, npConsumer.exchange as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, npConsumer.jwkPairDest.publicJwk, expectedPayload)
       } catch (error) {
         err = error
       }
@@ -199,10 +257,11 @@ describe('Non-repudiation protocol', function () {
   describe('testing with a jwk with no \'alg\'', function () {
     it('verifyProof should throw error', async function () {
       const jwk = { ...npProvider.publicJwkDest }
+      // @ts-expect-error
       delete jwk.alg
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo as string, jwk, npProvider.exchange as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, jwk, npProvider.exchange as unknown as _pkg.ProofInputPayload)
       } catch (error) {
         err = error
       }
@@ -212,8 +271,9 @@ describe('Non-repudiation protocol', function () {
       let err
       try {
         const jwk = { ...npProvider.jwkPairOrig.privateJwk }
+        // @ts-expect-error
         delete jwk.alg
-        const payload: _pkg.PoOPayload = {
+        const payload: _pkg.PoOInputPayload = {
           proofType: 'PoO',
           iss: 'orig',
           exchange: npProvider.exchange
