@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/non-repudiation-protocol",
+  "name": "non-repudiation-protocol",
   "version": "1.0.0",
   "description": "Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data",
   "keywords": [
@@ -56,7 +56,9 @@
     "test:browser": "node build/testing/browser/index.js",
     "test:browser-headless": "node build/testing/browser/index.js headless",
     "test:node": "npm run mocha -- '{src/ts/**/*.spec.ts,test/**/*.ts}'",
-    "watch": "npm run mocha -- --watch '{src/ts/**/*.spec.ts,test/**/*.ts}'"
+    "watch": "npm run mocha -- --watch '{src/ts/**/*.spec.ts,test/**/*.ts}'",
+    "release": "npm pack --pack-destination releases/",
+    "postrelease": "rm ./releases/latest.tgz && ln -s ./$npm_package_name-$npm_package_version.tgz releases/latest.tgz"
   },
   "ts-standard": {
     "env": [
