@@ -58,7 +58,7 @@
     "test:node": "npm run mocha -- '{src/ts/**/*.spec.ts,test/**/*.ts}'",
     "watch": "npm run mocha -- --watch '{src/ts/**/*.spec.ts,test/**/*.ts}'",
     "release": "npm pack --pack-destination releases/",
-    "postrelease": "rm ./releases/latest.tgz && ln -s ./$npm_package_name-$npm_package_version.tgz releases/$npm_package_name-latest.tgz"
+    "postrelease": "rm -f ./releases/latest.tgz && ln -s ./$npm_package_name-$npm_package_version.tgz releases/$npm_package_name-latest.tgz"
   },
   "ts-standard": {
     "env": [
