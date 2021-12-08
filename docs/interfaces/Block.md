@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L40)
+[src/ts/types.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L40)
 
 ___
 
@@ -35,7 +35,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L45)
+[src/ts/types.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L45)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L47)
+[src/ts/types.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L47)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L46)
+[src/ts/types.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L46)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L39)
+[src/ts/types.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L39)
 
 ___
 
@@ -82,4 +82,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/c22782d/src/ts/types.ts#L41)
+[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/a2e589a/src/ts/types.ts#L41)

@@ -30,11 +30,11 @@ describe('Non-repudiation protocol', function () {
       encAlg: 'A256GCM',
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
-      ledgerContractAddress: '7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
+      ledgerContractAddress: '8d407a1722633bdd1dcf221474be7a44c05d7c2f',
       ledgerSignerAddress: '17bd12c2134afc1f6e9302a532efe30c19b9e903',
       pooToPorDelay: 10000,
       pooToPopDelay: 20000,
-      pooToSecretDelay: 150000
+      pooToSecretDelay: 180000 // 3 minutes
     }
 
     console.log(dataExchangeAgreement)

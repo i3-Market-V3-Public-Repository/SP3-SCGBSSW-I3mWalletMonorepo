@@ -113,7 +113,7 @@ export class NonRepudiationOrig {
       }
 
       if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+        throw new Error(`Contract address ${parseHex(this.dltConfig.contract.address)} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 
       this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, signer)

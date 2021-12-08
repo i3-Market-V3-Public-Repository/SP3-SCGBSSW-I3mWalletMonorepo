@@ -2,6 +2,7 @@ import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
 import { hashable } from 'object-sha'
+import { checkIssuedAt } from './checkTimestamp'
 /** TO-DO: Could the json be imported from an npm package? */
 import { createProof } from './createProof'
 import { defaultDltConfig } from './defaultDltConfig'
@@ -68,7 +69,7 @@ export class NonRepudiationDest {
       const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
 
       if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+        throw new Error(`Contract address ${parseHex(this.dltConfig.contract.address)} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 
       this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, rpcProvider)
@@ -219,9 +220,10 @@ export class NonRepudiationDest {
     const timeout = Math.round((maxTimeForSecret - currentTimestamp) / 1000)
 
     let secretBn = ethers.BigNumber.from(0)
+    let timestampBn = ethers.BigNumber.from(0)
     let counter = 0
     do {
-      secretBn = await this.dltContract.registry(this.agreement.ledgerSignerAddress, `0x${this.exchange.id}`)
+      ({ secret: secretBn, timestamp: timestampBn } = await this.dltContract.registry(this.agreement.ledgerSignerAddress, `0x${this.exchange.id}`))
       if (secretBn.isZero()) {
         counter++
         await new Promise(resolve => setTimeout(resolve, 1000))
@@ -231,8 +233,22 @@ export class NonRepudiationDest {
       throw new Error(`timeout of ${timeout}s exceeded when querying the ledger`)
     }
     const secretHex = secretBn.toHexString()
+    const iat = timestampBn.toNumber()
 
     this.block.secret = await oneTimeSecret(this.exchange.encAlg, secretHex)
+
+    try {
+      checkIssuedAt(iat, {
+        clockToleranceMs: 0, // The ledger time is what it counts
+        expectedTimestampInterval: {
+          min: this.block.poo.payload.iat * 1000,
+          max: this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay
+        }
+      })
+    } catch (error) {
+      throw new Error(`Although the secret has been obtained (you can try to decrypt the cipherblock), it's been published later than agreed: ${(new Date(iat * 1000)).toUTCString()} > ${(new Date(this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay)).toUTCString()}`)
+    }
+
     return this.block.secret
   }
 
