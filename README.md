@@ -5,7 +5,7 @@
 
 # non-repudiation-protocol
 
-Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data.
+Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflicc Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
 
 ## API reference documentation
 
