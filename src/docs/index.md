@@ -13,10 +13,16 @@ Library for the i3-market non-repudiation protocol that helps generate/verifying
 
 ## Usage
 
-`{{PKG_NAME}}` can be imported to your project with `npm`:
+Once you set up the i3-MARKET NPM, `{{PKG_NAME}}` can be imported to your project with `npm`:
 
 ```console
 npm install {{PKG_NAME}}
+```
+
+Alternatively you can just download the [latest release](./releases/{{PKG_NAME}}-latest.tgz) and install into your project with:
+
+```console
+npm install <path to {{PKG_NAME}}-latest.tgz>
 ```
 
 Then either require (Node.js CJS):

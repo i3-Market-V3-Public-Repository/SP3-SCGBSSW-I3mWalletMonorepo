@@ -3,7 +3,7 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 
-# @i3-market/non-repudiation-protocol
+# non-repudiation-protocol
 
 Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data.
 
@@ -13,27 +13,33 @@ Library for the i3-market non-repudiation protocol that helps generate/verifying
 
 ## Usage
 
-`@i3-market/non-repudiation-protocol` can be imported to your project with `npm`:
+Once you set up the i3-MARKET NPM, `non-repudiation-protocol` can be imported to your project with `npm`:
 
 ```console
-npm install @i3-market/non-repudiation-protocol
+npm install non-repudiation-protocol
+```
+
+Alternatively you can just download the [latest release](./releases/non-repudiation-protocol-latest.tgz) and install into your project with:
+
+```console
+npm install <path to non-repudiation-protocol-latest.tgz>
 ```
 
 Then either require (Node.js CJS):
 
 ```javascript
-const nonRepudiationProtocol = require('@i3-market/non-repudiation-protocol')
+const nonRepudiationProtocol = require('non-repudiation-protocol')
 ```
 
 or import (JavaScript ES module):
 
 ```javascript
-import * as nonRepudiationProtocol from '@i3-market/non-repudiation-protocol'
+import * as nonRepudiationProtocol from 'non-repudiation-protocol'
 ```
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `@i3-market/non-repudiation-protocol` in your project, just get the bundles from `node_modules/@i3-market/non-repudiation-protocol/dist/bundles/`.
+You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `non-repudiation-protocol` in your project, just get the bundles from `node_modules/non-repudiation-protocol/dist/bundles/`.
 
 ### Example for an i3-MARKET Provider
 
