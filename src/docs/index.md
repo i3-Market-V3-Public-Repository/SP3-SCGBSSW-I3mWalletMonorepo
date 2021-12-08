@@ -5,7 +5,7 @@
 
 # {{PKG_NAME}}
 
-Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflicc Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
+Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflict Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
 
 ## API reference documentation
 
@@ -43,7 +43,7 @@ You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDL
 
 ### Example for an i3-MARKET Provider
 
-Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the generateKeys utility function. For example, if you already have a random private key in hex:
+Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the `generateKeys` utility function. For example, if you already have a random private key in hex:
 
 ```typescript
   /** you need a pair of public-private keys as JWK in one of the EC supported 
@@ -56,7 +56,7 @@ Before starting the agreement you need a pair of public-private keys as JWK in o
   const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
 ```
 
-And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
+And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
 
 ```typescript
 async nrp() => {
@@ -120,7 +120,7 @@ nrp()
 
 ### Example for an i3-MARKET Consumer
 
-Before starting the agreement you need a pair of public private keys. You can easily create the key pair with the generateKeys utility function:
+Before starting the agreement, you need a pair of public private keys. You can easily create the key pair with the `generateKeys` utility function:
 
 ```typescript
   const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256', providerPrivKeyHex)

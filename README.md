@@ -19,7 +19,7 @@ Once you set up the i3-MARKET NPM, `non-repudiation-protocol` can be imported to
 npm install non-repudiation-protocol
 ```
 
-Alternatively you can just download the [latest release](./releases/non-repudiation-protocol-latest.tgz) and install into your project with:
+Alternatively, you can just download the [latest release](./releases/non-repudiation-protocol-latest.tgz) and install into your project with:
 
 ```console
 npm install <path to non-repudiation-protocol-latest.tgz>
