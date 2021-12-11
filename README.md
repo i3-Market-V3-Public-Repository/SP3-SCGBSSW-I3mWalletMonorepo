@@ -3,9 +3,9 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 
-# non-repudiation-protocol
+# @i3m/non-repudiation-protocol
 
-Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflicc Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
+Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflict Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
 
 ## API reference documentation
 
@@ -13,50 +13,44 @@ Library for the i3-market non-repudiation protocol that helps generate/verifying
 
 ## Usage
 
-Once you set up the i3-MARKET NPM, `non-repudiation-protocol` can be imported to your project with `npm`:
+Once you set up the i3-MARKET NPM, `@i3m/non-repudiation-protocol` can be imported to your project with `npm`:
 
 ```console
-npm install non-repudiation-protocol
+npm install @i3m/non-repudiation-protocol
 ```
 
-Alternatively, you can just download the [latest release](./releases/non-repudiation-protocol-latest.tgz) and install into your project with:
+Alternatively you can just download the [latest release](./releases/@i3m/non-repudiation-protocol-latest.tgz) and install into your project with:
 
 ```console
-npm install <path to non-repudiation-protocol-latest.tgz>
+npm install <path to @i3m/non-repudiation-protocol-latest.tgz>
 ```
 
 Then either require (Node.js CJS):
 
 ```javascript
-const nonRepudiationProtocol = require('non-repudiation-protocol')
+const nonRepudiationProtocol = require('@i3m/non-repudiation-protocol')
 ```
 
 or import (JavaScript ES module):
 
 ```javascript
-import * as nonRepudiationProtocol from 'non-repudiation-protocol'
+import * as nonRepudiationProtocol from '@i3m/non-repudiation-protocol'
 ```
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `non-repudiation-protocol` in your project, just get the bundles from `node_modules/non-repudiation-protocol/dist/bundles/`.
+You can also download the IIFE bundle, the ESM bundle or the UMD bundle and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-protocol` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-protocol/dist/bundles/`.
 
 ### Example for an i3-MARKET Provider
 
-Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the generateKeys utility function. For example, if you already have a random private key in hex:
+Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the `generateKeys` utility function. For example, if you already have a random private key in hex:
 
 ```typescript
-  /** you need a pair of public-private keys as JWK in one of the EC supported 
-   * curves (P-256, P-384, P-521).
-   * If you already have a random private key in hex, base64 or Uint8Array, you
-   * can easily create the key pair with the generateKeys utility function.
-   * An example with a key in hex format would be
-   */
-  const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
-  const providerJwks = await nonRepudiationProtocol.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
+const providerJwks = await nonRepudiationProtocol.generateKeys(SIGNING_ALG, providerPrivKeyHex)
 ```
 
-And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
+And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
 
 ```typescript
 async nrp() => {
@@ -87,7 +81,7 @@ async nrp() => {
   }
 
   /**
-   * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted.
+   * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
    * You need:
    *  - the data agreement
    *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
@@ -120,7 +114,7 @@ nrp()
 
 ### Example for an i3-MARKET Consumer
 
-Before starting the agreement you need a pair of public private keys. You can easily create the key pair with the generateKeys utility function:
+Before starting the agreement, you need a pair of public private keys. You can easily create the key pair with the `generateKeys` utility function:
 
 ```typescript
   const consumerJwks = await nonRepudiationProtocol.generateKeys('ES256', providerPrivKeyHex)

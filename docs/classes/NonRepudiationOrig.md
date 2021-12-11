@@ -17,16 +17,13 @@ likely to be a Provider.
 - [dltConfig](NonRepudiationOrig.md#dltconfig)
 - [dltContract](NonRepudiationOrig.md#dltcontract)
 - [exchange](NonRepudiationOrig.md#exchange)
-- [initialized](NonRepudiationOrig.md#initialized)
 - [jwkPairOrig](NonRepudiationOrig.md#jwkpairorig)
 - [publicJwkDest](NonRepudiationOrig.md#publicjwkdest)
 
 ### Methods
 
-- [\_dltSetup](NonRepudiationOrig.md#_dltsetup)
 - [generatePoO](NonRepudiationOrig.md#generatepoo)
 - [generatePoP](NonRepudiationOrig.md#generatepop)
-- [init](NonRepudiationOrig.md#init)
 - [verifyPoR](NonRepudiationOrig.md#verifypor)
 
 ## Constructors
@@ -47,7 +44,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L38)
+[src/ts/NonRepudiationOrig.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L38)
 
 ## Properties
 
@@ -57,7 +54,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L22)
+[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L22)
 
 ___
 
@@ -67,7 +64,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L26)
+[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L26)
 
 ___
 
@@ -77,7 +74,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L27)
+[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L27)
 
 ___
 
@@ -87,7 +84,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L28)
+[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L28)
 
 ___
 
@@ -97,17 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L23)
-
-___
-
-### initialized
-
-• **initialized**: `Promise`<`boolean`\>
-
-#### Defined in
-
-[src/ts/NonRepudiationOrig.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L29)
+[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L23)
 
 ___
 
@@ -117,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L24)
+[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L24)
 
 ___
 
@@ -127,29 +114,9 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L25)
+[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L25)
 
 ## Methods
-
-### \_dltSetup
-
-▸ `Private` **_dltSetup**(`privateLedgerKeyHex?`): `Promise`<`void`\>
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `privateLedgerKeyHex?` | `string` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Defined in
-
-[src/ts/NonRepudiationOrig.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L98)
-
-___
 
 ### generatePoO
 
@@ -166,7 +133,7 @@ a compact JWS with the PoO along with its decoded payload
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L129)
+[src/ts/NonRepudiationOrig.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L129)
 
 ___
 
@@ -185,29 +152,7 @@ a compact JWS with the PoP
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:189](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L189)
-
-___
-
-### init
-
-▸ **init**(`privateLedgerKeyHex?`): `Promise`<`void`\>
-
-Initialize this instance. It MUST be invoked before calling any other method.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `privateLedgerKeyHex?` | `string` |
-
-#### Returns
-
-`Promise`<`void`\>
-
-#### Defined in
-
-[src/ts/NonRepudiationOrig.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L74)
+[src/ts/NonRepudiationOrig.ts:189](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L189)
 
 ___
 
@@ -234,4 +179,4 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/NonRepudiationOrig.ts#L150)
+[src/ts/NonRepudiationOrig.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/NonRepudiationOrig.ts#L150)

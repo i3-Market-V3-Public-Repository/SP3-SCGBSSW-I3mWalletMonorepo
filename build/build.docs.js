@@ -28,7 +28,8 @@ async function typedoc () {
     includeVersion: true,
     entryDocument: 'API.md',
     readme: 'none',
-    hideBreadcrumbs: true
+    hideBreadcrumbs: true,
+    excludePrivate: true
   })
 
   const project = app.convert()

@@ -13,7 +13,7 @@ export declare class NonRepudiationDest {
     block: Block;
     dltConfig: DltConfig;
     dltContract: ethers.Contract;
-    initialized: Promise<boolean>;
+    private readonly initialized;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
@@ -24,7 +24,7 @@ export declare class NonRepudiationDest {
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
      */
-    init(): Promise<void>;
+    private init;
     /**
      * Verifies a proof of origin against the received cipherblock.
      * If verification passes, `pop` and `cipherblock` are added to this.block

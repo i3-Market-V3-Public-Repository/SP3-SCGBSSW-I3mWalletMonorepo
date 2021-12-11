@@ -26,7 +26,7 @@ export class NonRepudiationOrig {
   block: OrigBlock
   dltConfig: DltConfig
   dltContract!: ethers.Contract
-  initialized: Promise<boolean>
+  private readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement
@@ -71,7 +71,7 @@ export class NonRepudiationOrig {
   /**
    * Initialize this instance. It MUST be invoked before calling any other method.
    */
-  async init (privateLedgerKeyHex?: string): Promise<void> {
+  private async init (privateLedgerKeyHex?: string): Promise<void> {
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 
     const secret = await oneTimeSecret(this.agreement.encAlg)

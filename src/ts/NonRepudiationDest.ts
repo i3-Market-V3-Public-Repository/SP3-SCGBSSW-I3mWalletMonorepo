@@ -27,7 +27,7 @@ export class NonRepudiationDest {
   block: Block
   dltConfig: DltConfig
   dltContract!: ethers.Contract
-  initialized: Promise<boolean>
+  private readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement
@@ -79,7 +79,7 @@ export class NonRepudiationDest {
   /**
    * Initialize this instance. It MUST be invoked before calling any other method.
    */
-  async init (): Promise<void> {
+  private async init (): Promise<void> {
     await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk)
   }
 

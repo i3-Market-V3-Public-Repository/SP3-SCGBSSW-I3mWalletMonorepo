@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L52)
+[src/ts/types.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L52)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L45)
+[src/ts/types.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L45)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L47)
+[src/ts/types.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L47)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L46)
+[src/ts/types.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L46)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L51)
+[src/ts/types.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L51)
 
 ___
 
@@ -106,4 +106,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/29e9a91/src/ts/types.ts#L53)
+[src/ts/types.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/97869db/src/ts/types.ts#L53)

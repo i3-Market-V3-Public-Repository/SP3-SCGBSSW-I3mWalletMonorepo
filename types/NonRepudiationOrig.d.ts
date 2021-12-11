@@ -13,7 +13,7 @@ export declare class NonRepudiationOrig {
     block: OrigBlock;
     dltConfig: DltConfig;
     dltContract: ethers.Contract;
-    initialized: Promise<boolean>;
+    private readonly initialized;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
@@ -25,7 +25,7 @@ export declare class NonRepudiationOrig {
     /**
      * Initialize this instance. It MUST be invoked before calling any other method.
      */
-    init(privateLedgerKeyHex?: string): Promise<void>;
+    private init;
     private _dltSetup;
     /**
      * Creates the proof of origin (PoO).

@@ -20,6 +20,15 @@
     "type": "git",
     "url": "git+https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol.git"
   },
+  "bugs": {
+    "url": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/issues"
+  },
+  "homepage": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol#readme",
+  "author": {
+    "name": "Juan Hernández Serrano",
+    "email": "j.hernandez@upc.edu",
+    "url": "https://github.com/juanelas"
+  },
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
   "browser": "./dist/esm/index.browser.js",
@@ -38,8 +47,11 @@
     "./types": "./types/index.d.ts"
   },
   "directories": {
-    "doc": "docs",
-    "test": "test"
+    "build": "./build",
+    "dist": "./dist",
+    "docs": "./docs",
+    "src": "./src",
+    "test": "./test"
   },
   "scripts": {
     "build": "run-s lint build:js docs test:browser-headless coverage",
@@ -118,10 +130,5 @@
     "ethers": "^5.5.2",
     "jose": "^4.3.7",
     "object-sha": "^2.0.6"
-  },
-  "bugs": {
-    "url": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/issues"
-  },
-  "homepage": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol#readme",
-  "author": ""
+  }
 }

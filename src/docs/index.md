@@ -46,14 +46,8 @@ You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDL
 Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the `generateKeys` utility function. For example, if you already have a random private key in hex:
 
 ```typescript
-  /** you need a pair of public-private keys as JWK in one of the EC supported 
-   * curves (P-256, P-384, P-521).
-   * If you already have a random private key in hex, base64 or Uint8Array, you
-   * can easily create the key pair with the generateKeys utility function.
-   * An example with a key in hex format would be
-   */
-  const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
-  const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
+const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
+const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
 ```
 
 And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
@@ -87,7 +81,7 @@ async nrp() => {
   }
 
   /**
-   * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted.
+   * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
    * You need:
    *  - the data agreement
    *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
