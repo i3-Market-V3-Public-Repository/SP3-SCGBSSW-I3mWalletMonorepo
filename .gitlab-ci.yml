@@ -5,7 +5,9 @@ build:
   stage: build
   image: node:$NODE_VERSION
   script:
-    - npm install 
+    - npm ci
+    - npm run build:js
+    - npm run docs
     - npm publish
   
   rules:
