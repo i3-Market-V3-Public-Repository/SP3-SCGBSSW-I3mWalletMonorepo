@@ -3,10 +3,10 @@ stages:
 
 build:
   stage: build
-  image: node
+  image: node:${NODE_VERSION}
   script:
     - npm install 
-    - npm deploy
+    - npm publish
   
   rules:
     - if: $CI_COMMIT_TAG != null
