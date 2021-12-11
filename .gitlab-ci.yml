@@ -3,7 +3,7 @@ stages:
 
 build:
   stage: build
-  image: node:${NODE_VERSION}
+  image: node:$NODE_VERSION
   script:
     - npm install 
     - npm publish
