@@ -11,6 +11,7 @@ logs
 npm-debug.log*
 
 # Output of 'npm pack'
+releases
 *.tgz
 
 # Visual Studio Code
