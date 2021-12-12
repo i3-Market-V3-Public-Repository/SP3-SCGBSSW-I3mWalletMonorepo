@@ -54,6 +54,16 @@ function getRepositoryData () {
         repoName: repodata.slice(2).join('/')
       }
     } else return null
+  } else {
+    if (pkgJson.repository.url !== 'undefined') {
+      const regex = /(?:.+?\+)?http[s]?:\/\/(?<repoProvider>[\w._-]+)\.\w{2,3}\/(?<repoUsername>[\w._-]+)\/(?<repoName>[\w._\-/]+?)\.git/
+      const match = pkgJson.repository.url.match(regex)
+      return {
+        repoProvider: match[1],
+        repoUsername: match[2],
+        repoName: match[3]
+      }
+    }
   }
 }
 
