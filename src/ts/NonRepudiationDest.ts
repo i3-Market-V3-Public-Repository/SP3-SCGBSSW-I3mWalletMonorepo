@@ -1,15 +1,17 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
+import { importJWK, SignJWT } from 'jose'
 import { hashable } from 'object-sha'
 import { checkIssuedAt } from './checkTimestamp'
 /** TO-DO: Could the json be imported from an npm package? */
 import { createProof } from './createProof'
 import { defaultDltConfig } from './defaultDltConfig'
+import generateVerificationRequest from './generateVerificationRequest'
 import { jweDecrypt } from './jwe'
 import { oneTimeSecret } from './oneTimeSecret'
 import { sha } from './sha'
-import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, JWTVerifyResult, PoOInputPayload, PoPInputPayload, PoPPayload, PoRInputPayload, ProofPayload, StoredProof, TimestampVerifyOptions } from './types'
+import { Block, DataExchange, DataExchangeAgreement, DisputeRequestPayload, DltConfig, JWK, JwkPair, JWTVerifyResult, PoOInputPayload, PoPInputPayload, PoPPayload, PoRInputPayload, ProofPayload, StoredProof, TimestampVerifyOptions } from './types'
 import { parseHex } from './utils'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
@@ -276,5 +278,46 @@ export class NonRepudiationDest {
     this.block.raw = decryptedBlock
 
     return decryptedBlock
+  }
+
+  /**
+   * Generates a verification request that can be used to query the
+   * Conflict-Resolver Service for completeness of the non-repudiation protocol
+   *
+   * @returns the verification request as a compact JWS signed with 'dest's private key
+   */
+  async generateVerificationRequest (): Promise<string> {
+    if (this.block.por === undefined) {
+      throw new Error('Before generating a VerificationRequest, you have first to hold a valid PoR for the exchange')
+    }
+
+    return await generateVerificationRequest('orig', this.block.por.jws, this.jwkPairDest.privateJwk)
+  }
+
+  /**
+   * Generates a dispute request that can be used to query the
+   * Conflict-Resolver Service regarding impossibility to decrypt the cipherblock with the received secret
+   *
+   * @returns the dispute request as a compact JWS signed with 'dest's private key
+   */
+  async generateDisputeRequest (): Promise<string> {
+    if (this.block.por === undefined || this.block.jwe === undefined) {
+      throw new Error('Before generating a VerificationRequest, you have first to hold a valid PoR for the exchange and have received the cipherblock')
+    }
+
+    const payload: DisputeRequestPayload = {
+      iss: 'dest',
+      por: this.block.por.jws,
+      type: 'disputeRequest',
+      cipherblock: this.block.jwe,
+      iat: Math.floor(Date.now() / 1000)
+    }
+
+    const privateKey = await importJWK(this.jwkPairDest.privateJwk)
+
+    return await new SignJWT(payload)
+      .setProtectedHeader({ alg: this.jwkPairDest.privateJwk.alg })
+      .setIssuedAt(payload.iat)
+      .sign(privateKey)
   }
 }

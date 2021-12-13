@@ -118,4 +118,18 @@ export interface PoPPayload extends PoPInputPayload {
     iat: number;
     verificationCode: string;
 }
+interface ConflictResolutionRequest {
+    [key: string]: string | number;
+    iss: 'orig' | 'dest';
+    iat: number;
+    por: string;
+}
+export interface VerificationRequestPayload extends ConflictResolutionRequest {
+    type: 'verificationRequest';
+}
+export interface DisputeRequestPayload extends ConflictResolutionRequest {
+    type: 'disputeRequest';
+    iss: 'dest';
+    cipherblock: string;
+}
 //# sourceMappingURL=types.d.ts.map

@@ -69,5 +69,19 @@ export declare class NonRepudiationDest {
      * @throws Error if the previous proofs have not been verified or the decrypted block does not meet the committed one
      */
     decrypt(): Promise<Uint8Array>;
+    /**
+     * Generates a verification request that can be used to query the
+     * Conflict-Resolver Service for completeness of the non-repudiation protocol
+     *
+     * @returns the verification request as a compact JWS signed with 'dest's private key
+     */
+    generateVerificationRequest(): Promise<string>;
+    /**
+     * Generates a dispute request that can be used to query the
+     * Conflict-Resolver Service regarding impossibility to decrypt the cipherblock with the received secret
+     *
+     * @returns the dispute request as a compact JWS signed with 'dest's private key
+     */
+    generateDisputeRequest(): Promise<string>;
 }
 //# sourceMappingURL=NonRepudiationDest.d.ts.map

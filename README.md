@@ -19,10 +19,10 @@ Once you set up the i3-MARKET NPM, `@i3m/non-repudiation-protocol` can be import
 npm install @i3m/non-repudiation-protocol
 ```
 
-Alternatively you can just download the [latest release](./releases/@i3m/non-repudiation-protocol-latest.tgz) and install into your project with:
+Alternatively, you can just download the [latest release](./releases/i3m-non-repudiation-protocol-latest.tgz) and install into your project with:
 
 ```console
-npm install <path to @i3m/non-repudiation-protocol-latest.tgz>
+npm install <path to i3m-non-repudiation-protocol-latest.tgz>
 ```
 
 Then either require (Node.js CJS):

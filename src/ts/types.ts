@@ -136,3 +136,20 @@ export interface PoPPayload extends PoPInputPayload {
   iat: number
   verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
+
+interface ConflictResolutionRequest {
+  [key: string]: string | number
+  iss: 'orig' | 'dest'
+  iat: number // unix timestamp for issued at
+  por: string // a compact JWS holding a PoR. The proof MUST be signed with the same key as either 'orig' or 'dest' of the payload proof.
+}
+
+export interface VerificationRequestPayload extends ConflictResolutionRequest {
+  type: 'verificationRequest'
+}
+
+export interface DisputeRequestPayload extends ConflictResolutionRequest {
+  type: 'disputeRequest'
+  iss: 'dest'
+  cipherblock: string // the cipherblock as a JWE string
+}

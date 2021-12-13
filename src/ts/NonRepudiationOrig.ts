@@ -2,16 +2,16 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { ethers } from 'ethers'
 import { hashable } from 'object-sha'
-import { } from '.'
 import { createProof } from './createProof'
 import { defaultDltConfig } from './defaultDltConfig'
+import generateVerificationRequest from './generateVerificationRequest'
 import { jweEncrypt } from './jwe'
 import { oneTimeSecret } from './oneTimeSecret'
 import { sha } from './sha'
 import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOInputPayload, PoPInputPayload, PoRInputPayload, ProofPayload, StoredProof, TimestampVerifyOptions } from './types'
+import { parseHex } from './utils'
 import { verifyKeyPair } from './verifyKeyPair'
 import { verifyProof } from './verifyProof'
-import { parseHex } from './utils'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -215,5 +215,19 @@ export class NonRepudiationOrig {
     }
     this.block.pop = await createProof(payload, this.jwkPairOrig.privateJwk)
     return this.block.pop
+  }
+
+  /**
+   * Generates a verification request that can be used to query the
+   * Conflict-Resolver Service for completeness of the non-repudiation protocol
+   *
+   * @returns the verification request as a compact JWS signed with 'orig's private key
+   */
+  async generateVerificationRequest (): Promise<string> {
+    if (this.block.por === undefined) {
+      throw new Error('Before generating a VerificationRequest, you have first to hold a valid PoR for the exchange')
+    }
+
+    return await generateVerificationRequest('orig', this.block.por.jws, this.jwkPairOrig.privateJwk)
   }
 }

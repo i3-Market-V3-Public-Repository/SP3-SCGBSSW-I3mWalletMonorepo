@@ -51,5 +51,12 @@ export declare class NonRepudiationOrig {
      * @returns a compact JWS with the PoP
      */
     generatePoP(): Promise<StoredProof>;
+    /**
+     * Generates a verification request that can be used to query the
+     * Conflict-Resolver Service for completeness of the non-repudiation protocol
+     *
+     * @returns the verification request as a compact JWS signed with 'orig's private key
+     */
+    generateVerificationRequest(): Promise<string>;
 }
 //# sourceMappingURL=NonRepudiationOrig.d.ts.map

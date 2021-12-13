@@ -1,6 +1,7 @@
 import { hashable } from 'object-sha'
 import { randBytes } from 'bigint-crypto-utils'
 import { DataExchange } from '../src/ts'
+import { importJWK, jwtVerify } from 'jose'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(20000)
@@ -186,6 +187,79 @@ describe('Non-repudiation protocol', function () {
       })
     })
   }
+
+  describe('verification request', function () {
+    it('a consumer should be able to generate a valid JWS', async function () {
+      const verificationRequest = await npConsumer.generateVerificationRequest()
+      const verified = await jwtVerify(verificationRequest, await importJWK(npConsumer.jwkPairDest.publicJwk))
+      chai.expect(verified.payload).to.not.equal(undefined)
+    })
+    it('a provider should be able to generate a valid JWS', async function () {
+      const verificationRequest = await npProvider.generateVerificationRequest()
+      const verified = await jwtVerify(verificationRequest, await importJWK(npProvider.jwkPairOrig.publicJwk))
+      chai.expect(verified.payload).to.not.equal(undefined)
+    })
+    it('should fail if there is no previous PoR (consumer side)', async function () {
+      const block = npConsumer.block
+      const por = block.por
+      delete block.por
+      let err
+      try {
+        await npConsumer.generateVerificationRequest()
+      } catch (error) {
+        err = error
+      }
+      block.por = por
+      chai.expect(err).to.not.equal(undefined)
+    })
+    it('should fail if there is no previous PoR (provider side)', async function () {
+      const block = npProvider.block
+      const por = block.por
+      delete block.por
+      let err
+      try {
+        await npProvider.generateVerificationRequest()
+      } catch (error) {
+        err = error
+      }
+      block.por = por
+      chai.expect(err).to.not.equal(undefined)
+    })
+  })
+
+  describe('dispute request', function () {
+    it('a consumer should be able to generate it', async function () {
+      const disputeRequest = await npConsumer.generateDisputeRequest()
+      const verified = await jwtVerify(disputeRequest, await importJWK(npConsumer.jwkPairDest.publicJwk))
+      chai.expect(verified.payload).to.not.equal(undefined)
+    })
+    it('should fail if there is no previous PoR', async function () {
+      const block = npConsumer.block
+      const por = block.por
+      delete block.por
+      let err
+      try {
+        await npConsumer.generateDisputeRequest()
+      } catch (error) {
+        err = error
+      }
+      block.por = por
+      chai.expect(err).to.not.equal(undefined)
+    })
+    it('should fail if there is no previously receive cipherblock', async function () {
+      const block = npConsumer.block
+      const jwe = block.jwe
+      delete block.jwe
+      let err
+      try {
+        await npConsumer.generateDisputeRequest()
+      } catch (error) {
+        err = error
+      }
+      block.jwe = jwe
+      chai.expect(err).to.not.equal(undefined)
+    })
+  })
 
   describe('testing with invalid claims', function () {
     it('using \'issr\' instead of \'iss\' should throw error', async function () {
