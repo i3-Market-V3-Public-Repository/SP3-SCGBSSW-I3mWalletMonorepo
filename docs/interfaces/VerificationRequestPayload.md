@@ -27,7 +27,7 @@ ConflictResolutionRequest.iat
 
 #### Defined in
 
-[src/ts/types.ts:143](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/types.ts#L143)
+[src/ts/types.ts:143](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L143)
 
 ___
 
@@ -41,7 +41,7 @@ ConflictResolutionRequest.iss
 
 #### Defined in
 
-[src/ts/types.ts:142](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/types.ts#L142)
+[src/ts/types.ts:142](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L142)
 
 ___
 
@@ -55,7 +55,7 @@ ConflictResolutionRequest.por
 
 #### Defined in
 
-[src/ts/types.ts:144](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/types.ts#L144)
+[src/ts/types.ts:144](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L144)
 
 ___
 
@@ -65,4 +65,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/types.ts#L148)
+[src/ts/types.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L148)

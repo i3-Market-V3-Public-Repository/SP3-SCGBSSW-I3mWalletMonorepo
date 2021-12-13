@@ -45,7 +45,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L38)
+[src/ts/NonRepudiationOrig.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L38)
 
 ## Properties
 
@@ -55,7 +55,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L22)
+[src/ts/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L22)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L26)
+[src/ts/NonRepudiationOrig.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L26)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L27)
+[src/ts/NonRepudiationOrig.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L27)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L28)
+[src/ts/NonRepudiationOrig.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L28)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L23)
+[src/ts/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L23)
 
 ___
 
@@ -105,7 +105,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L24)
+[src/ts/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L24)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L25)
+[src/ts/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L25)
 
 ## Methods
 
@@ -134,7 +134,7 @@ a compact JWS with the PoO along with its decoded payload
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L129)
+[src/ts/NonRepudiationOrig.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L129)
 
 ___
 
@@ -153,7 +153,7 @@ a compact JWS with the PoP
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:189](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L189)
+[src/ts/NonRepudiationOrig.ts:189](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L189)
 
 ___
 
@@ -172,7 +172,7 @@ the verification request as a compact JWS signed with 'orig's private key
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:226](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L226)
+[src/ts/NonRepudiationOrig.ts:226](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L226)
 
 ___
 
@@ -199,4 +199,4 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/NonRepudiationOrig.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/5b44d38/src/ts/NonRepudiationOrig.ts#L150)
+[src/ts/NonRepudiationOrig.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/NonRepudiationOrig.ts#L150)
