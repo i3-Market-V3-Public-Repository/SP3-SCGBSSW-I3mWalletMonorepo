@@ -37,7 +37,7 @@ A ledger signer using an ethers.io Wallet.
 
 #### Defined in
 
-src/ts/signers/EthersSigner.ts:18
+[src/ts/signers/EthersSigner.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/signers/EthersSigner.ts#L18)
 
 ## Properties
 
@@ -47,7 +47,7 @@ src/ts/signers/EthersSigner.ts:18
 
 #### Defined in
 
-src/ts/signers/EthersSigner.ts:11
+[src/ts/signers/EthersSigner.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/signers/EthersSigner.ts#L11)
 
 ## Methods
 
@@ -71,4 +71,4 @@ DltSigner.signTransaction
 
 #### Defined in
 
-src/ts/signers/EthersSigner.ts:24
+[src/ts/signers/EthersSigner.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/signers/EthersSigner.ts#L24)

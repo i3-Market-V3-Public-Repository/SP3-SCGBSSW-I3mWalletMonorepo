@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { PoRPayload } from '..';
 import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOPayload, PoPPayload, StoredProof } from './../types';
 /**
  * The base class that should be instantiated by the destination of a data
@@ -40,7 +41,7 @@ export declare class NonRepudiationDest {
      *
      * @returns the PoR as a compact JWS along with its decoded payload
      */
-    generatePoR(): Promise<StoredProof>;
+    generatePoR(): Promise<StoredProof<PoRPayload>>;
     /**
      * Verifies a received Proof of Publication (PoP) and returns the secret
      * @param pop - a PoP in compact JWS

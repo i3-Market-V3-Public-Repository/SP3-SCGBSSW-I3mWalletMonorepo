@@ -2,7 +2,6 @@ import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
 import { importJWK, jwtVerify } from 'jose'
 import { hashable } from 'object-sha'
-import { VerificationRequestPayload } from '../src/ts'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
@@ -50,7 +49,7 @@ describe('Non-repudiation protocol', function () {
   })
 
   describe('create/verify proof of origin (PoO)', function () {
-    let poo: _pkg.StoredProof
+    let poo: _pkg.StoredProof<_pkg.PoOPayload>
     this.beforeAll(async function () {
       poo = await npProvider.generatePoO()
     })
@@ -72,7 +71,7 @@ describe('Non-repudiation protocol', function () {
   })
 
   describe('create/verify proof of reception (PoR)', function () {
-    let por: _pkg.StoredProof
+    let por: _pkg.StoredProof<_pkg.PoRPayload>
     this.beforeAll(async function () {
       por = await npConsumer.generatePoR()
     })
@@ -109,7 +108,7 @@ describe('Non-repudiation protocol', function () {
 
   describe('create/verify proof of publication (PoP)', function () {
     this.timeout(120000)
-    let pop: _pkg.StoredProof
+    let pop: _pkg.StoredProof<_pkg.PoPPayload>
     this.beforeAll(async function () {
       pop = await npProvider.generatePoP()
     })
@@ -224,7 +223,7 @@ describe('Non-repudiation protocol', function () {
     it('verification should throw error if it holds an invalid PoR', async function () {
       const jws = verificationRequestProvider
       const [headerb64, , signatureb64] = jws.split('.')
-      const { payload } = await _pkg.jwsDecode<VerificationRequestPayload>(jws)
+      const { payload } = await _pkg.jwsDecode<_pkg.VerificationRequestPayload>(jws)
       payload.por = payload.por.replace(/[a-zA-Z]/g, (val) => '2')
       const jws2 = [headerb64, encode(JSON.stringify(payload), true, false), signatureb64].join('.')
       let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
@@ -346,11 +345,12 @@ describe('Non-repudiation protocol', function () {
     it('using \'issr\' instead of \'iss\' should throw error', async function () {
       const expectedPayload = {
         issr: 'orig',
-        exchange: npConsumer.exchange
+        exchange: npConsumer.exchange,
+        proofType: 'PoO'
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.ProofPayload)
       } catch (error) {
         err = error
       }
@@ -358,21 +358,24 @@ describe('Non-repudiation protocol', function () {
     })
     it('adding unknown property \'x\' to expectedDataExchange claims should throw error', async function () {
       const expectedPayload = {
+        proofType: 'PoO',
         iss: 'orig',
         x: 'afasf',
         exchange: npConsumer.exchange
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.ProofInputPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.PoOPayload)
       } catch (error) {
         err = error
       }
       chai.expect(err).to.not.equal(undefined)
     })
     it('property in expectedDataExchange different that in the dataExchange should throw error', async function () {
-      const expectedPayload: _pkg.ProofInputPayload = {
+      const expectedPayload: Omit<_pkg.PoRPayload, 'iat'> = {
+        // @ts-expect-error
         iss: 'orig',
+        // @ts-expect-error
         proofType: 'por',
         exchange: {
           ...npConsumer.exchange as _pkg.DataExchange,
@@ -391,7 +394,7 @@ describe('Non-repudiation protocol', function () {
 
   describe('testing with invalid key', function () {
     it('should throw error', async function () {
-      const expectedPayload: _pkg.ProofInputPayload = {
+      const expectedPayload: Omit<_pkg.ProofPayload, 'iat'> = {
         iss: 'orig',
         proofType: 'por',
         exchange: {
@@ -416,7 +419,7 @@ describe('Non-repudiation protocol', function () {
         const jwk = { ...npProvider.jwkPairOrig.privateJwk }
         // @ts-expect-error
         delete jwk.alg
-        const payload: _pkg.PoOInputPayload = {
+        const payload: Omit<_pkg.PoOPayload, 'iat'> = {
           proofType: 'PoO',
           iss: 'orig',
           exchange: npProvider.exchange

@@ -2,9 +2,13 @@
 
 ## Hierarchy
 
-- [`ProofInputPayload`](ProofInputPayload.md)
+- **`ProofPayload`**
 
-  ↳ **`ProofPayload`**
+  ↳ [`PoOPayload`](PoOPayload.md)
+
+  ↳ [`PoRPayload`](PoRPayload.md)
+
+  ↳ [`PoPPayload`](PoPPayload.md)
 
 ## Table of contents
 
@@ -21,13 +25,9 @@
 
 • **exchange**: [`DataExchange`](DataExchange.md)
 
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[exchange](ProofInputPayload.md#exchange)
-
 #### Defined in
 
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L102)
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L104)
 
 ___
 
@@ -37,21 +37,17 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L108)
+[src/ts/types.ts:101](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L101)
 
 ___
 
 ### iss
 
-• **iss**: ``"orig"`` \| ``"dest"``
-
-#### Overrides
-
-[ProofInputPayload](ProofInputPayload.md).[iss](ProofInputPayload.md#iss)
+• **iss**: `string`
 
 #### Defined in
 
-[src/ts/types.ts:109](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L109)
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L102)
 
 ___
 
@@ -59,10 +55,6 @@ ___
 
 • **proofType**: `string`
 
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[proofType](ProofInputPayload.md#prooftype)
-
 #### Defined in
 
-[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L104)
+[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L103)

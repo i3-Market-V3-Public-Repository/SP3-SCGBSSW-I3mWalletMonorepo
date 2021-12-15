@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, StoredProof } from '../types';
+import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof } from '../types';
 /**
  * The base class that should be instantiated by the origin of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -30,7 +30,7 @@ export declare class NonRepudiationOrig {
      *
      * @returns a compact JWS with the PoO along with its decoded payload
      */
-    generatePoO(): Promise<StoredProof>;
+    generatePoO(): Promise<StoredProof<PoOPayload>>;
     /**
      * Verifies a proof of reception.
      * If verification passes, `por` is added to `this.block`
@@ -40,14 +40,14 @@ export declare class NonRepudiationOrig {
      * @param currentDate - check the proof as it were checked in this date
      * @returns the verified payload and protected header
      */
-    verifyPoR(por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof>;
+    verifyPoR(por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof<PoRPayload>>;
     /**
      * Creates the proof of publication (PoP).
      * Besides returning its value, it is also stored in `this.block.pop`
      *
      * @returns a compact JWS with the PoP
      */
-    generatePoP(): Promise<StoredProof>;
+    generatePoP(): Promise<StoredProof<PoPPayload>>;
     /**
      * Generates a verification request that can be used to query the
      * Conflict-Resolver Service for completeness of the non-repudiation protocol

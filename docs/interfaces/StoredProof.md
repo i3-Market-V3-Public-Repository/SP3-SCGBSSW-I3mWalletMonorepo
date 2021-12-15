@@ -1,4 +1,10 @@
-# Interface: StoredProof
+# Interface: StoredProof<T\>
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`ProofPayload`](ProofPayload.md) |
 
 ## Table of contents
 
@@ -15,14 +21,14 @@
 
 #### Defined in
 
-[src/ts/types.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L40)
+[src/ts/types.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L40)
 
 ___
 
 ### payload
 
-• **payload**: [`ProofPayload`](ProofPayload.md)
+• **payload**: `T`
 
 #### Defined in
 
-[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L41)
+[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L41)

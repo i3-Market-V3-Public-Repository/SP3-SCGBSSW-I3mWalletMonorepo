@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- [`PoPInputPayload`](PoPInputPayload.md)
+- [`ProofPayload`](ProofPayload.md)
 
   ↳ **`PoPPayload`**
 
@@ -26,11 +26,11 @@
 
 #### Inherited from
 
-[PoPInputPayload](PoPInputPayload.md).[exchange](PoPInputPayload.md#exchange)
+[ProofPayload](ProofPayload.md).[exchange](ProofPayload.md#exchange)
 
 #### Defined in
 
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L102)
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L104)
 
 ___
 
@@ -38,9 +38,13 @@ ___
 
 • **iat**: `number`
 
+#### Inherited from
+
+[ProofPayload](ProofPayload.md).[iat](ProofPayload.md#iat)
+
 #### Defined in
 
-[src/ts/types.ts:136](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L136)
+[src/ts/types.ts:101](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L101)
 
 ___
 
@@ -48,13 +52,13 @@ ___
 
 • **iss**: ``"orig"``
 
-#### Inherited from
+#### Overrides
 
-[PoPInputPayload](PoPInputPayload.md).[iss](PoPInputPayload.md#iss)
+[ProofPayload](ProofPayload.md).[iss](ProofPayload.md#iss)
 
 #### Defined in
 
-[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L130)
+[src/ts/types.ts:119](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L119)
 
 ___
 
@@ -62,13 +66,9 @@ ___
 
 • **por**: `string`
 
-#### Inherited from
-
-[PoPInputPayload](PoPInputPayload.md).[por](PoPInputPayload.md#por)
-
 #### Defined in
 
-[src/ts/types.ts:132](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L132)
+[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L121)
 
 ___
 
@@ -76,13 +76,13 @@ ___
 
 • **proofType**: ``"PoP"``
 
-#### Inherited from
+#### Overrides
 
-[PoPInputPayload](PoPInputPayload.md).[proofType](PoPInputPayload.md#prooftype)
+[ProofPayload](ProofPayload.md).[proofType](ProofPayload.md#prooftype)
 
 #### Defined in
 
-[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L131)
+[src/ts/types.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L120)
 
 ___
 
@@ -90,13 +90,9 @@ ___
 
 • **secret**: `string`
 
-#### Inherited from
-
-[PoPInputPayload](PoPInputPayload.md).[secret](PoPInputPayload.md#secret)
-
 #### Defined in
 
-[src/ts/types.ts:133](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L133)
+[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L122)
 
 ___
 
@@ -106,4 +102,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:137](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L137)
+[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L123)

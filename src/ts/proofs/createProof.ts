@@ -1,5 +1,5 @@
 import { SignJWT } from 'jose'
-import { JWK, ProofInputPayload, ProofPayload, StoredProof, DataExchange, Dict } from '../types'
+import { JWK, ProofPayload, StoredProof, DataExchange, Dict } from '../types'
 import { verifyKeyPair } from '../crypto/verifyKeyPair'
 import { importJwk } from '../crypto'
 
@@ -11,7 +11,7 @@ import { importJwk } from '../crypto'
  * @param privateJwk - The private key in JWK that will sign the proof
  * @returns a proof as a compact JWS formatted JWT string
  */
-export async function createProof (payload: ProofInputPayload, privateJwk: JWK): Promise<StoredProof> {
+export async function createProof<T extends ProofPayload> (payload: Omit<T, 'iat'>, privateJwk: JWK): Promise<StoredProof<T>> {
   if (payload.iss === undefined) {
     throw new Error('Payload iss should be set to either "orig" or "dest"')
   }
@@ -25,15 +25,18 @@ export async function createProof (payload: ProofInputPayload, privateJwk: JWK):
 
   const alg = privateJwk.alg as string // if alg were undefined verifyKeyPair would have thrown an error
 
-  payload.iat = Math.floor(Date.now() / 1000)
+  const proofPayload = {
+    ...payload,
+    iat: Math.floor(Date.now() / 1000)
+  }
 
-  const jws = await new SignJWT(payload)
+  const jws = await new SignJWT(proofPayload)
     .setProtectedHeader({ alg })
-    .setIssuedAt(payload.iat)
+    .setIssuedAt(proofPayload.iat)
     .sign(privateKey)
 
   return {
     jws,
-    payload: payload as ProofPayload
+    payload: proofPayload as T
   }
 }

@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-src/ts/errors/NrError.ts:6
+[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/errors/NrError.ts#L6)
 
 ## Properties
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-src/ts/errors/NrError.ts:4
+[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/errors/NrError.ts#L4)
 
 ___
 
@@ -164,7 +164,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-src/ts/errors/NrError.ts:16
+[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/errors/NrError.ts#L16)
 
 ___
 

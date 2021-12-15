@@ -2,14 +2,15 @@ import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
 import { SignJWT } from 'jose'
+import { PoRPayload } from '..'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig, getSecretFromLedger } from '../dlt/'
-import { exchangeId } from '../exchange'
 import { NrError } from '../errors'
+import { exchangeId } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkIssuedAt, parseHex, sha } from '../utils/'
-import { Block, DataExchange, DataExchangeAgreement, DisputeRequestPayload, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOInputPayload, PoOPayload, PoPInputPayload, PoPPayload, PoRInputPayload, Dict, StoredProof, TimestampVerifyOptions } from './../types'
+import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -93,7 +94,7 @@ export class NonRepudiationDest {
 
     const cipherblockDgst = b64.encode(await sha(cipherblock, this.agreement.hashAlg), true, false)
 
-    const { payload } = await jwsDecode<PoOPayload>(poo)
+    const { payload } = await jwsDecode<Dict<PoOPayload>>(poo)
 
     const dataExchangePreview: Omit<DataExchange, 'id'> = {
       ...this.agreement,
@@ -107,7 +108,7 @@ export class NonRepudiationDest {
       id: await exchangeId(dataExchangePreview)
     }
 
-    const expectedPayloadClaims: PoOInputPayload = {
+    const expectedPayloadClaims: Omit<PoOPayload, 'iat'> = {
       proofType: 'PoO',
       iss: 'orig',
       exchange: dataExchange
@@ -138,14 +139,14 @@ export class NonRepudiationDest {
    *
    * @returns the PoR as a compact JWS along with its decoded payload
    */
-  async generatePoR (): Promise<StoredProof> {
+  async generatePoR (): Promise<StoredProof<PoRPayload>> {
     await this.initialized
 
     if (this.exchange === undefined || this.block.poo === undefined) {
       throw new Error('Before computing a PoR, you have first to receive a valid cipherblock with a PoO and validate the PoO')
     }
 
-    const payload: PoRInputPayload = {
+    const payload: Omit<PoRPayload, 'iat'> = {
       proofType: 'PoR',
       iss: 'dest',
       exchange: this.exchange,
@@ -171,7 +172,7 @@ export class NonRepudiationDest {
       throw new Error('Cannot verify a PoP if not even a PoR have been created')
     }
 
-    const expectedPayloadClaims: PoPInputPayload = {
+    const expectedPayloadClaims: Omit<PoPPayload, 'iat'> = {
       proofType: 'PoP',
       iss: 'orig',
       exchange: this.exchange,

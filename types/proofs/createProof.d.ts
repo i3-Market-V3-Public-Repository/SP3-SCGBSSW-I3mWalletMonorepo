@@ -1,4 +1,4 @@
-import { JWK, ProofInputPayload, StoredProof } from '../types';
+import { JWK, ProofPayload, StoredProof } from '../types';
 /**
  * Creates a non-repudiable proof for a given data exchange
  * @param payload - the payload to be added to the proof.
@@ -7,5 +7,5 @@ import { JWK, ProofInputPayload, StoredProof } from '../types';
  * @param privateJwk - The private key in JWK that will sign the proof
  * @returns a proof as a compact JWS formatted JWT string
  */
-export declare function createProof(payload: ProofInputPayload, privateJwk: JWK): Promise<StoredProof>;
+export declare function createProof<T extends ProofPayload>(payload: Omit<T, 'iat'>, privateJwk: JWK): Promise<StoredProof<T>>;
 //# sourceMappingURL=createProof.d.ts.map

@@ -36,9 +36,9 @@ export interface DltConfig {
   signer?: DltSigner
 }
 
-export interface StoredProof {
+export interface StoredProof<T extends ProofPayload> {
   jws: string
-  payload: ProofPayload
+  payload: T
 }
 
 export interface Block {
@@ -48,9 +48,9 @@ export interface Block {
     jwk: JWK
     hex: string
   }
-  poo?: StoredProof
-  por?: StoredProof
-  pop?: StoredProof
+  poo?: StoredProof<PoOPayload>
+  por?: StoredProof<PoRPayload>
+  pop?: StoredProof<PoPPayload>
 }
 
 export interface OrigBlock extends Block {
@@ -97,43 +97,29 @@ export interface JwkPair {
   privateJwk: JWK
 }
 
-export interface ProofInputPayload {
-  [key: string]: string | number | DataExchange | undefined
-  exchange: DataExchange
+export interface ProofPayload {
+  iat: number
   iss: string
   proofType: string
+  exchange: DataExchange
 }
 
-export interface ProofPayload extends ProofInputPayload {
-  iat: number
-  iss: 'orig' | 'dest'
-}
-
-export interface PoOInputPayload extends ProofInputPayload {
-  iss: 'orig' // it points to 'orig' or 'dest' of the DataExchange
+export interface PoOPayload extends ProofPayload {
+  iss: 'orig'
   proofType: 'PoO'
 }
-export interface PoOPayload extends PoOInputPayload {
-  iat: number
-}
 
-export interface PoRInputPayload extends ProofInputPayload {
-  iss: 'dest' // it points to 'orig' or 'dest' of the DataExchange
+export interface PoRPayload extends ProofPayload {
+  iss: 'dest'
   proofType: 'PoR'
-  poo: string // // the received PoR as compact JWS
-}
-export interface PoRPayload extends PoRInputPayload {
-  iat: number
+  poo: string // the received PoR as compact JWS
 }
 
-export interface PoPInputPayload extends ProofInputPayload {
-  iss: 'orig' // it points to 'orig' or 'dest' of the DataExchange
+export interface PoPPayload extends ProofPayload {
+  iss: 'orig'
   proofType: 'PoP'
   por: string // the received PoR as compact JWS
   secret: string // Compact JWK of the secret to decrypt the ciphertext
-}
-export interface PoPPayload extends PoPInputPayload {
-  iat: number
   verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
 

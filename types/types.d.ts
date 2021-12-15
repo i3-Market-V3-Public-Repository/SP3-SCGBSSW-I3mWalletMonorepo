@@ -6,8 +6,8 @@ export { ContractInterface };
 export declare type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512';
 export declare type SigningAlg = 'ES256' | 'ES384' | 'ES512';
 export declare type EncryptionAlg = 'A128GCM' | 'A256GCM';
-export declare type Sign<T> = T & {
-    [key: string | symbol]: any | undefined;
+export declare type Dict<T> = T & {
+    [key: string | symbol | number]: any | undefined;
 };
 export interface Algs {
     hashAlg?: HashAlg;
@@ -28,9 +28,9 @@ export interface DltConfig {
     disable: boolean;
     signer?: DltSigner;
 }
-export interface StoredProof {
+export interface StoredProof<T extends ProofPayload> {
     jws: string;
-    payload: ProofPayload;
+    payload: T;
 }
 export interface Block {
     raw?: Uint8Array;
@@ -39,9 +39,9 @@ export interface Block {
         jwk: JWK;
         hex: string;
     };
-    poo?: StoredProof;
-    por?: StoredProof;
-    pop?: StoredProof;
+    poo?: StoredProof<PoOPayload>;
+    por?: StoredProof<PoRPayload>;
+    pop?: StoredProof<PoPPayload>;
 }
 export interface OrigBlock extends Block {
     raw: Uint8Array;
@@ -82,39 +82,26 @@ export interface JwkPair {
     publicJwk: JWK;
     privateJwk: JWK;
 }
-export interface ProofInputPayload {
-    [key: string]: string | number | DataExchange | undefined;
-    exchange: DataExchange;
+export interface ProofPayload {
+    iat: number;
     iss: string;
     proofType: string;
+    exchange: DataExchange;
 }
-export interface ProofPayload extends ProofInputPayload {
-    iat: number;
-    iss: 'orig' | 'dest';
-}
-export interface PoOInputPayload extends ProofInputPayload {
+export interface PoOPayload extends ProofPayload {
     iss: 'orig';
     proofType: 'PoO';
 }
-export interface PoOPayload extends PoOInputPayload {
-    iat: number;
-}
-export interface PoRInputPayload extends ProofInputPayload {
+export interface PoRPayload extends ProofPayload {
     iss: 'dest';
     proofType: 'PoR';
     poo: string;
 }
-export interface PoRPayload extends PoRInputPayload {
-    iat: number;
-}
-export interface PoPInputPayload extends ProofInputPayload {
+export interface PoPPayload extends ProofPayload {
     iss: 'orig';
     proofType: 'PoP';
     por: string;
     secret: string;
-}
-export interface PoPPayload extends PoPInputPayload {
-    iat: number;
     verificationCode: string;
 }
 interface ConflictResolutionRequest extends JWTPayload {

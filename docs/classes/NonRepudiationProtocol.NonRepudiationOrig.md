@@ -47,7 +47,7 @@ likely to be a Provider.
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:35
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L35)
 
 ## Properties
 
@@ -57,7 +57,7 @@ src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:35
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:19
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L19)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:23
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L23)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:24
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L24)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:25
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L25)
 
 ___
 
@@ -97,7 +97,7 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:20
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L20)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:21
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L21)
 
 ___
 
@@ -117,45 +117,45 @@ ___
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:22
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L22)
 
 ## Methods
 
 ### generatePoO
 
-▸ **generatePoO**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+▸ **generatePoO**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoOPayload`](../interfaces/PoOPayload.md)\>\>
 
 Creates the proof of origin (PoO).
 Besides returning its value, it is also stored in this.block.poo
 
 #### Returns
 
-`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoOPayload`](../interfaces/PoOPayload.md)\>\>
 
 a compact JWS with the PoO along with its decoded payload
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:134
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:134](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L134)
 
 ___
 
 ### generatePoP
 
-▸ **generatePoP**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+▸ **generatePoP**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoPPayload`](../interfaces/PoPPayload.md)\>\>
 
 Creates the proof of publication (PoP).
 Besides returning its value, it is also stored in `this.block.pop`
 
 #### Returns
 
-`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoPPayload`](../interfaces/PoPPayload.md)\>\>
 
 a compact JWS with the PoP
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:194
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:193](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L193)
 
 ___
 
@@ -174,13 +174,13 @@ the verification request as a compact JWS signed with 'orig's private key
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:242
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:241](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L241)
 
 ___
 
 ### verifyPoR
 
-▸ **verifyPoR**(`por`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+▸ **verifyPoR**(`por`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoRPayload`](../interfaces/PoRPayload.md)\>\>
 
 Verifies a proof of reception.
 If verification passes, `por` is added to `this.block`
@@ -195,10 +195,10 @@ If verification passes, `por` is added to `this.block`
 
 #### Returns
 
-`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)<[`PoRPayload`](../interfaces/PoRPayload.md)\>\>
 
 the verified payload and protected header
 
 #### Defined in
 
-src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:155
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:154](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L154)

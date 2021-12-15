@@ -28,13 +28,9 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 - [JwkPair](interfaces/JwkPair.md)
 - [JwsHeaderAndPayload](interfaces/JwsHeaderAndPayload.md)
 - [OrigBlock](interfaces/OrigBlock.md)
-- [PoOInputPayload](interfaces/PoOInputPayload.md)
 - [PoOPayload](interfaces/PoOPayload.md)
-- [PoPInputPayload](interfaces/PoPInputPayload.md)
 - [PoPPayload](interfaces/PoPPayload.md)
-- [PoRInputPayload](interfaces/PoRInputPayload.md)
 - [PoRPayload](interfaces/PoRPayload.md)
-- [ProofInputPayload](interfaces/ProofInputPayload.md)
 - [ProofPayload](interfaces/ProofPayload.md)
 - [Resolution](interfaces/Resolution.md)
 - [StoredProof](interfaces/StoredProof.md)
@@ -45,11 +41,11 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 ### Type aliases
 
 - [ContractInterface](API.md#contractinterface)
+- [Dict](API.md#dict)
 - [EncryptionAlg](API.md#encryptionalg)
 - [HashAlg](API.md#hashalg)
 - [KeyLike](API.md#keylike)
 - [NrErrorName](API.md#nrerrorname)
-- [Sign](API.md#sign)
 - [SigningAlg](API.md#signingalg)
 - [getFromJws](API.md#getfromjws)
 
@@ -85,13 +81,29 @@ node_modules/@ethersproject/contracts/lib/index.d.ts:75
 
 ___
 
+### Dict
+
+Ƭ **Dict**<`T`\>: `T` & { [key: string | symbol | number]: `any` \| `undefined`;  }
+
+#### Type parameters
+
+| Name |
+| :------ |
+| `T` |
+
+#### Defined in
+
+[src/ts/types.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L12)
+
+___
+
 ### EncryptionAlg
 
 Ƭ **EncryptionAlg**: ``"A128GCM"`` \| ``"A256GCM"``
 
 #### Defined in
 
-[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L10)
+[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L10)
 
 ___
 
@@ -101,7 +113,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L8)
+[src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L8)
 
 ___
 
@@ -214,23 +226,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:181](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L181)
-
-___
-
-### Sign
-
-Ƭ **Sign**<`T`\>: `T` & { [key: string | symbol]: `any` \| `undefined`;  }
-
-#### Type parameters
-
-| Name |
-| :------ |
-| `T` |
-
-#### Defined in
-
-[src/ts/types.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L12)
+[src/ts/types.ts:167](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L167)
 
 ___
 
@@ -240,7 +236,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L9)
+[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L9)
 
 ___
 
@@ -271,7 +267,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:179](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L179)
+[src/ts/types.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L165)
 
 ## Variables
 
@@ -281,7 +277,7 @@ ___
 
 #### Defined in
 
-src/ts/dlt/defaultDltConfig.ts:5
+[src/ts/dlt/defaultDltConfig.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/dlt/defaultDltConfig.ts#L5)
 
 ## Functions
 
@@ -302,32 +298,38 @@ src/ts/dlt/defaultDltConfig.ts:5
 
 #### Defined in
 
-src/ts/utils/checkIssuedAt.ts:4
+[src/ts/utils/checkIssuedAt.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/utils/checkIssuedAt.ts#L4)
 
 ___
 
 ### createProof
 
-▸ **createProof**(`payload`, `privateJwk`): `Promise`<[`StoredProof`](interfaces/StoredProof.md)\>
+▸ **createProof**<`T`\>(`payload`, `privateJwk`): `Promise`<[`StoredProof`](interfaces/StoredProof.md)<`T`\>\>
 
 Creates a non-repudiable proof for a given data exchange
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends [`ProofPayload`](interfaces/ProofPayload.md) |
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `payload` | [`ProofInputPayload`](interfaces/ProofInputPayload.md) | the payload to be added to the proof.                  `payload.iss` must be either the origin 'orig' or the destination 'dest' of the data exchange                  `payload.iat` shall be ommitted since it will be automatically added when signing (`Date.now()`) |
+| `payload` | `Omit`<`T`, ``"iat"``\> | the payload to be added to the proof.                  `payload.iss` must be either the origin 'orig' or the destination 'dest' of the data exchange                  `payload.iat` shall be ommitted since it will be automatically added when signing (`Date.now()`) |
 | `privateJwk` | [`JWK`](interfaces/JWK.md) | The private key in JWK that will sign the proof |
 
 #### Returns
 
-`Promise`<[`StoredProof`](interfaces/StoredProof.md)\>
+`Promise`<[`StoredProof`](interfaces/StoredProof.md)<`T`\>\>
 
 a proof as a compact JWS formatted JWT string
 
 #### Defined in
 
-src/ts/proofs/createProof.ts:14
+[src/ts/proofs/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/proofs/createProof.ts#L14)
 
 ___
 
@@ -351,7 +353,7 @@ Generates a pair of JWK signing/verification keys
 
 #### Defined in
 
-src/ts/crypto/generateKeys.ts:16
+[src/ts/crypto/generateKeys.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/generateKeys.ts#L16)
 
 ___
 
@@ -377,7 +379,7 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 #### Defined in
 
-src/ts/dlt/getSecretFromLedger.ts:16
+[src/ts/dlt/getSecretFromLedger.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/dlt/getSecretFromLedger.ts#L16)
 
 ___
 
@@ -398,7 +400,7 @@ ___
 
 #### Defined in
 
-src/ts/crypto/importJwk.ts:5
+[src/ts/crypto/importJwk.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/importJwk.ts#L5)
 
 ___
 
@@ -424,7 +426,7 @@ the plaintext
 
 #### Defined in
 
-src/ts/crypto/jwe.ts:37
+[src/ts/crypto/jwe.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/jwe.ts#L37)
 
 ___
 
@@ -450,7 +452,7 @@ a Compact JWE
 
 #### Defined in
 
-src/ts/crypto/jwe.ts:14
+[src/ts/crypto/jwe.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/jwe.ts#L14)
 
 ___
 
@@ -479,7 +481,7 @@ Decodes and optionally verifies a JWS, and returns the decoded header, payload.
 
 #### Defined in
 
-src/ts/crypto/jwsDecode.ts:12
+[src/ts/crypto/jwsDecode.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/jwsDecode.ts#L12)
 
 ___
 
@@ -505,7 +507,7 @@ a promise that resolves to the secret in JWK and raw hex string
 
 #### Defined in
 
-src/ts/crypto/oneTimeSecret.ts:17
+[src/ts/crypto/oneTimeSecret.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/oneTimeSecret.ts#L17)
 
 ___
 
@@ -526,7 +528,7 @@ ___
 
 #### Defined in
 
-src/ts/utils/parseHex.ts:3
+[src/ts/utils/parseHex.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/utils/parseHex.ts#L3)
 
 ___
 
@@ -548,7 +550,7 @@ ___
 
 #### Defined in
 
-src/ts/utils/sha.ts:4
+[src/ts/utils/sha.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/utils/sha.ts#L4)
 
 ___
 
@@ -569,7 +571,7 @@ ___
 
 #### Defined in
 
-src/ts/crypto/verifyKeyPair.ts:7
+[src/ts/crypto/verifyKeyPair.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/crypto/verifyKeyPair.ts#L7)
 
 ___
 
@@ -590,7 +592,7 @@ Verify a proof
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `proof` | `string` | a non-repudiable proof in Compact JWS formatted JWT string |
-| `expectedPayloadClaims` | [`ProofInputPayload`](interfaces/ProofInputPayload.md) | The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be: {   proofType: 'PoO',   iss: 'orig',   exchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: '', // hash of the plaintext block in base64url with no padding     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
+| `expectedPayloadClaims` | `Partial`<`T`\> & { `exchange`: [`Dict`](API.md#dict)<`T`[``"exchange"``]\> ; `iss`: `T`[``"iss"``] ; `proofType`: `T`[``"proofType"``]  } | The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be: {   proofType: 'PoO',   iss: 'orig',   exchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: '', // hash of the plaintext block in base64url with no padding     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
 | `timestampVerifyOptions?` | [`TimestampVerifyOptions`](interfaces/TimestampVerifyOptions.md) | specifies a time window to accept the proof |
 
 #### Returns
@@ -601,4 +603,4 @@ The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-src/ts/proofs/verifyProof.ts:29
+[src/ts/proofs/verifyProof.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/proofs/verifyProof.ts#L29)

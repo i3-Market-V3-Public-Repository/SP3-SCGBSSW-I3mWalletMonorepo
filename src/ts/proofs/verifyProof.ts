@@ -1,6 +1,6 @@
 import { hashable } from 'object-sha'
 import { jwsDecode } from '../crypto/'
-import { DataExchange, JwsHeaderAndPayload, ProofInputPayload, ProofPayload, TimestampVerifyOptions } from '../types'
+import { DataExchange, Dict, JwsHeaderAndPayload, ProofPayload, TimestampVerifyOptions } from '../types'
 import { checkIssuedAt } from '../utils/checkIssuedAt'
 
 /**
@@ -26,10 +26,10 @@ import { checkIssuedAt } from '../utils/checkIssuedAt'
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export async function verifyProof<T extends ProofPayload> (proof: string, expectedPayloadClaims: ProofInputPayload, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JwsHeaderAndPayload<T>> {
-  const publicJwk = JSON.parse((expectedPayloadClaims.exchange as any)[expectedPayloadClaims.iss] as string)
+export async function verifyProof<T extends ProofPayload> (proof: string, expectedPayloadClaims: Partial<T> & { iss: T['iss'], proofType: T['proofType'], exchange: Dict<T['exchange']> }, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JwsHeaderAndPayload<T>> {
+  const publicJwk = JSON.parse(expectedPayloadClaims.exchange[expectedPayloadClaims.iss] as string)
 
-  const verification = await jwsDecode<T>(proof, publicJwk)
+  const verification = await jwsDecode<Dict<T>>(proof, publicJwk)
 
   if (verification.payload.iss === undefined) {
     throw new Error('Property "iss" missing')
@@ -43,19 +43,20 @@ export async function verifyProof<T extends ProofPayload> (proof: string, expect
   const payload = verification.payload
 
   // Check that the publicKey is the public key of the issuer
-  const issuer = payload.exchange[payload.iss]
+  const issuer = (payload.exchange as Dict<DataExchange>)[payload.iss] as string
   if (hashable(publicJwk) !== hashable(JSON.parse(issuer))) {
     throw new Error(`The proof is issued by ${issuer} instead of ${JSON.stringify(publicJwk)}`)
   }
 
-  for (const key in expectedPayloadClaims) {
+  const expectedClaimsDict: Dict<typeof expectedPayloadClaims> = expectedPayloadClaims
+  for (const key in expectedClaimsDict) {
     if (payload[key] === undefined) throw new Error(`Expected key '${key}' not found in proof`)
     if (key === 'exchange') {
-      const expectedDataExchange = expectedPayloadClaims.exchange
+      const expectedDataExchange = expectedPayloadClaims.exchange as DataExchange
       const dataExchange = payload.exchange
       checkDataExchange(dataExchange, expectedDataExchange)
-    } else if (expectedPayloadClaims[key] !== '' && hashable(expectedPayloadClaims[key] as object) !== hashable(payload[key] as object)) {
-      throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedPayloadClaims[key], undefined, 2)}`)
+    } else if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
+      throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`)
     }
   }
   return verification

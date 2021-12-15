@@ -9,6 +9,7 @@
 ### Functions
 
 - [checkCompleteness](ConflictResolution.md#checkcompleteness)
+- [checkDecryption](ConflictResolution.md#checkdecryption)
 - [generateVerificationRequest](ConflictResolution.md#generateverificationrequest)
 - [verifyPor](ConflictResolution.md#verifypor)
 
@@ -33,7 +34,30 @@ Checks the completeness of a given data exchange by verifying the PoR in the ver
 
 #### Defined in
 
-src/ts/conflict-resolution/checkCompleteness.ts:14
+[src/ts/conflict-resolution/checkCompleteness.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/checkCompleteness.ts#L14)
+
+___
+
+### checkDecryption
+
+▸ **checkDecryption**(`disputeRequest`, `dltContract`): `Promise`<{ `destPublicJwk`: [`JWK`](../interfaces/JWK.md) ; `drPayload`: [`DisputeRequestPayload`](../interfaces/DisputeRequestPayload.md) ; `origPublicJwk`: [`JWK`](../interfaces/JWK.md) ; `pooPayload`: [`PoOPayload`](../interfaces/PoOPayload.md) ; `porPayload`: [`PoRPayload`](../interfaces/PoRPayload.md)  }\>
+
+Check if the cipherblock in the disputeRequest is the one agreed for the dataExchange, and if it could be decrypted with the secret published on the ledger for that dataExchange.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `disputeRequest` | `string` | a dispute request as a compact JWS |
+| `dltContract` | `Contract` |  |
+
+#### Returns
+
+`Promise`<{ `destPublicJwk`: [`JWK`](../interfaces/JWK.md) ; `drPayload`: [`DisputeRequestPayload`](../interfaces/DisputeRequestPayload.md) ; `origPublicJwk`: [`JWK`](../interfaces/JWK.md) ; `pooPayload`: [`PoOPayload`](../interfaces/PoOPayload.md) ; `porPayload`: [`PoRPayload`](../interfaces/PoRPayload.md)  }\>
+
+#### Defined in
+
+[src/ts/conflict-resolution/checkDecryption.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/checkDecryption.ts#L16)
 
 ___
 
@@ -56,7 +80,7 @@ ___
 
 #### Defined in
 
-src/ts/conflict-resolution/generateVerificationRequest.ts:4
+[src/ts/conflict-resolution/generateVerificationRequest.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/generateVerificationRequest.ts#L4)
 
 ___
 
@@ -77,4 +101,4 @@ ___
 
 #### Defined in
 
-src/ts/conflict-resolution/verifyPor.ts:10
+[src/ts/conflict-resolution/verifyPor.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/verifyPor.ts#L10)

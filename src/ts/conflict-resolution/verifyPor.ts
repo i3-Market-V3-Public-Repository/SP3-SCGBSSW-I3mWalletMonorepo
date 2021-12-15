@@ -4,11 +4,11 @@ import { getSecretFromLedger } from '../dlt'
 import { exchangeId } from '../exchange'
 import { NrError } from '../errors'
 import { verifyProof } from '../proofs'
-import { JWK, PoOPayload, PoRPayload } from '../types'
+import { Dict, JWK, PoOPayload, PoRPayload } from '../types'
 import { checkIssuedAt } from '../utils'
 
 export async function verifyPor (por: string, dltContract: Contract): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
-  const { payload: porPayload } = await jwsDecode<PoRPayload>(por)
+  const { payload: porPayload } = await jwsDecode<Dict<PoRPayload>>(por)
   const exchange = porPayload.exchange
 
   const dataExchangePreview = { ...exchange }
