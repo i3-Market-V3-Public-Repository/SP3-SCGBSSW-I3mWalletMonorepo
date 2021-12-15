@@ -8,6 +8,7 @@
 - [disable](DltConfig.md#disable)
 - [gasLimit](DltConfig.md#gaslimit)
 - [rpcProviderUrl](DltConfig.md#rpcproviderurl)
+- [signer](DltConfig.md#signer)
 
 ## Properties
 
@@ -17,7 +18,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L29)
+[src/ts/types.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L34)
 
 ___
 
@@ -27,7 +28,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L30)
+[src/ts/types.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L35)
 
 ___
 
@@ -37,7 +38,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L28)
+[src/ts/types.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L33)
 
 ___
 
@@ -47,4 +48,14 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L27)
+[src/ts/types.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L32)
+
+___
+
+### signer
+
+• `Optional` **signer**: [`DltSigner`](../classes/Signers.DltSigner.md)
+
+#### Defined in
+
+[src/ts/types.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L36)

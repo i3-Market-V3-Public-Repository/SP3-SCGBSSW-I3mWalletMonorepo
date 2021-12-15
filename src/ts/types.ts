@@ -1,12 +1,17 @@
 import { ContractInterface } from '@ethersproject/contracts'
-import { JWK as JWKjose } from 'jose'
+import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose'
+import { DltSigner } from './signers'
 
+export { KeyLike } from 'jose'
 export { ContractInterface }
-export { CompactDecryptResult, JWTVerifyResult } from 'jose'
 
 export type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512'
 export type SigningAlg = 'ES256' | 'ES384' | 'ES512' // ECDSA with secp256k1 (ES256K) Edwards Curve DSA are not supported in browsers
 export type EncryptionAlg = 'A128GCM' | 'A256GCM' // A192GCM is not supported in browsers
+
+export type Dict<T> = T & {
+  [key: string | symbol | number]: any | undefined
+}
 
 export interface Algs {
   hashAlg?: HashAlg
@@ -28,6 +33,7 @@ export interface DltConfig {
   gasLimit: number
   contract: ContractConfig
   disable: boolean
+  signer?: DltSigner
 }
 
 export interface StoredProof {
@@ -66,7 +72,6 @@ export interface TimestampVerifyOptions {
 }
 
 export interface DataExchangeAgreement {
-  [key: string]: string | number | undefined
   orig: string // Public key in JSON.stringify(JWK) of the block origin (sender)
   dest: string // Public key in JSON.stringify(JWK) of the block destination (receiver)
   hashAlg: HashAlg
@@ -81,10 +86,10 @@ export interface DataExchangeAgreement {
 }
 
 export interface DataExchange extends DataExchangeAgreement {
-  id: string // base64url-no-padding encoded uint256 of the sha256(hashable(dataExchangeAgreement, cipherblockDgst))
+  id: string // base64url-no-padding encoded uint256 of the sha256(hashable(dataExchangeButId))
   cipherblockDgst: string // hash of the cipherblock in base64url with no padding
-  blockCommitment?: string // hash of the plaintext block in base64url with no padding
-  secretCommitment?: string // hash of the secret that can be used to decrypt the block in base64url with no padding
+  blockCommitment: string // hash of the plaintext block in base64url with no padding
+  secretCommitment: string // hash of the secret that can be used to decrypt the block in base64url with no padding
 }
 
 export interface JwkPair {
@@ -95,13 +100,8 @@ export interface JwkPair {
 export interface ProofInputPayload {
   [key: string]: string | number | DataExchange | undefined
   exchange: DataExchange
-  iat?: number
-  iss?: 'orig' | 'dest'
+  iss: string
   proofType: string
-  poo?: string
-  por?: string
-  secret?: string
-  verificationCode?: string
 }
 
 export interface ProofPayload extends ProofInputPayload {
@@ -137,11 +137,11 @@ export interface PoPPayload extends PoPInputPayload {
   verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
 
-interface ConflictResolutionRequest {
-  [key: string]: string | number
+interface ConflictResolutionRequest extends JWTPayload {
   iss: 'orig' | 'dest'
   iat: number // unix timestamp for issued at
   por: string // a compact JWS holding a PoR. The proof MUST be signed with the same key as either 'orig' or 'dest' of the payload proof.
+  dataExchangeId: string // the unique id of this data exchange
 }
 
 export interface VerificationRequestPayload extends ConflictResolutionRequest {
@@ -153,3 +153,51 @@ export interface DisputeRequestPayload extends ConflictResolutionRequest {
   iss: 'dest'
   cipherblock: string // the cipherblock as a JWE string
 }
+
+export interface Resolution extends JWTPayload {
+  type?: string
+  resolution?: string
+  dataExchangeId: string // the unique id of this data exchange
+  iat: number // unix timestamp stating when it was resolved
+  iss: string // the public key of the CRS in JWK
+}
+
+export interface VerificationResolution extends Resolution {
+  type: 'verification'
+  resolution: 'completed' | 'not completed' // whether the data exchange has been verified to be complete
+}
+
+export interface DisputeResolution extends Resolution {
+  type: 'dispute'
+  resolution: 'accepted' | 'denied' // resolution is 'denied' if the cipherblock can be properly decrypted; otherwise is 'accepted'
+}
+
+export interface JwsHeaderAndPayload<T> {
+  header: JWTHeaderParameters
+  payload: T
+}
+export type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>
+
+export type NrErrorName =
+'not a compact jws' |
+'invalid key' |
+'encryption failed' |
+'decryption failed' |
+'jws verification failed' |
+'invalid algorithm' |
+'invalid poo' |
+'invalid por' |
+'invalid pop' |
+'invalid dispute request' |
+'invalid verification request' |
+'invalid dispute request' |
+'data exchange not as expected' |
+'dataExchange integrity violated' |
+'secret not published' |
+'secret not published in time' |
+'received too late' |
+'unexpected error' |
+'invalid iat' |
+'invalid format' |
+'cannot contact the ledger' |
+'cannot verify'

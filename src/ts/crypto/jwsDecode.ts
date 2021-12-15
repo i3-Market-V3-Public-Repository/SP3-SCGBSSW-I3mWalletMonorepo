@@ -1,0 +1,44 @@
+import * as b64 from '@juanelas/base64'
+import { JWTHeaderParameters, JWTPayload, jwtVerify } from 'jose'
+import { NrError } from '../errors'
+import { getFromJws, JWK, JwsHeaderAndPayload } from '../types'
+import { importJwk } from './importJwk'
+
+/**
+ * Decodes and optionally verifies a JWS, and returns the decoded header, payload.
+ * @param jws
+ * @param publicJwk - either a public key as a JWK or a function that resolves to a JWK. If not provided, the JWS signature is not verified
+ */
+export async function jwsDecode<T extends JWTPayload> (jws: string, publicJwk?: JWK | getFromJws<T>): Promise<JwsHeaderAndPayload<T>> {
+  const regex = /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/
+  const match = jws.match(regex)
+
+  if (match === null) {
+    throw new NrError(new Error(`${jws} is not a JWS`), ['not a compact jws'])
+  }
+
+  let header: JWTHeaderParameters
+  let payload: T
+  try {
+    header = JSON.parse(b64.decode(match[1], true) as string)
+    payload = JSON.parse(b64.decode(match[2], true) as string)
+  } catch (error) {
+    throw new NrError(error, ['invalid format', 'not a compact jws'])
+  }
+
+  if (publicJwk !== undefined) {
+    const pubJwk = (typeof publicJwk === 'function') ? await publicJwk(header, payload) : publicJwk
+    const jwk = await importJwk(pubJwk)
+    try {
+      const verified = await jwtVerify(jws, jwk)
+      return {
+        header: verified.protectedHeader,
+        payload: verified.payload as T
+      }
+    } catch (error) {
+      throw new NrError(error, ['jws verification failed'])
+    }
+  }
+
+  return { header, payload }
+}

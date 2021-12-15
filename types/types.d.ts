@@ -1,10 +1,14 @@
 import { ContractInterface } from '@ethersproject/contracts';
-import { JWK as JWKjose } from 'jose';
+import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose';
+import { DltSigner } from './signers';
+export { KeyLike } from 'jose';
 export { ContractInterface };
-export { CompactDecryptResult, JWTVerifyResult } from 'jose';
 export declare type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512';
 export declare type SigningAlg = 'ES256' | 'ES384' | 'ES512';
 export declare type EncryptionAlg = 'A128GCM' | 'A256GCM';
+export declare type Sign<T> = T & {
+    [key: string | symbol]: any | undefined;
+};
 export interface Algs {
     hashAlg?: HashAlg;
     SigningAlg?: SigningAlg;
@@ -22,6 +26,7 @@ export interface DltConfig {
     gasLimit: number;
     contract: ContractConfig;
     disable: boolean;
+    signer?: DltSigner;
 }
 export interface StoredProof {
     jws: string;
@@ -55,7 +60,6 @@ export interface TimestampVerifyOptions {
     clockToleranceMs?: number;
 }
 export interface DataExchangeAgreement {
-    [key: string]: string | number | undefined;
     orig: string;
     dest: string;
     hashAlg: HashAlg;
@@ -71,8 +75,8 @@ export interface DataExchangeAgreement {
 export interface DataExchange extends DataExchangeAgreement {
     id: string;
     cipherblockDgst: string;
-    blockCommitment?: string;
-    secretCommitment?: string;
+    blockCommitment: string;
+    secretCommitment: string;
 }
 export interface JwkPair {
     publicJwk: JWK;
@@ -81,13 +85,8 @@ export interface JwkPair {
 export interface ProofInputPayload {
     [key: string]: string | number | DataExchange | undefined;
     exchange: DataExchange;
-    iat?: number;
-    iss?: 'orig' | 'dest';
+    iss: string;
     proofType: string;
-    poo?: string;
-    por?: string;
-    secret?: string;
-    verificationCode?: string;
 }
 export interface ProofPayload extends ProofInputPayload {
     iat: number;
@@ -118,11 +117,11 @@ export interface PoPPayload extends PoPInputPayload {
     iat: number;
     verificationCode: string;
 }
-interface ConflictResolutionRequest {
-    [key: string]: string | number;
+interface ConflictResolutionRequest extends JWTPayload {
     iss: 'orig' | 'dest';
     iat: number;
     por: string;
+    dataExchangeId: string;
 }
 export interface VerificationRequestPayload extends ConflictResolutionRequest {
     type: 'verificationRequest';
@@ -132,4 +131,25 @@ export interface DisputeRequestPayload extends ConflictResolutionRequest {
     iss: 'dest';
     cipherblock: string;
 }
+export interface Resolution extends JWTPayload {
+    type?: string;
+    resolution?: string;
+    dataExchangeId: string;
+    iat: number;
+    iss: string;
+}
+export interface VerificationResolution extends Resolution {
+    type: 'verification';
+    resolution: 'completed' | 'not completed';
+}
+export interface DisputeResolution extends Resolution {
+    type: 'dispute';
+    resolution: 'accepted' | 'denied';
+}
+export interface JwsHeaderAndPayload<T> {
+    header: JWTHeaderParameters;
+    payload: T;
+}
+export declare type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
+export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid iat' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
 //# sourceMappingURL=types.d.ts.map

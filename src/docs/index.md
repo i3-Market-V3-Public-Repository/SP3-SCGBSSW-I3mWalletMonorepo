@@ -41,14 +41,21 @@ The appropriate version for browser or node is automatically exported.
 
 You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDLE}} and manually add it to your project, or, if you have already installed `{{PKG_NAME}}` in your project, just get the bundles from `node_modules/{{PKG_NAME}}/dist/bundles/`.
 
-### Example for an i3-MARKET Provider
+### Example for an i3-MARKET Provider using the Non-Repudiation Protocol
 
-Before starting the agreement you need a pair of public-private keys as JWK in one of the EC supported curves (P-256, P-384, P-521). You can easily create the key pair with the `generateKeys` utility function. For example, if you already have a random private key in hex:
+Before starting the agreement you need:
 
-```typescript
-const privKey = '0x4b7903c8fe1824ba5329939c7d2c4318307794a544f2eb5fb3b6536210c98677'
-const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG, providerPrivKeyHex)
-```
+- **A private key for signing the non-repudiation proofs**. You should generate a public-private key pair in one of the EC supported curves (P-256, P-384, P-521). Key format must be JSON Web Key (JWK).
+  
+  >You can easily create the key pair with the `generateKeys` utility function. For example:
+  >
+  >```typescript
+  >const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG)
+  >```
+
+- An Ethereum address with enough funds on the ledger and either:
+  - [recommended] A DltSigner instance, e.g. a Wallet, that can handle signing of the transactions needed to publish the secret to the ledger.
+  - [discouraged] The private key for signing the transactions to the ledger.
 
 And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
 
@@ -58,7 +65,7 @@ async nrp() => {
    * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
    */
   const dataExchangeAgreement: {{PKG_CAMELCASE}}.DataExchangeAgreement = {
-    // Public key of the origin (data provider)
+    // Public key of the origin (data provider) for verifying the proofs she/he issues. It should be providerJwks.publicJwk
     orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
     // Public key of the destination (data consumer)
     dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
@@ -70,7 +77,7 @@ async nrp() => {
     hashAlg: 'SHA-256',
     // The ledger smart contract address (hexadecimal) on the DLT
     ledgerContractAddress: '7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
-    // The orig (data provider) address in the DLT (hexadecimal). It can use a different keypair for signing proofs and signing transactions to the DLT) 
+    // The orig (data provider) address in the DLT (hexadecimal).
     ledgerSignerAddress: '17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
     // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
     pooToPorDelay: 10000,
@@ -80,6 +87,14 @@ async nrp() => {
     pooToSecretDelay: 150000
   }
 
+  // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
+  const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
+    rpcProviderUrl: '***REMOVED***'
+  }
+  
+  // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an externam Wallet, such as the i3-MARKET one
+  const providerDltSigningKeyHex = '***REMOVED***'
+
   /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
    * You need:
@@ -87,9 +102,9 @@ async nrp() => {
    *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
    *  - the block of data to send as a Uint8Array
    *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
-   *  - [optional] a private key in hex for the DLT, just in case the private key used to sign transactions on the ledger is different than the one for signing the proofs
+   *  - [optional] a private key in hex for the DLT, just in case no DltSigner is provided in dltConfig
    */
-  const npProvider = new {{PKG_CAMELCASE}}.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block)
+  const npProvider = new {{PKG_CAMELCASE}}.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig, providerDltSigningKeyHex)
 
   // Create the proof of origin (PoO)
   const poo = await npProvider.generatePoO()
@@ -112,12 +127,12 @@ async nrp() => {
 nrp()
 ```
 
-### Example for an i3-MARKET Consumer
+### Example for an i3-MARKET Consumer using the Non-Repudiation Protocol
 
 Before starting the agreement, you need a pair of public private keys. You can easily create the key pair with the `generateKeys` utility function:
 
 ```typescript
-  const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256', providerPrivKeyHex)
+  const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256')
 ```
 
 And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
@@ -130,7 +145,7 @@ async nrp() => {
   const dataExchangeAgreement: {{PKG_CAMELCASE}}.DataExchangeAgreement = {
     // Public key of the origin (data provider)
     orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
-    // Public key of the destination (data consumer)
+    // Public key of the destination (data consumer). It should be consumerJwks.publicJwk
     dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
     // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
     encAlg: 'A256GCM',
@@ -150,6 +165,11 @@ async nrp() => {
     pooToSecretDelay: 150000
   }
   
+  // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
+  const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
+    rpcProviderUrl: '***REMOVED***'
+  }
+
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
    * You need:
@@ -157,7 +177,7 @@ async nrp() => {
    *  - the private key of the consumer (to sign proofs)
    *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
    */
-  const npConsumer = new {{PKG_CAMELCASE}}NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk)
+  const npConsumer = new {{PKG_CAMELCASE}}.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
 
   // Receive poo and cipherblock (in JWE string format)
   ...

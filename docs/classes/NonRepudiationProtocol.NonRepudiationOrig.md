@@ -1,0 +1,204 @@
+# Class: NonRepudiationOrig
+
+[NonRepudiationProtocol](../modules/NonRepudiationProtocol.md).NonRepudiationOrig
+
+The base class that should be instantiated by the origin of a data
+exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
+likely to be a Provider.
+
+## Table of contents
+
+### Constructors
+
+- [constructor](NonRepudiationProtocol.NonRepudiationOrig.md#constructor)
+
+### Properties
+
+- [agreement](NonRepudiationProtocol.NonRepudiationOrig.md#agreement)
+- [block](NonRepudiationProtocol.NonRepudiationOrig.md#block)
+- [dltConfig](NonRepudiationProtocol.NonRepudiationOrig.md#dltconfig)
+- [dltContract](NonRepudiationProtocol.NonRepudiationOrig.md#dltcontract)
+- [exchange](NonRepudiationProtocol.NonRepudiationOrig.md#exchange)
+- [jwkPairOrig](NonRepudiationProtocol.NonRepudiationOrig.md#jwkpairorig)
+- [publicJwkDest](NonRepudiationProtocol.NonRepudiationOrig.md#publicjwkdest)
+
+### Methods
+
+- [generatePoO](NonRepudiationProtocol.NonRepudiationOrig.md#generatepoo)
+- [generatePoP](NonRepudiationProtocol.NonRepudiationOrig.md#generatepop)
+- [generateVerificationRequest](NonRepudiationProtocol.NonRepudiationOrig.md#generateverificationrequest)
+- [verifyPoR](NonRepudiationProtocol.NonRepudiationOrig.md#verifypor)
+
+## Constructors
+
+### constructor
+
+• **new NonRepudiationOrig**(`agreement`, `privateJwk`, `block`, `dltConfig?`, `privateLedgerKeyHex?`)
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `agreement` | [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md) | a DataExchangeAgreement |
+| `privateJwk` | [`JWK`](../interfaces/JWK.md) | the private key that will be used to sign the proofs |
+| `block` | `Uint8Array` | the block of data to transmit in this data exchange |
+| `dltConfig?` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> | an object with the necessary configuration for the (Ethereum-like) DLT |
+| `privateLedgerKeyHex?` | `string` | the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that a DltSigner is provided in the dltConfig |
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:35
+
+## Properties
+
+### agreement
+
+• **agreement**: [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md)
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:19
+
+___
+
+### block
+
+• **block**: [`OrigBlock`](../interfaces/OrigBlock.md)
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:23
+
+___
+
+### dltConfig
+
+• **dltConfig**: `Required`<[`DltConfig`](../interfaces/DltConfig.md)\>
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:24
+
+___
+
+### dltContract
+
+• **dltContract**: `Contract`
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:25
+
+___
+
+### exchange
+
+• **exchange**: [`DataExchange`](../interfaces/DataExchange.md)
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:20
+
+___
+
+### jwkPairOrig
+
+• **jwkPairOrig**: [`JwkPair`](../interfaces/JwkPair.md)
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:21
+
+___
+
+### publicJwkDest
+
+• **publicJwkDest**: [`JWK`](../interfaces/JWK.md)
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:22
+
+## Methods
+
+### generatePoO
+
+▸ **generatePoO**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+Creates the proof of origin (PoO).
+Besides returning its value, it is also stored in this.block.poo
+
+#### Returns
+
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+a compact JWS with the PoO along with its decoded payload
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:134
+
+___
+
+### generatePoP
+
+▸ **generatePoP**(): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+Creates the proof of publication (PoP).
+Besides returning its value, it is also stored in `this.block.pop`
+
+#### Returns
+
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+a compact JWS with the PoP
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:194
+
+___
+
+### generateVerificationRequest
+
+▸ **generateVerificationRequest**(): `Promise`<`string`\>
+
+Generates a verification request that can be used to query the
+Conflict-Resolver Service for completeness of the non-repudiation protocol
+
+#### Returns
+
+`Promise`<`string`\>
+
+the verification request as a compact JWS signed with 'orig's private key
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:242
+
+___
+
+### verifyPoR
+
+▸ **verifyPoR**(`por`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+Verifies a proof of reception.
+If verification passes, `por` is added to `this.block`
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `por` | `string` | A PoR in caompact JWS format |
+| `clockToleranceMs?` | `number` | expected clock tolerance in milliseconds when comparing Dates |
+| `currentDate?` | `Date` | check the proof as it were checked in this date |
+
+#### Returns
+
+`Promise`<[`StoredProof`](../interfaces/StoredProof.md)\>
+
+the verified payload and protected header
+
+#### Defined in
+
+src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:155

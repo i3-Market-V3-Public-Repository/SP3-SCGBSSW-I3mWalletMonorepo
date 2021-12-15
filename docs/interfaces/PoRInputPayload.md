@@ -13,13 +13,9 @@
 ### Properties
 
 - [exchange](PoRInputPayload.md#exchange)
-- [iat](PoRInputPayload.md#iat)
 - [iss](PoRInputPayload.md#iss)
 - [poo](PoRInputPayload.md#poo)
-- [por](PoRInputPayload.md#por)
 - [proofType](PoRInputPayload.md#prooftype)
-- [secret](PoRInputPayload.md#secret)
-- [verificationCode](PoRInputPayload.md#verificationcode)
 
 ## Properties
 
@@ -33,21 +29,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:97](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L97)
-
-___
-
-### iat
-
-• `Optional` **iat**: `number`
-
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[iat](ProofInputPayload.md#iat)
-
-#### Defined in
-
-[src/ts/types.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L98)
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L102)
 
 ___
 
@@ -61,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L121)
+[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L121)
 
 ___
 
@@ -69,27 +51,9 @@ ___
 
 • **poo**: `string`
 
-#### Overrides
-
-[ProofInputPayload](ProofInputPayload.md).[poo](ProofInputPayload.md#poo)
-
 #### Defined in
 
-[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L123)
-
-___
-
-### por
-
-• `Optional` **por**: `string`
-
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[por](ProofInputPayload.md#por)
-
-#### Defined in
-
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L102)
+[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L123)
 
 ___
 
@@ -103,32 +67,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L122)
-
-___
-
-### secret
-
-• `Optional` **secret**: `string`
-
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[secret](ProofInputPayload.md#secret)
-
-#### Defined in
-
-[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L103)
-
-___
-
-### verificationCode
-
-• `Optional` **verificationCode**: `string`
-
-#### Inherited from
-
-[ProofInputPayload](ProofInputPayload.md).[verificationCode](ProofInputPayload.md#verificationcode)
-
-#### Defined in
-
-[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L104)
+[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L122)

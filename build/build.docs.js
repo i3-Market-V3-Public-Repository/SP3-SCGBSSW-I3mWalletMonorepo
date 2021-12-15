@@ -89,9 +89,9 @@ if (repoProvider) {
       break
 
     case 'gitlab':
-      iifeBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/${iifeBundlePath}?inline=false)`
-      esmBundle = `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/${esmBundlePath}?inline=false)`
-      umdBundle = `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/dist/${umdBundlePath}?inline=false)`
+      iifeBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${iifeBundlePath}?inline=false)`
+      esmBundle = `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${esmBundlePath}?inline=false)`
+      umdBundle = `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${umdBundlePath}?inline=false)`
       break
 
     default:

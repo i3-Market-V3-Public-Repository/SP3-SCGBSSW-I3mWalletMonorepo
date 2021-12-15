@@ -3,14 +3,12 @@
  *
  * @packageDocumentation
  */
-export * from './createProof'
-export * from './generateKeys'
-export * from './jwe'
-export * from './NonRepudiationDest'
-export * from './NonRepudiationOrig'
-export * from './oneTimeSecret'
-export * from './sha'
+export * as ConflictResolution from './conflict-resolution'
+export * from './crypto'
+export * from './dlt'
+export * as NonRepudiationProtocol from './non-repudiation-protocol'
+export * from './errors'
+export * from './proofs'
+export * as Signers from './signers'
 export * from './types'
 export * from './utils'
-export * from './verifyKeyPair'
-export * from './verifyProof'

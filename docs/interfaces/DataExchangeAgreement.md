@@ -6,10 +6,6 @@
 
   ↳ [`DataExchange`](DataExchange.md)
 
-## Indexable
-
-▪ [key: `string`]: `string` \| `number` \| `undefined`
-
 ## Table of contents
 
 ### Properties
@@ -34,7 +30,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:71](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L71)
+[src/ts/types.ts:76](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L76)
 
 ___
 
@@ -44,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:73](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L73)
+[src/ts/types.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L78)
 
 ___
 
@@ -54,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L72)
+[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L77)
 
 ___
 
@@ -64,7 +60,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L75)
+[src/ts/types.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L80)
 
 ___
 
@@ -74,7 +70,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:76](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L76)
+[src/ts/types.ts:81](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L81)
 
 ___
 
@@ -84,7 +80,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:70](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L70)
+[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L75)
 
 ___
 
@@ -94,7 +90,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L78)
+[src/ts/types.ts:83](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L83)
 
 ___
 
@@ -104,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L77)
+[src/ts/types.ts:82](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L82)
 
 ___
 
@@ -114,7 +110,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L79)
+[src/ts/types.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L84)
 
 ___
 
@@ -124,7 +120,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L80)
+[src/ts/types.ts:85](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L85)
 
 ___
 
@@ -134,4 +130,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/78eba13/src/ts/types.ts#L74)
+[src/ts/types.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/6294cd9/src/ts/types.ts#L79)

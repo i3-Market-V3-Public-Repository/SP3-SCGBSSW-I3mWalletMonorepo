@@ -18,6 +18,6 @@ describe('parseHex', function () {
   it('parseHex(\'adge3\') should throw error', function () {
     chai.expect(() => {
       _pkg.parseHex('adge3')
-    }).to.throw(RangeError)
+    }).to.throw(_pkg.NrError)
   })
 })
