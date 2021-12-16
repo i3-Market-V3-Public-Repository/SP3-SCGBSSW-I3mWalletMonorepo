@@ -38,7 +38,7 @@
 
 ### alg
 
-• **alg**: [`SigningAlg`](../API.md#signingalg) \| [`EncryptionAlg`](../API.md#encryptionalg)
+• **alg**: ``"ES256"`` \| ``"ES384"`` \| ``"ES512"`` \| ``"A128GCM"`` \| ``"A256GCM"``
 
 #### Overrides
 
@@ -46,7 +46,7 @@ JWKjose.alg
 
 #### Defined in
 
-[src/ts/types.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/types.ts#L23)
+[src/ts/types.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L24)
 
 ___
 

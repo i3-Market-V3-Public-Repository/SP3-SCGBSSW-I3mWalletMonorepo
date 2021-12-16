@@ -34,7 +34,7 @@ Checks the completeness of a given data exchange by verifying the PoR in the ver
 
 #### Defined in
 
-[src/ts/conflict-resolution/checkCompleteness.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/checkCompleteness.ts#L14)
+[src/ts/conflict-resolution/checkCompleteness.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/conflict-resolution/checkCompleteness.ts#L14)
 
 ___
 
@@ -57,7 +57,7 @@ Check if the cipherblock in the disputeRequest is the one agreed for the dataExc
 
 #### Defined in
 
-[src/ts/conflict-resolution/checkDecryption.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/checkDecryption.ts#L16)
+[src/ts/conflict-resolution/checkDecryption.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/conflict-resolution/checkDecryption.ts#L16)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/generateVerificationRequest.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/generateVerificationRequest.ts#L4)
+[src/ts/conflict-resolution/generateVerificationRequest.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/conflict-resolution/generateVerificationRequest.ts#L4)
 
 ___
 
@@ -101,4 +101,4 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/verifyPor.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/blob/f58faf3/src/ts/conflict-resolution/verifyPor.ts#L10)
+[src/ts/conflict-resolution/verifyPor.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/conflict-resolution/verifyPor.ts#L10)
