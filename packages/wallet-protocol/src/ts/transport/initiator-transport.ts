@@ -81,6 +81,7 @@ export abstract class InitiatorTransport<Req, Res> extends BaseTransport<Req, Re
       a: pkeData,
       b: received,
 
+      port: this.connString.extractPort(),
       sent: pkeData,
       received
     }

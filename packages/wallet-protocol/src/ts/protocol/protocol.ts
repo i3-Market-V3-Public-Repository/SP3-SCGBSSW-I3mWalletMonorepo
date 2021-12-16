@@ -102,6 +102,7 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
     // Compute master key
     const secret = await pbkdf2Hmac(secretWithContext, salt, 1, 32)
     const masterKey = await MasterKey.fromSecret(
+      fullPkeData.port,
       fullPkeData.sent.id,
       fullPkeData.received.id,
       fullAuthData.a.nx,

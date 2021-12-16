@@ -12,6 +12,7 @@ const rootDir = path.join(__dirname, '../../../')
 
 global.chai = chai
 global._pkg = require(rootDir)
+global.IS_BROWSER = false
 
 const watch = process.argv.includes('--watch') || process.argv.includes('-w')
 

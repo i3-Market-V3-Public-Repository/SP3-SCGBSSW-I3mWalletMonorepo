@@ -1,4 +1,3 @@
-
 import { bufferUtils } from '../internal'
 
 export class BaseECDH {

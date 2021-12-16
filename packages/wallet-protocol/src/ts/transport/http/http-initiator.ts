@@ -1,17 +1,66 @@
+import http from 'http'
+
 import { constants, format, MasterKey } from '../../internal'
 import { InitiatorTransport } from '../initiator-transport'
 import { Request } from '../request'
 
 export interface HttpRequest {
   url: string
-  init: RequestInit
+  init?: RequestInit
 }
 
-export type HttpResponse = Response
+export interface HttpResponse{
+  status: number
+  body: string
+}
+type HttpType = typeof http
 
 export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, HttpResponse> {
   buildRpcUrl (port: number): string {
     return `http://${this.opts.host}:${port}/${constants.RPC_URL_PATH}`
+  }
+
+  async baseSend (port: number, httpReq: RequestInit): Promise<HttpResponse> {
+    if (IS_BROWSER) {
+      const rpcUrl = this.buildRpcUrl(port)
+      const resp = await fetch(rpcUrl, httpReq)
+      const body = await resp.text()
+
+      return {
+        status: resp.status,
+        body
+      }
+    } else {
+      const http: HttpType = require('http') // eslint-disable-line
+      const resp = await new Promise<HttpResponse>(resolve => {
+        const postData = httpReq.body as string
+        const req = http.request({
+          path: `/${constants.RPC_URL_PATH}`,
+          port,
+          method: httpReq.method ?? 'POST',
+          headers: {
+            ...httpReq.headers as any,
+            'Content-Length': Buffer.byteLength(postData)
+          }
+        }, (res) => {
+          let data = ''
+          res.on('data', (chunk: string) => {
+            data += chunk
+          })
+          res.on('end', () => {
+            resolve({
+              status: res.statusCode ?? 200,
+              body: data
+            })
+          })
+        })
+
+        req.write(postData)
+        req.end()
+      })
+
+      return resp
+    }
   }
 
   async sendRequest<T extends Request> (request: Request): Promise<T> {
@@ -20,47 +69,35 @@ export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, Http
     }
 
     const port = this.connString.extractPort()
-    const rpcUrl = this.buildRpcUrl(port)
-    const resp = await fetch(rpcUrl, {
+
+    const resp = await this.baseSend(port, {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(request)
     })
-    const body: T = await resp.json()
 
-    return body
+    return JSON.parse(resp.body)
   }
 
   async send (masterKey: MasterKey, code: Uint8Array, req: HttpRequest): Promise<HttpResponse> {
-    const headers = new Headers()
-    headers.append('Authorization', format.u8Arr2Utf(code))
-
     const message = format.utf2U8Arr(JSON.stringify(req))
     const ciphertext = await masterKey.encrypt(message)
-    const rpcUrl = this.buildRpcUrl(29170)
 
-    const resp = await fetch(rpcUrl, {
+    const resp = await this.baseSend(masterKey.port, {
       method: 'POST',
-      headers: headers,
+      headers: {
+        Authorization: format.u8Arr2Utf(code)
+      },
       body: format.u8Arr2Base64(ciphertext)
     })
 
-    return new Proxy<HttpResponse>(resp, {
-      get: (resp, p) => {
-        switch (p) {
-          case 'json':
-            return async () => {
-              const ciphertextBase64 = await resp.text()
-              const ciphertext = format.base642U8Arr(ciphertextBase64)
-              const jsonBuffer = await masterKey.decrypt(ciphertext)
-              const json = format.u8Arr2Utf(jsonBuffer)
+    // Decrypt body
+    const bodyCiphertext = format.base642U8Arr(resp.body)
+    const jsonBuffer = await masterKey.decrypt(bodyCiphertext)
+    resp.body = format.u8Arr2Utf(jsonBuffer)
 
-              return JSON.parse(json)
-            }
-
-          default:
-            return (resp as any)[p]
-        }
-      }
-    })
+    return resp
   }
 }

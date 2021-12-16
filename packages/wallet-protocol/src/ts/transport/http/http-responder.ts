@@ -9,7 +9,7 @@ export interface HttpResponderOptions extends ResponderOptions {
   rpcUrl: string
 }
 
-export class HttpResponderTransport extends ResponderTransport<http.IncomingMessage, http.ServerResponse> {
+export class HttpResponderTransport extends ResponderTransport<http.IncomingMessage, never> {
   readonly rpcUrl: string
   protected listeners: http.RequestListener[] = []
 
@@ -51,12 +51,13 @@ export class HttpResponderTransport extends ResponderTransport<http.IncomingMess
     const messageJson = format.u8Arr2Utf(message)
     const body: HttpRequest = JSON.parse(messageJson)
     let innerBody: any = {}
-    if (body.init.body !== undefined && body.init.body !== '') {
-      innerBody = JSON.parse(body.init.body as string)
+    const init: RequestInit = body.init ?? {}
+    if (init.body !== undefined && init.body !== '') {
+      innerBody = JSON.parse(init.body as string)
     }
 
     const headers = Object
-      .entries(body.init.headers ?? {})
+      .entries(init.headers ?? {})
       .reduce((h, [key, value]) => {
         h[key.toLocaleLowerCase()] = value
         return h
@@ -69,7 +70,7 @@ export class HttpResponderTransport extends ResponderTransport<http.IncomingMess
             return body.url
 
           case 'method':
-            return body.init.method
+            return init.method
 
           case 'headers':
             return headers
