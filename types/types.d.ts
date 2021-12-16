@@ -1,11 +1,12 @@
 import { ContractInterface } from '@ethersproject/contracts';
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose';
 import { DltSigner } from './signers';
+import { HASH_ALGS, SIGNING_ALGS, ENC_ALGS } from './constants';
 export { KeyLike } from 'jose';
 export { ContractInterface };
-export declare type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512';
-export declare type SigningAlg = 'ES256' | 'ES384' | 'ES512';
-export declare type EncryptionAlg = 'A128GCM' | 'A256GCM';
+export declare type HashAlg = typeof HASH_ALGS[number];
+export declare type SigningAlg = typeof SIGNING_ALGS[number];
+export declare type EncryptionAlg = typeof ENC_ALGS[number];
 export declare type Dict<T> = T & {
     [key: string | symbol | number]: any | undefined;
 };

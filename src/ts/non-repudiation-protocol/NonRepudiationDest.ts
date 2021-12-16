@@ -7,7 +7,7 @@ import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig, getSecretFromLedger } from '../dlt/'
 import { NrError } from '../errors'
-import { exchangeId } from '../exchange'
+import { exchangeId, checkAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkIssuedAt, parseHex, sha } from '../utils/'
 import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
@@ -18,7 +18,7 @@ import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload
  * likely to be a Consumer.
  */
 export class NonRepudiationDest {
-  agreement: DataExchangeAgreement
+  agreement!: DataExchangeAgreement
   exchange?: DataExchange
   jwkPairDest: JwkPair
   publicJwkOrig: JWK
@@ -39,22 +39,15 @@ export class NonRepudiationDest {
     }
     this.publicJwkOrig = JSON.parse(agreement.orig) as JWK
 
-    this.agreement = {
-      ...agreement,
-      ledgerContractAddress: parseHex(agreement.ledgerContractAddress),
-      ledgerSignerAddress: parseHex(agreement.ledgerSignerAddress)
-    }
-
     this.block = {}
 
     this.dltConfig = {
       ...defaultDltConfig,
       ...dltConfig
     }
-    this._dltSetup()
 
     this.initialized = new Promise((resolve, reject) => {
-      this.init().then(() => {
+      this.init(agreement).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -66,15 +59,19 @@ export class NonRepudiationDest {
     if (!this.dltConfig.disable) {
       const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
 
-      if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${parseHex(this.dltConfig.contract.address)} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+      if (parseHex(this.agreement.ledgerContractAddress) !== parseHex(this.dltConfig.contract.address)) {
+        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 
       this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, rpcProvider)
     }
   }
 
-  private async init (): Promise<void> {
+  private async init (agreement: DataExchangeAgreement): Promise<void> {
+    this.agreement = await checkAgreement(agreement)
+
+    this._dltSetup()
+
     await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk)
   }
 

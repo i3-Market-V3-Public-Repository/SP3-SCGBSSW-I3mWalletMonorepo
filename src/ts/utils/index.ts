@@ -1,3 +1,5 @@
 export * from './checkIssuedAt'
+export * from './jsonSort'
 export * from './parseHex'
+export * from './parseJwk'
 export * from './sha'

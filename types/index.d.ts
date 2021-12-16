@@ -12,4 +12,6 @@ export * from './proofs';
 export * as Signers from './signers';
 export * from './types';
 export * from './utils';
+export * from './constants';
+export * from './exchange';
 //# sourceMappingURL=index.d.ts.map

@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig } from '../dlt/'
-import { exchangeId } from '../exchange'
+import { exchangeId, checkAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { EthersSigner } from '../signers'
 import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
@@ -16,7 +16,7 @@ import { parseHex, sha } from '../utils'
  * likely to be a Provider.
  */
 export class NonRepudiationOrig {
-  agreement: DataExchangeAgreement
+  agreement!: DataExchangeAgreement
   exchange!: DataExchange
   jwkPairOrig: JwkPair
   publicJwkDest: JWK
@@ -39,12 +39,6 @@ export class NonRepudiationOrig {
     }
     this.publicJwkDest = JSON.parse(agreement.dest) as JWK
 
-    this.agreement = {
-      ...agreement,
-      ledgerContractAddress: parseHex(agreement.ledgerContractAddress),
-      ledgerSignerAddress: parseHex(agreement.ledgerSignerAddress)
-    }
-
     // @ts-expect-error I will end assigning the complete Block in the async init()
     this.block = {
       raw: block
@@ -57,7 +51,7 @@ export class NonRepudiationOrig {
     }
 
     this.initialized = new Promise((resolve, reject) => {
-      this.init(privateLedgerKeyHex).then(() => {
+      this.init(agreement, privateLedgerKeyHex).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -65,7 +59,9 @@ export class NonRepudiationOrig {
     })
   }
 
-  private async init (privateLedgerKeyHex?: string): Promise<void> {
+  private async init (agreement: DataExchangeAgreement, privateLedgerKeyHex?: string): Promise<void> {
+    this.agreement = await checkAgreement(agreement)
+
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 
     const secret = await oneTimeSecret(this.agreement.encAlg)
@@ -117,8 +113,8 @@ export class NonRepudiationOrig {
       //   throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address associated to the provided private key ${signerAddress}`)
       // }
 
-      if (this.agreement.ledgerContractAddress !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${parseHex(this.dltConfig.contract.address)} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+      if (parseHex(this.agreement.ledgerContractAddress) !== parseHex(this.dltConfig.contract.address)) {
+        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
       }
 
       this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, rpcProvider)

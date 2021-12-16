@@ -1,13 +1,14 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose'
 import { DltSigner } from './signers'
+import { HASH_ALGS, SIGNING_ALGS, ENC_ALGS } from './constants'
 
 export { KeyLike } from 'jose'
 export { ContractInterface }
 
-export type HashAlg = 'SHA-256' | 'SHA-384' | 'SHA-512'
-export type SigningAlg = 'ES256' | 'ES384' | 'ES512' // ECDSA with secp256k1 (ES256K) Edwards Curve DSA are not supported in browsers
-export type EncryptionAlg = 'A128GCM' | 'A256GCM' // A192GCM is not supported in browsers
+export type HashAlg = typeof HASH_ALGS[number]
+export type SigningAlg = typeof SIGNING_ALGS[number]
+export type EncryptionAlg = typeof ENC_ALGS[number]
 
 export type Dict<T> = T & {
   [key: string | symbol | number]: any | undefined
