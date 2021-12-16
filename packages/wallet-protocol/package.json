@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/wallet-protocol",
+  "name": "@i3m/wallet-protocol",
   "version": "1.0.0",
   "description": "A wallet protocol",
   "keywords": [
@@ -11,7 +11,7 @@
     "name": "Fernando Roman-Garcia",
     "email": "fernando.roman@upc.edu"
   },
-  "repository": "repoprovider:username/my-package-name",
+  "repository": "gitlab.com:i3-market/code/wp3/t3.2/i3m-wallet-monorepo",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
   "browser": "./dist/esm/index.browser.js",
@@ -53,7 +53,7 @@
     "test:node": "npm run mocha -- '{src/ts/**/*.spec.ts,test/**/*.ts}'",
     "watch": "npm run mocha -- --watch '{src/ts/**/*.spec.ts,test/**/*.ts}'",
     "release": "npm pack --pack-destination releases/",
-    "postrelease": "rm -f ./releases/i3-market-wallet-protocol-latest.tgz && cp ./releases/i3-market-wallet-protocol-$npm_package_version.tgz ./releases/i3-market-wallet-protocol-latest.tgz"
+    "postrelease": "rm -f ./releases/i3m-wallet-protocol-latest.tgz && cp ./releases/i3m-wallet-protocol-$npm_package_version.tgz ./releases/i3m-wallet-protocol-latest.tgz"
   },
   "ts-standard": {
     "env": [
@@ -103,6 +103,7 @@
   "dependencies": {
     "@juanelas/base64": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "node-fetch": "^3.1.0",
     "object-sha": "^2.0.6",
     "pbkdf2-hmac": "^1.0.4"
   }

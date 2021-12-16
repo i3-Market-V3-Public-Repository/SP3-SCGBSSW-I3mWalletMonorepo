@@ -18,7 +18,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@i3-market/wallet-protocol": "^1.0.0",
+    "@i3m/wallet-protocol": "^1.0.0",
     "rollup-plugin-import-css": "^3.0.2",
     "rxjs": "^7.4.0"
   }

@@ -26,6 +26,7 @@ export class MasterKey {
   protected decipher: Cipher
 
   constructor (
+    public readonly port: number,
     public readonly from: Identity,
     public readonly to: Identity,
     public readonly na: Uint8Array,
@@ -64,14 +65,14 @@ export class MasterKey {
     return await objectSha.digest(this.to)
   }
 
-  static async fromSecret (from: Identity, to: Identity, na: Uint8Array, nb: Uint8Array, secret: Uint8Array): Promise<MasterKey> {
+  static async fromSecret (port: number, from: Identity, to: Identity, na: Uint8Array, nb: Uint8Array, secret: Uint8Array): Promise<MasterKey> {
     const fromHash = await objectSha.digest(from)
     const toHash = await objectSha.digest(to)
 
     const encryptKey = await deriveKey(fromHash, toHash, secret)
     const decryptKey = await deriveKey(toHash, fromHash, secret)
 
-    return new MasterKey(from, to, na, nb, secret, encryptKey, decryptKey)
+    return new MasterKey(port, from, to, na, nb, secret, encryptKey, decryptKey)
   }
 
   static async fromJSON (data: any): Promise<MasterKey> {
@@ -79,6 +80,6 @@ export class MasterKey {
     const nb = format.base642U8Arr(data.nb)
     const secret = format.base642U8Arr(data.secret)
 
-    return await this.fromSecret(data.from, data.to, na, nb, secret)
+    return await this.fromSecret(data.port, data.from, data.to, na, nb, secret)
   }
 }

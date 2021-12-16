@@ -128,6 +128,7 @@ export abstract class ResponderTransport<Req, Res> extends BaseTransport<Req, Re
       a: received,
       b: pkeData,
 
+      port: this.connString.extractPort(),
       sent: pkeData,
       received
     }

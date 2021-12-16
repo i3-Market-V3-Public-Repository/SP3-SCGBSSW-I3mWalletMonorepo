@@ -58,7 +58,7 @@ const main = async () => {
       body
     })
     if (resp.status < 300 && resp.status >= 200) {
-      const json = await resp.json()
+      const json = JSON.parse(resp.body)
       responseInput.value = JSON.stringify(json, null, 2)
     } else {
       responseInput.value = `ERROR: ${resp.status} ${resp.statusText}`

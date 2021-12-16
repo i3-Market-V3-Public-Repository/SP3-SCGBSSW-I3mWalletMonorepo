@@ -13,6 +13,7 @@ export interface PKEData {
 export interface ProtocolPKEData {
   a: PKEData
   b: PKEData
+  port: number
 
   sent: PKEData
   received: PKEData

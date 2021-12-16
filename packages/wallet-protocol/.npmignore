@@ -1,6 +1,9 @@
 # Build scripts
 build
 
+# Releases
+release
+
 # Test files
 test
 **/*.spec.ts
