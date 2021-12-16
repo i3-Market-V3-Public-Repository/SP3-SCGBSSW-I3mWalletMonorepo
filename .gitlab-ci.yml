@@ -16,7 +16,7 @@ variables:
 #   script:
 #     - npm i
 
-build:
+build_libraries:
   stage: build
   image: node:$NODE_VERSION
   script:
