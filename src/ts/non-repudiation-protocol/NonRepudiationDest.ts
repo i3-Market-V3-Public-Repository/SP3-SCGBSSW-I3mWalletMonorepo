@@ -1,16 +1,16 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
-import { SignJWT } from 'jose'
+import { JWTPayload, SignJWT } from 'jose'
 import { PoRPayload } from '..'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig, getSecretFromLedger } from '../dlt/'
 import { NrError } from '../errors'
-import { exchangeId, checkAgreement } from '../exchange'
+import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkIssuedAt, parseHex, sha } from '../utils/'
-import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
+import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -68,7 +68,7 @@ export class NonRepudiationDest {
   }
 
   private async init (agreement: DataExchangeAgreement): Promise<void> {
-    this.agreement = await checkAgreement(agreement)
+    this.agreement = await parseAgreement(agreement)
 
     this._dltSetup()
 
@@ -86,7 +86,7 @@ export class NonRepudiationDest {
    * @returns the verified payload and protected header
    *
    */
-  async verifyPoO (poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<JwsHeaderAndPayload<PoOPayload>> {
+  async verifyPoO (poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoOPayload>> {
     await this.initialized
 
     const cipherblockDgst = b64.encode(await sha(cipherblock, this.agreement.hashAlg), true, false)
@@ -162,7 +162,7 @@ export class NonRepudiationDest {
    * @param currentDate - check the proof as it were checked in this date
    * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
    */
-  async verifyPoP (pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<JwsHeaderAndPayload<PoPPayload>> {
+  async verifyPoP (pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoPPayload>> {
     await this.initialized
 
     if (this.exchange === undefined || this.block.por === undefined || this.block.poo === undefined) {
@@ -294,7 +294,8 @@ export class NonRepudiationDest {
       throw new Error('Before generating a VerificationRequest, you have first to hold a valid PoR for the exchange and have received the cipherblock')
     }
 
-    const payload: Dict<DisputeRequestPayload> = {
+    const payload: DisputeRequestPayload = {
+      proofType: 'request',
       iss: 'dest',
       por: this.block.por.jws,
       type: 'disputeRequest',
@@ -306,7 +307,7 @@ export class NonRepudiationDest {
     const privateKey = await importJwk(this.jwkPairDest.privateJwk)
 
     try {
-      const jws = await new SignJWT(payload)
+      const jws = await new SignJWT(payload as unknown as JWTPayload)
         .setProtectedHeader({ alg: this.jwkPairDest.privateJwk.alg })
         .setIssuedAt(payload.iat)
         .sign(privateKey)

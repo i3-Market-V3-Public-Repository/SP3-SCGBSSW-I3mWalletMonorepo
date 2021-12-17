@@ -1,7 +1,7 @@
 import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
-import { importJWK, jwtVerify } from 'jose'
 import { hashable } from 'object-sha'
+import { VerificationResolutionPayload } from '../src/ts'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
@@ -198,25 +198,26 @@ describe('Non-repudiation protocol', function () {
 
     it('a consumer should be able to generate a valid JWS', async function () {
       verificationRequestConsumer = await npConsumer.generateVerificationRequest()
-      const verified = await jwtVerify(verificationRequestConsumer, await importJWK(npConsumer.jwkPairDest.publicJwk))
+      const verified = await _pkg.jwsDecode(verificationRequestConsumer, npConsumer.jwkPairDest.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
     if (dltConfig.disable !== true) {
-      it('the consumer\'s verification req is properly verified by the CRS', async function () {
+      it('the consumer\'s verification req is verified and executed by the CRS, and, since the protocol completed, resolution is \'completed\'', async function () {
         const resolution = await crs.resolveCompleteness(verificationRequestConsumer)
-        const { payload } = await _pkg.jwsDecode<_pkg.VerificationResolution>(resolution, crs.jwkPair.publicJwk)
+        const { payload } = await _pkg.ConflictResolution.verifyResolution<VerificationResolutionPayload>(resolution)
         chai.expect(payload.resolution).to.equal('completed')
       })
     }
     it('a provider should be able to generate a valid JWS', async function () {
       verificationRequestProvider = await npProvider.generateVerificationRequest()
-      const verified = await jwtVerify(verificationRequestProvider, await importJWK(npProvider.jwkPairOrig.publicJwk))
+      const verified = await _pkg.jwsDecode(verificationRequestProvider, npProvider.jwkPairOrig.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
     if (dltConfig.disable !== true) {
       it('the provider\'s verification req is properly verified by the CRS', async function () {
         const resolution = await crs.resolveCompleteness(verificationRequestProvider)
-        const { payload } = await _pkg.jwsDecode<_pkg.VerificationResolution>(resolution, crs.jwkPair.publicJwk)
+        const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.VerificationResolutionPayload>(resolution, crs.jwkPair.publicJwk)
+        console.log(JSON.stringify(payload, undefined, 2))
         chai.expect(payload.resolution).to.equal('completed')
       })
     }
@@ -224,7 +225,7 @@ describe('Non-repudiation protocol', function () {
       const jws = verificationRequestProvider
       const [headerb64, , signatureb64] = jws.split('.')
       const { payload } = await _pkg.jwsDecode<_pkg.VerificationRequestPayload>(jws)
-      payload.por = payload.por.replace(/[a-zA-Z]/g, (val) => '2')
+      payload.por = payload.por.replace(/[a-zA-Z]/g, () => '2')
       const jws2 = [headerb64, encode(JSON.stringify(payload), true, false), signatureb64].join('.')
       let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
       try {
@@ -273,7 +274,7 @@ describe('Non-repudiation protocol', function () {
     if (dltConfig.disable !== true) {
       it('the CRS will send error if the request has an invalid signature', async function () {
         const [header, payload, signature] = verificationRequestConsumer.split('.')
-        const modifiedSignature = signature.replace(/[a-zA-Z]/g, (val) => '2')
+        const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
         const verificationRequestConsumer2 = [header, payload, modifiedSignature].join('.')
         let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
         try {
@@ -291,18 +292,18 @@ describe('Non-repudiation protocol', function () {
 
     it('a consumer should be able to generate it', async function () {
       disputeRequest = await npConsumer.generateDisputeRequest()
-      const verified = await jwtVerify(disputeRequest, await importJWK(npConsumer.jwkPairDest.publicJwk))
+      const verified = await _pkg.jwsDecode(disputeRequest, npConsumer.jwkPairDest.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
     if (dltConfig.disable !== true) {
       it('should be denied if the consumer\'s dispute req is properly verified by the CRS and decryption works', async function () {
         const resolution = await crs.resolveDispute(disputeRequest)
-        const { payload } = await _pkg.jwsDecode<_pkg.DisputeResolution>(resolution, crs.jwkPair.publicJwk)
+        const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.DisputeResolutionPayload>(resolution)
         chai.expect(payload.resolution).to.equal('denied')
       })
       it('the CRS will send error if the request has an invalid signature', async function () {
         const [header, payload, signature] = disputeRequest.split('.')
-        const modifiedSignature = signature.replace(/[a-zA-Z]/g, (val) => '2')
+        const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
         const disputeRequestConsumer2 = [header, payload, modifiedSignature].join('.')
         let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
         try {
@@ -350,7 +351,7 @@ describe('Non-repudiation protocol', function () {
       }
       let err
       try {
-        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.ProofPayload)
+        await _pkg.verifyProof(npConsumer.block?.poo?.jws as string, expectedPayload as unknown as _pkg.NrProofPayload)
       } catch (error) {
         err = error
       }
@@ -394,7 +395,7 @@ describe('Non-repudiation protocol', function () {
 
   describe('testing with invalid key', function () {
     it('should throw error', async function () {
-      const expectedPayload: Omit<_pkg.ProofPayload, 'iat'> = {
+      const expectedPayload: Omit<_pkg.NrProofPayload, 'iat'> = {
         iss: 'orig',
         proofType: 'por',
         exchange: {

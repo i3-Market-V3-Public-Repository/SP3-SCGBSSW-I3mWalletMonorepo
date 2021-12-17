@@ -1,10 +1,10 @@
 import { ethers } from 'ethers'
-import { importJWK, SignJWT } from 'jose'
+import { importJWK, JWTPayload, SignJWT } from 'jose'
 import { jwsDecode, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig } from '../dlt'
 import { NrError } from '../errors'
-import { DisputeRequestPayload, DisputeResolution, DltConfig, JwkPair, Resolution, VerificationRequestPayload, VerificationResolution } from '../types'
-import { parseHex } from '../utils/'
+import { DisputeRequestPayload, DisputeResolutionPayload, DltConfig, JwkPair, PoRPayload, ResolutionPayload, VerificationRequestPayload, VerificationResolutionPayload } from '../types'
+import { parseHex, parseJwk } from '../utils/'
 import { checkCompleteness } from './checkCompleteness'
 import { checkDecryption } from './checkDecryption'
 
@@ -70,8 +70,16 @@ export class ConflictResolver {
 
     const { payload: vrPayload } = await jwsDecode<VerificationRequestPayload>(verificationRequest)
 
-    const verificationResolution: VerificationResolution = {
-      ...resolution(vrPayload.dataExchangeId, vrPayload.iss),
+    let porPayload: PoRPayload
+    try {
+      const decoded = await jwsDecode<PoRPayload>(vrPayload.por)
+      porPayload = decoded.payload
+    } catch (error) {
+      throw new NrError(error, ['invalid por'])
+    }
+
+    const verificationResolution: VerificationResolutionPayload = {
+      ...await this._resolution(vrPayload.dataExchangeId, porPayload.exchange[vrPayload.iss]),
       resolution: 'not completed',
       type: 'verification'
     }
@@ -88,7 +96,7 @@ export class ConflictResolver {
 
     const privateKey = await importJWK(this.jwkPair.privateJwk)
 
-    return await new SignJWT(verificationResolution)
+    return await new SignJWT(verificationResolution as unknown as JWTPayload)
       .setProtectedHeader({ alg: this.jwkPair.privateJwk.alg })
       .setIssuedAt(verificationResolution.iat)
       .sign(privateKey)
@@ -108,8 +116,16 @@ export class ConflictResolver {
 
     const { payload: drPayload } = await jwsDecode<DisputeRequestPayload>(disputeRequest)
 
-    const disputeResolution: DisputeResolution = {
-      ...resolution(drPayload.dataExchangeId, drPayload.iss),
+    let porPayload: PoRPayload
+    try {
+      const decoded = await jwsDecode<PoRPayload>(drPayload.por)
+      porPayload = decoded.payload
+    } catch (error) {
+      throw new NrError(error, ['invalid por'])
+    }
+
+    const disputeResolution: DisputeResolutionPayload = {
+      ...await this._resolution(drPayload.dataExchangeId, porPayload.exchange[drPayload.iss]),
       resolution: 'denied',
       type: 'dispute'
     }
@@ -126,17 +142,19 @@ export class ConflictResolver {
 
     const privateKey = await importJWK(this.jwkPair.privateJwk)
 
-    return await new SignJWT(disputeResolution)
+    return await new SignJWT(disputeResolution as unknown as JWTPayload)
       .setProtectedHeader({ alg: this.jwkPair.privateJwk.alg })
       .setIssuedAt(disputeResolution.iat)
       .sign(privateKey)
   }
-}
 
-function resolution (dataExchangeId: string, iss: string): Resolution {
-  return {
-    dataExchangeId,
-    iat: Math.floor(Date.now() / 1000),
-    iss
+  private async _resolution (dataExchangeId: string, sub: string): Promise<ResolutionPayload> {
+    return {
+      proofType: 'resolution',
+      dataExchangeId,
+      iat: Math.floor(Date.now() / 1000),
+      iss: await parseJwk(this.jwkPair.publicJwk),
+      sub
+    }
   }
 }

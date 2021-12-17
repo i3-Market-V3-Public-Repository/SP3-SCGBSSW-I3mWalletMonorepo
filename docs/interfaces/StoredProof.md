@@ -4,7 +4,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `T` | extends [`ProofPayload`](ProofPayload.md) |
+| `T` | extends [`NrProofPayload`](NrProofPayload.md) |
 
 ## Table of contents
 
@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L41)
+[src/ts/types.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L41)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L42)
+[src/ts/types.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L42)

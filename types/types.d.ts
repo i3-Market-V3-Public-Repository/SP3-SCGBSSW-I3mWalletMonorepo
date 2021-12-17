@@ -1,5 +1,5 @@
 import { ContractInterface } from '@ethersproject/contracts';
-import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose';
+import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose';
 import { DltSigner } from './signers';
 import { HASH_ALGS, SIGNING_ALGS, ENC_ALGS } from './constants';
 export { KeyLike } from 'jose';
@@ -29,7 +29,7 @@ export interface DltConfig {
     disable: boolean;
     signer?: DltSigner;
 }
-export interface StoredProof<T extends ProofPayload> {
+export interface StoredProof<T extends NrProofPayload> {
     jws: string;
     payload: T;
 }
@@ -87,56 +87,62 @@ export interface ProofPayload {
     iat: number;
     iss: string;
     proofType: string;
+}
+export interface NrProofPayload extends ProofPayload {
     exchange: DataExchange;
 }
-export interface PoOPayload extends ProofPayload {
+export interface PoOPayload extends NrProofPayload {
     iss: 'orig';
     proofType: 'PoO';
 }
-export interface PoRPayload extends ProofPayload {
+export interface PoRPayload extends NrProofPayload {
     iss: 'dest';
     proofType: 'PoR';
     poo: string;
 }
-export interface PoPPayload extends ProofPayload {
+export interface PoPPayload extends NrProofPayload {
     iss: 'orig';
     proofType: 'PoP';
     por: string;
     secret: string;
     verificationCode: string;
 }
-interface ConflictResolutionRequest extends JWTPayload {
+interface ConflictResolutionRequestPayload extends ProofPayload {
+    proofType: 'request';
     iss: 'orig' | 'dest';
     iat: number;
     por: string;
     dataExchangeId: string;
 }
-export interface VerificationRequestPayload extends ConflictResolutionRequest {
+export interface VerificationRequestPayload extends ConflictResolutionRequestPayload {
     type: 'verificationRequest';
 }
-export interface DisputeRequestPayload extends ConflictResolutionRequest {
+export interface DisputeRequestPayload extends ConflictResolutionRequestPayload {
     type: 'disputeRequest';
     iss: 'dest';
     cipherblock: string;
 }
-export interface Resolution extends JWTPayload {
+export interface ResolutionPayload extends ProofPayload {
+    proofType: 'resolution';
     type?: string;
     resolution?: string;
     dataExchangeId: string;
     iat: number;
     iss: string;
+    sub: string;
 }
-export interface VerificationResolution extends Resolution {
+export interface VerificationResolutionPayload extends ResolutionPayload {
     type: 'verification';
     resolution: 'completed' | 'not completed';
 }
-export interface DisputeResolution extends Resolution {
+export interface DisputeResolutionPayload extends ResolutionPayload {
     type: 'dispute';
     resolution: 'accepted' | 'denied';
 }
-export interface JwsHeaderAndPayload<T> {
+export interface DecodedProof<T extends ProofPayload> {
     header: JWTHeaderParameters;
     payload: T;
+    signer?: JWK;
 }
 export declare type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
 export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid iat' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';

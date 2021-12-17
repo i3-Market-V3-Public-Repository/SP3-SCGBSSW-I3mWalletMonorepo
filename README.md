@@ -3,9 +3,14 @@
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 
-# @i3m/non-repudiation-protocol
+# @i3m/non-repudiation-library
 
-Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data. It is a core element of the Conflict Resolution system in i3-MARKET. [Read more here](./conflict-resolution.md)
+Library for handling non-repudiation proofs in the i3-MARKET ecosystem. It is a core element of the Conflict Resolution system in i3-MARKET ([Read more here](./conflict-resolution.md)).
+
+The library enables implementation of:
+
+1. The **non-repudiation protocol** of a data exchange
+2. **The Conflict-Resolver Service**, which can be queried to check completeness of the non-repudiation protocol and/or solve a dispute.
 
 ## API reference documentation
 
@@ -13,33 +18,33 @@ Library for the i3-market non-repudiation protocol that helps generate/verifying
 
 ## Usage
 
-Once you set up the i3-MARKET NPM, `@i3m/non-repudiation-protocol` can be imported to your project with `npm`:
+Once you set up the i3-MARKET NPM, `@i3m/non-repudiation-library` can be imported to your project with `npm`:
 
 ```console
-npm install @i3m/non-repudiation-protocol
+npm install @i3m/non-repudiation-library
 ```
 
-Alternatively, you can just download the [latest release](./releases/i3m-non-repudiation-protocol-latest.tgz) and install into your project with:
+Alternatively, you can just download the [latest release](./releases/i3m-non-repudiation-library-latest.tgz) and install into your project with:
 
 ```console
-npm install <path to i3m-non-repudiation-protocol-latest.tgz>
+npm install <path to i3m-non-repudiation-library-latest.tgz>
 ```
 
 Then either require (Node.js CJS):
 
 ```javascript
-const nonRepudiationProtocol = require('@i3m/non-repudiation-protocol')
+const nonRepudiationLibrary = require('@i3m/non-repudiation-library')
 ```
 
 or import (JavaScript ES module):
 
 ```javascript
-import * as nonRepudiationProtocol from '@i3m/non-repudiation-protocol'
+import * as nonRepudiationLibrary from '@i3m/non-repudiation-library'
 ```
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-protocol/-/raw/master/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-protocol` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-protocol/dist/bundles/`.
+You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
 
 ### Example for an i3-MARKET Provider using the Non-Repudiation Protocol
 
@@ -50,7 +55,7 @@ Before starting the agreement you need:
   >You can easily create the key pair with the `generateKeys` utility function. For example:
   >
   >```typescript
-  >const providerJwks = await nonRepudiationProtocol.generateKeys(SIGNING_ALG)
+  >const providerJwks = await nonRepudiationLibrary.generateKeys(SIGNING_ALG)
   >```
 
 - An Ethereum address with enough funds on the ledger and either:
@@ -64,7 +69,7 @@ async nrp() => {
   /**
    * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
    */
-  const dataExchangeAgreement: nonRepudiationProtocol.DataExchangeAgreement = {
+  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = {
     // Public key of the origin (data provider) for verifying the proofs she/he issues. It should be providerJwks.publicJwk
     orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
     // Public key of the destination (data consumer)
@@ -76,9 +81,9 @@ async nrp() => {
     // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
     hashAlg: 'SHA-256',
     // The ledger smart contract address (hexadecimal) on the DLT
-    ledgerContractAddress: '7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
+    ledgerContractAddress: '0x7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
     // The orig (data provider) address in the DLT (hexadecimal).
-    ledgerSignerAddress: '17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
+    ledgerSignerAddress: '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
     // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
     pooToPorDelay: 10000,
     // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
@@ -88,7 +93,7 @@ async nrp() => {
   }
 
   // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
-  const dltConfig: Partial<nonRepudiationProtocol.DltConfig> = {
+  const dltConfig: Partial<nonRepudiationLibrary.DltConfig> = {
     rpcProviderUrl: '***REMOVED***'
   }
   
@@ -98,13 +103,13 @@ async nrp() => {
   /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
    * You need:
-   *  - the data agreement
+   *  - the data agreement. It will be parsed for correctness.
    *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
    *  - the block of data to send as a Uint8Array
    *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
    *  - [optional] a private key in hex for the DLT, just in case no DltSigner is provided in dltConfig
    */
-  const npProvider = new nonRepudiationProtocol.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig, providerDltSigningKeyHex)
+  const npProvider = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig, providerDltSigningKeyHex)
 
   // Create the proof of origin (PoO)
   const poo = await npProvider.generatePoO()
@@ -123,6 +128,15 @@ async nrp() => {
 
   // Send pop to the consumer. The PoP includes the secret to decrypt the cipherblock; although the consumer could also get the secret from the smart contract
   ...
+
+  // It is desired to send a signed resolution about the completeness of the protocol by a trusted third party (the CRS), so generate a verification Request as:
+  verificationRequest = await npProvider.generateVerificationRequest()
+
+  // Send the verificationRequest to the CRS and receive a signed resolution. The resolution can be decoded/verified as:
+  const { payload, signer } = await _pkg.ConflictResolution.verifyResolution<_pkg.VerificationResolutionPayload>(resolution, crs.jwkPair.publicJwk)
+  if (payload.resolution === 'completed') {
+    // is a valid proof of completeness signed by signer (the public JWK)
+  }
 )
 nrp()
 ```
@@ -132,7 +146,7 @@ nrp()
 Before starting the agreement, you need a pair of public private keys. You can easily create the key pair with the `generateKeys` utility function:
 
 ```typescript
-  const consumerJwks = await nonRepudiationProtocol.generateKeys('ES256')
+  const consumerJwks = await nonRepudiationLibrary.generateKeys('ES256')
 ```
 
 And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
@@ -142,7 +156,7 @@ async nrp() => {
   /**
    * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
    */
-  const dataExchangeAgreement: nonRepudiationProtocol.DataExchangeAgreement = {
+  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = {
     // Public key of the origin (data provider)
     orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
     // Public key of the destination (data consumer). It should be consumerJwks.publicJwk
@@ -154,9 +168,9 @@ async nrp() => {
     // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
     hashAlg: 'SHA-256',
     // The ledger smart contract address on the DLT (hexadecimal)
-    ledgerContractAddress: '7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
+    ledgerContractAddress: '0x7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
     // The orig (data provider) address in the DLT (hexadecimal). It can use a different keypair for signing proofs and signing transactions to the DLT) 
-    ledgerSignerAddress: '17bd12c2134afc1f6e9302a532efe30c19b9e903',
+    ledgerSignerAddress: '0x17bd12c2134afc1f6e9302a532efe30c19b9e903',
     // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
     pooToPorDelay: 10000,
     // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
@@ -166,18 +180,18 @@ async nrp() => {
   }
   
   // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
-  const dltConfig: Partial<nonRepudiationProtocol.DltConfig> = {
+  const dltConfig: Partial<nonRepudiationLibrary.DltConfig> = {
     rpcProviderUrl: '***REMOVED***'
   }
 
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
    * You need:
-   *  - the data agreement
+   *  - the data agreement. It will be parsed for correctness.
    *  - the private key of the consumer (to sign proofs)
    *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
    */
-  const npConsumer = new nonRepudiationProtocol.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
+  const npConsumer = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
 
   // Receive poo and cipherblock (in JWE string format)
   ...
@@ -201,7 +215,25 @@ async nrp() => {
   await npConsumer.getSecretFromLedger()
 
   // Decrypt cipherblock and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). If verification fails, it throws an error.
-  const decryptedBlock = await npConsumer.decrypt()
+  try {
+    const decryptedBlock = await npConsumer.decrypt()
+  } catch(error) {
+    /* If we have been unable to decrypt the cipherblock using the published secret,
+     * we can generate a dispute request to send to the Conflict-Resolver Service (CRS).
+     */
+    const disputeRequest = await npConsumer.generateDisputeRequest()
+
+    // Send disputeRequest to CRS
+    ...
+
+    // We will receive a signed resolution. Let us assume that is in variable disputeResolution
+    const resolutionPayload = await @i3m/non-repudiation-library.ConflictResolution.verifyResolution<DisputeResolution>(disputeResolution)
+    if (resolutionPayload.resolution === 'accepted') {
+      // We were right about our claim: the cipherblock cannot be decrypted and we can't be invoiced for it.
+    } else { // resolutionPayload.resolution === 'denied'
+      // The cipherblock can be decrypted with the published secret, so either we had a malicious intention or we have an issue with our software.
+    }
+  }
 )
 nrp()
 ```

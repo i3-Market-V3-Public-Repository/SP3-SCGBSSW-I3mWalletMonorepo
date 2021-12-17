@@ -12,7 +12,7 @@ describe('checkAgreement', function () {
     pooToSecretDelay: 180000
   }
   it('should return a parsed agreement strictly following the required format', async function () {
-    const parsedAgreement = await _pkg.checkAgreement(agreement)
+    const parsedAgreement = await _pkg.parseAgreement(agreement)
     console.log(JSON.stringify(parsedAgreement, undefined, 2))
     chai.expect(parsedAgreement).to.not.equal(undefined)
   })
@@ -20,7 +20,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, extra: 'juju' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement)
+      await _pkg.parseAgreement(badAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -32,7 +32,7 @@ describe('checkAgreement', function () {
     delete badAgreement.pooToPopDelay
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -42,7 +42,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, ledgerSignerAddress: '0xjuju' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -52,7 +52,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, orig: '{"kty":"EC","crv":"P-256","x":"Qcg51QcqVM7x2m7U_8cM7-Cndo5SVcRFXhrkSC2n_bM","y":"KLONuQwA0Tv8DeQlteWQ1Yy64iwBMCvtXOJwns1NL_8"}' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -62,7 +62,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, hashAlg: 'otro' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -72,7 +72,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, encAlg: 'otro' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }
@@ -82,7 +82,7 @@ describe('checkAgreement', function () {
     const badAgreement = { ...agreement, signingAlg: 'otro' }
     let err: _pkg.NrError = new _pkg.NrError(new Error('error'), ['unexpected error'])
     try {
-      await _pkg.checkAgreement(badAgreement as _pkg.DataExchangeAgreement)
+      await _pkg.parseAgreement(badAgreement as _pkg.DataExchangeAgreement)
     } catch (error) {
       err = error as _pkg.NrError
     }

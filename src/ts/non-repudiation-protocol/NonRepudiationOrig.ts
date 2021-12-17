@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { defaultDltConfig } from '../dlt/'
-import { exchangeId, checkAgreement } from '../exchange'
+import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { EthersSigner } from '../signers'
 import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
@@ -60,7 +60,7 @@ export class NonRepudiationOrig {
   }
 
   private async init (agreement: DataExchangeAgreement, privateLedgerKeyHex?: string): Promise<void> {
-    this.agreement = await checkAgreement(agreement)
+    this.agreement = await parseAgreement(agreement)
 
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 

@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- [`ProofPayload`](ProofPayload.md)
+- [`NrProofPayload`](NrProofPayload.md)
 
   ↳ **`PoPPayload`**
 
@@ -26,11 +26,11 @@
 
 #### Inherited from
 
-[ProofPayload](ProofPayload.md).[exchange](ProofPayload.md#exchange)
+[NrProofPayload](NrProofPayload.md).[exchange](NrProofPayload.md#exchange)
 
 #### Defined in
 
-[src/ts/types.ts:105](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L105)
+[src/ts/types.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L108)
 
 ___
 
@@ -40,11 +40,11 @@ ___
 
 #### Inherited from
 
-[ProofPayload](ProofPayload.md).[iat](ProofPayload.md#iat)
+[NrProofPayload](NrProofPayload.md).[iat](NrProofPayload.md#iat)
 
 #### Defined in
 
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L102)
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L102)
 
 ___
 
@@ -54,11 +54,11 @@ ___
 
 #### Overrides
 
-[ProofPayload](ProofPayload.md).[iss](ProofPayload.md#iss)
+[NrProofPayload](NrProofPayload.md).[iss](NrProofPayload.md#iss)
 
 #### Defined in
 
-[src/ts/types.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L120)
+[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L123)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L122)
+[src/ts/types.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L125)
 
 ___
 
@@ -78,11 +78,11 @@ ___
 
 #### Overrides
 
-[ProofPayload](ProofPayload.md).[proofType](ProofPayload.md#prooftype)
+[NrProofPayload](NrProofPayload.md).[proofType](NrProofPayload.md#prooftype)
 
 #### Defined in
 
-[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L121)
+[src/ts/types.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L124)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L123)
+[src/ts/types.ts:126](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L126)
 
 ___
 
@@ -102,4 +102,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L124)
+[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L127)

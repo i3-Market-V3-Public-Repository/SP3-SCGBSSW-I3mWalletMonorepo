@@ -11,7 +11,7 @@ function parseTimestamp (timestamp: number | string): number {
   }
 }
 
-export async function checkAgreement (agreement: DataExchangeAgreement): Promise<DataExchangeAgreement> {
+export async function parseAgreement (agreement: DataExchangeAgreement): Promise<DataExchangeAgreement> {
   const parsedAgreement: DataExchangeAgreement = { ...agreement }
   const agreementClaims = Object.keys(parsedAgreement)
   if (agreementClaims.length < 10 || agreementClaims.length > 11) {
@@ -50,7 +50,7 @@ export async function checkAgreement (agreement: DataExchangeAgreement): Promise
       case 'schema':
         break
       default:
-        throw new NrError(new Error(`Additional key ${key} not allowed in dataAgreement`), ['invalid format'])
+        throw new NrError(new Error(`Property ${key} not allowed in dataAgreement`), ['invalid format'])
     }
   }
   return parsedAgreement

@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- [`ProofPayload`](ProofPayload.md)
+- [`NrProofPayload`](NrProofPayload.md)
 
   ↳ **`PoOPayload`**
 
@@ -23,11 +23,11 @@
 
 #### Inherited from
 
-[ProofPayload](ProofPayload.md).[exchange](ProofPayload.md#exchange)
+[NrProofPayload](NrProofPayload.md).[exchange](NrProofPayload.md#exchange)
 
 #### Defined in
 
-[src/ts/types.ts:105](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L105)
+[src/ts/types.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L108)
 
 ___
 
@@ -37,11 +37,11 @@ ___
 
 #### Inherited from
 
-[ProofPayload](ProofPayload.md).[iat](ProofPayload.md#iat)
+[NrProofPayload](NrProofPayload.md).[iat](NrProofPayload.md#iat)
 
 #### Defined in
 
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L102)
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L102)
 
 ___
 
@@ -51,11 +51,11 @@ ___
 
 #### Overrides
 
-[ProofPayload](ProofPayload.md).[iss](ProofPayload.md#iss)
+[NrProofPayload](NrProofPayload.md).[iss](NrProofPayload.md#iss)
 
 #### Defined in
 
-[src/ts/types.ts:109](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L109)
+[src/ts/types.ts:112](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L112)
 
 ___
 
@@ -65,8 +65,8 @@ ___
 
 #### Overrides
 
-[ProofPayload](ProofPayload.md).[proofType](ProofPayload.md#prooftype)
+[NrProofPayload](NrProofPayload.md).[proofType](NrProofPayload.md#prooftype)
 
 #### Defined in
 
-[src/ts/types.ts:110](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L110)
+[src/ts/types.ts:113](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L113)

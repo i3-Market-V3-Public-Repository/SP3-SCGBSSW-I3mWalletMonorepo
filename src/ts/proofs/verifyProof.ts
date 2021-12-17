@@ -1,6 +1,6 @@
 import { hashable } from 'object-sha'
 import { jwsDecode } from '../crypto/'
-import { DataExchange, Dict, JwsHeaderAndPayload, ProofPayload, TimestampVerifyOptions } from '../types'
+import { DataExchange, Dict, DecodedProof, NrProofPayload, TimestampVerifyOptions } from '../types'
 import { checkIssuedAt } from '../utils/checkIssuedAt'
 
 /**
@@ -26,7 +26,7 @@ import { checkIssuedAt } from '../utils/checkIssuedAt'
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export async function verifyProof<T extends ProofPayload> (proof: string, expectedPayloadClaims: Partial<T> & { iss: T['iss'], proofType: T['proofType'], exchange: Dict<T['exchange']> }, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JwsHeaderAndPayload<T>> {
+export async function verifyProof<T extends NrProofPayload> (proof: string, expectedPayloadClaims: Partial<T> & { iss: T['iss'], proofType: T['proofType'], exchange: Dict<T['exchange']> }, timestampVerifyOptions?: TimestampVerifyOptions): Promise<DecodedProof<T>> {
   const publicJwk = JSON.parse(expectedPayloadClaims.exchange[expectedPayloadClaims.iss] as string)
 
   const verification = await jwsDecode<Dict<T>>(proof, publicJwk)

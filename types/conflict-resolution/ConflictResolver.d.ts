@@ -39,5 +39,6 @@ export declare class ConflictResolver {
      * @returns a signed resolution
      */
     resolveDispute(disputeRequest: string): Promise<string>;
+    private _resolution;
 }
 //# sourceMappingURL=ConflictResolver.d.ts.map

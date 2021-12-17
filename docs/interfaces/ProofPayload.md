@@ -4,32 +4,19 @@
 
 - **`ProofPayload`**
 
-  ↳ [`PoOPayload`](PoOPayload.md)
+  ↳ [`NrProofPayload`](NrProofPayload.md)
 
-  ↳ [`PoRPayload`](PoRPayload.md)
-
-  ↳ [`PoPPayload`](PoPPayload.md)
+  ↳ [`ResolutionPayload`](ResolutionPayload.md)
 
 ## Table of contents
 
 ### Properties
 
-- [exchange](ProofPayload.md#exchange)
 - [iat](ProofPayload.md#iat)
 - [iss](ProofPayload.md#iss)
 - [proofType](ProofPayload.md#prooftype)
 
 ## Properties
-
-### exchange
-
-• **exchange**: [`DataExchange`](DataExchange.md)
-
-#### Defined in
-
-[src/ts/types.ts:105](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L105)
-
-___
 
 ### iat
 
@@ -37,7 +24,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L102)
+[src/ts/types.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L102)
 
 ___
 
@@ -47,7 +34,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L103)
+[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L103)
 
 ___
 
@@ -57,4 +44,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fe11e28/src/ts/types.ts#L104)
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/aecb67f/src/ts/types.ts#L104)

@@ -1,8 +1,9 @@
-import { importJWK, SignJWT } from 'jose'
+import { importJWK, JWTPayload, SignJWT } from 'jose'
 import { JWK, VerificationRequestPayload } from '../types'
 
 export async function generateVerificationRequest (iss: 'orig' | 'dest', dataExchangeId: string, por: string, privateJwk: JWK): Promise<string> {
   const payload: VerificationRequestPayload = {
+    proofType: 'request',
     iss,
     dataExchangeId,
     por,
@@ -12,7 +13,7 @@ export async function generateVerificationRequest (iss: 'orig' | 'dest', dataExc
 
   const privateKey = await importJWK(privateJwk)
 
-  return await new SignJWT(payload)
+  return await new SignJWT(payload as unknown as JWTPayload)
     .setProtectedHeader({ alg: privateJwk.alg })
     .setIssuedAt(payload.iat)
     .sign(privateKey)

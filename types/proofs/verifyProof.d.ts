@@ -1,4 +1,4 @@
-import { Dict, JwsHeaderAndPayload, ProofPayload, TimestampVerifyOptions } from '../types';
+import { Dict, DecodedProof, NrProofPayload, TimestampVerifyOptions } from '../types';
 /**
  * Verify a proof
  * @param proof - a non-repudiable proof in Compact JWS formatted JWT string
@@ -22,9 +22,9 @@ import { Dict, JwsHeaderAndPayload, ProofPayload, TimestampVerifyOptions } from 
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export declare function verifyProof<T extends ProofPayload>(proof: string, expectedPayloadClaims: Partial<T> & {
+export declare function verifyProof<T extends NrProofPayload>(proof: string, expectedPayloadClaims: Partial<T> & {
     iss: T['iss'];
     proofType: T['proofType'];
     exchange: Dict<T['exchange']>;
-}, timestampVerifyOptions?: TimestampVerifyOptions): Promise<JwsHeaderAndPayload<T>>;
+}, timestampVerifyOptions?: TimestampVerifyOptions): Promise<DecodedProof<T>>;
 //# sourceMappingURL=verifyProof.d.ts.map

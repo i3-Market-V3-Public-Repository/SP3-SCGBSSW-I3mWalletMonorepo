@@ -1,7 +1,7 @@
 import * as b64 from '@juanelas/base64'
-import { JWTHeaderParameters, JWTPayload, jwtVerify } from 'jose'
+import { JWTHeaderParameters, jwtVerify } from 'jose'
 import { NrError } from '../errors'
-import { getFromJws, JWK, JwsHeaderAndPayload } from '../types'
+import { ProofPayload, getFromJws, JWK, DecodedProof } from '../types'
 import { importJwk } from './importJwk'
 
 /**
@@ -9,7 +9,7 @@ import { importJwk } from './importJwk'
  * @param jws
  * @param publicJwk - either a public key as a JWK or a function that resolves to a JWK. If not provided, the JWS signature is not verified
  */
-export async function jwsDecode<T extends JWTPayload> (jws: string, publicJwk?: JWK | getFromJws<T>): Promise<JwsHeaderAndPayload<T>> {
+export async function jwsDecode<T extends ProofPayload> (jws: string, publicJwk?: JWK | getFromJws<T>): Promise<DecodedProof<T>> {
   const regex = /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/
   const match = jws.match(regex)
 
@@ -28,12 +28,13 @@ export async function jwsDecode<T extends JWTPayload> (jws: string, publicJwk?: 
 
   if (publicJwk !== undefined) {
     const pubJwk = (typeof publicJwk === 'function') ? await publicJwk(header, payload) : publicJwk
-    const jwk = await importJwk(pubJwk)
+    const pubKey = await importJwk(pubJwk)
     try {
-      const verified = await jwtVerify(jws, jwk)
+      const verified = await jwtVerify(jws, pubKey)
       return {
         header: verified.protectedHeader,
-        payload: verified.payload as T
+        payload: verified.payload as unknown as T,
+        signer: pubJwk
       }
     } catch (error) {
       throw new NrError(error, ['jws verification failed'])

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { PoRPayload } from '..';
-import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, JwsHeaderAndPayload, PoOPayload, PoPPayload, StoredProof } from './../types';
+import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof } from './../types';
 /**
  * The base class that should be instantiated by the destination of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -34,7 +34,7 @@ export declare class NonRepudiationDest {
      * @returns the verified payload and protected header
      *
      */
-    verifyPoO(poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<JwsHeaderAndPayload<PoOPayload>>;
+    verifyPoO(poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoOPayload>>;
     /**
      * Creates the proof of reception (PoR).
      * Besides returning its value, it is also stored in `this.block.por`
@@ -49,7 +49,7 @@ export declare class NonRepudiationDest {
      * @param currentDate - check the proof as it were checked in this date
      * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
      */
-    verifyPoP(pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<JwsHeaderAndPayload<PoPPayload>>;
+    verifyPoP(pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoPPayload>>;
     /**
      * Just in case the PoP is not received, the secret can be downloaded from the ledger.
      * The secret should be downloaded before poo.iat + pooToPop max delay.

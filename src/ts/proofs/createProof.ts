@@ -1,5 +1,5 @@
 import { SignJWT } from 'jose'
-import { JWK, ProofPayload, StoredProof, DataExchange, Dict } from '../types'
+import { JWK, NrProofPayload, StoredProof, DataExchange, Dict } from '../types'
 import { verifyKeyPair } from '../crypto/verifyKeyPair'
 import { importJwk } from '../crypto'
 
@@ -11,7 +11,7 @@ import { importJwk } from '../crypto'
  * @param privateJwk - The private key in JWK that will sign the proof
  * @returns a proof as a compact JWS formatted JWT string
  */
-export async function createProof<T extends ProofPayload> (payload: Omit<T, 'iat'>, privateJwk: JWK): Promise<StoredProof<T>> {
+export async function createProof<T extends NrProofPayload> (payload: Omit<T, 'iat'>, privateJwk: JWK): Promise<StoredProof<T>> {
   if (payload.iss === undefined) {
     throw new Error('Payload iss should be set to either "orig" or "dest"')
   }

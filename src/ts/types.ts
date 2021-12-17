@@ -1,5 +1,5 @@
 import { ContractInterface } from '@ethersproject/contracts'
-import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters, JWTPayload } from 'jose'
+import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose'
 import { DltSigner } from './signers'
 import { HASH_ALGS, SIGNING_ALGS, ENC_ALGS } from './constants'
 
@@ -37,7 +37,7 @@ export interface DltConfig {
   signer?: DltSigner
 }
 
-export interface StoredProof<T extends ProofPayload> {
+export interface StoredProof<T extends NrProofPayload> {
   jws: string
   payload: T
 }
@@ -102,21 +102,24 @@ export interface ProofPayload {
   iat: number
   iss: string
   proofType: string
+}
+
+export interface NrProofPayload extends ProofPayload {
   exchange: DataExchange
 }
 
-export interface PoOPayload extends ProofPayload {
+export interface PoOPayload extends NrProofPayload {
   iss: 'orig'
   proofType: 'PoO'
 }
 
-export interface PoRPayload extends ProofPayload {
+export interface PoRPayload extends NrProofPayload {
   iss: 'dest'
   proofType: 'PoR'
   poo: string // the received PoR as compact JWS
 }
 
-export interface PoPPayload extends ProofPayload {
+export interface PoPPayload extends NrProofPayload {
   iss: 'orig'
   proofType: 'PoP'
   por: string // the received PoR as compact JWS
@@ -124,44 +127,48 @@ export interface PoPPayload extends ProofPayload {
   verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
 
-interface ConflictResolutionRequest extends JWTPayload {
+interface ConflictResolutionRequestPayload extends ProofPayload {
+  proofType: 'request'
   iss: 'orig' | 'dest'
   iat: number // unix timestamp for issued at
   por: string // a compact JWS holding a PoR. The proof MUST be signed with the same key as either 'orig' or 'dest' of the payload proof.
   dataExchangeId: string // the unique id of this data exchange
 }
 
-export interface VerificationRequestPayload extends ConflictResolutionRequest {
+export interface VerificationRequestPayload extends ConflictResolutionRequestPayload {
   type: 'verificationRequest'
 }
 
-export interface DisputeRequestPayload extends ConflictResolutionRequest {
+export interface DisputeRequestPayload extends ConflictResolutionRequestPayload {
   type: 'disputeRequest'
   iss: 'dest'
   cipherblock: string // the cipherblock as a JWE string
 }
 
-export interface Resolution extends JWTPayload {
+export interface ResolutionPayload extends ProofPayload {
+  proofType: 'resolution'
   type?: string
   resolution?: string
   dataExchangeId: string // the unique id of this data exchange
   iat: number // unix timestamp stating when it was resolved
   iss: string // the public key of the CRS in JWK
+  sub: string // the public key (JWK) of the entity that requested a resolution
 }
 
-export interface VerificationResolution extends Resolution {
+export interface VerificationResolutionPayload extends ResolutionPayload {
   type: 'verification'
   resolution: 'completed' | 'not completed' // whether the data exchange has been verified to be complete
 }
 
-export interface DisputeResolution extends Resolution {
+export interface DisputeResolutionPayload extends ResolutionPayload {
   type: 'dispute'
   resolution: 'accepted' | 'denied' // resolution is 'denied' if the cipherblock can be properly decrypted; otherwise is 'accepted'
 }
 
-export interface JwsHeaderAndPayload<T> {
+export interface DecodedProof<T extends ProofPayload> {
   header: JWTHeaderParameters
   payload: T
+  signer?: JWK // Public JWK used to verify the signature
 }
 export type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>
 
