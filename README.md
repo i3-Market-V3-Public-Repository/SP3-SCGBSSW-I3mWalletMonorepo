@@ -132,8 +132,11 @@ async nrp() => {
   // It is desired to send a signed resolution about the completeness of the protocol by a trusted third party (the CRS), so generate a verification Request as:
   verificationRequest = await npProvider.generateVerificationRequest()
 
-  // Send the verificationRequest to the CRS and receive a signed resolution. The resolution can be decoded/verified as:
-  const { payload, signer } = await _pkg.ConflictResolution.verifyResolution<_pkg.VerificationResolutionPayload>(resolution, crs.jwkPair.publicJwk)
+  // Send the verificationRequest to the CRS
+  ...
+  
+  // and receive a signed resolution. The resolution can be decoded/verified as:
+  const { payload, signer } = await nonRepudiationLibrary.ConflictResolution.verifyResolution<VerificationResolutionPayload>(resolution)
   if (payload.resolution === 'completed') {
     // is a valid proof of completeness signed by signer (the public JWK)
   }
@@ -227,7 +230,7 @@ async nrp() => {
     ...
 
     // We will receive a signed resolution. Let us assume that is in variable disputeResolution
-    const resolutionPayload = await @i3m/non-repudiation-library.ConflictResolution.verifyResolution<DisputeResolution>(disputeResolution)
+    const resolutionPayload = await nonRepudiationLibrary.ConflictResolution.verifyResolution<DisputeResolution>(disputeResolution)
     if (resolutionPayload.resolution === 'accepted') {
       // We were right about our claim: the cipherblock cannot be decrypted and we can't be invoiced for it.
     } else { // resolutionPayload.resolution === 'denied'
