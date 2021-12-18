@@ -9,7 +9,7 @@ import { defaultDltConfig, getSecretFromLedger } from '../dlt/'
 import { NrError } from '../errors'
 import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
-import { checkIssuedAt, parseHex, sha } from '../utils/'
+import { checkTimestamp, parseHex, sha } from '../utils/'
 import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
@@ -81,12 +81,11 @@ export class NonRepudiationDest {
    *
    * @param poo - a Proof of Origin (PoO) in compact JWS format
    * @param cipherblock - a cipherblock as a JWE
-   * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-   * @param currentDate - check the PoO as it were checked in this date
+   * @param options - time verification options
    * @returns the verified payload and protected header
    *
    */
-  async verifyPoO (poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoOPayload>> {
+  async verifyPoO (poo: string, cipherblock: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<DecodedProof<PoOPayload>> {
     await this.initialized
 
     const cipherblockDgst = b64.encode(await sha(cipherblock, this.agreement.hashAlg), true, false)
@@ -111,11 +110,14 @@ export class NonRepudiationDest {
       exchange: dataExchange
     }
 
-    const proofVerifyOptions: TimestampVerifyOptions = {}
-    if (clockToleranceMs !== undefined) proofVerifyOptions.clockToleranceMs = clockToleranceMs
-    if (currentDate !== undefined) proofVerifyOptions.currentTimestamp = currentDate.valueOf()
-
-    const verified = await verifyProof<PoOPayload>(poo, expectedPayloadClaims, proofVerifyOptions)
+    const currentTimestamp = Date.now()
+    const opts: TimestampVerifyOptions = {
+      timestamp: currentTimestamp,
+      notBefore: 'iat',
+      notAfter: 'iat',
+      ...options
+    }
+    const verified = await verifyProof<PoOPayload>(poo, expectedPayloadClaims, opts)
 
     this.block = {
       jwe: cipherblock,
@@ -158,11 +160,10 @@ export class NonRepudiationDest {
   /**
    * Verifies a received Proof of Publication (PoP) and returns the secret
    * @param pop - a PoP in compact JWS
-   * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-   * @param currentDate - check the proof as it were checked in this date
+   * @param options - time related options for verification
    * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
    */
-  async verifyPoP (pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoPPayload>> {
+  async verifyPoP (pop: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<DecodedProof<PoPPayload>> {
     await this.initialized
 
     if (this.exchange === undefined || this.block.por === undefined || this.block.poo === undefined) {
@@ -178,16 +179,14 @@ export class NonRepudiationDest {
       verificationCode: ''
     }
 
-    const proofVerifyOptions: TimestampVerifyOptions = {
-      expectedTimestampInterval: {
-        min: this.block.poo?.payload.iat * 1000,
-        max: this.block.poo?.payload.iat * 1000 + this.exchange.pooToPopDelay
-      }
+    const opts: TimestampVerifyOptions = {
+      timestamp: Date.now(),
+      notBefore: 'iat',
+      notAfter: this.block.poo.payload.iat * 1000 + this.exchange.pooToPopDelay,
+      ...options
     }
-    if (clockToleranceMs !== undefined) proofVerifyOptions.clockToleranceMs = clockToleranceMs
-    if (currentDate !== undefined) proofVerifyOptions.currentTimestamp = currentDate.valueOf()
 
-    const verified = await verifyProof<PoPPayload>(pop, expectedPayloadClaims, proofVerifyOptions)
+    const verified = await verifyProof<PoPPayload>(pop, expectedPayloadClaims, opts)
 
     const secret: JWK = JSON.parse(verified.payload.secret)
 
@@ -224,15 +223,9 @@ export class NonRepudiationDest {
     this.block.secret = await oneTimeSecret(this.exchange.encAlg, secretHex)
 
     try {
-      checkIssuedAt(iat, {
-        clockToleranceMs: 0, // The ledger time is what it counts
-        expectedTimestampInterval: {
-          min: this.block.poo.payload.iat * 1000,
-          max: this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay
-        }
-      })
+      checkTimestamp(iat * 1000, this.block.por.payload.iat * 1000, this.block.poo.payload.iat * 1000 + this.exchange.pooToSecretDelay)
     } catch (error) {
-      throw new Error(`Although the secret has been obtained (and you could try to decrypt the cipherblock), it's been published later than agreed: ${(new Date(iat * 1000)).toUTCString()} > ${(new Date(this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay)).toUTCString()}`)
+      throw new NrError(`Although the secret has been obtained (and you could try to decrypt the cipherblock), it's been published later than agreed: ${(new Date(iat * 1000)).toUTCString()} > ${(new Date(this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay)).toUTCString()}`, ['secret not published in time'])
     }
 
     return this.block.secret

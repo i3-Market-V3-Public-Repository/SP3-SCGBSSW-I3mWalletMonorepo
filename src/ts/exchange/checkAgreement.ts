@@ -7,7 +7,7 @@ function parseTimestamp (timestamp: number | string): number {
   if ((new Date(timestamp)).getTime() > 0) {
     return Number(timestamp)
   } else {
-    throw new NrError(new Error('invalid timestamp'), ['invalid iat'])
+    throw new NrError(new Error('invalid timestamp'), ['invalid timestamp'])
   }
 }
 
@@ -21,7 +21,7 @@ export async function parseAgreement (agreement: DataExchangeAgreement): Promise
     switch (key) {
       case 'orig':
       case 'dest':
-        parsedAgreement[key] = await parseJwk(JSON.parse(agreement[key]))
+        parsedAgreement[key] = await parseJwk(JSON.parse(agreement[key]), true)
         break
       case 'ledgerContractAddress':
       case 'ledgerSignerAddress':

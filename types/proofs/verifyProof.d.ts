@@ -1,4 +1,4 @@
-import { Dict, DecodedProof, NrProofPayload, TimestampVerifyOptions } from '../types';
+import { DecodedProof, Dict, NrProofPayload, TimestampVerifyOptions } from '../types';
 /**
  * Verify a proof
  * @param proof - a non-repudiable proof in Compact JWS formatted JWT string
@@ -18,7 +18,7 @@ import { Dict, DecodedProof, NrProofPayload, TimestampVerifyOptions } from '../t
  *   }
  * }
  *
- * @param timestampVerifyOptions - specifies a time window to accept the proof
+ * @param options - specifies a time window to accept the proof
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
@@ -26,5 +26,5 @@ export declare function verifyProof<T extends NrProofPayload>(proof: string, exp
     iss: T['iss'];
     proofType: T['proofType'];
     exchange: Dict<T['exchange']>;
-}, timestampVerifyOptions?: TimestampVerifyOptions): Promise<DecodedProof<T>>;
+}, options?: TimestampVerifyOptions): Promise<DecodedProof<T>>;
 //# sourceMappingURL=verifyProof.d.ts.map

@@ -1,7 +1,7 @@
 import { hashable } from 'object-sha'
 import { jwsDecode } from '../crypto/'
-import { DataExchange, Dict, DecodedProof, NrProofPayload, TimestampVerifyOptions } from '../types'
-import { checkIssuedAt } from '../utils/checkIssuedAt'
+import { DataExchange, DecodedProof, Dict, NrProofPayload, TimestampVerifyOptions } from '../types'
+import { checkTimestamp } from '../utils/timestamps'
 
 /**
  * Verify a proof
@@ -22,11 +22,11 @@ import { checkIssuedAt } from '../utils/checkIssuedAt'
  *   }
  * }
  *
- * @param timestampVerifyOptions - specifies a time window to accept the proof
+ * @param options - specifies a time window to accept the proof
  *
  * @returns The JWT protected header and payload if the proof is validated
  */
-export async function verifyProof<T extends NrProofPayload> (proof: string, expectedPayloadClaims: Partial<T> & { iss: T['iss'], proofType: T['proofType'], exchange: Dict<T['exchange']> }, timestampVerifyOptions?: TimestampVerifyOptions): Promise<DecodedProof<T>> {
+export async function verifyProof<T extends NrProofPayload> (proof: string, expectedPayloadClaims: Partial<T> & { iss: T['iss'], proofType: T['proofType'], exchange: Dict<T['exchange']> }, options?: TimestampVerifyOptions): Promise<DecodedProof<T>> {
   const publicJwk = JSON.parse(expectedPayloadClaims.exchange[expectedPayloadClaims.iss] as string)
 
   const verification = await jwsDecode<Dict<T>>(proof, publicJwk)
@@ -38,7 +38,12 @@ export async function verifyProof<T extends NrProofPayload> (proof: string, expe
     throw new Error('Property claim iat missing')
   }
 
-  checkIssuedAt(verification.payload.iat, timestampVerifyOptions)
+  if (options !== undefined) {
+    const timestamp = (options.timestamp === 'iat') ? verification.payload.iat * 1000 : options.timestamp
+    const notBefore = (options.notBefore === 'iat') ? verification.payload.iat * 1000 : options.notBefore
+    const notAfter = (options.notAfter === 'iat') ? verification.payload.iat * 1000 : options.notAfter
+    checkTimestamp(timestamp, notBefore, notAfter, options.tolerance)
+  }
 
   const payload = verification.payload
 

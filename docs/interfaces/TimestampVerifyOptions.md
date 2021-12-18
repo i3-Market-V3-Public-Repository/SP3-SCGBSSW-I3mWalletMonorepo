@@ -4,43 +4,47 @@
 
 ### Properties
 
-- [clockToleranceMs](TimestampVerifyOptions.md#clocktolerancems)
-- [currentTimestamp](TimestampVerifyOptions.md#currenttimestamp)
-- [expectedTimestampInterval](TimestampVerifyOptions.md#expectedtimestampinterval)
+- [notAfter](TimestampVerifyOptions.md#notafter)
+- [notBefore](TimestampVerifyOptions.md#notbefore)
+- [timestamp](TimestampVerifyOptions.md#timestamp)
+- [tolerance](TimestampVerifyOptions.md#tolerance)
 
 ## Properties
 
-### clockToleranceMs
+### notAfter
 
-• `Optional` **clockToleranceMs**: `number`
+• **notAfter**: `number` \| ``"iat"``
 
 #### Defined in
 
-[src/ts/types.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/types.ts#L72)
+[src/ts/types.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/types.ts#L69)
 
 ___
 
-### currentTimestamp
+### notBefore
 
-• `Optional` **currentTimestamp**: `number`
+• **notBefore**: `number` \| ``"iat"``
 
 #### Defined in
 
-[src/ts/types.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/types.ts#L67)
+[src/ts/types.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/types.ts#L68)
 
 ___
 
-### expectedTimestampInterval
+### timestamp
 
-• `Optional` **expectedTimestampInterval**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `max` | `number` |
-| `min` | `number` |
+• **timestamp**: `number` \| ``"iat"``
 
 #### Defined in
 
-[src/ts/types.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/types.ts#L68)
+[src/ts/types.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/types.ts#L67)
+
+___
+
+### tolerance
+
+• `Optional` **tolerance**: `number`
+
+#### Defined in
+
+[src/ts/types.ts:70](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/types.ts#L70)

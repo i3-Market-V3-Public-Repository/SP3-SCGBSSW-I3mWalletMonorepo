@@ -143,14 +143,13 @@ export class NonRepudiationOrig {
    * If verification passes, `por` is added to `this.block`
    *
    * @param por - A PoR in caompact JWS format
-   * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-   * @param currentDate - check the proof as it were checked in this date
+   * @param options - time-related verifications
    * @returns the verified payload and protected header
    */
-  async verifyPoR (por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof<PoRPayload>> {
+  async verifyPoR (por: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<StoredProof<PoRPayload>> {
     await this.initialized
 
-    if (this.block?.poo === undefined) {
+    if (this.block.poo === undefined) {
       throw new Error('Cannot verify a PoR if not even a PoO have been created')
     }
 
@@ -161,16 +160,14 @@ export class NonRepudiationOrig {
       poo: this.block.poo.jws
     }
 
-    const proofVerifyOptions: TimestampVerifyOptions = {
-      expectedTimestampInterval: {
-        min: this.block.poo?.payload.iat * 1000,
-        max: this.block.poo?.payload.iat * 1000 + this.exchange.pooToPopDelay
-      }
+    const pooTs = this.block.poo.payload.iat * 1000
+    const opts: TimestampVerifyOptions = {
+      timestamp: Date.now(),
+      notBefore: pooTs,
+      notAfter: pooTs + this.exchange.pooToPorDelay,
+      ...options
     }
-    if (clockToleranceMs !== undefined) proofVerifyOptions.clockToleranceMs = clockToleranceMs
-    if (currentDate !== undefined) proofVerifyOptions.currentTimestamp = currentDate.valueOf()
-
-    const verified = await verifyProof<PoRPayload>(por, expectedPayloadClaims, proofVerifyOptions)
+    const verified = await verifyProof<PoRPayload>(por, expectedPayloadClaims, opts)
 
     this.block.por = {
       jws: por,

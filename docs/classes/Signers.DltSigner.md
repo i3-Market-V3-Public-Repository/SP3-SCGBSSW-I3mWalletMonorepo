@@ -43,4 +43,4 @@ A SW-based ethers.io Walllet is provided (EthersSigner) as a reference implement
 
 #### Defined in
 
-[src/ts/signers/Signer.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/signers/Signer.ts#L7)
+[src/ts/signers/Signer.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/signers/Signer.ts#L7)

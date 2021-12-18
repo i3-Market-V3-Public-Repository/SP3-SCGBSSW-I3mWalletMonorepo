@@ -5,7 +5,7 @@ import { exchangeId } from '../exchange'
 import { NrError } from '../errors'
 import { verifyProof } from '../proofs'
 import { Dict, JWK, PoOPayload, PoRPayload } from '../types'
-import { checkIssuedAt } from '../utils'
+import { checkTimestamp } from '../utils'
 
 export async function verifyPor (por: string, dltContract: Contract): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
   const { payload: porPayload } = await jwsDecode<Dict<PoRPayload>>(por)
@@ -42,6 +42,10 @@ export async function verifyPor (por: string, dltContract: Contract): Promise<{ 
       iss: 'dest',
       proofType: 'PoR',
       exchange
+    }, {
+      timestamp: 'iat',
+      notBefore: pooPayload.iat * 1000,
+      notAfter: pooPayload.iat * 1000 + exchange.pooToPorDelay
     })
   } catch (error) {
     throw new NrError(error, ['invalid por'])
@@ -57,15 +61,9 @@ export async function verifyPor (por: string, dltContract: Contract): Promise<{ 
   }
 
   try {
-    checkIssuedAt(iat, {
-      clockToleranceMs: 0, // The ledger time is what it counts
-      expectedTimestampInterval: {
-        min: pooPayload.iat * 1000,
-        max: pooPayload.iat * 1000 + exchange.pooToSecretDelay
-      }
-    })
+    checkTimestamp(iat * 1000, porPayload.iat * 1000, pooPayload.iat * 1000 + exchange.pooToSecretDelay)
   } catch (error) {
-    throw new NrError(error, ['secret not published in time'])
+    throw new NrError(`Although the secret has been obtained (and you could try to decrypt the cipherblock), it's been published later than agreed: ${(new Date(iat * 1000)).toUTCString()} > ${(new Date(pooPayload.iat * 1000 + exchange.pooToSecretDelay)).toUTCString()}`, ['secret not published in time'])
   }
 
   return {

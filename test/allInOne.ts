@@ -62,7 +62,7 @@ describe('Non-repudiation protocol', function () {
 
       let err
       try {
-        await npConsumer.verifyPoO(poo.jws, npProvider.block.jwe, undefined, currentDate)
+        await npConsumer.verifyPoO(poo.jws, npProvider.block.jwe, { timestamp: currentDate.valueOf() })
       } catch (error) {
         err = error
       }
@@ -98,7 +98,7 @@ describe('Non-repudiation protocol', function () {
 
       let err
       try {
-        await npProvider.verifyPoR(por.jws, clockToleranceMs, currentDate)
+        await npProvider.verifyPoR(por.jws, { timestamp: currentDate.valueOf(), tolerance: clockToleranceMs })
       } catch (error) {
         err = error
       }
@@ -136,7 +136,7 @@ describe('Non-repudiation protocol', function () {
 
       let err
       try {
-        await npConsumer.verifyPoP(pop.jws, clockToleranceMs, currentDate)
+        await npConsumer.verifyPoP(pop.jws, { timestamp: currentDate.valueOf(), tolerance: clockToleranceMs })
       } catch (error) {
         err = error
       }
@@ -210,6 +210,7 @@ describe('Non-repudiation protocol', function () {
     }
     it('a provider should be able to generate a valid JWS', async function () {
       verificationRequestProvider = await npProvider.generateVerificationRequest()
+      console.log(verificationRequestProvider)
       const verified = await _pkg.jwsDecode(verificationRequestProvider, npProvider.jwkPairOrig.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
@@ -292,6 +293,7 @@ describe('Non-repudiation protocol', function () {
 
     it('a consumer should be able to generate it', async function () {
       disputeRequest = await npConsumer.generateDisputeRequest()
+      console.log(disputeRequest)
       const verified = await _pkg.jwsDecode(disputeRequest, npConsumer.jwkPairDest.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })

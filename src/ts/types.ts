@@ -64,12 +64,10 @@ export interface OrigBlock extends Block {
 }
 
 export interface TimestampVerifyOptions {
-  currentTimestamp?: number // Unix timestamp in ms to use as current date when comparing dates. Defaults to (new Date()).valueOf()
-  expectedTimestampInterval?: {
-    min: number
-    max: number
-  }
-  clockToleranceMs?: number // clock tolerance in milliseconds
+  timestamp: 'iat' | number
+  notBefore: 'iat' | number // timestamp in ms
+  notAfter: 'iat' | number // ms
+  tolerance?: number // ms
 }
 
 export interface DataExchangeAgreement {
@@ -191,7 +189,7 @@ export type NrErrorName =
 'secret not published in time' |
 'received too late' |
 'unexpected error' |
-'invalid iat' |
+'invalid timestamp' |
 'invalid format' |
 'cannot contact the ledger' |
 'cannot verify'

@@ -53,12 +53,10 @@ export interface OrigBlock extends Block {
     };
 }
 export interface TimestampVerifyOptions {
-    currentTimestamp?: number;
-    expectedTimestampInterval?: {
-        min: number;
-        max: number;
-    };
-    clockToleranceMs?: number;
+    timestamp: 'iat' | number;
+    notBefore: 'iat' | number;
+    notAfter: 'iat' | number;
+    tolerance?: number;
 }
 export interface DataExchangeAgreement {
     orig: string;
@@ -145,5 +143,5 @@ export interface DecodedProof<T extends ProofPayload> {
     signer?: JWK;
 }
 export declare type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
-export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid iat' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
+export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid timestamp' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
 //# sourceMappingURL=types.d.ts.map

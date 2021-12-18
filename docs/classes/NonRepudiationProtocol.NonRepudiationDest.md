@@ -48,7 +48,7 @@ likely to be a Consumer.
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L35)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L35)
 
 ## Properties
 
@@ -58,7 +58,7 @@ likely to be a Consumer.
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L21)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L21)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L25)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L25)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L26)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L26)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L27)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L27)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L22)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L22)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L23)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L23)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L24)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L24)
 
 ## Methods
 
@@ -136,7 +136,7 @@ the decrypted block
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:245](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L245)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:238](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L238)
 
 ___
 
@@ -155,7 +155,7 @@ the dispute request as a compact JWS signed with 'dest's private key
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:290](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L290)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:283](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L283)
 
 ___
 
@@ -174,7 +174,7 @@ the PoR as a compact JWS along with its decoded payload
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L139)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L141)
 
 ___
 
@@ -193,7 +193,7 @@ the verification request as a compact JWS signed with 'dest's private key
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:274](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L274)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:267](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L267)
 
 ___
 
@@ -212,13 +212,13 @@ the secret
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:212](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L212)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:211](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L211)
 
 ___
 
 ### verifyPoO
 
-▸ **verifyPoO**(`poo`, `cipherblock`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`DecodedProof`](../interfaces/DecodedProof.md)<[`PoOPayload`](../interfaces/PoOPayload.md)\>\>
+▸ **verifyPoO**(`poo`, `cipherblock`, `options?`): `Promise`<[`DecodedProof`](../interfaces/DecodedProof.md)<[`PoOPayload`](../interfaces/PoOPayload.md)\>\>
 
 Verifies a proof of origin against the received cipherblock.
 If verification passes, `pop` and `cipherblock` are added to this.block
@@ -229,8 +229,7 @@ If verification passes, `pop` and `cipherblock` are added to this.block
 | :------ | :------ | :------ |
 | `poo` | `string` | a Proof of Origin (PoO) in compact JWS format |
 | `cipherblock` | `string` | a cipherblock as a JWE |
-| `clockToleranceMs?` | `number` | expected clock tolerance in milliseconds when comparing Dates |
-| `currentDate?` | `Date` | check the PoO as it were checked in this date |
+| `options?` | `Pick`<[`TimestampVerifyOptions`](../interfaces/TimestampVerifyOptions.md), ``"timestamp"`` \| ``"tolerance"``\> | time verification options |
 
 #### Returns
 
@@ -240,13 +239,13 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L89)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:88](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L88)
 
 ___
 
 ### verifyPoP
 
-▸ **verifyPoP**(`pop`, `clockToleranceMs?`, `currentDate?`): `Promise`<[`DecodedProof`](../interfaces/DecodedProof.md)<[`PoPPayload`](../interfaces/PoPPayload.md)\>\>
+▸ **verifyPoP**(`pop`, `options?`): `Promise`<[`DecodedProof`](../interfaces/DecodedProof.md)<[`PoPPayload`](../interfaces/PoPPayload.md)\>\>
 
 Verifies a received Proof of Publication (PoP) and returns the secret
 
@@ -255,8 +254,7 @@ Verifies a received Proof of Publication (PoP) and returns the secret
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `pop` | `string` | a PoP in compact JWS |
-| `clockToleranceMs?` | `number` | expected clock tolerance in milliseconds when comparing Dates |
-| `currentDate?` | `Date` | check the proof as it were checked in this date |
+| `options?` | `Pick`<[`TimestampVerifyOptions`](../interfaces/TimestampVerifyOptions.md), ``"timestamp"`` \| ``"tolerance"``\> | time related options for verification |
 
 #### Returns
 
@@ -266,4 +264,4 @@ the verified payload (that includes the secret that can be used to decrypt the c
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a2c335c/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L165)
+[src/ts/non-repudiation-protocol/NonRepudiationDest.ts:166](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1e88c9a/src/ts/non-repudiation-protocol/NonRepudiationDest.ts#L166)

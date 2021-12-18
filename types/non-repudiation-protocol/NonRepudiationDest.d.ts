@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { PoRPayload } from '..';
-import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof } from './../types';
+import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types';
 /**
  * The base class that should be instantiated by the destination of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -29,12 +29,11 @@ export declare class NonRepudiationDest {
      *
      * @param poo - a Proof of Origin (PoO) in compact JWS format
      * @param cipherblock - a cipherblock as a JWE
-     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-     * @param currentDate - check the PoO as it were checked in this date
+     * @param options - time verification options
      * @returns the verified payload and protected header
      *
      */
-    verifyPoO(poo: string, cipherblock: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoOPayload>>;
+    verifyPoO(poo: string, cipherblock: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<DecodedProof<PoOPayload>>;
     /**
      * Creates the proof of reception (PoR).
      * Besides returning its value, it is also stored in `this.block.por`
@@ -45,11 +44,10 @@ export declare class NonRepudiationDest {
     /**
      * Verifies a received Proof of Publication (PoP) and returns the secret
      * @param pop - a PoP in compact JWS
-     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-     * @param currentDate - check the proof as it were checked in this date
+     * @param options - time related options for verification
      * @returns the verified payload (that includes the secret that can be used to decrypt the cipherblock) and protected header
      */
-    verifyPoP(pop: string, clockToleranceMs?: number, currentDate?: Date): Promise<DecodedProof<PoPPayload>>;
+    verifyPoP(pop: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<DecodedProof<PoPPayload>>;
     /**
      * Just in case the PoP is not received, the secret can be downloaded from the ledger.
      * The secret should be downloaded before poo.iat + pooToPop max delay.

@@ -153,7 +153,7 @@ export class ConflictResolver {
       proofType: 'resolution',
       dataExchangeId,
       iat: Math.floor(Date.now() / 1000),
-      iss: await parseJwk(this.jwkPair.publicJwk),
+      iss: await parseJwk(this.jwkPair.publicJwk, true),
       sub
     }
   }

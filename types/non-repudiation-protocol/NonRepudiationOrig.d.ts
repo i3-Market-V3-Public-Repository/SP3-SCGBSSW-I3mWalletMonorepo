@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof } from '../types';
+import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types';
 /**
  * The base class that should be instantiated by the origin of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -36,11 +36,10 @@ export declare class NonRepudiationOrig {
      * If verification passes, `por` is added to `this.block`
      *
      * @param por - A PoR in caompact JWS format
-     * @param clockToleranceMs - expected clock tolerance in milliseconds when comparing Dates
-     * @param currentDate - check the proof as it were checked in this date
+     * @param options - time-related verifications
      * @returns the verified payload and protected header
      */
-    verifyPoR(por: string, clockToleranceMs?: number, currentDate?: Date): Promise<StoredProof<PoRPayload>>;
+    verifyPoR(por: string, options?: Pick<TimestampVerifyOptions, 'timestamp' | 'tolerance'>): Promise<StoredProof<PoRPayload>>;
     /**
      * Creates the proof of publication (PoP).
      * Besides returning its value, it is also stored in `this.block.pop`
