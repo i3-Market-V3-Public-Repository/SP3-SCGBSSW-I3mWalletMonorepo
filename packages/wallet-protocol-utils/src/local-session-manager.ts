@@ -22,18 +22,13 @@ export class LocalSessionManager<T extends Transport = Transport> {
   }
 
 
-  fetch = new Proxy(fetch, {
-    apply: (oldFecth, thisArg, argArray) => {
-      if (!this.session) {
-        throw new Error('no session')
-      }
-
-      return this.session.send({
-        url: argArray[0],
-        init: argArray[1]
-      } as any)
+  fetch: Session<T>['send'] = (...args) => {
+    if (!this.session) {
+      throw new Error('no session')
     }
-  })
+
+    return this.session.send(...args)
+  }
 
   async createIfNotExists (): Promise<Session<T>> {
     if (this.session !== undefined) {

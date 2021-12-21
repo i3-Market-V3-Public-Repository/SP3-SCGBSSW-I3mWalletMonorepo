@@ -1,4 +1,4 @@
-import { app, BrowserWindow, session } from 'electron'
+import { app, BrowserWindow, session, dialog } from 'electron'
 import path from 'path'
 import { generateSecret, exportJWK, importJWK, JWK } from 'jose'
 
@@ -164,9 +164,15 @@ export default async (argv: string[]): Promise<void> => {
   // This method will be called when Electron has finished
   // initialization and is ready to create browser windows.
   // Some APIs can only be used after this event occurs.
-  const singleInstance = app.requestSingleInstanceLock()
-  logger.info(`Single instance ${singleInstance.toString()}`)
   app.on('ready', () => {
+    const singleInstance = app.requestSingleInstanceLock()
+    if (!singleInstance) {
+      logger.warn('The application is already running')
+      dialog.showErrorBox('Cannot start', 'The application is already running. Check your tray.')
+      app.quit()
+      return
+    }
+
     onReady().catch((err) => {
       if (err instanceof StartFeatureError && err.exit) {
         return app.quit()

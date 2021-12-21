@@ -23,6 +23,7 @@ const main = async () => {
   const responseInput = document.getElementById('response-input')
   const sessionState = document.getElementById('session-state')
   const protocolButton = document.getElementById('protocol-button')
+  const sessionButton = document.getElementById('session-button')
   const removeButton = document.getElementById('remove-button')
   const queryButton = document.getElementById('query-button')
 
@@ -38,6 +39,10 @@ const main = async () => {
 
   const startProtocol = async () => {
     await sessionManager.createIfNotExists()
+  }
+
+  const sessionToClipboard = async () => {
+    await navigator.clipboard.writeText(JSON.stringify(sessionManager.session.toJSON(), null, 2))
   }
 
   const sendQuery = async () => {
@@ -67,6 +72,7 @@ const main = async () => {
 
   // Load Events
   protocolButton.addEventListener('click', startProtocol)
+  sessionButton.addEventListener('click', sessionToClipboard)
   queryButton.addEventListener('click', sendQuery)
   removeButton.addEventListener('click', () => sessionManager.removeSession())
 

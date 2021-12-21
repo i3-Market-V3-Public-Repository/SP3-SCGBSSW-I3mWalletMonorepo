@@ -16,6 +16,12 @@
           cursor: pointer;
         }
       }
+
+      &.settings-number {
+        label {    
+          margin-right: 10px;
+        }
+      }
     }
   }
 }

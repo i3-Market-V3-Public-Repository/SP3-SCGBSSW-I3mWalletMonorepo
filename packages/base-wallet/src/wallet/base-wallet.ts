@@ -1,21 +1,22 @@
-import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletComponents, WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
 import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
+import { ethers } from 'ethers'
+import _ from 'lodash'
+import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
 
-import { getCredentialClaims } from '../utils'
-
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store } from '../app'
+import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
+import { getCredentialClaims } from '../utils'
+import { displayDid } from '../utils/display-did'
 import Veramo from '../veramo'
-import { WalletError } from '../errors'
+import { DEFAULT_PROVIDER } from '../veramo/veramo'
 
 import { Wallet } from './wallet'
-import { WalletOptions } from './wallet-options'
-import { displayDid } from '../utils/display-did'
-import { DEFAULT_PROVIDER } from '../veramo/veramo'
 import { WalletFunctionMetadata } from './wallet-metadata'
-import { ethers } from 'ethers'
+import { WalletOptions } from './wallet-options'
 
 interface SdrClaim {
   claimType: string
@@ -53,6 +54,11 @@ interface TransactionData {
   sign: boolean
 }
 
+interface TransactionOptions {
+  transaction?: string
+  notifyUser?: boolean
+}
+
 export class BaseWallet<
   Options extends WalletOptions<Model>,
   Model extends BaseWalletModel = BaseWalletModel
@@ -80,30 +86,37 @@ export class BaseWallet<
 
   }
 
-  async executeTransaction (): Promise<void> {
+  async executeTransaction (options: TransactionOptions = {}): Promise<void> {
     const providerData = this.veramo.providersData[this.provider]
     if (providerData?.rpcUrl === undefined) {
       throw new WalletError('This provider has incomplete information, cannot execute transaction')
     }
+    let transaction = options.transaction
+    const notifyUser = options.notifyUser ?? true
 
-    const transaction = await this.dialog.text({
-      title: 'Execute transaction',
-      message: 'Put the transaction. Should start with 0x'
-    })
+    if (transaction === undefined) {
+      transaction = await this.dialog.text({
+        title: 'Execute transaction',
+        message: 'Put the transaction. Should start with 0x'
+      })
+    }
     if (transaction === undefined || !transaction.startsWith('0x')) {
       throw new WalletError(`Invalid transaction ${transaction ?? '<undefined>'}`)
     }
 
     const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
     const response = await provider.sendTransaction(transaction)
-    const recipt = await response.wait()
-
-    await this.dialog.confirmation({
-      message: 'Transaction properly executed!',
-      acceptMsg: 'Continue',
-      rejectMsg: ''
-    })
-    console.log(recipt)
+    if (notifyUser) {
+      const recipt = await response.wait()
+      await this.dialog.confirmation({
+        message: 'Transaction properly executed!',
+        acceptMsg: 'Continue',
+        rejectMsg: ''
+      })
+      console.log(recipt)
+    } else {
+      console.log(response)
+    }
   }
 
   async queryBalance (): Promise<void> {
@@ -454,13 +467,24 @@ export class BaseWallet<
         }
         const identity = await this.veramo.agent.didManagerGet(pathParameters)
         // transaction.from = `0x${identity.keys[0].publicKeyHex}`
-        const signedTransaction = await this.veramo.agent.keyManagerSignEthTX({
+        const signature = await this.veramo.agent.keyManagerSignEthTX({
           kid: identity.keys[0].kid,
           transaction
         })
-        response = {
-          signature: signedTransaction
+        response = { signature }
+        break
+      }
+      case 'Raw': {
+        const { data } = requestBody
+        if (data === undefined) {
+          throw new WalletError('No data present on the request', { code: 400 })
         }
+        const identity = await this.veramo.agent.didManagerGet(pathParameters)
+        const signature = await this.veramo.agent.keyManagerSignJWT({
+          kid: identity.keys[0].kid,
+          data: u8a.fromString(data.payload, 'base64url')
+        })
+        response = { signature }
         break
       }
       default:
@@ -468,6 +492,22 @@ export class BaseWallet<
     }
 
     return response
+  }
+
+  async identityInfo (pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200> {
+    const ddo = await this.veramo.agent.didManagerGet({
+      did: pathParameters.did
+    })
+    const result = _.pick(ddo, ['did', 'alias', 'provider']) as any
+    if (ddo.provider.startsWith('did:ethr')) {
+      result.addresses = ddo.keys.map((key) => ethers.utils.computeAddress(`0x${key.publicKeyHex}`))
+    }
+
+    return result
+  }
+
+  async identityDeployTransaction (pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletComponents.Schemas.Transaction): Promise<WalletComponents.Schemas.Receipt> {
+    throw new Error('Method not implemented.')
   }
 
   async getResources (): Promise<BaseWalletModel['resources']> {
@@ -534,5 +574,12 @@ export class BaseWallet<
     return {
       jwt: vp.proof.jwt
     }
+  }
+
+  async transactionDeploy (requestBody: WalletComponents.Schemas.SignedTransaction): Promise<WalletPaths.TransactionDeploy.Responses.$200> {
+    await this.executeTransaction({
+      transaction: requestBody.transaction
+    })
+    return {}
   }
 }

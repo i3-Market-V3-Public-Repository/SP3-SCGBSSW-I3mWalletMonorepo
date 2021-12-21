@@ -1,0 +1,41 @@
+openapi: "3.0.2"
+
+info:
+  version: 1.0.0
+  title: i3M Wallet API
+
+paths:
+  /transaction/deploy:
+    post:
+      summary: Deploy a signed transaction
+      operationId: transactionDeploy
+      x-eov-operation-handler: transaction
+      tags:
+        - transaction
+      requestBody:
+        description: Create a resource.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SignedTransaction"
+      responses:
+        "200":
+          description: Deployment OK
+
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+components:
+  schemas:
+    SignedTransaction:
+      title: SignedTransaction
+      description: A list of resources
+      type: object
+      properties:
+        transaction:
+          type: string
+          pattern: ^0x(?:[A-Fa-f0-9])+$

@@ -61,6 +61,12 @@ export namespace WalletComponents {
       Did
     }
     /**
+         * Receipt
+         */
+    export interface Receipt {
+      receipt: string
+    }
+    /**
          * Resource
          */
     export type Resource = /* Resource */ /* VerifiableCredential */ VerifiableCredential
@@ -76,12 +82,24 @@ export namespace WalletComponents {
     /**
          * SignInput
          */
-    export type SignInput = /* SignInput */ /* SignTransaction */ SignTransaction
+    export type SignInput = /* SignInput */ /* SignTransaction */ SignTransaction | /* SignRaw */ SignRaw
     /**
          * SignOutput
          */
     export interface SignOutput {
       signature: string
+    }
+    /**
+         * SignRaw
+         */
+    export interface SignRaw {
+      type?: 'Raw'
+      data?: {
+        /**
+                 * Base64Url encoded data to sign
+                 */
+        payload: string // ^[A-Za-z0-9_-]+$
+      }
     }
     /**
          * SignTransaction
@@ -93,12 +111,22 @@ export namespace WalletComponents {
     /**
          * SignTypes
          */
-    export type SignTypes = 'Transaction'
+    export type SignTypes = 'Transaction' | 'Raw'
+    /**
+         * SignedTransaction
+         * A list of resources
+         */
+    export interface SignedTransaction {
+      transaction?: string // ^0x(?:[A-Fa-f0-9])+$
+    }
     /**
          * Transaction
          */
     export interface Transaction {
+      [name: string]: any
       from?: string
+      to?: string
+      nonce?: number
     }
     /**
          * VerifiableCredential
@@ -181,6 +209,41 @@ export namespace WalletPaths {
       export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }
   }
+  export namespace IdentityDeployTransaction {
+    export namespace Parameters {
+      export type Did = /**
+             * DID
+             * example:
+             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+            WalletComponents.Schemas.Did
+    }
+    export interface PathParameters {
+      did: Parameters.Did
+    }
+    export type RequestBody = /* Transaction */ WalletComponents.Schemas.Transaction
+    export namespace Responses {
+      export type $200 = /* Receipt */ WalletComponents.Schemas.Receipt
+    }
+  }
+  export namespace IdentityInfo {
+    export namespace Parameters {
+      export type Did = /**
+             * DID
+             * example:
+             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+            WalletComponents.Schemas.Did
+    }
+    export interface PathParameters {
+      did: Parameters.Did
+    }
+    export namespace Responses {
+      export interface $200 {
+        [name: string]: any
+      }
+    }
+  }
   export namespace IdentityList {
     export namespace Parameters {
       /**
@@ -258,6 +321,18 @@ export namespace WalletPaths {
     export namespace Responses {
       export interface $200 {
         jwt?: string
+      }
+      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+    }
+  }
+  export namespace TransactionDeploy {
+    export type RequestBody = /**
+         * SignedTransaction
+         * A list of resources
+         */
+        WalletComponents.Schemas.SignedTransaction
+    export namespace Responses {
+      export interface $200 {
       }
       export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }

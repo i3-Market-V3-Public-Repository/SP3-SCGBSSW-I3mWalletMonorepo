@@ -16,6 +16,9 @@
 			"path": "packages/wallet-protocol"
 		},
 		{
+			"path": "packages/wallet-protocol-api"
+		},
+		{
 			"path": "packages/wallet-protocol-utils"
 		},
 		{

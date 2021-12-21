@@ -51,6 +51,7 @@ export class MasterKey {
     return {
       from: this.from,
       to: this.to,
+      port: this.port,
       na: format.u8Arr2Base64(this.na),
       nb: format.u8Arr2Base64(this.nb),
       secret: format.u8Arr2Base64(this.secret)

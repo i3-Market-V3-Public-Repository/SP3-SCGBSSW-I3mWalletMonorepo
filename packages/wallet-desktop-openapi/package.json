@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/wallet-desktop-openapi",
+  "name": "@i3m/wallet-desktop-openapi",
   "version": "1.0.0",
   "description": "The API of the i3m-wallet desktop application",
   "main": "openapi.json",

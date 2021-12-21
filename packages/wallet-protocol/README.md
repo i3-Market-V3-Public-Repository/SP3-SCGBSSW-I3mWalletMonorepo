@@ -87,7 +87,13 @@ Your package description
 
 ## Usage
 
-`@i3m/wallet-protocol` can be imported to your project with `npm`:
+`@i3m/wallet-protocol` can be imported to your project with `npm`. First create a `.npmrc` file with the following content:
+
+```console
+@i3m:registry=http://***REMOVED***:8081/repository/i3m-npm-registry
+```
+
+Then install it using `npm`:
 
 ```console
 npm install @i3m/wallet-protocol

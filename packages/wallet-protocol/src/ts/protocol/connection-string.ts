@@ -8,7 +8,10 @@ export class ConnectionString {
   }
 
   extractPort (): number {
-    const portBytes = bufferUtils.extractBits(this.buffer, this.l, constants.PORT_LENGTH)
+    const portBytesLen = Math.ceil(constants.PORT_LENGTH / 8)
+    const portBytesOffset = this.l % 8
+    const portBytes = new Uint8Array(portBytesLen)
+    bufferUtils.insertBits(this.buffer, portBytes, this.l, portBytesOffset, constants.PORT_LENGTH)
     const dport = format.u8Arr2Num(portBytes)
     return constants.INITIAL_PORT + dport
   }

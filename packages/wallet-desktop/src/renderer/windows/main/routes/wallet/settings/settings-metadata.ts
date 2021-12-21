@@ -12,4 +12,11 @@ export interface InputSettingsMetadata extends BaseSettingsMetadata {
   type: 'input'
 }
 
-export type SettingsMetadata = CheckboxSettingsMetadata | InputSettingsMetadata
+export interface NumberSettingsMetadata extends BaseSettingsMetadata {
+  type: 'number'
+}
+
+export type SettingsMetadata =
+  CheckboxSettingsMetadata |
+  InputSettingsMetadata |
+  NumberSettingsMetadata

@@ -59,8 +59,17 @@ paths:
   /identities/{did}/sign:
     $ref: "./paths/identities.yaml#/paths/~1identities~1%7Bdid%7D~1sign"
 
+  /identities/{did}/info:
+    $ref: "./paths/identities.yaml#/paths/~1identities~1{did}~1info"
+
+  /identities/{did}/deploy-tx:
+    $ref: "./paths/identities.yaml#/paths/~1identities~1{did}~1deploy-tx"
+
   /resources:
     $ref: "./paths/resources.yaml#/paths/~1resources"
 
   /disclosure/{jwt}:
     $ref: "./paths/disclosure.yaml#/paths/~1disclosure~1%7Bjwt%7D"
+
+  /transaction/deploy:
+    $ref: "./paths/transaction.yaml#/paths/~1transaction~1deploy"

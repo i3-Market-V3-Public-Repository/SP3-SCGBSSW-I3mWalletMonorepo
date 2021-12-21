@@ -17,6 +17,18 @@ export function Settings (): JSX.Element {
         type: 'checkbox',
         key: 'developer.enableDeveloperApi'
       }
+    ],
+    'Wallet Connect': [
+      {
+        label: 'Enable Token expiration',
+        type: 'checkbox',
+        key: 'connect.enableTokenExpiration'
+      },
+      {
+        label: 'Wallet protocol session TTL',
+        type: 'number',
+        key: 'connect.tokenTTL'
+      }
     ]
   }
   const groups = Object.keys(settingsMetadatas)

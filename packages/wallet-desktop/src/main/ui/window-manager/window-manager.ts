@@ -1,15 +1,20 @@
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, Menu } from 'electron'
 import path from 'path'
 
 import { WindowArgs } from '@wallet/lib'
 import { getResourcePath, logger, Locals } from '@wallet/main/internal'
 import { CustomWindow, Mapper } from './custom-window'
+import { buildMenuBar } from './menu-bar'
 import { MainWindow } from './main-window'
 
 export class WindowManager {
   windows: Map<string, CustomWindow>
 
   constructor (protected locals: Locals) {
+    // Setup menu bar
+    const menuBar = buildMenuBar(locals)
+    Menu.setApplicationMenu(menuBar)
+
     this.windows = new Map()
 
     const { sharedMemoryManager } = locals
