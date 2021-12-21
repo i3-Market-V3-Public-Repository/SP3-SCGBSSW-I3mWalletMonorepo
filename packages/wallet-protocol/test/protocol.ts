@@ -1,7 +1,7 @@
 
 import http from 'http'
 
-const { WalletProtocol, HttpInitiatorTransport, HttpResponderTransport, constants } = _pkg
+const { WalletProtocol, HttpInitiatorTransport, HttpResponderTransport, constants, Session } = _pkg
 
 type HttpType = typeof http
 
@@ -61,7 +61,7 @@ describe('Protocol execution using HTTP', function () {
     })
   })
 
-  it('Should run properly', async () => {
+  it('should run properly', async () => {
     await Promise.all([
       responder.run(),
       initiator.run().then((s: _pkgTypes.Session<any>) => {
@@ -70,7 +70,7 @@ describe('Protocol execution using HTTP', function () {
     ])
   })
 
-  it('Should exchange authenticated and encrypted messages', async () => {
+  it('should exchange authenticated and encrypted messages', async () => {
     if (session === undefined) {
       throw new Error('This test can only be executed if protocol runs properly')
     }
@@ -81,6 +81,16 @@ describe('Protocol execution using HTTP', function () {
       }
     })
     console.log(res.body)
+  })
+
+  it('should convert session to JSON', async () => {
+    if (session === undefined) {
+      throw new Error('This test can only be executed if protocol runs properly')
+    }
+    const transport = new HttpInitiatorTransport()
+    const json = session.toJSON()
+    const s = Session.fromJSON(transport, json)
+    chai.expect(s).to.not.be.equal(undefined)
   })
 
   this.afterAll(async () => {
