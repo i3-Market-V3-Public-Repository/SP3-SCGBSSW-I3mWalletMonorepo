@@ -76,7 +76,7 @@
     "@i3-market/base-wallet": "^1.0.0",
     "@i3-market/bok-wallet": "^1.0.0",
     "@i3-market/sw-wallet": "^1.0.0",
-    "@i3-market/wallet-desktop-openapi": "^1.0.0",
+    "@i3m/wallet-desktop-openapi": "^1.0.0",
     "@i3m/wallet-protocol": "^1.0.0",
     "cors": "^2.8.5",
     "electron-connect": "^0.6.3",

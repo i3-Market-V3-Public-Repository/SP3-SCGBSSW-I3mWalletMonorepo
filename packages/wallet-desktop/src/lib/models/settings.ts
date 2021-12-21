@@ -27,6 +27,11 @@ export interface DeveloperSettings {
   enableDeveloperApi: boolean
 }
 
+export interface WalletConnectSettings {
+  enableTokenExpiration: boolean
+  tokenTTL: number // in seconds
+}
+
 export interface AuthSettings {
   localAuth: string
   salt: string
@@ -36,6 +41,7 @@ export interface Settings {
   wallet: WalletSettings
   providers: Provider[]
   developer: DeveloperSettings
+  connect: WalletConnectSettings
   auth?: AuthSettings
   secret?: JWK
 }
@@ -47,6 +53,10 @@ export function createDefaultSettings (): Settings {
       packages: ['@i3-market/sw-wallet']
     },
     providers: [],
+    connect: {
+      enableTokenExpiration: true,
+      tokenTTL: 2419200 // 4 weeks
+    },
     developer: {
       enableDeveloperFunctions: false,
       enableDeveloperApi: false

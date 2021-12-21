@@ -15,7 +15,7 @@ export class ConnectManager {
     const id: Identity = {
       name: 'Wallet desktop'
     }
-    const codeGenerator = new JwtCodeGenerator(key)
+    const codeGenerator = new JwtCodeGenerator(key, locals)
     const httpTransport = new HttpResponderTransport({
       id,
       codeGenerator,

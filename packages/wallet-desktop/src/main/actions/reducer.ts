@@ -7,6 +7,7 @@ import { Module } from './module'
 import { ActionHandler } from './action-handler'
 import { walletModule } from './wallet'
 import { connectModule } from './connect'
+import { systemModule } from './system'
 import { ActionResult } from './action-result'
 
 export class ActionReducer {
@@ -29,7 +30,8 @@ export class ActionReducer {
   protected getDefaultModules (): Module[] {
     return [
       walletModule,
-      connectModule
+      connectModule,
+      systemModule
     ]
   }
 

@@ -1,7 +1,7 @@
 
 import http from 'http'
 
-const { WalletProtocol, HttpInitiatorTransport, HttpResponderTransport } = _pkg
+const { WalletProtocol, HttpInitiatorTransport, HttpResponderTransport, constants } = _pkg
 
 type HttpType = typeof http
 
@@ -13,7 +13,9 @@ describe('Protocol execution using HTTP', function () {
 
   const http: HttpType = require('http') // eslint-disable-line
 
-  const responderTransport = new HttpResponderTransport()
+  const responderTransport = new HttpResponderTransport({
+    port: constants.INITIAL_PORT + 24
+  })
   responderTransport.use((req: any, res: any) => {
     chai.expect(req.walletProtocol).to.be.equal(true)
     res.end(Buffer.from(JSON.stringify({

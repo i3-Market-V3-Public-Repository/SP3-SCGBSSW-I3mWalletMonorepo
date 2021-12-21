@@ -22,8 +22,8 @@ export class LocalAuthentication {
 
   constructor (protected locals: Locals) {
     this.maxTries = 3
-    this.passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
-    this.passwordRegexMessage = 'Password must fulfill: \nMinimum eight characters, at least one uppercase letter, one lowercase letter and one number:'
+    this.passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d\W]{8,}$/
+    this.passwordRegexMessage = 'Password must fulfill: \n - Minimum eight characters.\n - At least one uppercase letter, one lowercase letter and one number. \n - Optional: Symbols '
     this.pekSettings = {
       iterations: 50000,
       keyLength: 32,
@@ -98,7 +98,7 @@ export class LocalAuthentication {
   }
 
   private async initializePassword (): Promise<void> {
-    const message = (tries: number): string => `You don't have an application password: setup a new one (${tries} left).`
+    const message = (tries: number): string => `You don't have an application password: setup a new one (${tries} left).\n ${this.passwordRegexMessage}`
     const validPassword = await this.askValidPassword(message)
 
     if (validPassword === undefined) {
@@ -142,6 +142,10 @@ export class LocalAuthentication {
     } else {
       await this.localAuthentication(auth)
     }
+  }
+
+  get authenticated (): boolean {
+    return this.pek !== undefined
   }
 
   async computeWalletKey (walletUuid: string): Promise<Buffer> {
