@@ -1,4 +1,4 @@
-import { WalletComponents } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import Veramo from '../veramo'
 import { verifiableClaimValidator } from './vc-validator'
 

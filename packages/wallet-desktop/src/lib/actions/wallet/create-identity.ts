@@ -1,4 +1,4 @@
-import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { Action as BaseAction } from '../action'
 import { ActionBuilder } from '../action-builder'
 

@@ -3,10 +3,10 @@
   "version": "1.0.1",
   "description": "A wallet protocol",
   "keywords": [
-    "keyword1",
-    "keyword2"
+    "i3-market",
+    "wallet"
   ],
-  "license": "MIT",
+  "license": "EUPL-1.2",
   "author": {
     "name": "Fernando Roman-Garcia",
     "email": "fernando.roman@upc.edu"

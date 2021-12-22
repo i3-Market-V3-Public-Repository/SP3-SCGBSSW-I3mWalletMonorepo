@@ -21,7 +21,7 @@
   "private": true,
   "keywords": [],
   "author": "Fernando Roman Garcia",
-  "license": "ISC",
+  "license": "EUPL-1.2",
   "devDependencies": {
     "dotenv": "^10.0.0",
     "dotenv-cli": "^4.0.0",

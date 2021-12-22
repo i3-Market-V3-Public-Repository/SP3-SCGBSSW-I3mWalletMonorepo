@@ -1,5 +1,5 @@
 /* DO NOT MODIFY THIS FILE */
-import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { BaseWalletModel } from '../app'
 import { WalletFunctionMetadata } from './wallet-metadata'
 

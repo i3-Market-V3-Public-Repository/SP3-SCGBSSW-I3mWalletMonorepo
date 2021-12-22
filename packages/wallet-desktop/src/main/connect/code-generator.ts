@@ -1,4 +1,4 @@
-import { CodeGenerator, MasterKey } from '@i3-market/wallet-protocol'
+import { CodeGenerator, MasterKey } from '@i3m/wallet-protocol'
 import { EncryptJWT, jwtDecrypt, KeyLike } from 'jose'
 import { Locals } from '../locals'
 

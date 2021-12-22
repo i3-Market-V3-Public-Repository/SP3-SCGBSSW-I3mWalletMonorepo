@@ -33,7 +33,7 @@
   },
   "keywords": [],
   "author": "Juan Hernández Serrano",
-  "license": "ISC",
+  "license": "EUPL-1.2",
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.0.2",
     "@dtsgenerator/replace-namespace": "^1.4.1",

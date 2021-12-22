@@ -1,15 +1,15 @@
 {
   "name": "@i3m/wallet-cli",
   "version": "1.0.1",
-  "description": "",
+  "description": "Wallet client",
   "main": "index.js",
   "scripts": {
     "start": "ts-node --files ./src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Fernando Román García",
+  "license": "EUPL-1.2",
   "devDependencies": {
     "ts-node": "^10.4.0",
     "typescript": "^4.4.4"

@@ -1,4 +1,4 @@
-import { WalletProtocol, Session, Transport } from '@i3-market/wallet-protocol'
+import { WalletProtocol, Session, Transport } from '@i3m/wallet-protocol'
 import { BehaviorSubject, Subject } from 'rxjs'
 
 export interface SessionManagerOptions {
