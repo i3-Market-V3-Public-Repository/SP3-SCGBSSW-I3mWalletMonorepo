@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L14)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L14)
 
 ## Properties
 
@@ -57,7 +57,7 @@
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
 
 ## Methods
 
@@ -105,7 +105,7 @@ Returns the address of the smart contract in use
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
 
 ___
 
@@ -134,4 +134,4 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts#L13)
+[src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts#L13)
