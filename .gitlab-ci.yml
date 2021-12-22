@@ -9,25 +9,47 @@ variables:
   NEXUS_IMAGE_TAG: $NEXUS_REGISTRY/auditable-accounting:latest
   URL_DEPLOY_AA: "http://***REMOVED***:19000/api/v2/job_templates/34/launch/"
 
+build_libraries:
+  stage: build
+  image: node:$NODE_VERSION
+  script:
+    - npm ci
+
+    - pushd packages/wallet-protocol
+    - npm publish
+    - popd
+
+    - pushd packages/wallet-protocol-api
+    - npm publish
+    - popd
+
+    - pushd packages/wallet-protocol-utils
+    - npm publish
+    - popd
+
+    - pushd packages/base-wallet
+    - npm publish
+    - popd
+
+    - pushd packages/sw-wallet
+    - npm publish
+    - popd
+
+    - pushd packages/bok-wallet
+    - npm publish
+    - popd
+
+  rules:
+    - if: $CI_COMMIT_TAG != null
+    - if: $DEPLOY_ALL == true
+    - if: $DEPLOY_LIBRARIES == true
+
 # build_win:
 #   stage: build
 #   tags:
 #     - "windows"
 #   script:
 #     - npm i
-
-build_libraries:
-  stage: build
-  image: node:$NODE_VERSION
-  script:
-    - cd packages/wallet-protocol
-    - npm ci
-    - npm run build:js
-    - npm run docs
-    - npm publish
-
-  rules:
-    - if: $CI_COMMIT_TAG != null
 
 ## Wallet desktop
 build_mac:
