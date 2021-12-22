@@ -1,7 +1,7 @@
 import readline from 'readline'
 import http from 'http'
 import { stdin, stdout } from 'process'
-import { WalletProtocol, HttpResponderTransport, constants } from '@i3-market/wallet-protocol'
+import { WalletProtocol, HttpResponderTransport, constants } from '@i3m/wallet-protocol'
 
 const PAIRING_COMMAND='pairing'
 

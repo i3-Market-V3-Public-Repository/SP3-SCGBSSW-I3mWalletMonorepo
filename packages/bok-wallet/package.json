@@ -64,8 +64,8 @@
   "publishConfig": {
     "@i3-market:registry": "https://gitlab.com/api/v4/projects/26002994/packages/npm/"
   },
-  "author": "",
-  "license": "MIT",
+  "author": "Fernando Román García",
+  "license": "EUPL-1.2",
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
     "@i3-market/base-wallet": "^1.0.1",

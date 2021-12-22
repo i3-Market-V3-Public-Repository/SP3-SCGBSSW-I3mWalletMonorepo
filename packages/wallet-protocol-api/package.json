@@ -3,13 +3,13 @@
   "version": "1.0.1",
   "description": "Wallet protocol API",
   "keywords": [
-    "keyword1",
-    "keyword2"
+    "i3-market",
+    "wallet"
   ],
-  "license": "MIT",
+  "license": "EUPL-1.2",
   "author": {
-    "name": "My name",
-    "email": "email@myemaildomain.com"
+    "name": "Fernando Roman-Garcia",
+    "email": "fernando.roman@upc.edu"
   },
   "repository": "repoprovider:username/my-package-name",
   "types": "./types/index.d.ts",

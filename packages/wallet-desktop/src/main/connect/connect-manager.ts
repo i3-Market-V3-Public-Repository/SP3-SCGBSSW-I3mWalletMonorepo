@@ -1,6 +1,6 @@
 import http from 'http'
 import { WalletError } from '@i3-market/base-wallet'
-import { WalletProtocol, HttpResponderTransport, Identity } from '@i3-market/wallet-protocol'
+import { WalletProtocol, HttpResponderTransport, Identity } from '@i3m/wallet-protocol'
 
 import { Locals } from '@wallet/main/internal'
 import { cors } from './cors'

@@ -6,7 +6,7 @@ import http from 'http'
 import { middleware as openapiValidator } from 'express-openapi-validator'
 import swaggerUI from 'swagger-ui-express'
 import { HttpError } from 'express-openapi-validator/dist/framework/types'
-import openapiSpec from '@i3-market/wallet-desktop-openapi'
+import openapiSpec from '@i3m/wallet-desktop-openapi'
 import { WalletError } from '@i3-market/base-wallet'
 
 import {

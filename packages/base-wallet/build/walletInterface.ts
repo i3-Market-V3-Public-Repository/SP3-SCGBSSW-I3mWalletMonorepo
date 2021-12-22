@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import openapi from '@i3-market/wallet-desktop-openapi'
+import openapi from '@i3m/wallet-desktop-openapi'
 import pkgJson from '../package.json'
 
 const rootDir = path.join(__dirname, '..')
