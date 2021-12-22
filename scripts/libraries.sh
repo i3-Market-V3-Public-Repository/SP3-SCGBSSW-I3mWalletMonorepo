@@ -1,5 +1,3 @@
-#npm ci
-
 REPO_FOLDER=$PWD
 ERROR=0
 
@@ -9,6 +7,14 @@ publish() {
   cd $REPO_FOLDER
 }
 
+# Prepare
+if [ -d ./node_modules ]; then
+  echo Node modules already exists
+else
+  npm ci
+fi
+
+# Publish packages
 publish packages/wallet-protocol
 publish packages/wallet-protocol-api
 publish packages/wallet-protocol-utils
