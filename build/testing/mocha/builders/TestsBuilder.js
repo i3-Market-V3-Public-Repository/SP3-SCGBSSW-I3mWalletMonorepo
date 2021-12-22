@@ -28,18 +28,11 @@ module.exports = class TestsBuilder extends Builder {
 
     tsConfig.file = undefined
 
-    if (!tsConfig.include.includes('node_modules/**/*.d.ts')) {
-      tsConfig.include = [
-        ...tsConfig.include,
-        'node_modules/**/*.d.ts'
-      ]
-    }
-
     // Exclude already transpiled files in src
     tsConfig.exclude = ['src/ts/**/!(*.spec).ts']
 
     // "noResolve": true
-    tsConfig.compilerOptions.noResolve = true
+    tsConfig.compilerOptions.noResolve = false
 
     // we don't need declaration files
     tsConfig.compilerOptions.declaration = false
@@ -53,11 +46,8 @@ module.exports = class TestsBuilder extends Builder {
     // This prevents SyntaxError: Cannot use import statement outside a module
     tsConfig.compilerOptions.module = 'commonjs'
 
-    // typeroots should also include testing ones
-    tsConfig.compilerOptions.typeRoots = [
-      ...tsConfig.compilerOptions.typeRoots,
-      'build/testing/types/'
-    ]
+    // Removed typeroots (it causes issues)
+    tsConfig.compilerOptions.typeRoots = undefined
 
     tsConfig.compilerOptions.outDir = path.isAbsolute(tempDir) ? path.relative(rootDir, tempDir) : tempDir
 

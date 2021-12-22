@@ -106,12 +106,11 @@ export class NonRepudiationOrig {
         throw new Error('Either a dltConfig.signer or a privateLedgerKeyHex MUST be provided.')
       }
 
-      // TO-DO: we need an implementation on DltSigner class:
-      // const signerAddress: string = parseHex(await signer.getAddress())
+      const signerAddress: string = parseHex(await this.dltConfig.signer.getId(), true)
 
-      // if (signerAddress !== this.exchange.ledgerSignerAddress) {
-      //   throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address associated to the provided private key ${signerAddress}`)
-      // }
+      if (signerAddress !== this.exchange.ledgerSignerAddress) {
+        throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address ${signerAddress} derived from the provided private key`)
+      }
 
       if (parseHex(this.agreement.ledgerContractAddress) !== parseHex(this.dltConfig.contract.address)) {
         throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
@@ -194,23 +193,8 @@ export class NonRepudiationOrig {
     if (!this.dltConfig.disable) {
       const secret = ethers.BigNumber.from(`0x${this.block.secret.hex}`)
       const exchangeIdHex = parseHex(bufToHex(b64.decode(this.exchange.id) as Uint8Array), true)
-      const tx = await this.dltContract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: this.dltConfig.gasLimit })
-      // ethers.utils.serializeTransaction(tx)
-
-      tx.nonce = await this.dltContract.provider.getTransactionCount(this.exchange.ledgerSignerAddress)
-      tx.gasPrice = await this.dltContract.provider.getGasPrice()
-      tx.chainId = (await this.dltContract.provider.getNetwork()).chainId
-
-      const signedTx = await this.dltConfig.signer.signTransaction(tx)
-
-      const setRegistryTx = await this.dltContract.provider.sendTransaction(signedTx)
-
-      // TO-DO: it fails with a random account since it hasn't got any funds (ethers). Do we have a faucet? Set gas prize to 0?
-      // const setRegistryTx = await this.dltContract.setRegistry(`0x${this.exchange.id}`, secret, { gasLimit: this.dltConfig.gasLimit })
-      verificationCode = setRegistryTx.hash
-
-      // TO-DO: I would say that we can remove the next wait
-      // await setRegistryTx.wait()
+      const unsignedTx = await this.dltContract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: this.dltConfig.gasLimit })
+      verificationCode = await this.dltConfig.signer.deployTransaction(unsignedTx)
     }
 
     const payload: Omit<PoPPayload, 'iat'> = {

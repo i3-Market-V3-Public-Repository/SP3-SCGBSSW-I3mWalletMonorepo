@@ -126,6 +126,8 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "@i3m/non-repudiation-protocol-smart-contract": "^1.0.1",
+    "@i3m/wallet-protocol": "^1.0.0",
     "@juanelas/base64": "^1.0.4",
     "bigint-conversion": "^2.2.1",
     "bigint-crypto-utils": "^3.0.21",

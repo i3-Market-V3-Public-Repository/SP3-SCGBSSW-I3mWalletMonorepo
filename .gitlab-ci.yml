@@ -1,13 +1,10 @@
 stages:
-  - build
+  - publish
 
 build:
-  stage: build
+  stage: publish
   image: node:$NODE_VERSION
   script:
-    - npm ci
-    - npm run build:js
-    - npm run docs
     - npm publish
   
   rules:
