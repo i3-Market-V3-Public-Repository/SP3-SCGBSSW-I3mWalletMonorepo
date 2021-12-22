@@ -11,3 +11,15 @@ services:
       - .:/app
     command:
       - /app/scripts/publish.sh
+
+  libraries:
+    image: node:16
+    container_name: wallet-libraries
+    restart: unless-stopped
+    working_dir: /app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command:
+      - /app/scripts/libraries.sh
