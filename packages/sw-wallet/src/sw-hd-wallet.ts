@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { HDNode, defaultPath } from '@ethersproject/hdnode'
 import * as u8a from 'uint8arrays'
 
-import { KeyLike, Dialog, Store, KeyWallet } from '@i3-market/base-wallet'
+import { KeyLike, Dialog, Store, KeyWallet } from '@i3m/base-wallet'
 import { SwWalletError } from './errors'
 import { SwWalletModel, HDData } from './types'
 

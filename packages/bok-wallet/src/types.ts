@@ -1,4 +1,4 @@
-import { WalletOptionsSettings, BaseWalletModel } from '@i3-market/base-wallet'
+import { WalletOptionsSettings, BaseWalletModel } from '@i3m/base-wallet'
 
 export type KeyType = 'Secp256k1'
 

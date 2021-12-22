@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 
 import { WindowManager, extractLocals } from '@wallet/main/internal'
 import { asyncHandler } from './async-handler'

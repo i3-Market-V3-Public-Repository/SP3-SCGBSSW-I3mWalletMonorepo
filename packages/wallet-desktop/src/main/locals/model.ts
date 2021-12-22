@@ -1,5 +1,5 @@
 
-import { Dialog } from '@i3-market/base-wallet'
+import { Dialog } from '@i3m/base-wallet'
 import {
   Tray,
   WalletFactory,

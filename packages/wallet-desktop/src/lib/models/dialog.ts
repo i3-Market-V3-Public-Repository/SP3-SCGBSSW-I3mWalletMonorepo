@@ -1,6 +1,6 @@
 
 import { v4 as uuid } from 'uuid'
-import { DialogOptionContext } from '@i3-market/base-wallet'
+import { DialogOptionContext } from '@i3m/base-wallet'
 
 export interface DialogOption<T> {
   text: string

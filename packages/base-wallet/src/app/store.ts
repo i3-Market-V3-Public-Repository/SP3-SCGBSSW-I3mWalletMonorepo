@@ -1,4 +1,4 @@
-import { WalletComponents } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import { IIdentifier } from '@veramo/core'
 import { CanBePromise } from '../utils'
 

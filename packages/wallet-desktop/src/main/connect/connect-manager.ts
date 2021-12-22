@@ -1,5 +1,5 @@
 import http from 'http'
-import { WalletError } from '@i3-market/base-wallet'
+import { WalletError } from '@i3m/base-wallet'
 import { WalletProtocol, HttpResponderTransport, Identity } from '@i3m/wallet-protocol'
 
 import { Locals } from '@wallet/main/internal'

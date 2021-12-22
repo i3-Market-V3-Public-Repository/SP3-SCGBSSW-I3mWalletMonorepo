@@ -1,4 +1,4 @@
-import { Wallet, WalletBuilder, WalletMetadata } from '@i3-market/base-wallet'
+import { Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
 import { WalletMetadataMap } from '@wallet/lib'
 import {
   logger,

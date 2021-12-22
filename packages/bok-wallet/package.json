@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/bok-wallet",
+  "name": "@i3m/bok-wallet",
   "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
@@ -62,13 +62,13 @@
     ]
   },
   "publishConfig": {
-    "@i3-market:registry": "https://gitlab.com/api/v4/projects/26002994/packages/npm/"
+    "@i3m:registry": "https://gitlab.com/api/v4/projects/26002994/packages/npm/"
   },
   "author": "Fernando Román García",
   "license": "EUPL-1.2",
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
-    "@i3-market/base-wallet": "^1.0.1",
+    "@i3m/base-wallet": "^1.0.1",
     "debug": "^4.3.1",
     "did-jwt": "^5.2.0",
     "ethers": "^5.3.0",

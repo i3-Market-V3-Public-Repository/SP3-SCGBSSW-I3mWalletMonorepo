@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid'
-import { WalletMetadata } from '@i3-market/base-wallet'
+import { WalletMetadata } from '@i3m/base-wallet'
 import {
   createWalletAction,
   WalletInfo

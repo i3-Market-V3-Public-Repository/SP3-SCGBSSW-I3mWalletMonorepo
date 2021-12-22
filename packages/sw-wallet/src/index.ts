@@ -1,4 +1,4 @@
-import { BaseWallet, WalletBuilder } from '@i3-market/base-wallet'
+import { BaseWallet, WalletBuilder } from '@i3m/base-wallet'
 
 import { SwWalletOptions } from './types'
 import { SwHdKeyWallet } from './sw-hd-wallet'

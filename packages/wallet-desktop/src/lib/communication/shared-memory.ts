@@ -1,4 +1,4 @@
-import { Resource, Identity, WalletMetadata } from '@i3-market/base-wallet'
+import { Resource, Identity, WalletMetadata } from '@i3m/base-wallet'
 import { Settings, createDefaultSettings, DialogData, ConnectData } from '../internal'
 
 export interface WalletMetadataMap {
