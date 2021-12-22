@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Wallet protocol API",
   "keywords": [
     "keyword1",
@@ -100,7 +100,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.0.0",
-    "@i3m/wallet-protocol": "^1.0.0"
+    "@i3m/wallet-desktop-openapi": "^1.0.1",
+    "@i3m/wallet-protocol": "^1.0.1"
   }
 }
