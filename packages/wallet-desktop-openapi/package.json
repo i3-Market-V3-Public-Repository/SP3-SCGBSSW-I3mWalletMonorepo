@@ -24,9 +24,6 @@
     "prepublishOnly": "npm run build",
     "postversion": "run-s build commit"
   },
-  "publishConfig": {
-    "@i3m:registry": "https://gitlab.com/api/v4/projects/26002446/packages/npm/"
-  },
   "repository": {
     "type": "git",
     "url": "git@gitlab.com:i3-market/code/wp3/t3.2/i3m-wallet/wallet-desktop-openapi.git"
