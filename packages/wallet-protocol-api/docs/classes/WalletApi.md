@@ -28,7 +28,7 @@
 
 #### Defined in
 
-api.ts:9
+[api.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c96848d/packages/wallet-protocol-api/src/ts/api.ts#L9)
 
 ## Properties
 
@@ -54,4 +54,4 @@ api.ts:9
 
 #### Defined in
 
-api.ts:37
+[api.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c96848d/packages/wallet-protocol-api/src/ts/api.ts#L37)
