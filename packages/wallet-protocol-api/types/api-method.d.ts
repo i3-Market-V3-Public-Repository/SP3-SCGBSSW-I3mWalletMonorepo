@@ -1,7 +1,7 @@
 import { WalletPaths } from '@i3m/wallet-desktop-openapi/types';
 export interface ApiMethod<T> {
     path: string;
-    method?: string;
+    method: string;
     headers?: Record<string, string>;
     _nothing?: T;
 }
