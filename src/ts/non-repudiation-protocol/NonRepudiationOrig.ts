@@ -1,14 +1,12 @@
 import * as b64 from '@juanelas/base64'
-import { bufToHex, hexToBuf } from 'bigint-conversion'
-import { ethers } from 'ethers'
+import { hexToBuf } from 'bigint-conversion'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { defaultDltConfig } from '../dlt/'
 import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
-import { EthersSigner } from '../signers'
-import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
+import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
 import { parseHex, sha } from '../utils'
+import { WalletAgentOrig, EthersWalletAgentOrig } from '../dlt/wallet-agents'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -21,18 +19,24 @@ export class NonRepudiationOrig {
   jwkPairOrig: JwkPair
   publicJwkDest: JWK
   block: OrigBlock
-  dltConfig: Required<DltConfig>
-  dltContract!: ethers.Contract
+  wallet!: WalletAgentOrig
   private readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement
    * @param privateJwk - the private key that will be used to sign the proofs
    * @param block - the block of data to transmit in this data exchange
-   * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-   * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that a DltSigner is provided in the dltConfig
+   * @param walletAgent - a wallet agent providing connection to a wallet (that can actually sign and deploy transactions to the ledger)
    */
-  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string) {
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgent: WalletAgentOrig)
+  /**
+   * @param agreement - a DataExchangeAgreement
+   * @param privateJwk - the private key that will be used to sign the proofs
+   * @param block - the block of data to transmit in this data exchange
+   * @param privateLedgerKeyHex - the private key to use for sign transactions to the ledger. An EthersWalletAgent will be created internally for that purpose.
+   */
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, privateLedgerKeyHex: string)
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgentOrPrivKey: WalletAgentOrig | string) {
     this.jwkPairOrig = {
       privateJwk: privateJwk,
       publicJwk: JSON.parse(agreement.orig) as JWK
@@ -44,14 +48,8 @@ export class NonRepudiationOrig {
       raw: block
     }
 
-    // @ts-expect-error I will end assigning the complete dltConfig in the async init()
-    this.dltConfig = {
-      ...defaultDltConfig,
-      ...dltConfig
-    }
-
     this.initialized = new Promise((resolve, reject) => {
-      this.init(agreement, privateLedgerKeyHex).then(() => {
+      this.init(agreement, walletAgentOrPrivKey).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -59,7 +57,7 @@ export class NonRepudiationOrig {
     })
   }
 
-  private async init (agreement: DataExchangeAgreement, privateLedgerKeyHex?: string): Promise<void> {
+  private async init (agreement: DataExchangeAgreement, walletAgentOrPrivKey: WalletAgentOrig | string): Promise<void> {
     this.agreement = await parseAgreement(agreement)
 
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
@@ -88,35 +86,26 @@ export class NonRepudiationOrig {
       id
     }
 
-    await this._dltSetup(privateLedgerKeyHex)
+    await this._dltSetup(walletAgentOrPrivKey)
   }
 
-  private async _dltSetup (privateLedgerKeyHex?: string): Promise<void> {
-    if (!this.dltConfig.disable) {
-      const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
-      if (this.jwkPairOrig.privateJwk.d === undefined) {
-        throw new Error('INVALID SIGNING ALGORITHM: No d property found on private key')
-      }
+  private async _dltSetup (walletAgentOrPrivKey: WalletAgentOrig | string): Promise<void> {
+    if (typeof walletAgentOrPrivKey === 'string') {
+      this.wallet = new EthersWalletAgentOrig(walletAgentOrPrivKey)
+    } else {
+      this.wallet = walletAgentOrPrivKey
+    }
 
-      if (privateLedgerKeyHex !== undefined) {
-        this.dltConfig.signer = new EthersSigner(rpcProvider, privateLedgerKeyHex)
-      }
+    const signerAddress: string = parseHex(await this.wallet.getAddress(), true)
 
-      if (this.dltConfig.signer === undefined) {
-        throw new Error('Either a dltConfig.signer or a privateLedgerKeyHex MUST be provided.')
-      }
+    if (signerAddress !== this.exchange.ledgerSignerAddress) {
+      throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address ${signerAddress} derived from the provided private key`)
+    }
 
-      const signerAddress: string = parseHex(await this.dltConfig.signer.getId(), true)
+    const contractAddress = parseHex(await this.wallet.getContractAddress(), true)
 
-      if (signerAddress !== this.exchange.ledgerSignerAddress) {
-        throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address ${signerAddress} derived from the provided private key`)
-      }
-
-      if (parseHex(this.agreement.ledgerContractAddress) !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
-      }
-
-      this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, rpcProvider)
+    if (contractAddress !== parseHex(this.agreement.ledgerContractAddress, true)) {
+      throw new Error(`Contract address in use ${contractAddress} does not meet the agreed one ${this.agreement.ledgerContractAddress}`)
     }
   }
 
@@ -189,13 +178,7 @@ export class NonRepudiationOrig {
       throw new Error('Before computing a PoP, you have first to have received and verified the PoR')
     }
 
-    let verificationCode = 'verificationCode'
-    if (!this.dltConfig.disable) {
-      const secret = ethers.BigNumber.from(`0x${this.block.secret.hex}`)
-      const exchangeIdHex = parseHex(bufToHex(b64.decode(this.exchange.id) as Uint8Array), true)
-      const unsignedTx = await this.dltContract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: this.dltConfig.gasLimit })
-      verificationCode = await this.dltConfig.signer.deployTransaction(unsignedTx)
-    }
+    const verificationCode = await this.wallet.deploySecret(this.block.secret.hex, this.exchange.id)
 
     const payload: Omit<PoPPayload, 'iat'> = {
       proofType: 'PoP',

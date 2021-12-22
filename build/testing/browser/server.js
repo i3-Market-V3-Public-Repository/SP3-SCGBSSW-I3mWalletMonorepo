@@ -11,6 +11,7 @@ const replace = require('@rollup/plugin-replace')
 const multi = require('@rollup/plugin-multi-entry')
 const typescriptPlugin = require('@rollup/plugin-typescript')
 const commonjs = require('@rollup/plugin-commonjs')
+const json = require('@rollup/plugin-json')
 
 const rootDir = path.join(__dirname, '..', '..', '..')
 
@@ -69,7 +70,8 @@ async function buildTests () {
         browser: true,
         exportConditions: ['browser', 'module', 'import', 'default']
       }),
-      commonjs()
+      commonjs(),
+      json()
     ],
     external: [pkgJson.name]
   }

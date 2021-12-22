@@ -1,19 +1,19 @@
-import { Contract } from 'ethers'
 import { jweDecrypt, jwsDecode, oneTimeSecret } from '../crypto'
 import { NrError } from '../errors'
 import { DisputeRequestPayload, JWK, PoOPayload, PoRPayload } from '../types'
 import { sha } from '../utils'
 import { verifyPor } from './verifyPor'
 import * as b64 from '@juanelas/base64'
+import { WalletAgentDest } from '../dlt'
 
 /**
  * Check if the cipherblock in the disputeRequest is the one agreed for the dataExchange, and if it could be decrypted with the secret published on the ledger for that dataExchange.
  *
  * @param disputeRequest a dispute request as a compact JWS
- * @param dltContract
+ * @param wallet
  * @returns
  */
-export async function checkDecryption (disputeRequest: string, dltContract: Contract): Promise<{ drPayload: DisputeRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK }> {
+export async function checkDecryption (disputeRequest: string, wallet: WalletAgentDest): Promise<{ drPayload: DisputeRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK }> {
   const { payload: drPayload } = await jwsDecode<DisputeRequestPayload>(disputeRequest)
 
   const {
@@ -22,7 +22,7 @@ export async function checkDecryption (disputeRequest: string, dltContract: Cont
     secretHex,
     pooPayload,
     porPayload
-  } = await verifyPor(drPayload.por, dltContract)
+  } = await verifyPor(drPayload.por, wallet)
 
   try {
     await jwsDecode<DisputeRequestPayload>(disputeRequest, destPublicJwk)

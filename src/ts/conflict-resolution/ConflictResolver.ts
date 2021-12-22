@@ -1,10 +1,9 @@
-import { ethers } from 'ethers'
 import { importJWK, JWTPayload, SignJWT } from 'jose'
-import { jwsDecode, verifyKeyPair } from '../crypto/'
-import { defaultDltConfig } from '../dlt'
+import { jwsDecode, verifyKeyPair } from '../crypto'
+import { EthersWalletAgentDest, WalletAgentDest } from '../dlt/wallet-agents'
 import { NrError } from '../errors'
-import { DisputeRequestPayload, DisputeResolutionPayload, DltConfig, JwkPair, PoRPayload, ResolutionPayload, VerificationRequestPayload, VerificationResolutionPayload } from '../types'
-import { parseHex, parseJwk } from '../utils/'
+import { DisputeRequestPayload, DisputeResolutionPayload, JwkPair, PoRPayload, ResolutionPayload, VerificationRequestPayload, VerificationResolutionPayload } from '../types'
+import { parseJwk } from '../utils'
 import { checkCompleteness } from './checkCompleteness'
 import { checkDecryption } from './checkDecryption'
 
@@ -16,24 +15,22 @@ import { checkDecryption } from './checkDecryption'
  */
 export class ConflictResolver {
   jwkPair: JwkPair
-  dltConfig: DltConfig
-  dltContract!: ethers.Contract
+  wallet: WalletAgentDest
   private readonly initialized: Promise<boolean>
 
   /**
    *
    * @param jwkPair a pair of public/private keys in JWK format
-   * @param dltConfig
+   * @param walletAgent a wallet agent providing read-only access to the non-repudiation protocol smart contract
    */
-  constructor (jwkPair: JwkPair, dltConfig?: Partial<DltConfig>) {
+  constructor (jwkPair: JwkPair, walletAgent?: WalletAgentDest) {
     this.jwkPair = jwkPair
 
-    this.dltConfig = {
-      ...defaultDltConfig,
-      ...dltConfig
+    if (walletAgent !== undefined) {
+      this.wallet = walletAgent
+    } else {
+      this.wallet = new EthersWalletAgentDest()
     }
-    this.dltConfig.contract.address = parseHex(this.dltConfig.contract.address, true) // prefix '0x' to the contract address (just in case it is not there)
-    this._dltSetup()
 
     this.initialized = new Promise((resolve, reject) => {
       this.init().then(() => {
@@ -42,14 +39,6 @@ export class ConflictResolver {
         reject(error)
       })
     })
-  }
-
-  private _dltSetup (): void {
-    if (!this.dltConfig.disable) {
-      const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
-
-      this.dltContract = new ethers.Contract(this.dltConfig.contract.address, this.dltConfig.contract.abi, rpcProvider)
-    }
   }
 
   /**
@@ -85,7 +74,7 @@ export class ConflictResolver {
     }
 
     try {
-      await checkCompleteness(verificationRequest, this.dltContract)
+      await checkCompleteness(verificationRequest, this.wallet)
       verificationResolution.resolution = 'completed'
     } catch (error) {
       if (!(error instanceof NrError) ||
@@ -131,7 +120,7 @@ export class ConflictResolver {
     }
 
     try {
-      await checkDecryption(disputeRequest, this.dltContract)
+      await checkDecryption(disputeRequest, this.wallet)
     } catch (error) {
       if (error instanceof NrError && error.nrErrors.includes('decryption failed')) {
         disputeResolution.resolution = 'accepted'

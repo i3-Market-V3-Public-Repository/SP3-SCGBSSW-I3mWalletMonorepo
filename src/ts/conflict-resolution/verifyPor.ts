@@ -1,13 +1,12 @@
-import { Contract } from 'ethers'
 import { jwsDecode } from '../crypto'
-import { getSecretFromLedger } from '../dlt'
+import { WalletAgentDest } from '../dlt'
 import { exchangeId } from '../exchange'
 import { NrError } from '../errors'
 import { verifyProof } from '../proofs'
 import { Dict, JWK, PoOPayload, PoRPayload } from '../types'
 import { checkTimestamp } from '../utils'
 
-export async function verifyPor (por: string, dltContract: Contract): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
+export async function verifyPor (por: string, wallet: WalletAgentDest, connectionTimeout = 10): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
   const { payload: porPayload } = await jwsDecode<Dict<PoRPayload>>(por)
   const exchange = porPayload.exchange
 
@@ -53,7 +52,7 @@ export async function verifyPor (por: string, dltContract: Contract): Promise<{ 
 
   let secretHex: string, iat: number
   try {
-    const secret = await getSecretFromLedger(dltContract, exchange.ledgerSignerAddress, exchange.id)
+    const secret = await wallet.getSecretFromLedger(exchange.ledgerSignerAddress, exchange.id, connectionTimeout)
     secretHex = secret.hex
     iat = secret.iat
   } catch (error) {

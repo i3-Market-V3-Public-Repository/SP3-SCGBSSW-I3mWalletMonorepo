@@ -1,6 +1,5 @@
-import { ethers } from 'ethers';
-import { PoRPayload } from '..';
-import { Block, DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types';
+import { WalletAgentDest } from '../dlt/';
+import { Block, DataExchange, DataExchangeAgreement, DecodedProof, JWK, JwkPair, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types';
 /**
  * The base class that should be instantiated by the destination of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -12,17 +11,15 @@ export declare class NonRepudiationDest {
     jwkPairDest: JwkPair;
     publicJwkOrig: JWK;
     block: Block;
-    dltConfig: DltConfig;
-    dltContract: ethers.Contract;
+    wallet: WalletAgentDest;
     private readonly initialized;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
-     * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
+     * @param walletAgent - a wallet agent providing read connection to the ledger
      */
-    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, dltConfig?: Partial<DltConfig>);
-    private _dltSetup;
-    private init;
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, walletAgent?: WalletAgentDest);
+    private asyncConstructor;
     /**
      * Verifies a proof of origin against the received cipherblock.
      * If verification passes, `pop` and `cipherblock` are added to this.block

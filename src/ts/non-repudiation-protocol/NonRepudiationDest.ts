@@ -1,16 +1,14 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
-import { ethers } from 'ethers'
 import { JWTPayload, SignJWT } from 'jose'
-import { PoRPayload } from '..'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { defaultDltConfig, getSecretFromLedger } from '../dlt/'
+import { WalletAgentDest, EthersWalletAgentDest } from '../dlt/'
 import { NrError } from '../errors'
 import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkTimestamp, parseHex, sha } from '../utils/'
-import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload, DltConfig, JWK, JwkPair, DecodedProof, PoOPayload, PoPPayload, StoredProof, TimestampVerifyOptions } from './../types'
+import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -20,34 +18,20 @@ import { Block, DataExchange, DataExchangeAgreement, Dict, DisputeRequestPayload
 export class NonRepudiationDest {
   agreement!: DataExchangeAgreement
   exchange?: DataExchange
-  jwkPairDest: JwkPair
-  publicJwkOrig: JWK
-  block: Block
-  dltConfig: DltConfig
-  dltContract!: ethers.Contract
+  jwkPairDest!: JwkPair
+  publicJwkOrig!: JWK
+  block!: Block
+  wallet!: WalletAgentDest
   private readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement
    * @param privateJwk - the private key that will be used to sign the proofs
-   * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
+   * @param walletAgent - a wallet agent providing read connection to the ledger
    */
-  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, dltConfig?: Partial<DltConfig>) {
-    this.jwkPairDest = {
-      privateJwk: privateJwk,
-      publicJwk: JSON.parse(agreement.dest) as JWK
-    }
-    this.publicJwkOrig = JSON.parse(agreement.orig) as JWK
-
-    this.block = {}
-
-    this.dltConfig = {
-      ...defaultDltConfig,
-      ...dltConfig
-    }
-
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, walletAgent?: WalletAgentDest) {
     this.initialized = new Promise((resolve, reject) => {
-      this.init(agreement).then(() => {
+      this.asyncConstructor(agreement, privateJwk, walletAgent).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -55,24 +39,29 @@ export class NonRepudiationDest {
     })
   }
 
-  private _dltSetup (): void {
-    if (!this.dltConfig.disable) {
-      const rpcProvider = new ethers.providers.JsonRpcProvider(this.dltConfig.rpcProviderUrl)
-
-      if (parseHex(this.agreement.ledgerContractAddress) !== parseHex(this.dltConfig.contract.address)) {
-        throw new Error(`Contract address ${this.dltConfig.contract.address} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
-      }
-
-      this.dltContract = new ethers.Contract(this.agreement.ledgerContractAddress, this.dltConfig.contract.abi, rpcProvider)
-    }
-  }
-
-  private async init (agreement: DataExchangeAgreement): Promise<void> {
+  private async asyncConstructor (agreement: DataExchangeAgreement, privateJwk: JWK, walletAgent?: WalletAgentDest): Promise<void> {
     this.agreement = await parseAgreement(agreement)
 
-    this._dltSetup()
+    this.jwkPairDest = {
+      privateJwk: privateJwk,
+      publicJwk: JSON.parse(agreement.dest) as JWK
+    }
+    this.publicJwkOrig = JSON.parse(agreement.orig) as JWK
 
     await verifyKeyPair(this.jwkPairDest.publicJwk, this.jwkPairDest.privateJwk)
+
+    if (walletAgent !== undefined) {
+      this.wallet = walletAgent
+    } else {
+      this.wallet = new EthersWalletAgentDest()
+    }
+
+    const contractAddress = parseHex(await this.wallet.getContractAddress(), true)
+    if (this.agreement.ledgerContractAddress !== contractAddress) {
+      throw new Error(`Contract address ${contractAddress} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
+    }
+
+    this.block = {}
   }
 
   /**
@@ -218,7 +207,7 @@ export class NonRepudiationDest {
     const maxTimeForSecret = this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay
     const timeout = Math.round((maxTimeForSecret - currentTimestamp) / 1000)
 
-    const { hex: secretHex, iat } = await getSecretFromLedger(this.dltContract, this.agreement.ledgerSignerAddress, this.exchange.id, timeout)
+    const { hex: secretHex, iat } = await this.wallet.getSecretFromLedger(this.agreement.ledgerSignerAddress, this.exchange.id, timeout)
 
     this.block.secret = await oneTimeSecret(this.exchange.encAlg, secretHex)
 

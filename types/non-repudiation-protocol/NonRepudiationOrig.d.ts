@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
-import { DataExchange, DataExchangeAgreement, DltConfig, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types';
+import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types';
+import { WalletAgentOrig } from '../dlt/wallet-agents';
 /**
  * The base class that should be instantiated by the origin of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -11,17 +11,22 @@ export declare class NonRepudiationOrig {
     jwkPairOrig: JwkPair;
     publicJwkDest: JWK;
     block: OrigBlock;
-    dltConfig: Required<DltConfig>;
-    dltContract: ethers.Contract;
+    wallet: WalletAgentOrig;
     private readonly initialized;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
      * @param block - the block of data to transmit in this data exchange
-     * @param dltConfig - an object with the necessary configuration for the (Ethereum-like) DLT
-     * @param privateLedgerKeyHex - the private key (d parameter) as a hexadecimal string used to sign transactions to the ledger. If not provided, it is assumed that a DltSigner is provided in the dltConfig
+     * @param walletAgent - a wallet agent providing connection to a wallet (that can actually sign and deploy transactions to the ledger)
      */
-    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltConfig?: Partial<DltConfig>, privateLedgerKeyHex?: string);
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgent: WalletAgentOrig);
+    /**
+     * @param agreement - a DataExchangeAgreement
+     * @param privateJwk - the private key that will be used to sign the proofs
+     * @param block - the block of data to transmit in this data exchange
+     * @param privateLedgerKeyHex - the private key to use for sign transactions to the ledger. An EthersWalletAgent will be created internally for that purpose.
+     */
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, privateLedgerKeyHex: string);
     private init;
     private _dltSetup;
     /**

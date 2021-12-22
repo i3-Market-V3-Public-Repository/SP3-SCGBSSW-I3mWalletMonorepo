@@ -1,7 +1,6 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose'
-import { DltSigner } from './signers'
-import { HASH_ALGS, SIGNING_ALGS, ENC_ALGS } from './constants'
+import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants'
 
 export { KeyLike } from 'jose'
 export { ContractInterface }
@@ -34,7 +33,6 @@ export interface DltConfig {
   gasLimit: number
   contract: ContractConfig
   disable: boolean
-  signer?: DltSigner
 }
 
 export interface StoredProof<T extends NrProofPayload> {

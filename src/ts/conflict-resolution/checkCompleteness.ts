@@ -1,4 +1,4 @@
-import { Contract } from 'ethers'
+import { WalletAgentDest } from '..'
 import { jwsDecode } from '../crypto'
 import { NrError } from '../errors'
 import { JWK, PoOPayload, PoRPayload, VerificationRequestPayload } from '../types'
@@ -8,10 +8,10 @@ import { verifyPor } from './verifyPor'
  * Checks the completeness of a given data exchange by verifying the PoR in the verification request using the secret downloaded from the ledger
  *
  * @param verificationRequest
- * @param dltContract
+ * @param wallet
  * @returns
  */
-export async function checkCompleteness (verificationRequest: string, dltContract: Contract): Promise<{ vrPayload: VerificationRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK}> {
+export async function checkCompleteness (verificationRequest: string, wallet: WalletAgentDest, connectionTimeout = 10): Promise<{ vrPayload: VerificationRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK}> {
   let vrPayload: VerificationRequestPayload
   try {
     const decoded = await jwsDecode<VerificationRequestPayload>(verificationRequest)
@@ -22,7 +22,7 @@ export async function checkCompleteness (verificationRequest: string, dltContrac
 
   let destPublicJwk, origPublicJwk, pooPayload, porPayload
   try {
-    const verified = await verifyPor(vrPayload.por, dltContract)
+    const verified = await verifyPor(vrPayload.por, wallet, connectionTimeout)
     destPublicJwk = verified.destPublicJwk
     origPublicJwk = verified.origPublicJwk
     pooPayload = verified.pooPayload

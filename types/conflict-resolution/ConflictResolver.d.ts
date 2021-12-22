@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
-import { DltConfig, JwkPair } from '../types';
+import { WalletAgentDest } from '../dlt/wallet-agents';
+import { JwkPair } from '../types';
 /**
  * The base class that should be instantiated in order to create a Conflict Resolver instance.
  * The Conflict Resolver is an external entity that can:
@@ -8,16 +8,14 @@ import { DltConfig, JwkPair } from '../types';
  */
 export declare class ConflictResolver {
     jwkPair: JwkPair;
-    dltConfig: DltConfig;
-    dltContract: ethers.Contract;
+    wallet: WalletAgentDest;
     private readonly initialized;
     /**
      *
      * @param jwkPair a pair of public/private keys in JWK format
-     * @param dltConfig
+     * @param walletAgent a wallet agent providing read-only access to the non-repudiation protocol smart contract
      */
-    constructor(jwkPair: JwkPair, dltConfig?: Partial<DltConfig>);
-    private _dltSetup;
+    constructor(jwkPair: JwkPair, walletAgent?: WalletAgentDest);
     /**
      * Initialize this instance.
      */

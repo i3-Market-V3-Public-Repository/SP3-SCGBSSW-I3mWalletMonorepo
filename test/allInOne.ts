@@ -11,10 +11,6 @@ describe('Non-repudiation protocol', function () {
   let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest
   let crs: _pkg.ConflictResolution.ConflictResolver
 
-  const dltConfig: Partial<_pkg.DltConfig> = {
-    rpcProviderUrl: '***REMOVED***',
-    disable: false
-  }
   let dataExchangeAgreement: _pkg.DataExchangeAgreement
 
   this.beforeAll(async () => {
@@ -32,20 +28,20 @@ describe('Non-repudiation protocol', function () {
       encAlg: 'A256GCM',
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
-      ledgerContractAddress: '8d407a1722633bdd1dcf221474be7a44c05d7c2f',
-      ledgerSignerAddress: '17bd12c2134afc1f6e9302a532efe30c19b9e903',
+      ledgerContractAddress: '0x8d407a1722633bdd1dcf221474be7a44c05d7c2f',
+      ledgerSignerAddress: '0x17bd12c2134afc1f6e9302a532efe30c19b9e903',
       pooToPorDelay: 10000,
-      pooToPopDelay: 20000,
+      pooToPopDelay: 30000,
       pooToSecretDelay: 180000 // 3 minutes
     }
     const providerDltSigningKeyHex = '***REMOVED***'
     console.log(dataExchangeAgreement)
 
-    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig, providerDltSigningKeyHex)
-    nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
+    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltSigningKeyHex)
+    nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk)
 
     const jwkPair = await _pkg.generateKeys(SIGNING_ALG)
-    crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair, dltConfig)
+    crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair)
   })
 
   describe('create/verify proof of origin (PoO)', function () {
@@ -179,18 +175,16 @@ describe('Non-repudiation protocol', function () {
     })
   })
 
-  if (dltConfig.disable !== true) {
-    describe('get secret from ledger', function () {
-      const timeout = 180000 // 3 minutes (we currently have one block every 2 minutes)
-      this.timeout(timeout)
-      it('should be the same secret as the one obtained in the PoP', async function () {
-        const secret = { ...nrpConsumer.block.secret }
-        const secretFromLedger = await nrpConsumer.getSecretFromLedger()
-        chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
-        nrpConsumer.block.secret = secret as _pkg.Block['secret']
-      })
+  describe('get secret from ledger', function () {
+    const timeout = 180000 // 3 minutes (we currently have one block every 2 minutes)
+    this.timeout(timeout)
+    it('should be the same secret as the one obtained in the PoP', async function () {
+      const secret = { ...nrpConsumer.block.secret }
+      const secretFromLedger = await nrpConsumer.getSecretFromLedger()
+      chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
+      nrpConsumer.block.secret = secret as _pkg.Block['secret']
     })
-  }
+  })
 
   describe('verification request', function () {
     let verificationRequestConsumer: string
@@ -201,27 +195,23 @@ describe('Non-repudiation protocol', function () {
       const verified = await _pkg.jwsDecode(verificationRequestConsumer, nrpConsumer.jwkPairDest.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
-    if (dltConfig.disable !== true) {
-      it('the consumer\'s verification req is verified and executed by the CRS, and, since the protocol completed, resolution is \'completed\'', async function () {
-        const resolution = await crs.resolveCompleteness(verificationRequestConsumer)
-        const { payload } = await _pkg.ConflictResolution.verifyResolution<VerificationResolutionPayload>(resolution)
-        chai.expect(payload.resolution).to.equal('completed')
-      })
-    }
+    it('the consumer\'s verification req is verified and executed by the CRS, and, since the protocol completed, resolution is \'completed\'', async function () {
+      const resolution = await crs.resolveCompleteness(verificationRequestConsumer)
+      const { payload } = await _pkg.ConflictResolution.verifyResolution<VerificationResolutionPayload>(resolution)
+      chai.expect(payload.resolution).to.equal('completed')
+    })
     it('a provider should be able to generate a valid JWS', async function () {
       verificationRequestProvider = await nrpProvider.generateVerificationRequest()
       console.log(verificationRequestProvider)
       const verified = await _pkg.jwsDecode(verificationRequestProvider, nrpProvider.jwkPairOrig.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
-    if (dltConfig.disable !== true) {
-      it('the provider\'s verification req is properly verified by the CRS', async function () {
-        const resolution = await crs.resolveCompleteness(verificationRequestProvider)
-        const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.VerificationResolutionPayload>(resolution, crs.jwkPair.publicJwk)
-        console.log(JSON.stringify(payload, undefined, 2))
-        chai.expect(payload.resolution).to.equal('completed')
-      })
-    }
+    it('the provider\'s verification req is properly verified by the CRS', async function () {
+      const resolution = await crs.resolveCompleteness(verificationRequestProvider)
+      const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.VerificationResolutionPayload>(resolution, crs.jwkPair.publicJwk)
+      console.log(JSON.stringify(payload, undefined, 2))
+      chai.expect(payload.resolution).to.equal('completed')
+    })
     it('verification should throw error if it holds an invalid PoR', async function () {
       const jws = verificationRequestProvider
       const [headerb64, , signatureb64] = jws.split('.')
@@ -272,20 +262,18 @@ describe('Non-repudiation protocol', function () {
       }
       chai.expect(err.nrErrors.includes('not a compact jws')).to.equal(true)
     })
-    if (dltConfig.disable !== true) {
-      it('the CRS will send error if the request has an invalid signature', async function () {
-        const [header, payload, signature] = verificationRequestConsumer.split('.')
-        const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
-        const verificationRequestConsumer2 = [header, payload, modifiedSignature].join('.')
-        let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
-        try {
-          await crs.resolveCompleteness(verificationRequestConsumer2)
-        } catch (error) {
-          err = error as _pkg.NrError
-        }
-        chai.expect(err.nrErrors.includes('invalid verification request')).to.equal(true)
-      })
-    }
+    it('the CRS will send error if the request has an invalid signature', async function () {
+      const [header, payload, signature] = verificationRequestConsumer.split('.')
+      const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
+      const verificationRequestConsumer2 = [header, payload, modifiedSignature].join('.')
+      let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
+      try {
+        await crs.resolveCompleteness(verificationRequestConsumer2)
+      } catch (error) {
+        err = error as _pkg.NrError
+      }
+      chai.expect(err.nrErrors.includes('invalid verification request')).to.equal(true)
+    })
   })
 
   describe('dispute request', function () {
@@ -297,25 +285,24 @@ describe('Non-repudiation protocol', function () {
       const verified = await _pkg.jwsDecode(disputeRequest, nrpConsumer.jwkPairDest.publicJwk)
       chai.expect(verified.payload).to.not.equal(undefined)
     })
-    if (dltConfig.disable !== true) {
-      it('should be denied if the consumer\'s dispute req is properly verified by the CRS and decryption works', async function () {
-        const resolution = await crs.resolveDispute(disputeRequest)
-        const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.DisputeResolutionPayload>(resolution)
-        chai.expect(payload.resolution).to.equal('denied')
-      })
-      it('the CRS will send error if the request has an invalid signature', async function () {
-        const [header, payload, signature] = disputeRequest.split('.')
-        const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
-        const disputeRequestConsumer2 = [header, payload, modifiedSignature].join('.')
-        let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
-        try {
-          await crs.resolveDispute(disputeRequestConsumer2)
-        } catch (error) {
-          err = error as _pkg.NrError
-        }
-        chai.expect(err.nrErrors.includes('jws verification failed')).to.equal(true)
-      })
-    }
+    it('should be denied if the consumer\'s dispute req is properly verified by the CRS and decryption works', async function () {
+      const resolution = await crs.resolveDispute(disputeRequest)
+      const { payload } = await _pkg.ConflictResolution.verifyResolution<_pkg.DisputeResolutionPayload>(resolution)
+      chai.expect(payload.resolution).to.equal('denied')
+    })
+    it('the CRS will send error if the request has an invalid signature', async function () {
+      const [header, payload, signature] = disputeRequest.split('.')
+      const modifiedSignature = signature.replace(/[a-zA-Z]/g, () => '2')
+      const disputeRequestConsumer2 = [header, payload, modifiedSignature].join('.')
+      let err: _pkg.NrError = new _pkg.NrError(new Error(), ['unexpected error'])
+      try {
+        await crs.resolveDispute(disputeRequestConsumer2)
+      } catch (error) {
+        err = error as _pkg.NrError
+      }
+      chai.expect(err.nrErrors.includes('jws verification failed')).to.equal(true)
+    })
+
     it('should fail if there is no previous PoR', async function () {
       const block = nrpConsumer.block
       const por = block.por
