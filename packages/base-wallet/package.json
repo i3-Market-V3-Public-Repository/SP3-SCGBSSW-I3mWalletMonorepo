@@ -26,9 +26,6 @@
     "wallet",
     "i3-market"
   ],
-  "publishConfig": {
-    "@i3m:registry": "https://gitlab.com/api/v4/projects/26002974/packages/npm/"
-  },
   "author": "Juan Hernandez Serrano",
   "license": "EUPL-1.2",
   "devDependencies": {

@@ -54,9 +54,6 @@
       }
     ]
   },
-  "publishConfig": {
-    "@i3m:registry": "https://gitlab.com/api/v4/projects/26002994/packages/npm/"
-  },
   "author": "Fernando Román García",
   "license": "EUPL-1.2",
   "dependencies": {
