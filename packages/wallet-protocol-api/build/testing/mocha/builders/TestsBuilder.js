@@ -46,7 +46,7 @@ module.exports = class TestsBuilder extends Builder {
     // This prevents SyntaxError: Cannot use import statement outside a module
     tsConfig.compilerOptions.module = 'commonjs'
 
-    // typeroots should also include testing ones
+    // Removed typeroots (it causes issues)
     tsConfig.compilerOptions.typeRoots = undefined
 
     tsConfig.compilerOptions.outDir = path.isAbsolute(tempDir) ? path.relative(rootDir, tempDir) : tempDir
