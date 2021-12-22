@@ -1,11 +1,11 @@
-import { Wallet, TestDialog, TestStore, Veramo, Resource } from '@i3-market/base-wallet'
+import { Wallet, TestDialog, TestStore, Veramo, Resource } from '@i3m/base-wallet'
 import Debug from 'debug'
 
 import swBuilder from '..'
 
 const debug = Debug('i3-market:sw-wallet:test')
 
-describe('@i3-market/sw-wallet', () => {
+describe('@i3m/sw-wallet', () => {
   const dialog = new TestDialog()
   const store = new TestStore()
   let wallet: Wallet

@@ -1,4 +1,4 @@
-import { WalletComponents, WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletComponents, WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
 import { ethers } from 'ethers'
 import _ from 'lodash'

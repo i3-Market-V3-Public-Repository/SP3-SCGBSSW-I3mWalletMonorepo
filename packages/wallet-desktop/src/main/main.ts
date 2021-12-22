@@ -41,8 +41,8 @@ async function getAppSettings (locals: Locals): Promise<MainContext> {
 
   const wallet = settings.get('wallet')
   wallet.packages = [
-    '@i3-market/sw-wallet',
-    '@i3-market/bok-wallet'
+    '@i3m/sw-wallet',
+    '@i3m/bok-wallet'
   ]
   settings.set('wallet', wallet)
 

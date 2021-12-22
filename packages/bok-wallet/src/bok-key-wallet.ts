@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { v4 as uuid } from 'uuid'
 import * as u8a from 'uint8arrays'
 
-import { KeyLike, Dialog, Store, KeyWallet } from '@i3-market/base-wallet'
+import { KeyLike, Dialog, Store, KeyWallet } from '@i3m/base-wallet'
 
 import { BokWalletModel, Key } from './types'
 import { BokWalletError } from './errors'

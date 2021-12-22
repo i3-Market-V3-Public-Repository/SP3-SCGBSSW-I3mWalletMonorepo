@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { WalletError } from '@i3-market/base-wallet'
+import { WalletError } from '@i3m/base-wallet'
 import { Locals, logger } from '@wallet/main/internal'
 
 export const developerApi = (locals: Locals): RequestHandler => {

@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/base-wallet",
+  "name": "@i3m/base-wallet",
   "version": "1.0.1",
   "description": "The abstract class defining an i3-market wallet",
   "main": "dist/index.js",
@@ -27,7 +27,7 @@
     "i3-market"
   ],
   "publishConfig": {
-    "@i3-market:registry": "https://gitlab.com/api/v4/projects/26002974/packages/npm/"
+    "@i3m:registry": "https://gitlab.com/api/v4/projects/26002974/packages/npm/"
   },
   "author": "Juan Hernandez Serrano",
   "license": "EUPL-1.2",

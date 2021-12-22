@@ -1,4 +1,4 @@
-import { BaseWallet, WalletOptions } from '@i3-market/base-wallet'
+import { BaseWallet, WalletOptions } from '@i3m/base-wallet'
 import { ethers } from 'ethers'
 import { BokWalletModel } from './types'
 import { BokKeyWallet } from './bok-key-wallet'

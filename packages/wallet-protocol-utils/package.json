@@ -1,5 +1,5 @@
 {
-  "name": "@i3-market/wallet-protocol-utils",
+  "name": "@i3m/wallet-protocol-utils",
   "version": "1.0.1",
   "description": "Wallet protocol utilities",
   "main": "index.js",

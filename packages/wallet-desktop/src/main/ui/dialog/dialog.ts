@@ -1,5 +1,5 @@
 
-import { Dialog, ConfirmationOptions, SelectOptions, DialogResponse, TextOptions, FormOptions, Descriptors, DialogOptionContext } from '@i3-market/base-wallet'
+import { Dialog, ConfirmationOptions, SelectOptions, DialogResponse, TextOptions, FormOptions, Descriptors, DialogOptionContext } from '@i3m/base-wallet'
 
 import { DialogData, DialogDescriptors, createDialogId } from '@wallet/lib'
 import { Locals } from '@wallet/main/internal'

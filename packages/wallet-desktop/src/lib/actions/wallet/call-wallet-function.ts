@@ -1,4 +1,4 @@
-import { WalletFunctionMetadata } from '@i3-market/base-wallet'
+import { WalletFunctionMetadata } from '@i3m/base-wallet'
 import { Action as BaseAction } from '../action'
 import { ActionBuilder } from '../action-builder'
 

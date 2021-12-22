@@ -1,4 +1,4 @@
-import { WalletPaths } from '@i3-market/wallet-desktop-openapi/types'
+import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 
 import { extractLocals } from '@wallet/main/locals'
 import { asyncHandler } from './async-handler'

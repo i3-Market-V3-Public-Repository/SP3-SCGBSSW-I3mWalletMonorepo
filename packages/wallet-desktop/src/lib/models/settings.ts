@@ -50,7 +50,7 @@ export function createDefaultSettings (): Settings {
   return {
     wallet: {
       wallets: {},
-      packages: ['@i3-market/sw-wallet']
+      packages: ['@i3m/sw-wallet']
     },
     providers: [],
     connect: {
