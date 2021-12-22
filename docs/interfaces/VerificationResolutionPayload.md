@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L148)
+[src/ts/types.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L148)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:149](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L149)
+[src/ts/types.ts:149](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L149)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L150)
+[src/ts/types.ts:150](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L150)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L145)
+[src/ts/types.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L145)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:156](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L156)
+[src/ts/types.ts:156](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L156)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:151](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L151)
+[src/ts/types.ts:151](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L151)
 
 ___
 
@@ -114,4 +114,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:155](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2c9bb24/src/ts/types.ts#L155)
+[src/ts/types.ts:155](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/types.ts#L155)

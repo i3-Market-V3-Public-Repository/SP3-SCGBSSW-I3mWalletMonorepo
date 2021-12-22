@@ -31,7 +31,7 @@ WalletAgent.getContractAddress
 
 #### Defined in
 
-src/ts/dlt/wallet-agents/WalletAgent.ts:10
+[src/ts/dlt/wallet-agents/WalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/WalletAgent.ts#L10)
 
 ___
 
@@ -58,4 +58,4 @@ the secret in hex and when it was published to the blockchain as a NumericDate
 
 #### Defined in
 
-src/ts/dlt/wallet-agents/dest/WalletAgentDest.ts:12
+[src/ts/dlt/wallet-agents/dest/WalletAgentDest.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/08a7999/src/ts/dlt/wallet-agents/dest/WalletAgentDest.ts#L12)
