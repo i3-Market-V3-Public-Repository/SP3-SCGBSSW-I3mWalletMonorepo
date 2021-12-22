@@ -37,7 +37,7 @@
     "test": "./test"
   },
   "scripts": {
-    "build": "run-s lint build:js docs test:browser-headless coverage",
+    "build": "run-s lint build:js docs",
     "build:js": "rollup -c build/rollup.config.js",
     "clean": "rimraf .nyc_output .mocha-ts coverage dist types docs",
     "coverage": "nyc --check-coverage --exclude build --exclude '{src/ts/**/*.spec.ts,test/**/*.ts,.mocha-ts/**/*}' --reporter=text --reporter=lcov node ./build/bin/mocha-ts.js --require build/testing/mocha/mocha-init.js '{src/ts/**/*.spec.ts,test/**/*.ts}'",
