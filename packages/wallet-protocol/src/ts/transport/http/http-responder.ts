@@ -95,16 +95,19 @@ export class HttpResponderTransport extends ResponderTransport<http.IncomingMess
       apply: (target: Function, thisArg, argsArray) => {
         const chunk = argsArray[0]
         const send = async (): Promise<void> => {
-          if (chunk instanceof Buffer) {
-            const ciphertext = await masterKey.encrypt(chunk)
-            const ciphertextBase64 = format.u8Arr2Base64(ciphertext)
-            res.setHeader('Content-Length', ciphertextBase64.length)
-
-            target.call(thisArg, ciphertextBase64, ...argsArray)
-            return
+          let buffer: Uint8Array
+          if (typeof chunk === 'string') {
+            buffer = format.utf2U8Arr(chunk)
+          } else if (chunk instanceof Buffer) {
+            buffer = chunk
+          } else {
+            throw new Error('cannot manage this chunk...')
           }
+          const ciphertext = await masterKey.encrypt(buffer)
+          const ciphertextBase64 = format.u8Arr2Base64(ciphertext)
+          res.setHeader('Content-Length', ciphertextBase64.length)
 
-          throw new Error('cannot manage this chunk...')
+          target.call(thisArg, ciphertextBase64, ...argsArray)
         }
 
         send().catch(err => { console.error(err) })
