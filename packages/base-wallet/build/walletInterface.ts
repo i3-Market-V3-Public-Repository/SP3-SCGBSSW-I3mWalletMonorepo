@@ -172,6 +172,7 @@ const writeWalletCode = function (
   })
 
   code.prependLine('/* DO NOT MODIFY THIS FILE */')
+  code.replace(/\r/g) // Remove windows CR...
   code.replace(/ *\/\/ *@ts-ignore\n/g)
   code.replace(/ *\/\/ *@wallet-methods\n/g, methodsCode)
 
