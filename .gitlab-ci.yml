@@ -67,7 +67,7 @@ build_lin:
     - if: $CI_COMMIT_TAG != null
     - if: $DEPLOY_ALL == "true"
     - if: $DEPLOY_DESKTOP == "true"
-    - if: $DEPLOY_WIN == "true"
+    - if: $DEPLOY_LIN == "true"
 
 deploy:
   stage: deploy
