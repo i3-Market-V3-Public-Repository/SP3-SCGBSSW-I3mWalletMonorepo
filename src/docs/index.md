@@ -5,7 +5,7 @@
 
 # {{PKG_NAME}}
 
-Library for handling non-repudiation proofs in the i3-MARKET ecosystem. It is a core element of the Conflict Resolution system in i3-MARKET ([Read more here](./conflict-resolution.md)).
+Library for handling non-repudiation proofs in the i3-MARKET ecosystem. It is a core element of the Conflict Resolution system in i3-MARKET ([Read more here](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/documentation#conflict-resolution-non-repudiation-protocol)).
 
 The library enables implementation of:
 

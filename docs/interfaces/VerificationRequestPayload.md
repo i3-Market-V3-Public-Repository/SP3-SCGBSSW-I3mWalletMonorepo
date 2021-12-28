@@ -29,7 +29,7 @@ ConflictResolutionRequestPayload.dataExchangeId
 
 #### Defined in
 
-[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L131)
+[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L131)
 
 ___
 
@@ -43,7 +43,7 @@ ConflictResolutionRequestPayload.iat
 
 #### Defined in
 
-[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L129)
+[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L129)
 
 ___
 
@@ -57,7 +57,7 @@ ConflictResolutionRequestPayload.iss
 
 #### Defined in
 
-[src/ts/types.ts:128](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L128)
+[src/ts/types.ts:128](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L128)
 
 ___
 
@@ -71,7 +71,7 @@ ConflictResolutionRequestPayload.por
 
 #### Defined in
 
-[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L130)
+[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L130)
 
 ___
 
@@ -85,7 +85,7 @@ ConflictResolutionRequestPayload.proofType
 
 #### Defined in
 
-[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L127)
+[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L127)
 
 ___
 
@@ -95,4 +95,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:135](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L135)
+[src/ts/types.ts:135](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L135)

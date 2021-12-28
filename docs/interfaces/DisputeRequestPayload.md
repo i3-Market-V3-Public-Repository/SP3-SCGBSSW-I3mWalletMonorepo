@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L141)
+[src/ts/types.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L141)
 
 ___
 
@@ -40,7 +40,7 @@ ConflictResolutionRequestPayload.dataExchangeId
 
 #### Defined in
 
-[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L131)
+[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L131)
 
 ___
 
@@ -54,7 +54,7 @@ ConflictResolutionRequestPayload.iat
 
 #### Defined in
 
-[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L129)
+[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L129)
 
 ___
 
@@ -68,7 +68,7 @@ ConflictResolutionRequestPayload.iss
 
 #### Defined in
 
-[src/ts/types.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L140)
+[src/ts/types.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L140)
 
 ___
 
@@ -82,7 +82,7 @@ ConflictResolutionRequestPayload.por
 
 #### Defined in
 
-[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L130)
+[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L130)
 
 ___
 
@@ -96,7 +96,7 @@ ConflictResolutionRequestPayload.proofType
 
 #### Defined in
 
-[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L127)
+[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L127)
 
 ___
 
@@ -106,4 +106,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/05d8d70/src/ts/types.ts#L139)
+[src/ts/types.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/types.ts#L139)
