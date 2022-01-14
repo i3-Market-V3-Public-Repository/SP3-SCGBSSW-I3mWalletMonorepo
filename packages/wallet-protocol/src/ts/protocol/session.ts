@@ -15,9 +15,19 @@ export class Session<T extends Transport> {
     }
   }
 
-  static async fromJSON <T extends Transport>(transport: T, json: any): Promise<Session<T>> {
+  static async fromJSON <T extends Transport>(transport: T, json: any): Promise<Session<T>>
+  static async fromJSON <T extends Transport>(transportConstructor: new () => T, json: any): Promise<Session<T>>
+  static async fromJSON <T extends Transport>(TransportOrConstructor: T | (new () => T), json: any): Promise<Session<T>> {
     const masterKey = await MasterKey.fromJSON(json.masterKey)
     const code = format.hex2U8Arr(json.code)
+    let transport: T
+    if (typeof TransportOrConstructor === 'object') {
+      transport = TransportOrConstructor
+    } else if (TransportOrConstructor instanceof Function) {
+      transport = new TransportOrConstructor()
+    } else {
+      throw new Error('First param must be transport or constructor of transport')
+    }
 
     return new Session(transport, masterKey, code)
   }
