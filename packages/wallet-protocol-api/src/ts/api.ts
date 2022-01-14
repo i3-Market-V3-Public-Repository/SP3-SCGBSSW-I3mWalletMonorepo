@@ -1,14 +1,19 @@
 import { Session, HttpInitiatorTransport } from '@i3m/wallet-protocol'
-import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
-import { ApiMethod, GET_IDENTITIES } from './api-method'
+import { IdentitiesApi, ResourcesApi, TransactionApi } from './models'
+import { ApiExecutor, Params, Body, ApiMethod } from './types'
 
-type Params = Record<string, string> | undefined
-type Body = any
+export class WalletApi implements ApiExecutor {
+  public identities: IdentitiesApi
+  public transaction: TransactionApi
+  public resources: ResourcesApi
 
-export class WalletApi {
-  constructor (protected session: Session<HttpInitiatorTransport>) {}
+  constructor (protected session: Session<HttpInitiatorTransport>) {
+    this.identities = new IdentitiesApi(this)
+    this.transaction = new TransactionApi(this)
+    this.resources = new ResourcesApi(this)
+  }
 
-  private async executeQuery<T>(api: ApiMethod<T>, queryParams: Params, bodyObject: Body): Promise<T> {
+  public async executeQuery<T>(api: ApiMethod, pathParams: Params, queryParams: Params, bodyObject: Body): Promise<T> {
     let queryParamsString = ''
     if (queryParams !== undefined) {
       queryParamsString = '?' + Object
@@ -19,10 +24,16 @@ export class WalletApi {
 
     let body
     if (bodyObject !== undefined) {
-      body = JSON.parse(bodyObject)
+      body = JSON.stringify(bodyObject)
     }
 
-    const url = api.path + queryParamsString
+    let url = api.path + queryParamsString
+    if (pathParams !== undefined) {
+      for (const [key, value] of Object.entries(pathParams)) {
+        url = url.replace(`{${key}}`, value)
+      }
+    }
+
     const resp = await this.session.send({
       url,
       init: {
@@ -32,9 +43,5 @@ export class WalletApi {
       }
     })
     return JSON.parse(resp.body)
-  }
-
-  async getIdentites (queryParams?: WalletPaths.IdentityList.QueryParameters): Promise<WalletPaths.IdentityList.Responses.$200> {
-    return await this.executeQuery(GET_IDENTITIES, queryParams as Params, undefined)
   }
 }

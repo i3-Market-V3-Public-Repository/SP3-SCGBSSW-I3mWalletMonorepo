@@ -19,3 +19,5 @@ coverage
 
 # docs temporal files
 .nojekyll
+
+/types
