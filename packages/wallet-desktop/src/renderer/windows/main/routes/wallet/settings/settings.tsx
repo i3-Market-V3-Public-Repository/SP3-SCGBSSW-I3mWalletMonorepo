@@ -18,7 +18,7 @@ export function Settings (): JSX.Element {
         key: 'developer.enableDeveloperApi'
       }
     ],
-    'Wallet Connect': [
+    'Wallet Protocol': [
       {
         label: 'Enable Token expiration',
         type: 'checkbox',
