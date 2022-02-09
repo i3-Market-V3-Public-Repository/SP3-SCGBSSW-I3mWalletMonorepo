@@ -14,7 +14,7 @@ const base58 = {
 }
 
 const { WalletProtocol, HttpInitiatorTransport, Session } = walletProtocol
-const { openModal, LocalSessionManager } = walletProtocolModal
+const { openModal, LocalSessionManager } = walletProtocolUtils
 
 const main = async () => {
   const urlInput = document.getElementById('url-input')
