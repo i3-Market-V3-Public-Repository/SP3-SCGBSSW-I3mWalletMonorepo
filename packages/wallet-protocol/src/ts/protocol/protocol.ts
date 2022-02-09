@@ -43,6 +43,7 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
     const input = new Uint8Array(inputLen)
 
     // Build input data
+    // TODO: change format?
     bufferUtils.insertBytes(pka, input, 1, 0, 32)
     bufferUtils.insertBytes(pkb, input, 1, 32, 32)
     bufferUtils.insertBits(nx, input, 0, 2 * 32 * 8, constants.NONCE_LENGTH)
