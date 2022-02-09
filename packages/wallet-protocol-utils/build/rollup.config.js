@@ -28,8 +28,8 @@ module.exports = [
     input: inputFile,
     output: [
       {
-        file: path.join(dstDir, 'wallet-protocol-modal.umd.js'),
-        name: 'walletProtocolModal',
+        file: path.join(dstDir, 'wallet-protocol-utils.umd.js'),
+        name: 'walletProtocolUtils',
         format: 'umd',
         sourcemap: true,
         sourcemapPathTransform: (relativeSourcePath, sourcemapPath) => {
