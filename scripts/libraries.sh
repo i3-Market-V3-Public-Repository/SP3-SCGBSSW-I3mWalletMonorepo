@@ -18,6 +18,7 @@ fi
 publish packages/wallet-protocol
 publish packages/wallet-protocol-api
 publish packages/wallet-protocol-utils
+publish packages/wallet-desktop-openapi
 publish packages/base-wallet
 publish packages/sw-wallet
 publish packages/bok-wallet
