@@ -1,16 +1,18 @@
 import { Session, HttpInitiatorTransport } from '@i3m/wallet-protocol'
-import { IdentitiesApi, ResourcesApi, TransactionApi } from './models'
+import { DisclosureApi, IdentitiesApi, ResourcesApi, TransactionApi } from './models'
 import { ApiExecutor, Params, Body, ApiMethod } from './types'
 
 export class WalletApi implements ApiExecutor {
   public identities: IdentitiesApi
   public transaction: TransactionApi
   public resources: ResourcesApi
+  public disclosure: DisclosureApi
 
   constructor (protected session: Session<HttpInitiatorTransport>) {
     this.identities = new IdentitiesApi(this)
     this.transaction = new TransactionApi(this)
     this.resources = new ResourcesApi(this)
+    this.disclosure = new DisclosureApi(this)
   }
 
   public async executeQuery<T>(api: ApiMethod, pathParams: Params, queryParams: Params, bodyObject: Body): Promise<T> {
