@@ -7,7 +7,7 @@ export class DisclosureApi {
 
   async disclose (pathParams: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200> {
     return await this.api.executeQuery({
-      path: '/disclosure',
+      path: '/disclosure/{jwt}',
       method: 'GET'
     }, pathParams as any, undefined, undefined)
   }
