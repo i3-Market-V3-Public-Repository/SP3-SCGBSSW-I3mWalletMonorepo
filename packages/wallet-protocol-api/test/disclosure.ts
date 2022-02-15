@@ -1,20 +1,20 @@
-import { Session, HttpInitiatorTransport } from '@i3m/wallet-protocol'
-import sessionJSON from './session-token'
+import data from './data'
 
-const { WalletApi } = _pkg
 // const { expect } = chai
 
-describe('WalletApi.disclosure', function () {
-  let api: _pkg.WalletApi
-
-  this.timeout(30000)
-  before(async function () {
-    const session = await Session.fromJSON(HttpInitiatorTransport, sessionJSON)
-    api = new WalletApi(session)
+export default function (): void {
+  it('should handle selective disclosures', async function () {
+    const { api, wallet, validator } = data
+    const sdrJwt = await wallet.veramo.agent.createSelectiveDisclosureRequest({
+      data: {
+        issuer: validator.did,
+        claims: [
+          { claimType: 'consumer', essential: true },
+          { claimType: 'age' }
+        ]
+      }
+    })
+    const response = await api.disclosure.disclose({ jwt: sdrJwt })
+    console.log(response)
   })
-
-  it('should list identities', async function () {
-    const identities = await api.disclosure.disclose({ jwt: 'blabla' })
-    console.log(identities)
-  })
-})
+}

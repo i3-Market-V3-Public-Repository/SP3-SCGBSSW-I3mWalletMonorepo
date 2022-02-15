@@ -72,6 +72,8 @@
     ]
   },
   "devDependencies": {
+    "@i3m/base-wallet": "^1.0.1",
+    "@i3m/bok-wallet": "^1.0.1",
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
