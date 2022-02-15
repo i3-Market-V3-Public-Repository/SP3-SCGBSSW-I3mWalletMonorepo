@@ -17,3 +17,7 @@ Then, to start the i3m-wallet execute commands:
 npm i
 npm start
 ```
+
+# Documentation
+
+The complete documentation can be found [here](https://i3-market.gitlab.io/code/backplane/backplane-api-gateway/backplane-api-specification/systems/trust-security-privacy/smart-wallet/overview.html).
