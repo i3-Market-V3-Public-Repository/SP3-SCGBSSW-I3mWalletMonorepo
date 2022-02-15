@@ -2,7 +2,8 @@
   "name": "@i3m/bok-wallet",
   "version": "1.0.1",
   "description": "",
-  "main": "dist/index.js",
+  "types": "./types/index.d.ts",
+  "main": "./dist/index.js",
   "scripts": {
     "build:ts": "tsc",
     "build": "run-s build:ts",
