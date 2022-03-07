@@ -18,9 +18,9 @@ import {
   ElectronDialog,
   StartFeatureError,
   ActionReducer,
-  LocalAuthentication
+  LocalAuthentication,
+  ConnectManager
 } from './internal'
-import { ConnectManager } from './connect'
 
 async function getAppSettings (locals: Locals): Promise<MainContext> {
   const sharedMemoryManager = new SharedMemoryManager()
@@ -122,6 +122,7 @@ async function initApi (
   locals: Locals
 ): Promise<void> {
   // Create and initialize connect manager
+  // FIXME: Important bug!? The secret is accesible on the disk...
   const jwk = locals.settings.get('secret') as JWK
   const key = await importJWK(jwk, 'HS256')
   locals.connectManager = new ConnectManager(locals, key)
