@@ -59,16 +59,23 @@ const main = async () => {
       headers['Content-Type'] = 'application/json'
     }
 
-    const resp = await sessionManager.fetch(urlInput.value, {
-      method: methodInput.value,
-      headers: headers,
-      body
-    })
-    if (resp.status < 300 && resp.status >= 200) {
-      const json = JSON.parse(resp.body)
-      responseInput.value = JSON.stringify(json, null, 2)
-    } else {
-      responseInput.value = `ERROR: ${resp.status} ${resp.statusText}`
+    try {
+      const resp = await sessionManager.fetch(urlInput.value, {
+        method: methodInput.value,
+        headers: headers,
+        body
+      })
+      if (resp.status < 300 && resp.status >= 200) {
+        const json = JSON.parse(resp.body)
+        responseInput.value = JSON.stringify(json, null, 2)
+      } else {
+        responseInput.value = `ERROR: ${resp.status} ${resp.statusText}`
+      }
+    } catch (e) {
+      console.log("Assuming invalid token... Remove it")
+      sessionManager.removeSession()
+      sessionManager.createIfNotExists()
+      return
     }
   }
 
