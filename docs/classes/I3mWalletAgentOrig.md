@@ -52,7 +52,7 @@ I3mWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L9)
+[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L9)
 
 ## Properties
 
@@ -66,7 +66,7 @@ I3mWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
 
 ___
 
@@ -78,7 +78,7 @@ The nonce of the next transaction to send to the blockchain. It keep track also 
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L12)
+[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L12)
 
 ___
 
@@ -92,7 +92,7 @@ I3mWalletAgent.did
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L7)
+[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L7)
 
 ___
 
@@ -106,7 +106,7 @@ I3mWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
 
 ___
 
@@ -120,7 +120,7 @@ I3mWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
 
 ___
 
@@ -134,7 +134,7 @@ I3mWalletAgent.session
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L6)
+[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L6)
 
 ## Methods
 
@@ -163,7 +163,7 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L14)
+[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L14)
 
 ___
 
@@ -183,7 +183,7 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L53)
+[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L53)
 
 ___
 
@@ -207,7 +207,7 @@ I3mWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
 
 ___
 
@@ -221,4 +221,4 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L64)
+[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L64)

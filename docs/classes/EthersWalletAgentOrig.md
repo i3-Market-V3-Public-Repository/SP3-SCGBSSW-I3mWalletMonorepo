@@ -52,7 +52,7 @@ EthersWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L22)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L22)
 
 ## Properties
 
@@ -66,7 +66,7 @@ EthersWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
 
 ___
 
@@ -78,7 +78,7 @@ The nonce of the next transaction to send to the blockchain. It keep track also 
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L20)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L20)
 
 ___
 
@@ -92,7 +92,7 @@ EthersWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
 
 ___
 
@@ -106,7 +106,7 @@ EthersWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L15)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L15)
 
 ## Methods
 
@@ -145,7 +145,7 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L44)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L44)
 
 ___
 
@@ -165,7 +165,7 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L64)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L64)
 
 ___
 
@@ -189,7 +189,7 @@ EthersWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
 
 ___
 
@@ -203,4 +203,4 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L68)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L68)
