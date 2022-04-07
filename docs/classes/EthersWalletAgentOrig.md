@@ -21,6 +21,7 @@ A ledger signer using an ethers.io Wallet.
 ### Properties
 
 - [contract](EthersWalletAgentOrig.md#contract)
+- [count](EthersWalletAgentOrig.md#count)
 - [dltConfig](EthersWalletAgentOrig.md#dltconfig)
 - [provider](EthersWalletAgentOrig.md#provider)
 - [signer](EthersWalletAgentOrig.md#signer)
@@ -30,6 +31,7 @@ A ledger signer using an ethers.io Wallet.
 - [deploySecret](EthersWalletAgentOrig.md#deploysecret)
 - [getAddress](EthersWalletAgentOrig.md#getaddress)
 - [getContractAddress](EthersWalletAgentOrig.md#getcontractaddress)
+- [nextNonce](EthersWalletAgentOrig.md#nextnonce)
 
 ## Constructors
 
@@ -50,7 +52,7 @@ EthersWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L17)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L22)
 
 ## Properties
 
@@ -64,7 +66,19 @@ EthersWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+
+___
+
+### count
+
+• **count**: `number` = `-1`
+
+The nonce of the next transaction to send to the blockchain. It keep track also of tx sent to the DLT bu not yet published on the blockchain
+
+#### Defined in
+
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L20)
 
 ___
 
@@ -78,7 +92,7 @@ EthersWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
 
 ___
 
@@ -92,7 +106,7 @@ EthersWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
 
 ___
 
@@ -102,7 +116,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L15)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L15)
 
 ## Methods
 
@@ -123,7 +137,7 @@ Publish the secret for a given data exchange on the ledger.
 
 `Promise`<`string`\>
 
-a receipt of the deployment. In Ethereum-like DLTs it is the transaction hash, which can be used to track the transaction on the ledger
+a receipt of the deployment. In Ethereum-like DLTs it contains the transaction hash, which can be used to track the transaction on the ledger, and the nonce of the transaction
 
 #### Implementation of
 
@@ -131,7 +145,7 @@ a receipt of the deployment. In Ethereum-like DLTs it is the transaction hash, w
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L39)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L44)
 
 ___
 
@@ -151,7 +165,7 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L57)
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L64)
 
 ___
 
@@ -175,4 +189,18 @@ EthersWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/0c7fb8d/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+
+___
+
+### nextNonce
+
+▸ **nextNonce**(): `Promise`<`number`\>
+
+#### Returns
+
+`Promise`<`number`\>
+
+#### Defined in
+
+[src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/6ca578f/src/ts/dlt/wallet-agents/orig/EthersWalletAgentOrig.ts#L68)

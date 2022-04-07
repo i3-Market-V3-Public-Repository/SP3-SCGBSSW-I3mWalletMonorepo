@@ -2,6 +2,7 @@ import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { VerificationResolutionPayload } from '../src/ts'
+import ethersWalletSetup from './ethersWalletSetup.json'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
@@ -29,12 +30,12 @@ describe('Non-repudiation protocol', function () {
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
       ledgerContractAddress: '0x8d407a1722633bdd1dcf221474be7a44c05d7c2f',
-      ledgerSignerAddress: '0x17bd12c2134afc1f6e9302a532efe30c19b9e903',
+      ledgerSignerAddress: ethersWalletSetup.address,
       pooToPorDelay: 10000,
       pooToPopDelay: 30000,
       pooToSecretDelay: 180000 // 3 minutes
     }
-    const providerDltSigningKeyHex = '***REMOVED***'
+    const providerDltSigningKeyHex = ethersWalletSetup.privateKey
     console.log(dataExchangeAgreement)
 
     nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltSigningKeyHex)

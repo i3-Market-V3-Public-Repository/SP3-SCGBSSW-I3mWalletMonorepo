@@ -14,6 +14,11 @@ import { WalletAgentOrig } from './WalletAgentOrig'
 export class EthersWalletAgentOrig extends EthersWalletAgent implements WalletAgentOrig {
   signer: ethers.Wallet
 
+  /**
+  * The nonce of the next transaction to send to the blockchain. It keep track also of tx sent to the DLT bu not yet published on the blockchain
+  */
+  count: number = -1
+
   constructor (privateKey?: string | Uint8Array, dltConfig?: Partial<DltConfig>) {
     super(dltConfig)
 
@@ -34,14 +39,14 @@ export class EthersWalletAgentOrig extends EthersWalletAgent implements WalletAg
    * @param secretHex - the secret in hexadecimal
    * @param exchangeId - the exchange id
    *
-   * @returns a receipt of the deployment. In Ethereum-like DLTs it is the transaction hash, which can be used to track the transaction on the ledger
+   * @returns a receipt of the deployment. In Ethereum-like DLTs it contains the transaction hash, which can be used to track the transaction on the ledger, and the nonce of the transaction
    */
   async deploySecret (secretHex: string, exchangeId: string): Promise<string> {
     const secret = ethers.BigNumber.from(parseHex(secretHex, true))
     const exchangeIdHex = parseHex(bufToHex(b64.decode(exchangeId) as Uint8Array), true)
 
     const unsignedTx = await this.contract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: this.dltConfig.gasLimit })
-    unsignedTx.nonce = await this.signer.provider.getTransactionCount(await this.getAddress())
+    unsignedTx.nonce = await this.nextNonce()
     unsignedTx.gasPrice = await this.signer.provider.getGasPrice()
     unsignedTx.chainId = (await this.signer.provider.getNetwork()).chainId
 
@@ -49,12 +54,23 @@ export class EthersWalletAgentOrig extends EthersWalletAgent implements WalletAg
 
     const setRegistryTx = await this.signer.provider.sendTransaction(signedTx)
 
+    this.count = this.count + 1
+
     // TO-DO: it fails with a random account since it hasn't got any funds (ethers). Do we have a faucet? Set gas prize to 0?
-    // const setRegistryTx = await this.dltContract.setRegistry(`0x${this.exchange.id}`, secret, { gasLimit: this.dltConfig.gasLimit })
+
     return setRegistryTx.hash
   }
 
   async getAddress (): Promise<string> {
     return this.signer.address
+  }
+
+  async nextNonce (): Promise<number> {
+    const publishedCount = await this.provider.getTransactionCount(await this.getAddress()) // Nonce of the next transaction to be published (there could be already sent transactions that are not published)
+    if (publishedCount > this.count) {
+      this.count = publishedCount
+    }
+    console.log(`next nonce = ${this.count}; last published nonce = ${publishedCount - 1}`)
+    return this.count
   }
 }

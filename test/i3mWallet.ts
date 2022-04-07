@@ -2,27 +2,14 @@ import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { I3mWalletAgentOrig, I3mWalletAgentDest } from '../src/ts/dlt/wallet-agents'
+import walletSetup from './i3mWalletSetup.json'
 
 const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
 describe('testing signing transactions with i3M-Wallet', function () {
   const transport = new HttpInitiatorTransport()
-  const sessionObj = {
-    masterKey: {
-      from: {
-        name: 'Initiator'
-      },
-      to: {
-        name: 'Wallet desktop'
-      },
-      port: 29170,
-      na: 's9MbjfciDGuekcdVszgibA',
-      nb: 'sfeQUjwJUcIKsmqULLfxOg',
-      secret: '1ZbCRFVZXiiHUD9a8Rc5rbDizARwil3US8GndWrLqa4'
-    },
-    code: '65794a68624763694f694a6b615849694c434a6c626d4d694f694a424d6a553252304e4e496e302e2e367159697557346c6b647431477571612e695032384973314f386e7533395734697a61524546644e5846314b6749785f546174416373566c5a307342374e7a524d6e6a75416836486a32535336355054336c7567596a744643556c78324a4f697a716f65754f753367777551424d31355f7574486c5773516f39516178506663383465374f3749724d3970323645566d3854396134683948635059646961794a4d6747562d7249775f67537175545755716c75726d69495a61327a796a6e41714b713847617a56517a5038395855633548686b6a78666a5945704d724d6e635a3350346e38383775785a656e724a4859327368504a6145736a5a61773649666e75666d374c6343636b52665449706e5061466b2d58774a425251724a68523257514e664f624d636862733357724d66427a7a4e6e6358437254574f6c4852514b377454465543745658586641374e64544d79646e4a4d504d4b784243664f4e7a556a465774346d485538314d6e64645173315051364470632e46346c6b556462584a4d3676463064335f4275636641'
-  }
-  const did = 'did:ethr:i3m:0x02c1e51dbe7fa3c3e89df33495f241316d9554b5206fcef16d8108486285e38c27'
+  const sessionObj = walletSetup.token
+  const did = walletSetup.did
   let session: Session<HttpInitiatorTransport>
   let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
   let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest

@@ -7,7 +7,7 @@ export interface WalletAgentOrig extends WalletAgent {
    * @param secretHex - the secret in hexadecimal
    * @param exchangeId - the exchange id
    *
-   * @returns a receipt of the deployment. In Ethereum-like DLTs it is the transaction hash, which can be used to track the transaction on the ledger
+   * @returns a receipt of the deployment. In Ethereum-like DLTs it contains the transaction hash, which can be used to track the transaction on the ledger
    */
   deploySecret: (secretHex: string, exchangeId: string) => Promise<string>
 

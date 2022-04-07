@@ -19,3 +19,11 @@ coverage
 
 # docs temporal files
 .nojekyll
+
+# The i3m wallet DID and pairing token
+i3mWalletSetup.json
+i3mWalletSetup.kids.json
+i3mWalletSetup.castefa.json
+
+# the ethers wallet address and private key
+ethersWalletSetup.json
