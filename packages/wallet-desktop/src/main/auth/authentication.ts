@@ -4,6 +4,7 @@ import crypto from 'crypto'
 
 import { Locals } from '@wallet/main/internal'
 import { AuthSettings } from '@wallet/lib'
+import { AuthenticationError } from './exceptions'
 
 interface PbkdfSettings {
   usage: string
@@ -100,9 +101,16 @@ export class LocalAuthentication {
   private async initializePassword (): Promise<void> {
     const message = (tries: number): string => `You don't have an application password: setup a new one (${tries} left).\n ${this.passwordRegexMessage}`
     const validPassword = await this.askValidPassword(message)
-
     if (validPassword === undefined) {
-      throw new Error('tries exceeded')
+      throw new AuthenticationError('tries exceeded')
+    }
+
+    const confirmedPassword = await this.askValidPassword(
+      (tries) => `Confirm your password (${tries} left).`,
+      async (password) => validPassword === password
+    )
+    if (confirmedPassword === undefined) {
+      throw new AuthenticationError('unconfirmed password')
     }
 
     const salt = await crypto.randomBytes(16)
@@ -127,7 +135,7 @@ export class LocalAuthentication {
     })
 
     if (validPassword === undefined) {
-      throw new Error('tries exceeded')
+      throw new AuthenticationError('tries exceeded')
     }
 
     this.pek = Buffer.from(await this.deriveKey(validPassword, salt, this.pekSettings))
