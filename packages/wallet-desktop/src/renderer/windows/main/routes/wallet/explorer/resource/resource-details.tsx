@@ -1,4 +1,4 @@
-import { Resource } from '@i3-market/base-wallet'
+import { Resource } from '@i3m/base-wallet'
 import { Extendible, Section } from '@wallet/renderer/components'
 import { VerifiableCredentialDetails } from './verifiable-credential-details'
 

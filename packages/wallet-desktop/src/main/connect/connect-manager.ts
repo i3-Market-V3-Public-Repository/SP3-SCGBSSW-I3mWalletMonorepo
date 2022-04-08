@@ -5,7 +5,7 @@ import { WalletProtocol, HttpResponderTransport, Identity } from '@i3m/wallet-pr
 import { Locals } from '@wallet/main/internal'
 import { cors } from './cors'
 import { JwtCodeGenerator } from './code-generator'
-import { KeyLike } from 'jose'
+import { KeyLike, errors } from 'jose'
 
 export class ConnectManager {
   protected walletProtocol: WalletProtocol
@@ -39,6 +39,12 @@ export class ConnectManager {
       if (err instanceof WalletError) {
         res.statusCode = err.status
         res.end(JSON.stringify(err))
+        return
+      } else if (err instanceof errors.JWTExpired || err instanceof errors.JWEInvalid) {
+        res.statusCode = 401
+        res.end(JSON.stringify({
+          reason: 'Unauthorized token'
+        }))
         return
       } else if (err instanceof Error) {
         res.statusCode = 500

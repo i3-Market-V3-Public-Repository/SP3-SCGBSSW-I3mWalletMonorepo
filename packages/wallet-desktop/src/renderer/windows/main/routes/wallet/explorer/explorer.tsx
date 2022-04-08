@@ -1,5 +1,5 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { Identity, Resource } from '@i3-market/base-wallet'
+import { Identity, Resource } from '@i3m/base-wallet'
 
 import { selectWalletAction, createWalletAction, createIdentityAction, WalletInfo } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
