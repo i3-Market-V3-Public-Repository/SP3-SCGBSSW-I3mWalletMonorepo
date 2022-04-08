@@ -38,8 +38,10 @@ export class ApiManager {
     // Log connection information
     const publicUri = `http://localhost:${port}`
     logger.info(`Application is listening on port ${port}`)
-    logger.info(`OpenAPI JSON spec at ${publicUri}/api-spec/openapi.json`)
-    logger.info(`OpenAPI browsable spec at ${publicUri}/api-spec/ui`)
+    logger.info('Setup Developer Api to access to the following services:')
+    logger.info(` - OpenAPI JSON spec at ${publicUri}/api-spec/openapi.json`)
+    logger.info(` - OpenAPI browsable spec at ${publicUri}/api-spec/ui`)
+    logger.info(` - Pairing form at ${publicUri}/pairing`)
   }
 
   async close (): Promise<void> {

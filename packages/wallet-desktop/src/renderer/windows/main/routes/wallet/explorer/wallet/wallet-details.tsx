@@ -1,4 +1,4 @@
-import { WalletFunctionMetadata } from '@i3-market/base-wallet'
+import { WalletFunctionMetadata } from '@i3m/base-wallet'
 import { WalletInfo, callWalletFunctionAction } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
 import { Extendible, Section } from '@wallet/renderer/components'

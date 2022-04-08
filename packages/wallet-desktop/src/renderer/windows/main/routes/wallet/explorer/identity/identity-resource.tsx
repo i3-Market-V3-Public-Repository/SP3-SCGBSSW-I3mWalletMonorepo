@@ -1,4 +1,4 @@
-import { Resource } from '@i3-market/base-wallet'
+import { Resource } from '@i3m/base-wallet'
 
 interface Props {
   resource: Resource

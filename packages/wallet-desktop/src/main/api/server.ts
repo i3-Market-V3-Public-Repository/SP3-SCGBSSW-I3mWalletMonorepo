@@ -13,9 +13,11 @@ import {
   loggerMiddleware,
   setLocals,
   Locals,
+  getResourcePath,
   ActionError
 } from '@wallet/main/internal'
 import { developerApi } from './developer-api'
+import { getModulesPath } from '../directories'
 
 interface ServerConfig {
   useHttps: boolean
@@ -76,6 +78,10 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
     res.json(openapiSpec)
   })
   app.use('/api-spec', apiSpecRouter)
+
+  // Static public folder
+  app.use('/pairing', express.static(getResourcePath('pairing')))
+  app.use('/pairing/@i3m', express.static(getModulesPath('@i3m')))
 
   // Add routes using openapi validator middleware
   const openApiMiddleware = openapiValidator({

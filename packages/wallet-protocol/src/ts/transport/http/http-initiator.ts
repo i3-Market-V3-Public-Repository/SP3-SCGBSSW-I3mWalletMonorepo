@@ -94,9 +94,11 @@ export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, Http
     })
 
     // Decrypt body
-    const bodyCiphertext = format.base642U8Arr(resp.body)
-    const jsonBuffer = await masterKey.decrypt(bodyCiphertext)
-    resp.body = format.u8Arr2Utf(jsonBuffer)
+    if (resp.status <= 300 && resp.status >= 200) {
+      const bodyCiphertext = format.base642U8Arr(resp.body)
+      const jsonBuffer = await masterKey.decrypt(bodyCiphertext)
+      resp.body = format.u8Arr2Utf(jsonBuffer)
+    }
 
     return resp
   }
