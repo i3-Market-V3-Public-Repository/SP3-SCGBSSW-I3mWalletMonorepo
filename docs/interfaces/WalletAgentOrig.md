@@ -37,7 +37,7 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts#L12)
+[src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts#L12)
 
 ___
 
@@ -53,7 +53,7 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts#L17)
+[src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/WalletAgentOrig.ts#L17)
 
 ___
 
@@ -73,4 +73,4 @@ WalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/WalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/dlt/wallet-agents/WalletAgent.ts#L10)
+[src/ts/dlt/wallet-agents/WalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/WalletAgent.ts#L10)
