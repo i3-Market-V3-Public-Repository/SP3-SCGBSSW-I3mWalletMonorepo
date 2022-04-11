@@ -35,10 +35,9 @@ describe('Non-repudiation protocol', function () {
       pooToPopDelay: 30000,
       pooToSecretDelay: 180000 // 3 minutes
     }
-    const providerDltSigningKeyHex = ethersWalletSetup.privateKey
     console.log(dataExchangeAgreement)
 
-    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltSigningKeyHex)
+    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, ethersWalletSetup.privateKey)
     nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk)
 
     const jwkPair = await _pkg.generateKeys(SIGNING_ALG)

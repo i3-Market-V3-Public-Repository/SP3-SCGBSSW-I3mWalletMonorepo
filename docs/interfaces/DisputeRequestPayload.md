@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- `ConflictResolutionRequestPayload`
+- [`ConflictResolutionRequestPayload`](ConflictResolutionRequestPayload.md)
 
   ↳ **`DisputeRequestPayload`**
 
@@ -26,7 +26,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L141)
+[src/ts/types.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L141)
 
 ___
 
@@ -36,11 +36,11 @@ ___
 
 #### Inherited from
 
-ConflictResolutionRequestPayload.dataExchangeId
+[ConflictResolutionRequestPayload](ConflictResolutionRequestPayload.md).[dataExchangeId](ConflictResolutionRequestPayload.md#dataexchangeid)
 
 #### Defined in
 
-[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L131)
+[src/ts/types.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L131)
 
 ___
 
@@ -50,11 +50,11 @@ ___
 
 #### Inherited from
 
-ConflictResolutionRequestPayload.iat
+[ConflictResolutionRequestPayload](ConflictResolutionRequestPayload.md).[iat](ConflictResolutionRequestPayload.md#iat)
 
 #### Defined in
 
-[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L129)
+[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L129)
 
 ___
 
@@ -64,11 +64,11 @@ ___
 
 #### Overrides
 
-ConflictResolutionRequestPayload.iss
+[ConflictResolutionRequestPayload](ConflictResolutionRequestPayload.md).[iss](ConflictResolutionRequestPayload.md#iss)
 
 #### Defined in
 
-[src/ts/types.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L140)
+[src/ts/types.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L140)
 
 ___
 
@@ -78,11 +78,11 @@ ___
 
 #### Inherited from
 
-ConflictResolutionRequestPayload.por
+[ConflictResolutionRequestPayload](ConflictResolutionRequestPayload.md).[por](ConflictResolutionRequestPayload.md#por)
 
 #### Defined in
 
-[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L130)
+[src/ts/types.ts:130](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L130)
 
 ___
 
@@ -92,11 +92,11 @@ ___
 
 #### Inherited from
 
-ConflictResolutionRequestPayload.proofType
+[ConflictResolutionRequestPayload](ConflictResolutionRequestPayload.md).[proofType](ConflictResolutionRequestPayload.md#prooftype)
 
 #### Defined in
 
-[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L127)
+[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L127)
 
 ___
 
@@ -106,4 +106,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L139)
+[src/ts/types.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L139)

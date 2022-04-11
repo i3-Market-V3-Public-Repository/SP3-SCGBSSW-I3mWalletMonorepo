@@ -12,7 +12,7 @@ export declare class NonRepudiationDest {
     publicJwkOrig: JWK;
     block: Block;
     wallet: WalletAgentDest;
-    private readonly initialized;
+    readonly initialized: Promise<boolean>;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs

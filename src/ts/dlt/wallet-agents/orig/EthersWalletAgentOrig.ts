@@ -66,11 +66,10 @@ export class EthersWalletAgentOrig extends EthersWalletAgent implements WalletAg
   }
 
   async nextNonce (): Promise<number> {
-    const publishedCount = await this.provider.getTransactionCount(await this.getAddress()) // Nonce of the next transaction to be published (there could be already sent transactions that are not published)
+    const publishedCount = await this.provider.getTransactionCount(await this.getAddress(), 'pending') // Nonce of the next transaction to be published (including nonces in pending state)
     if (publishedCount > this.count) {
       this.count = publishedCount
     }
-    console.log(`next nonce = ${this.count}; last published nonce = ${publishedCount - 1}`)
     return this.count
   }
 }

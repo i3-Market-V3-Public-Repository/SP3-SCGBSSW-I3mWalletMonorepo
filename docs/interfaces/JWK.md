@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- `JWK`
+- `JWKjose`
 
   ↳ **`JWK`**
 
@@ -46,7 +46,7 @@ JWKjose.alg
 
 #### Defined in
 
-[src/ts/types.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L23)
+[src/ts/types.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L23)
 
 ___
 
@@ -60,7 +60,7 @@ JWKjose.crv
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:100
+node_modules/jose/dist/types/types.d.ts:92
 
 ___
 
@@ -74,7 +74,7 @@ JWKjose.d
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:101
+node_modules/jose/dist/types/types.d.ts:93
 
 ___
 
@@ -88,7 +88,7 @@ JWKjose.dp
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:102
+node_modules/jose/dist/types/types.d.ts:94
 
 ___
 
@@ -102,7 +102,7 @@ JWKjose.dq
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:103
+node_modules/jose/dist/types/types.d.ts:95
 
 ___
 
@@ -116,7 +116,7 @@ JWKjose.e
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:104
+node_modules/jose/dist/types/types.d.ts:96
 
 ___
 
@@ -124,15 +124,13 @@ ___
 
 • `Optional` **ext**: `boolean`
 
-JWK "ext" (Extractable) Parameter.
-
 #### Inherited from
 
 JWKjose.ext
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:108
+node_modules/jose/dist/types/types.d.ts:97
 
 ___
 
@@ -146,7 +144,7 @@ JWKjose.k
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:109
+node_modules/jose/dist/types/types.d.ts:98
 
 ___
 
@@ -154,15 +152,13 @@ ___
 
 • `Optional` **key\_ops**: `string`[]
 
-JWK "key_ops" (Key Operations) Parameter.
-
 #### Inherited from
 
 JWKjose.key\_ops
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:113
+node_modules/jose/dist/types/types.d.ts:99
 
 ___
 
@@ -170,15 +166,13 @@ ___
 
 • `Optional` **kid**: `string`
 
-JWK "kid" (Key ID) Parameter.
-
 #### Inherited from
 
 JWKjose.kid
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:117
+node_modules/jose/dist/types/types.d.ts:100
 
 ___
 
@@ -186,15 +180,13 @@ ___
 
 • `Optional` **kty**: `string`
 
-JWK "kty" (Key Type) Parameter.
-
 #### Inherited from
 
 JWKjose.kty
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:121
+node_modules/jose/dist/types/types.d.ts:101
 
 ___
 
@@ -208,7 +200,7 @@ JWKjose.n
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:122
+node_modules/jose/dist/types/types.d.ts:102
 
 ___
 
@@ -222,7 +214,7 @@ JWKjose.oth
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:123
+node_modules/jose/dist/types/types.d.ts:103
 
 ___
 
@@ -236,7 +228,7 @@ JWKjose.p
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:128
+node_modules/jose/dist/types/types.d.ts:108
 
 ___
 
@@ -250,7 +242,7 @@ JWKjose.q
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:129
+node_modules/jose/dist/types/types.d.ts:109
 
 ___
 
@@ -264,7 +256,7 @@ JWKjose.qi
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:130
+node_modules/jose/dist/types/types.d.ts:110
 
 ___
 
@@ -272,15 +264,13 @@ ___
 
 • `Optional` **use**: `string`
 
-JWK "use" (Public Key Use) Parameter.
-
 #### Inherited from
 
 JWKjose.use
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:134
+node_modules/jose/dist/types/types.d.ts:111
 
 ___
 
@@ -294,7 +284,7 @@ JWKjose.x
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:135
+node_modules/jose/dist/types/types.d.ts:112
 
 ___
 
@@ -302,15 +292,13 @@ ___
 
 • `Optional` **x5c**: `string`[]
 
-JWK "x5c" (X.509 Certificate Chain) Parameter.
-
 #### Inherited from
 
 JWKjose.x5c
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:140
+node_modules/jose/dist/types/types.d.ts:114
 
 ___
 
@@ -318,15 +306,13 @@ ___
 
 • `Optional` **x5t**: `string`
 
-JWK "x5t" (X.509 Certificate SHA-1 Thumbprint) Parameter.
-
 #### Inherited from
 
 JWKjose.x5t
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:144
+node_modules/jose/dist/types/types.d.ts:115
 
 ___
 
@@ -334,15 +320,13 @@ ___
 
 • `Optional` **x5t#S256**: `string`
 
-"x5t#S256" (X.509 Certificate SHA-256 Thumbprint) Parameter.
-
 #### Inherited from
 
 JWKjose.x5t#S256
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:148
+node_modules/jose/dist/types/types.d.ts:116
 
 ___
 
@@ -350,15 +334,13 @@ ___
 
 • `Optional` **x5u**: `string`
 
-JWK "x5u" (X.509 URL) Parameter.
-
 #### Inherited from
 
 JWKjose.x5u
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:152
+node_modules/jose/dist/types/types.d.ts:117
 
 ___
 
@@ -372,4 +354,4 @@ JWKjose.y
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:136
+node_modules/jose/dist/types/types.d.ts:113

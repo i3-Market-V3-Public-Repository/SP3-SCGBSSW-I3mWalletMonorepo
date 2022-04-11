@@ -94,7 +94,7 @@ async nrp() => {
 
   // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
   const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
-    rpcProviderUrl: '***REMOVED***'
+    rpcProviderUrl: 'http://89.111.35.214:8545'
   }
   
   // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an externam Wallet, such as the i3-MARKET one
@@ -184,7 +184,7 @@ async nrp() => {
   
   // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
   const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
-    rpcProviderUrl: '***REMOVED***'
+    rpcProviderUrl: 'http://89.111.35.214:8545'
   }
 
   /**

@@ -62,7 +62,7 @@ export class I3mWalletAgentOrig extends I3mWalletAgent implements WalletAgentOri
   }
 
   async nextNonce (): Promise<number> {
-    const publishedCount = await this.provider.getTransactionCount(await this.getAddress()) // Nonce of the next transaction to be published (there could be already sent transactions that are not published)
+    const publishedCount = await this.provider.getTransactionCount(await this.getAddress(), 'pending') // Nonce of the next transaction to be published (including nonces in pending state)
     if (publishedCount > this.count) {
       this.count = publishedCount
     }

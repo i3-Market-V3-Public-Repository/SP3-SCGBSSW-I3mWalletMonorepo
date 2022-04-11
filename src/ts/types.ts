@@ -123,7 +123,7 @@ export interface PoPPayload extends NrProofPayload {
   verificationCode: string // A string that can be used to check the publication of the secret in a reliable ledger. Current implementation is the tx hash (which can be used to look up the transaction in the ledger)
 }
 
-interface ConflictResolutionRequestPayload extends ProofPayload {
+export interface ConflictResolutionRequestPayload extends ProofPayload {
   proofType: 'request'
   iss: 'orig' | 'dest'
   iat: number // unix timestamp for issued at

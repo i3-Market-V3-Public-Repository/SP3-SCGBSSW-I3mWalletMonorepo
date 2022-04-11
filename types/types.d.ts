@@ -103,7 +103,7 @@ export interface PoPPayload extends NrProofPayload {
     secret: string;
     verificationCode: string;
 }
-interface ConflictResolutionRequestPayload extends ProofPayload {
+export interface ConflictResolutionRequestPayload extends ProofPayload {
     proofType: 'request';
     iss: 'orig' | 'dest';
     iat: number;

@@ -22,7 +22,7 @@ export class NonRepudiationDest {
   publicJwkOrig!: JWK
   block!: Block
   wallet!: WalletAgentDest
-  private readonly initialized: Promise<boolean>
+  readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement

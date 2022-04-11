@@ -24,6 +24,7 @@ coverage
 i3mWalletSetup.json
 i3mWalletSetup.kids.json
 i3mWalletSetup.castefa.json
+i3mWalletSetup.thinkjuan.json
 
 # the ethers wallet address and private key
 ethersWalletSetup.json

@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L165)
+[src/ts/types.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L165)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:166](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L166)
+[src/ts/types.ts:166](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L166)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:167](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f37da41/src/ts/types.ts#L167)
+[src/ts/types.ts:167](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b64ca83/src/ts/types.ts#L167)
