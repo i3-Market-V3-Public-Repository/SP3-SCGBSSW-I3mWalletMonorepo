@@ -7,6 +7,7 @@ import { Password, Wallet } from './routes'
 import { Dialog, DialogProps } from './dialogs'
 
 import './main.scss'
+import { ContextMenu } from '@wallet/renderer/components'
 
 const { HashRouter: Router, Route, useHistory } = ReactRouterDOM
 
@@ -30,12 +31,14 @@ function App (props: MainArgs): JSX.Element {
 
   return (
     <div className='window'>
-      <Route path='/password'>
-        <Password />
-      </Route>
-      <Route path='/wallet'>
-        <Wallet />
-      </Route>
+      <ContextMenu>
+        <Route path='/password'>
+          <Password />
+        </Route>
+        <Route path='/wallet'>
+          <Wallet />
+        </Route>
+      </ContextMenu>
     </div>
   )
 }

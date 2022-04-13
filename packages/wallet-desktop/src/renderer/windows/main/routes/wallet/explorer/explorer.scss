@@ -98,6 +98,11 @@
       margin-right: 5px;
 
       cursor: pointer;
+
+      &:disabled {
+        background-color: #4caf4f69; /* Green */
+        cursor: not-allowed;
+      }
     }
   }
 
