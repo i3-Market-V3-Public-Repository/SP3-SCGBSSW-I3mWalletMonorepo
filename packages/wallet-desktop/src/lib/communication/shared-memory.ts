@@ -1,17 +1,8 @@
-import { Resource, Identity, WalletMetadata } from '@i3m/base-wallet'
+import { Resource, Identity, WalletMetadata, ToastOptions } from '@i3m/base-wallet'
 import { Settings, createDefaultSettings, DialogData, ConnectData } from '../internal'
 
 export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
-}
-
-export type ToastType = 'info' | 'success' | 'warning' | 'error'
-
-export interface ToastOptions {
-  message: string
-  type?: ToastType
-  details?: string
-  timeout?: number
 }
 
 export interface ToastData extends ToastOptions {

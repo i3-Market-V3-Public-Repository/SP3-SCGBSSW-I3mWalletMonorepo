@@ -1,4 +1,4 @@
-import { Dialog, Store, BaseWalletModel } from '../app'
+import { Dialog, Store, BaseWalletModel, Toast } from '../app'
 import { KeyWallet } from '../keywallet'
 
 export interface WalletOptionsCryptoWallet {
@@ -7,6 +7,7 @@ export interface WalletOptionsCryptoWallet {
 export interface WalletOptionsSettings<T extends BaseWalletModel> {
   dialog: Dialog
   store: Store<T>
+  toast: Toast
   provider?: string
 }
 

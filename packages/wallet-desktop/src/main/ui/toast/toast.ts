@@ -1,11 +1,7 @@
 
-import { createDialogId, ToastData, ToastOptions, ToastType } from '@wallet/lib'
+import { ToastOptions, ToastType, Toast } from '@i3m/base-wallet'
+import { createDialogId, ToastData } from '@wallet/lib'
 import { Locals } from '@wallet/main/internal'
-
-export interface Toast {
-  show: (toast: ToastOptions) => void
-  close: (toastId: string) => void
-}
 
 const TOAST_TIMEOUT_MAP: Map<ToastType, number> = new Map([
   ['info', 2000],

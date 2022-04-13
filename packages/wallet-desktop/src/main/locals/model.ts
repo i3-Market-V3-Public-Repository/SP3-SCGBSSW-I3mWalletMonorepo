@@ -1,5 +1,5 @@
 
-import { Dialog } from '@i3m/base-wallet'
+import { Dialog, Toast } from '@i3m/base-wallet'
 import {
   Tray,
   WalletFactory,
@@ -11,8 +11,7 @@ import {
   FeatureManager,
   ActionReducer,
   ConnectManager,
-  LocalAuthentication,
-  Toast
+  LocalAuthentication
 } from '@wallet/main/internal'
 
 export interface Locals {

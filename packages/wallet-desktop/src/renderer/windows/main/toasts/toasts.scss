@@ -13,6 +13,13 @@ $error-color: #F5426B;
   right: 0px;
   bottom: 0px;
 
+  .toast-transition-enter-active {
+    animation: fadein 0.5s;
+  }
+  .toast-transition-exit-active {
+    animation: fadeout 0.5s;
+  }
+
   .toast {
     display: flex;
     padding: 10px;
@@ -21,23 +28,35 @@ $error-color: #F5426B;
     background-color: white;
     // border: 1px solid black;
     box-shadow: 2px 2px 20px 1px rgba(0,0,0,0.75);
-    align-items: center;
     border-left-width: 10px;
     border-left-style: solid;
     max-width: 360px;
 
     > .toast-content {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      align-items: center;
+      margin-right: 10px;
       flex: 1;
-      white-space: pre-line;
 
-      > .message {
-        font-weight: bold;
-        margin-bottom: 3px;
-      }
-      > .details {
-        font-size: 14px;
+      > * {
+        margin-right: 10px;
+      }  
+
+      .toast-text {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        white-space: pre-line;
+        word-break: break-word;
+  
+        > .message {
+          font-weight: bold;
+          margin-bottom: 3px;
+        }
+        > .details {
+          font-size: 14px;
+        }
       }
     }
 
@@ -66,11 +85,7 @@ $error-color: #F5426B;
       }
     }
 
-    > :not(:last-child) {
-      margin-right: 10px;
-    }
-
-    > .icon {
+    .icon {
       &.type {
         height: 25px;
         width: 25px;
@@ -83,8 +98,21 @@ $error-color: #F5426B;
         height: 15px;
         width: 15px;
         cursor: pointer;
+
+        &:hover {
+          opacity: 0.7;
+        }
       }
     }
   }
 }
 
+@keyframes fadein {
+  0% { opacity:  0;}
+  100% { opacity:  1;}
+}
+
+@keyframes fadeout {
+  0% { opacity:  1;}
+  100% { opacity:  0;}
+}
