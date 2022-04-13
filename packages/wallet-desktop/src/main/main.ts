@@ -123,6 +123,7 @@ async function initApi (
 ): Promise<void> {
   // Create and initialize connect manager
   // FIXME: Important bug!? The secret is accesible on the disk...
+  // Maybe derivate the secret from the password?
   const jwk = locals.settings.get('secret') as JWK
   const key = await importJWK(jwk, 'HS256')
   locals.connectManager = new ConnectManager(locals, key)
