@@ -16,6 +16,10 @@ export const selectWallet: ActionHandlerBuilder<typeof selectWalletAction> = (
         wallet = await dialog.select({ values: walletFactory.walletNames })
       }
 
+      if (wallet === sharedMemoryManager.memory.settings.wallet.current) {
+        return { response: wallet }
+      }
+
       if (wallet === undefined) {
         throw new ActionError('Cannot change wallet: no wallet selected', action)
       }
@@ -28,7 +32,9 @@ export const selectWallet: ActionHandlerBuilder<typeof selectWalletAction> = (
             ...mem.settings.wallet,
             current: wallet
           }
-        }
+        },
+        identities: {},
+        resources: {}
       }))
 
       return { response: wallet }

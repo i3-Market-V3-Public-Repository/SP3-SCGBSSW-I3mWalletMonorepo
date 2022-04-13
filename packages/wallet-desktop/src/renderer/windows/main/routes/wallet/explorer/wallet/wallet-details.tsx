@@ -16,6 +16,7 @@ export function WalletDetails (props: Props): JSX.Element {
   const provider = sharedMemory.settings.providers.find((provider) => provider.provider === wallet.args.provider)
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
+  const enabled = wallet.name === sharedMemory.settings.wallet.current
 
   const executeWalletFunction = (walletFunction: WalletFunctionMetadata): void => {
     const action = callWalletFunctionAction.create(walletFunction)
@@ -42,7 +43,11 @@ export function WalletDetails (props: Props): JSX.Element {
             <span className='details-title'>Wallet Functions</span>
             <div className='details-buttons'>
               {walletFunctions.map((walletFunction, i) => (
-                <button onClick={() => executeWalletFunction(walletFunction)} key={i}>{walletFunction.name}</button>
+                <button
+                  disabled={!enabled}
+                  onClick={() => executeWalletFunction(walletFunction)} key={i}
+                >{walletFunction.name}
+                </button>
               ))}
             </div>
           </div>
@@ -51,11 +56,16 @@ export function WalletDetails (props: Props): JSX.Element {
               <span className='details-title'>Developer Functions</span>
               <div className='details-buttons'>
                 {developerFunctions.map((walletFunction, i) => (
-                  <button onClick={() => executeWalletFunction(walletFunction)} key={i}>{walletFunction.name}</button>
+                  <button
+                    disabled={!enabled}
+                    onClick={() => executeWalletFunction(walletFunction)} key={i}
+                  >{walletFunction.name}
+                  </button>
                 ))}
               </div>
             </div>
           ) : null}
+          {!enabled ? <span>*To enable wallet functions, you must select this wallet fist</span> : null}
         </div>
       </Section>
     </Extendible>
