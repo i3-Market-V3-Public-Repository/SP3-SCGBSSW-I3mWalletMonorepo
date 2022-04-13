@@ -13,13 +13,6 @@ $error-color: #F5426B;
   right: 0px;
   bottom: 0px;
 
-  .toast-transition-enter-active {
-    animation: fadein 0.5s;
-  }
-  .toast-transition-exit-active {
-    animation: fadeout 0.5s;
-  }
-
   .toast {
     display: flex;
     padding: 10px;
@@ -31,6 +24,19 @@ $error-color: #F5426B;
     border-left-width: 10px;
     border-left-style: solid;
     max-width: 360px;
+    opacity: 0;
+
+    &.toast-transition-enter-active {
+      animation: fadein 0.5s;
+    }
+
+    &.toast-transition-exit-active {
+      animation: fadeout 0.5s;
+    }
+
+    &.toast-transition-enter-done {
+      opacity: 1;
+    }
 
     > .toast-content {
       display: flex;
