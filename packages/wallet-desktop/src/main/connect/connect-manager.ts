@@ -92,8 +92,16 @@ export class ConnectManager {
   startWalletProtocol (): void {
     this.walletProtocol.run().then(() => {
       // Pairing correct
+      this.locals.toast.show({
+        message: 'Successful pairing',
+        type: 'success'
+      })
     }).catch((err) => {
       // Pairing failed
+      this.locals.toast.show({
+        message: 'Unsuccessful pairing',
+        type: 'error'
+      })
       throw err
     })
   }

@@ -5,7 +5,7 @@ import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
 
-import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store } from '../app'
+import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
@@ -65,6 +65,7 @@ export class BaseWallet<
 > implements Wallet {
   public dialog: Dialog
   public store: Store<Model>
+  public toast: Toast
   public veramo: Veramo<Model>
 
   protected keyWallet: KeyWallet
@@ -74,6 +75,7 @@ export class BaseWallet<
   constructor (opts: Options) {
     this.dialog = opts.dialog
     this.store = opts.store
+    this.toast = opts.toast
     this.keyWallet = opts.keyWallet
     this.resourceValidator = new ResourceValidator()
     this.provider = opts.provider ?? DEFAULT_PROVIDER
@@ -108,10 +110,9 @@ export class BaseWallet<
     const response = await provider.sendTransaction(transaction)
     if (notifyUser) {
       const recipt = await response.wait()
-      await this.dialog.confirmation({
+      this.toast.show({
         message: 'Transaction properly executed!',
-        acceptMsg: 'Continue',
-        rejectMsg: ''
+        type: 'success'
       })
       console.log(recipt)
     } else {
@@ -142,10 +143,10 @@ export class BaseWallet<
     const balance = await provider.getBalance(address)
     const ether = ethers.utils.formatEther(balance)
 
-    await this.dialog.confirmation({
-      message: `The account '${address}' current balance is ${ether} ETH.`,
-      acceptMsg: 'Continue',
-      rejectMsg: ''
+    this.toast.show({
+      message: 'Balance',
+      details: `The account '${address}' current balance is ${ether} ETH.`,
+      type: 'success'
     })
   }
 

@@ -87,7 +87,7 @@ export class WalletFactory {
   }
 
   async buildWallet (walletName: string): Promise<Wallet> {
-    const { settings, featureContext, featureManager, dialog } = this.locals
+    const { settings, featureContext, featureManager, dialog, toast } = this.locals
     const { wallets } = settings.get('wallet')
     const walletInfo = wallets[walletName]
     if (walletInfo === undefined) {
@@ -112,6 +112,7 @@ export class WalletFactory {
         ...walletInfo.args,
 
         store: featureContext.store,
+        toast,
         dialog
       })
 
