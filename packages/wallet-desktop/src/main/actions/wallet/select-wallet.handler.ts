@@ -37,6 +37,12 @@ export const selectWallet: ActionHandlerBuilder<typeof selectWalletAction> = (
         resources: {}
       }))
 
+      locals.toast.show({
+        message: 'Wallet change',
+        type: 'info',
+        details: `Using wallet '${wallet}'`
+      })
+
       return { response: wallet }
     }
   }

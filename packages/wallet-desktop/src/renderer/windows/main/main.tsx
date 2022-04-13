@@ -2,12 +2,13 @@ import { pluck } from 'rxjs/operators'
 
 import { MainArgs, withType } from '@wallet/lib'
 import { useFilterInput, useSharedMemory } from '@wallet/renderer/communication'
+import { ContextMenu } from '@wallet/renderer/components'
 
 import { Password, Wallet } from './routes'
 import { Dialog, DialogProps } from './dialogs'
+import { Toasts } from './toasts'
 
 import './main.scss'
-import { ContextMenu } from '@wallet/renderer/components'
 
 const { HashRouter: Router, Route, useHistory } = ReactRouterDOM
 
@@ -44,7 +45,7 @@ function App (props: MainArgs): JSX.Element {
 }
 
 export default function Main (props: MainArgs): JSX.Element {
-  const [{ dialogs }, setSharedMemory] = useSharedMemory()
+  const [{ dialogs, toasts }, setSharedMemory] = useSharedMemory()
   const dialogData = dialogs.data[dialogs.current ?? '']
 
   let dialogProps: DialogProps | undefined
@@ -77,6 +78,7 @@ export default function Main (props: MainArgs): JSX.Element {
       {
         dialogProps !== undefined ? <Dialog {...dialogProps} /> : null
       }
+      <Toasts toasts={toasts} />
     </Router>
   )
 }

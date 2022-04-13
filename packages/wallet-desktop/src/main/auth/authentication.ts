@@ -1,4 +1,3 @@
-import { dialog as electronDialogs } from 'electron'
 import pbkdf2Hmac from 'pbkdf2-hmac'
 import crypto from 'crypto'
 
@@ -40,8 +39,10 @@ export class LocalAuthentication {
   private verifyPasswordRegex (password: string): boolean {
     const match = password.match(this.passwordRegex) !== null
     if (!match) {
-      electronDialogs.showMessageBoxSync({
-        message: this.passwordRegexMessage
+      this.locals.toast.show({
+        message: 'Incorrect password format',
+        details: this.passwordRegexMessage,
+        type: 'error'
       })
       return false
     }
@@ -73,6 +74,11 @@ export class LocalAuthentication {
 
       if (await extraChecks(password)) {
         return password
+      } else {
+        this.locals.toast.show({
+          message: 'Incorrect password',
+          type: 'error'
+        })
       }
     }
   }
