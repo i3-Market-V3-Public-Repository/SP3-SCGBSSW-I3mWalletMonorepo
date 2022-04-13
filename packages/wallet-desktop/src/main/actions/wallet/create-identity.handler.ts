@@ -24,6 +24,14 @@ export const createIdentity: ActionHandlerBuilder<typeof createIdentityAction> =
       }
 
       // Create identity
+      if (!walletFactory.hasWalletSelected) {
+        locals.toast.show({
+          message: 'Wallet not selected',
+          details: 'You must select a wallet before creating identities',
+          type: 'warning'
+        })
+        return { response: undefined, status: 500 }
+      }
       const response = await walletFactory.wallet.identityCreate({ alias })
 
       // Update state

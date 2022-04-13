@@ -145,7 +145,28 @@ export class WalletFactory {
 
     // Build the current wallet
     this._walletName = walletName
-    this._wallet = await this.buildWallet(walletName)
+    try {
+      this._wallet = await this.buildWallet(walletName)
+    } catch (err) {
+      this._wallet = undefined
+      this._walletName = undefined
+      this.locals.toast.show({
+        message: 'Wallet initialization',
+        details: `Could not initialize the wallet '${walletName}'`,
+        type: 'warning'
+      })
+      this.locals.sharedMemoryManager.update((mem) => ({
+        ...mem,
+        settings: {
+          ...mem.settings,
+          wallet: {
+            ...mem.settings.wallet,
+            current: undefined
+          }
+        }
+      }))
+      return
+    }
 
     // Setup the resource list inside shared memory
     const identities = await this.wallet.getIdentities()
@@ -179,5 +200,9 @@ export class WalletFactory {
     }
 
     return this._wallet
+  }
+
+  get hasWalletSelected (): boolean {
+    return this._wallet !== undefined
   }
 }
