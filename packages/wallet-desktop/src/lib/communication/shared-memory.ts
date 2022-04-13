@@ -5,6 +5,19 @@ export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
 }
 
+export type ToastType = 'info' | 'success' | 'warning' | 'error'
+
+export interface ToastOptions {
+  message: string
+  type?: ToastType
+  details?: string
+  timeout?: number
+}
+
+export interface ToastData extends ToastOptions {
+  id: string
+}
+
 export interface SharedMemory {
   hasStore: boolean
   settings: Settings
@@ -20,6 +33,7 @@ export interface SharedMemory {
       [id: string]: DialogData
     }
   }
+  toasts: ToastData[]
   walletsMetadata: WalletMetadataMap
   connectData: ConnectData
 }
@@ -40,6 +54,7 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
     connectData: {
       walletProtocol: {}
     },
+    toasts: [],
 
     ...values
   }

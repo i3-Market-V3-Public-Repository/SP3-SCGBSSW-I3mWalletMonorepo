@@ -30,7 +30,7 @@ export const reset: ActionHandlerBuilder<typeof actionBuilder> = (
         app.quit()
       }
 
-      return { response: undefined, status: 400 }
+      return { response: undefined, status: 200 }
     }
   }
 }

@@ -11,7 +11,8 @@ import {
   FeatureManager,
   ActionReducer,
   ConnectManager,
-  LocalAuthentication
+  LocalAuthentication,
+  Toast
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -24,6 +25,7 @@ export interface Locals {
   featureManager: FeatureManager
   featureContext: FeatureContext
   dialog: Dialog
+  toast: Toast
   actionReducer: ActionReducer
   auth: LocalAuthentication
   connectManager: ConnectManager

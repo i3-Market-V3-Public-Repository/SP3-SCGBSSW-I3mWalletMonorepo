@@ -10,7 +10,7 @@ const create = (): Action => {
   return { type, payload: undefined }
 }
 
-export const resetAction: ActionBuilder<Action, Response, typeof create> = {
+export const openAction: ActionBuilder<Action, Response, typeof create> = {
   type: type,
   create
 }

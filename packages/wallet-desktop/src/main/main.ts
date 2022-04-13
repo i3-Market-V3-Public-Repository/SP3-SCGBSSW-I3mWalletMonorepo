@@ -16,6 +16,7 @@ import {
   SharedMemoryManager,
   WalletFactory,
   ElectronDialog,
+  ToastManager,
   StartFeatureError,
   ActionReducer,
   LocalAuthentication,
@@ -83,6 +84,7 @@ async function initUI (ctx: MainContext, locals: Locals): Promise<void> {
 
   locals.tray = new Tray(locals)
   locals.dialog = new ElectronDialog(locals)
+  locals.toast = new ToastManager(locals)
 
   // // Quit when all windows are closed, except on macOS. There, it's common
   // // for applications and their menu bar to stay active until the user quits

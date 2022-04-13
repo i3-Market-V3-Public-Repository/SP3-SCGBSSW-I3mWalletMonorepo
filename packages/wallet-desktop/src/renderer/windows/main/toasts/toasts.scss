@@ -1,0 +1,90 @@
+$info-color: #388EE8;
+$success-color: #4DD470;
+$warning-color: #F6C133;
+$error-color: #F5426B;
+
+
+.toasts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: absolute;
+  z-index: 100;
+  right: 0px;
+  bottom: 0px;
+
+  .toast {
+    display: flex;
+    padding: 10px;
+    margin: 10px;
+    user-select: none;
+    background-color: white;
+    // border: 1px solid black;
+    box-shadow: 2px 2px 20px 1px rgba(0,0,0,0.75);
+    align-items: center;
+    border-left-width: 10px;
+    border-left-style: solid;
+    max-width: 360px;
+
+    > .toast-content {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      white-space: pre-line;
+
+      > .message {
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
+      > .details {
+        font-size: 14px;
+      }
+    }
+
+    &.info {
+      border-color: $info-color;
+      .type {
+        background-color: $info-color;
+      }
+    }
+    &.success {
+      border-color: $success-color;
+      .type {
+        background-color: $success-color;
+      }
+    }
+    &.warning {
+      border-color: $warning-color;
+      .type {
+        background-color: $warning-color;
+      }
+    }
+    &.error {
+      border-color: $error-color;
+      .type {
+        background-color: $error-color;
+      }
+    }
+
+    > :not(:last-child) {
+      margin-right: 10px;
+    }
+
+    > .icon {
+      &.type {
+        height: 25px;
+        width: 25px;
+        padding: 8px;
+        border-radius: 35px;
+        color: white;
+      }
+
+      &.close {
+        height: 15px;
+        width: 15px;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
