@@ -1,4 +1,4 @@
-import { WalletAgentDest } from '../dlt/';
+import { NrpDltAgentDest } from '../dlt/';
 import { Block, DataExchange, DataExchangeAgreement, DecodedProof, JWK, JwkPair, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types';
 /**
  * The base class that should be instantiated by the destination of a data
@@ -11,14 +11,14 @@ export declare class NonRepudiationDest {
     jwkPairDest: JwkPair;
     publicJwkOrig: JWK;
     block: Block;
-    wallet: WalletAgentDest;
+    dltAgent: NrpDltAgentDest;
     readonly initialized: Promise<boolean>;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
-     * @param walletAgent - a wallet agent providing read connection to the ledger
+     * @param dltAgent - a DLT agent providing read connection to the ledger
      */
-    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, walletAgent?: WalletAgentDest);
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, dltAgent: NrpDltAgentDest);
     private asyncConstructor;
     /**
      * Verifies a proof of origin against the received cipherblock.

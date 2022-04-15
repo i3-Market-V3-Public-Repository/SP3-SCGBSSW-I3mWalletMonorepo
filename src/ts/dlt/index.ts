@@ -1,2 +1,2 @@
 export * from './defaultDltConfig'
-export * from './wallet-agents'
+export * from './agents'

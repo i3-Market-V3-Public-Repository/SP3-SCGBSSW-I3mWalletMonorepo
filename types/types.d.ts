@@ -25,7 +25,6 @@ export interface DltConfig {
     rpcProviderUrl: string;
     gasLimit: number;
     contract: ContractConfig;
-    disable: boolean;
 }
 export interface StoredProof<T extends NrProofPayload> {
     jws: string;

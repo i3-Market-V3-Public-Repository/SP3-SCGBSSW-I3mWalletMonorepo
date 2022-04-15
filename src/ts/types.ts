@@ -32,7 +32,6 @@ export interface DltConfig {
   rpcProviderUrl: string // http://<host>:<port>
   gasLimit: number
   contract: ContractConfig
-  disable: boolean
 }
 
 export interface StoredProof<T extends NrProofPayload> {

@@ -1,4 +1,4 @@
-import { WalletAgentDest } from '..'
+import { NrpDltAgentDest } from '..'
 import { jwsDecode } from '../crypto'
 import { NrError } from '../errors'
 import { JWK, PoOPayload, PoRPayload, VerificationRequestPayload } from '../types'
@@ -11,7 +11,7 @@ import { verifyPor } from './verifyPor'
  * @param wallet
  * @returns
  */
-export async function checkCompleteness (verificationRequest: string, wallet: WalletAgentDest, connectionTimeout = 10): Promise<{ vrPayload: VerificationRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK}> {
+export async function checkCompleteness (verificationRequest: string, wallet: NrpDltAgentDest, connectionTimeout = 10): Promise<{ vrPayload: VerificationRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK}> {
   let vrPayload: VerificationRequestPayload
   try {
     const decoded = await jwsDecode<VerificationRequestPayload>(verificationRequest)

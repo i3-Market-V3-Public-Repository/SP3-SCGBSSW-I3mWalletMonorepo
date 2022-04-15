@@ -1,12 +1,12 @@
 import { jwsDecode } from '../crypto'
-import { WalletAgentDest } from '../dlt'
+import { NrpDltAgentDest } from '../dlt'
 import { exchangeId } from '../exchange'
 import { NrError } from '../errors'
 import { verifyProof } from '../proofs'
 import { Dict, JWK, PoOPayload, PoRPayload } from '../types'
 import { checkTimestamp } from '../utils'
 
-export async function verifyPor (por: string, wallet: WalletAgentDest, connectionTimeout = 10): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
+export async function verifyPor (por: string, wallet: NrpDltAgentDest, connectionTimeout = 10): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
   const { payload: porPayload } = await jwsDecode<Dict<PoRPayload>>(por)
   const exchange = porPayload.exchange
 

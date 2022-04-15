@@ -1,5 +1,7 @@
 # Class: I3mWalletAgentOrig
 
+A DLT agent for the NRP orig using ethers.io library and the i3m-wallet for signing transactions to the DLT
+
 ## Hierarchy
 
 - `I3mWalletAgent`
@@ -8,7 +10,7 @@
 
 ## Implements
 
-- [`WalletAgentOrig`](../interfaces/Signers.WalletAgentOrig.md)
+- [`NrpDltAgentOrig`](../interfaces/Signers.NrpDltAgentOrig.md)
 
 ## Table of contents
 
@@ -36,7 +38,7 @@
 
 ### constructor
 
-• **new I3mWalletAgentOrig**(`session`, `did`, `dltConfig?`)
+• **new I3mWalletAgentOrig**(`session`, `did`, `dltConfig`)
 
 #### Parameters
 
@@ -44,7 +46,7 @@
 | :------ | :------ |
 | `session` | `Session`<`HttpInitiatorTransport`\> |
 | `did` | `string` |
-| `dltConfig?` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> |
+| `dltConfig` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> & `Pick`<[`DltConfig`](../interfaces/DltConfig.md), ``"rpcProviderUrl"``\> |
 
 #### Inherited from
 
@@ -52,7 +54,7 @@ I3mWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L9)
+src/ts/dlt/agents/I3mWalletAgent.ts:12
 
 ## Properties
 
@@ -66,7 +68,7 @@ I3mWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+src/ts/dlt/agents/EthersIoAgent.ts:11
 
 ___
 
@@ -78,7 +80,7 @@ The nonce of the next transaction to send to the blockchain. It keep track also 
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L12)
+src/ts/dlt/agents/orig/I3mWalletAgentOrig.ts:15
 
 ___
 
@@ -92,7 +94,7 @@ I3mWalletAgent.did
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L7)
+src/ts/dlt/agents/I3mWalletAgent.ts:10
 
 ___
 
@@ -106,7 +108,7 @@ I3mWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+src/ts/dlt/agents/EthersIoAgent.ts:10
 
 ___
 
@@ -120,7 +122,7 @@ I3mWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+src/ts/dlt/agents/EthersIoAgent.ts:12
 
 ___
 
@@ -134,7 +136,7 @@ I3mWalletAgent.session
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/I3mWalletAgent.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/I3mWalletAgent.ts#L6)
+src/ts/dlt/agents/I3mWalletAgent.ts:9
 
 ## Methods
 
@@ -159,11 +161,11 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Implementation of
 
-[WalletAgentOrig](../interfaces/Signers.WalletAgentOrig.md).[deploySecret](../interfaces/Signers.WalletAgentOrig.md#deploysecret)
+[NrpDltAgentOrig](../interfaces/Signers.NrpDltAgentOrig.md).[deploySecret](../interfaces/Signers.NrpDltAgentOrig.md#deploysecret)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L14)
+src/ts/dlt/agents/orig/I3mWalletAgentOrig.ts:17
 
 ___
 
@@ -179,11 +181,11 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Implementation of
 
-[WalletAgentOrig](../interfaces/Signers.WalletAgentOrig.md).[getAddress](../interfaces/Signers.WalletAgentOrig.md#getaddress)
+[NrpDltAgentOrig](../interfaces/Signers.NrpDltAgentOrig.md).[getAddress](../interfaces/Signers.NrpDltAgentOrig.md#getaddress)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L53)
+src/ts/dlt/agents/orig/I3mWalletAgentOrig.ts:56
 
 ___
 
@@ -199,7 +201,7 @@ Returns the address of the smart contract in use
 
 #### Implementation of
 
-[WalletAgentOrig](../interfaces/Signers.WalletAgentOrig.md).[getContractAddress](../interfaces/Signers.WalletAgentOrig.md#getcontractaddress)
+[NrpDltAgentOrig](../interfaces/Signers.NrpDltAgentOrig.md).[getContractAddress](../interfaces/Signers.NrpDltAgentOrig.md#getcontractaddress)
 
 #### Inherited from
 
@@ -207,7 +209,7 @@ I3mWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+src/ts/dlt/agents/EthersIoAgent.ts:26
 
 ___
 
@@ -221,4 +223,4 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/orig/I3mWalletAgentOrig.ts#L64)
+src/ts/dlt/agents/orig/I3mWalletAgentOrig.ts:67

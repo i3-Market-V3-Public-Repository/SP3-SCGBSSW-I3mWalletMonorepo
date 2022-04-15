@@ -1,1 +1,1 @@
-{"version":3,"file":"defaultDltConfig.d.ts","sourceRoot":"","sources":["../../src/ts/dlt/defaultDltConfig.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,SAAS,EAAE,MAAM,UAAU,CAAA;AAIpD,eAAO,MAAM,gBAAgB,EAAE,SAK9B,CAAA"}
+{"version":3,"file":"defaultDltConfig.d.ts","sourceRoot":"","sources":["../../src/ts/dlt/defaultDltConfig.ts"],"names":[],"mappings":"AAAA,OAAO,EAAkB,SAAS,EAAE,MAAM,UAAU,CAAA;AAGpD,eAAO,MAAM,gBAAgB,EAAE,IAAI,CAAC,SAAS,EAAE,gBAAgB,CAG9D,CAAA"}

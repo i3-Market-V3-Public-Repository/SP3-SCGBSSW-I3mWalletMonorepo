@@ -4,7 +4,7 @@
 
 ## Hierarchy
 
-- [`EthersWalletAgentDest`](Signers.EthersWalletAgentDest.md)
+- [`EthersIoAgentDest`](Signers.EthersIoAgentDest.md)
 
   ↳ **`I3mWalletAgentDest`**
 
@@ -29,21 +29,21 @@
 
 ### constructor
 
-• **new I3mWalletAgentDest**(`dltConfig?`)
+• **new I3mWalletAgentDest**(`dltConfig`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `dltConfig?` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> |
+| `dltConfig` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> & `Pick`<[`DltConfig`](../interfaces/DltConfig.md), ``"rpcProviderUrl"``\> |
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[constructor](Signers.EthersWalletAgentDest.md#constructor)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[constructor](Signers.EthersIoAgentDest.md#constructor)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L14)
+src/ts/dlt/agents/EthersIoAgent.ts:14
 
 ## Properties
 
@@ -53,11 +53,11 @@
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[contract](Signers.EthersWalletAgentDest.md#contract)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[contract](Signers.EthersIoAgentDest.md#contract)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L11)
+src/ts/dlt/agents/EthersIoAgent.ts:11
 
 ___
 
@@ -67,11 +67,11 @@ ___
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[dltConfig](Signers.EthersWalletAgentDest.md#dltconfig)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[dltConfig](Signers.EthersIoAgentDest.md#dltconfig)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L10)
+src/ts/dlt/agents/EthersIoAgent.ts:10
 
 ___
 
@@ -81,11 +81,11 @@ ___
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[provider](Signers.EthersWalletAgentDest.md#provider)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[provider](Signers.EthersIoAgentDest.md#provider)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L12)
+src/ts/dlt/agents/EthersIoAgent.ts:12
 
 ## Methods
 
@@ -101,11 +101,11 @@ Returns the address of the smart contract in use
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[getContractAddress](Signers.EthersWalletAgentDest.md#getcontractaddress)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[getContractAddress](Signers.EthersIoAgentDest.md#getcontractaddress)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/EthersWalletAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/EthersWalletAgent.ts#L26)
+src/ts/dlt/agents/EthersIoAgent.ts:26
 
 ___
 
@@ -130,8 +130,8 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 #### Inherited from
 
-[EthersWalletAgentDest](Signers.EthersWalletAgentDest.md).[getSecretFromLedger](Signers.EthersWalletAgentDest.md#getsecretfromledger)
+[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[getSecretFromLedger](Signers.EthersIoAgentDest.md#getsecretfromledger)
 
 #### Defined in
 
-[src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/dlt/wallet-agents/dest/EthersWalletAgentDest.ts#L13)
+src/ts/dlt/agents/dest/EthersIoAgentDest.ts:13

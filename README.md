@@ -58,9 +58,7 @@ Before starting the agreement you need:
   >const providerJwks = await nonRepudiationLibrary.generateKeys(SIGNING_ALG)
   >```
 
-- An Ethereum address with enough funds on the ledger and either:
-  - [recommended] A DltSigner instance, e.g. a Wallet, that can handle signing of the transactions needed to publish the secret to the ledger.
-  - [discouraged] The private key for signing the transactions to the ledger.
+- An Ethereum address with enough funds on the ledger and a NrpDltAgentOrig instance that can handle signing of the transactions needed to publish the secret to the ledger.
 
 And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
 
@@ -92,13 +90,16 @@ async nrp() => {
     pooToSecretDelay: 150000
   }
 
-  // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
+  // Let us define the RPC endopint to the ledger
   const dltConfig: Partial<nonRepudiationLibrary.DltConfig> = {
     rpcProviderUrl: 'http://89.111.35.214:8545'
   }
   
-  // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an externam Wallet, such as the i3-MARKET one
+  // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an external Wallet, such as the i3-MARKET one
   const providerDltSigningKeyHex = '***REMOVED***'
+
+  // Create a NRP DLT Agent for the provider. We are going to use the Ethers.io one
+  providerDltAgent = new nonRepudiationLibrary.EthersIoAgentOrig(dltConfig, providerDltSigningKeyHex)
 
   /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
@@ -106,39 +107,38 @@ async nrp() => {
    *  - the data agreement. It will be parsed for correctness.
    *  - the private key of the provider. It is used to sign the proofs and to sign transactions to the ledger (if not stated otherwise)
    *  - the block of data to send as a Uint8Array
-   *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
-   *  - [optional] a private key in hex for the DLT, just in case no DltSigner is provided in dltConfig
+   *  - the NRP DLT agent able to publish the secret to the smart contract
    */
-  const npProvider = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, dltConfig, providerDltSigningKeyHex)
+  const nrpProvider = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltAgent)
 
   // Create the proof of origin (PoO)
-  const poo = await npProvider.generatePoO()
+  const poo = await nrpProvider.generatePoO()
   
-  // Send the cipherblock in npProvider.block.jwe along with the poo to the consumer
+  // Send the cipherblock in nrpProvider.block.jwe along with the poo to the consumer
   ...
 
-  // Receive proof of reception (PoR) and stored in variable por
+  // Receive proof of reception (PoR) as a JWS and store it in variable por.
   ...
 
   // Verify PoR. If verification passes the por is added to npProvider.block.por; otherwise it throws an error.
-  await npProvider.verifyPoR(por)
+  await nrpProvider.verifyPoR(por)
 
   // Create proof of publication. It connects to the ledger and publishes the secret that can be used to decrypt the cipherblock
-  const pop = await npProvider.generatePoP()
+  const pop = await nrpProvider.generatePoP()
 
   // Send pop to the consumer. The PoP includes the secret to decrypt the cipherblock; although the consumer could also get the secret from the smart contract
   ...
 
   // It is desired to send a signed resolution about the completeness of the protocol by a trusted third party (the CRS), so generate a verification Request as:
-  verificationRequest = await npProvider.generateVerificationRequest()
+  verificationRequest = await nrpProvider.generateVerificationRequest()
 
-  // Send the verificationRequest to the CRS
+  // Send the verificationRequest to the CRS with public key stored in variable crsPublicJwk
   ...
   
   // and receive a signed resolution. The resolution can be decoded/verified as:
-  const { payload, signer } = await nonRepudiationLibrary.ConflictResolution.verifyResolution<VerificationResolutionPayload>(resolution)
+  const { payload } = await nonRepudiationLibrary.ConflictResolution.verifyResolution<nonRepudiationLibrary.VerificationResolutionPayload>(resolution, crsPublicKey)
   if (payload.resolution === 'completed') {
-    // is a valid proof of completeness signed by signer (the public JWK)
+    // is a valid proof of completeness signed by signer with public key crsPublicKey
   }
 )
 nrp()
@@ -179,7 +179,7 @@ async nrp() => {
     // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
     pooToPopDelay: 20000,
     // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
-    pooToSecretDelay: 150000
+    pooToSecretDelay: 180000
   }
   
   // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
@@ -187,50 +187,53 @@ async nrp() => {
     rpcProviderUrl: 'http://89.111.35.214:8545'
   }
 
+  // Init the Consumer's agent to get published secrets from the DLT.
+  consumerDltAgent = new nonRepudiationLibrary.EthersIoAgentDest(dltConfig)
+
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
    * You need:
    *  - the data agreement. It will be parsed for correctness.
    *  - the private key of the consumer (to sign proofs)
-   *  - [optional] a Partial<DltConfig> object with your own config for the DLT (see DltConfig interface)
+   *  - a NRP dest DLT Agent that is able to get from the smart contract the secret published by the provider
    */
-  const npConsumer = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, dltConfig)
+  const nrpConsumer = new nonRepudiationLibrary.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
 
   // Receive poo and cipherblock (in JWE string format)
   ...
 
-  // Verify PoO. If verification passes the poo is added to npConsumer.block.poo and cipherblock to npConsumer.block.cipherblock; otherwise it throws an error.
-  await npConsumer.verifyPoO(poo, cipherblock)
+  // Verify PoO. If verification passes the poo is added to nrpConsumer.block.poo and cipherblock to nrpConsumer.block.cipherblock; otherwise it throws an error.
+  await nrpConsumer.verifyPoO(poo.jws, cipherblock)
   
-  // Create the proof of reception (PoR). It is also added to npConsumer.block.por
-  const por = await npConsumer.generatePoR()
+  // Create the proof of reception (PoR). It is also added to nrpConsumer.block.por
+  const por = await nrpConsumer.generatePoR()
 
   // Send PoR to Provider
   ...
 
-  // Receive (or retrieve from ledger) secret in JWJ and proof of publication (PoR) and stored them in secret and pop.
+  // Receive (or retrieve from ledger) secret as a JWK and proof of publication (PoP) as a JWS and stored them in secret and pop.
   ...
 
-  // Verify PoP. If verification passes the pop is added to npConsumer.block.pop, and the secret to npConsumer.block.secret; otherwise it throws an error.
-  await npConsumer.verifyPoP(pop)
+  // Verify PoP. If verification passes the pop is added to nrpConsumer.block.pop, and the secret to nrpConsumer.block.secret; otherwise it throws an error.
+  await nrpConsumer.verifyPoP(pop)
 
-  // Just in case the PoP is not received, the secret can be downloaded from the ledger. The next function downloads the secret and stores it to npConsumer.block.secret
-  await npConsumer.getSecretFromLedger()
+  // Just in case the PoP is not received, the secret can be downloaded from the ledger. The next function downloads the secret and stores it to nrpConsumer.block.secret
+  await nrpConsumer.getSecretFromLedger()
 
   // Decrypt cipherblock and verify that the hash(decrypted block) is equal to the committed one (in the original PoO). If verification fails, it throws an error.
   try {
-    const decryptedBlock = await npConsumer.decrypt()
+    const decryptedBlock = await nrpConsumer.decrypt()
   } catch(error) {
     /* If we have been unable to decrypt the cipherblock using the published secret,
      * we can generate a dispute request to send to the Conflict-Resolver Service (CRS).
      */
-    const disputeRequest = await npConsumer.generateDisputeRequest()
+    const disputeRequest = await nrpConsumer.generateDisputeRequest()
 
     // Send disputeRequest to CRS
     ...
 
     // We will receive a signed resolution. Let us assume that is in variable disputeResolution
-    const resolutionPayload = await nonRepudiationLibrary.ConflictResolution.verifyResolution<DisputeResolution>(disputeResolution)
+    const { resolutionPayload } = await nonRepudiationLibrary.ConflictResolution.verifyResolution<nonRepudiationLibrary.DisputeResolutionPayload>(disputeResolution)
     if (resolutionPayload.resolution === 'accepted') {
       // We were right about our claim: the cipherblock cannot be decrypted and we can't be invoiced for it.
     } else { // resolutionPayload.resolution === 'denied'

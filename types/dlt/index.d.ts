@@ -1,3 +1,3 @@
 export * from './defaultDltConfig';
-export * from './wallet-agents';
+export * from './agents';
 //# sourceMappingURL=index.d.ts.map

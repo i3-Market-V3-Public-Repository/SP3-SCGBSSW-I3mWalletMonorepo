@@ -27,7 +27,7 @@ Checks the completeness of a given data exchange by verifying the PoR in the ver
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `verificationRequest` | `string` | `undefined` |
-| `wallet` | [`WalletAgentDest`](../interfaces/Signers.WalletAgentDest.md) | `undefined` |
+| `wallet` | [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md) | `undefined` |
 | `connectionTimeout` | `number` | `10` |
 
 #### Returns
@@ -36,7 +36,7 @@ Checks the completeness of a given data exchange by verifying the PoR in the ver
 
 #### Defined in
 
-[src/ts/conflict-resolution/checkCompleteness.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/checkCompleteness.ts#L14)
+[src/ts/conflict-resolution/checkCompleteness.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/checkCompleteness.ts#L14)
 
 ___
 
@@ -51,7 +51,7 @@ Check if the cipherblock in the disputeRequest is the one agreed for the dataExc
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `disputeRequest` | `string` | a dispute request as a compact JWS |
-| `wallet` | [`WalletAgentDest`](../interfaces/Signers.WalletAgentDest.md) |  |
+| `wallet` | [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md) |  |
 
 #### Returns
 
@@ -59,7 +59,7 @@ Check if the cipherblock in the disputeRequest is the one agreed for the dataExc
 
 #### Defined in
 
-[src/ts/conflict-resolution/checkDecryption.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/checkDecryption.ts#L16)
+[src/ts/conflict-resolution/checkDecryption.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/checkDecryption.ts#L16)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/generateVerificationRequest.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/generateVerificationRequest.ts#L4)
+[src/ts/conflict-resolution/generateVerificationRequest.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/generateVerificationRequest.ts#L4)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 | Name | Type | Default value |
 | :------ | :------ | :------ |
 | `por` | `string` | `undefined` |
-| `wallet` | [`WalletAgentDest`](../interfaces/Signers.WalletAgentDest.md) | `undefined` |
+| `wallet` | [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md) | `undefined` |
 | `connectionTimeout` | `number` | `10` |
 
 #### Returns
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/verifyPor.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/verifyPor.ts#L9)
+[src/ts/conflict-resolution/verifyPor.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/verifyPor.ts#L9)
 
 ___
 
@@ -131,4 +131,4 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/verifyResolution.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/verifyResolution.ts#L4)
+[src/ts/conflict-resolution/verifyResolution.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/verifyResolution.ts#L4)

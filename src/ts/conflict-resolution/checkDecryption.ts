@@ -4,7 +4,7 @@ import { DisputeRequestPayload, JWK, PoOPayload, PoRPayload } from '../types'
 import { sha } from '../utils'
 import { verifyPor } from './verifyPor'
 import * as b64 from '@juanelas/base64'
-import { WalletAgentDest } from '../dlt'
+import { NrpDltAgentDest } from '../dlt'
 
 /**
  * Check if the cipherblock in the disputeRequest is the one agreed for the dataExchange, and if it could be decrypted with the secret published on the ledger for that dataExchange.
@@ -13,7 +13,7 @@ import { WalletAgentDest } from '../dlt'
  * @param wallet
  * @returns
  */
-export async function checkDecryption (disputeRequest: string, wallet: WalletAgentDest): Promise<{ drPayload: DisputeRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK }> {
+export async function checkDecryption (disputeRequest: string, wallet: NrpDltAgentDest): Promise<{ drPayload: DisputeRequestPayload, porPayload: PoRPayload, pooPayload: PoOPayload, destPublicJwk: JWK, origPublicJwk: JWK }> {
   const { payload: drPayload } = await jwsDecode<DisputeRequestPayload>(disputeRequest)
 
   const {

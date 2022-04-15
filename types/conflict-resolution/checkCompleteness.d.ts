@@ -1,4 +1,4 @@
-import { WalletAgentDest } from '..';
+import { NrpDltAgentDest } from '..';
 import { JWK, PoOPayload, PoRPayload, VerificationRequestPayload } from '../types';
 /**
  * Checks the completeness of a given data exchange by verifying the PoR in the verification request using the secret downloaded from the ledger
@@ -7,7 +7,7 @@ import { JWK, PoOPayload, PoRPayload, VerificationRequestPayload } from '../type
  * @param wallet
  * @returns
  */
-export declare function checkCompleteness(verificationRequest: string, wallet: WalletAgentDest, connectionTimeout?: number): Promise<{
+export declare function checkCompleteness(verificationRequest: string, wallet: NrpDltAgentDest, connectionTimeout?: number): Promise<{
     vrPayload: VerificationRequestPayload;
     porPayload: PoRPayload;
     pooPayload: PoOPayload;

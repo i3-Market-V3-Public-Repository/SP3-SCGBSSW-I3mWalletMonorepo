@@ -8,6 +8,9 @@ describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
+  let providerDltAgent: _pkg.EthersIoAgentOrig
+  let consumerDltAgent: _pkg.EthersIoAgentDest
+
   let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
   let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest
   let crs: _pkg.ConflictResolution.ConflictResolver
@@ -23,6 +26,10 @@ describe('Non-repudiation protocol', function () {
     const providerJwks: _pkg.JwkPair = await _pkg.generateKeys(SIGNING_ALG)
     console.log(JSON.stringify({ providerKeys: providerJwks }, undefined, 2))
 
+    consumerDltAgent = new _pkg.EthersIoAgentDest({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl })
+
+    providerDltAgent = new _pkg.EthersIoAgentOrig({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl }, ethersWalletSetup.privateKey)
+
     dataExchangeAgreement = {
       orig: JSON.stringify(providerJwks.publicJwk),
       dest: JSON.stringify(consumerJwks.publicJwk),
@@ -37,11 +44,12 @@ describe('Non-repudiation protocol', function () {
     }
     console.log(dataExchangeAgreement)
 
-    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, ethersWalletSetup.privateKey)
-    nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk)
+    nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltAgent)
+    nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
 
     const jwkPair = await _pkg.generateKeys(SIGNING_ALG)
-    crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair)
+    crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair, new _pkg.EthersIoAgentDest({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl })
+    )
   })
 
   describe('create/verify proof of origin (PoO)', function () {

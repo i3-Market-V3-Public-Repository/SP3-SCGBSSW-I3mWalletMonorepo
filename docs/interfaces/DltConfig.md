@@ -5,7 +5,6 @@
 ### Properties
 
 - [contract](DltConfig.md#contract)
-- [disable](DltConfig.md#disable)
 - [gasLimit](DltConfig.md#gaslimit)
 - [rpcProviderUrl](DltConfig.md#rpcproviderurl)
 
@@ -17,17 +16,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/types.ts#L34)
-
-___
-
-### disable
-
-• **disable**: `boolean`
-
-#### Defined in
-
-[src/ts/types.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/types.ts#L35)
+[src/ts/types.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/types.ts#L34)
 
 ___
 
@@ -37,7 +26,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/types.ts#L33)
+[src/ts/types.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/types.ts#L33)
 
 ___
 
@@ -47,4 +36,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/types.ts#L32)
+[src/ts/types.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/types.ts#L32)

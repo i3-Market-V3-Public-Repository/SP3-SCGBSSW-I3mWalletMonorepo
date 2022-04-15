@@ -6,7 +6,7 @@ import { exchangeId, parseAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
 import { parseHex, sha } from '../utils'
-import { WalletAgentOrig, EthersWalletAgentOrig } from '../dlt/wallet-agents'
+import { NrpDltAgentOrig } from '../dlt/agents'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -19,24 +19,16 @@ export class NonRepudiationOrig {
   jwkPairOrig: JwkPair
   publicJwkDest: JWK
   block: OrigBlock
-  wallet!: WalletAgentOrig
+  dltAgent!: NrpDltAgentOrig
   readonly initialized: Promise<boolean>
 
   /**
    * @param agreement - a DataExchangeAgreement
    * @param privateJwk - the private key that will be used to sign the proofs
    * @param block - the block of data to transmit in this data exchange
-   * @param walletAgent - a wallet agent providing connection to a wallet (that can actually sign and deploy transactions to the ledger)
+   * @param dltAgent - a DLT agent providing read-write connection to NRP smart contract
    */
-  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgent: WalletAgentOrig)
-  /**
-   * @param agreement - a DataExchangeAgreement
-   * @param privateJwk - the private key that will be used to sign the proofs
-   * @param block - the block of data to transmit in this data exchange
-   * @param privateLedgerKeyHex - the private key to use for sign transactions to the ledger. An EthersWalletAgent will be created internally for that purpose.
-   */
-  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, privateLedgerKeyHex: string)
-  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgentOrPrivKey: WalletAgentOrig | string) {
+  constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltAgent: NrpDltAgentOrig) {
     this.jwkPairOrig = {
       privateJwk: privateJwk,
       publicJwk: JSON.parse(agreement.orig) as JWK
@@ -49,7 +41,7 @@ export class NonRepudiationOrig {
     }
 
     this.initialized = new Promise((resolve, reject) => {
-      this.init(agreement, walletAgentOrPrivKey).then(() => {
+      this.init(agreement, dltAgent).then(() => {
         resolve(true)
       }).catch((error) => {
         reject(error)
@@ -57,7 +49,7 @@ export class NonRepudiationOrig {
     })
   }
 
-  private async init (agreement: DataExchangeAgreement, walletAgentOrPrivKey: WalletAgentOrig | string): Promise<void> {
+  private async init (agreement: DataExchangeAgreement, dltAgent: NrpDltAgentOrig): Promise<void> {
     this.agreement = await parseAgreement(agreement)
 
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
@@ -86,23 +78,19 @@ export class NonRepudiationOrig {
       id
     }
 
-    await this._dltSetup(walletAgentOrPrivKey)
+    await this._dltSetup(dltAgent)
   }
 
-  private async _dltSetup (walletAgentOrPrivKey: WalletAgentOrig | string): Promise<void> {
-    if (typeof walletAgentOrPrivKey === 'string') {
-      this.wallet = new EthersWalletAgentOrig(walletAgentOrPrivKey)
-    } else {
-      this.wallet = walletAgentOrPrivKey
-    }
+  private async _dltSetup (dltAgent: NrpDltAgentOrig): Promise<void> {
+    this.dltAgent = dltAgent
 
-    const signerAddress: string = parseHex(await this.wallet.getAddress(), true)
+    const signerAddress: string = parseHex(await this.dltAgent.getAddress(), true)
 
     if (signerAddress !== this.exchange.ledgerSignerAddress) {
       throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address ${signerAddress} derived from the provided private key`)
     }
 
-    const contractAddress = parseHex(await this.wallet.getContractAddress(), true)
+    const contractAddress = parseHex(await this.dltAgent.getContractAddress(), true)
 
     if (contractAddress !== parseHex(this.agreement.ledgerContractAddress, true)) {
       throw new Error(`Contract address in use ${contractAddress} does not meet the agreed one ${this.agreement.ledgerContractAddress}`)
@@ -178,7 +166,7 @@ export class NonRepudiationOrig {
       throw new Error('Before computing a PoP, you have first to have received and verified the PoR')
     }
 
-    const verificationCode = await this.wallet.deploySecret(this.block.secret.hex, this.exchange.id)
+    const verificationCode = await this.dltAgent.deploySecret(this.block.secret.hex, this.exchange.id)
 
     const payload: Omit<PoPPayload, 'iat'> = {
       proofType: 'PoP',

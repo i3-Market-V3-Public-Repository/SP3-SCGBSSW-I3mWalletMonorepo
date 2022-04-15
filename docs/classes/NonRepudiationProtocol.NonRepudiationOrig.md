@@ -16,11 +16,11 @@ likely to be a Provider.
 
 - [agreement](NonRepudiationProtocol.NonRepudiationOrig.md#agreement)
 - [block](NonRepudiationProtocol.NonRepudiationOrig.md#block)
+- [dltAgent](NonRepudiationProtocol.NonRepudiationOrig.md#dltagent)
 - [exchange](NonRepudiationProtocol.NonRepudiationOrig.md#exchange)
 - [initialized](NonRepudiationProtocol.NonRepudiationOrig.md#initialized)
 - [jwkPairOrig](NonRepudiationProtocol.NonRepudiationOrig.md#jwkpairorig)
 - [publicJwkDest](NonRepudiationProtocol.NonRepudiationOrig.md#publicjwkdest)
-- [wallet](NonRepudiationProtocol.NonRepudiationOrig.md#wallet)
 
 ### Methods
 
@@ -33,7 +33,7 @@ likely to be a Provider.
 
 ### constructor
 
-• **new NonRepudiationOrig**(`agreement`, `privateJwk`, `block`, `walletAgent`)
+• **new NonRepudiationOrig**(`agreement`, `privateJwk`, `block`, `dltAgent`)
 
 #### Parameters
 
@@ -42,26 +42,11 @@ likely to be a Provider.
 | `agreement` | [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md) | a DataExchangeAgreement |
 | `privateJwk` | [`JWK`](../interfaces/JWK.md) | the private key that will be used to sign the proofs |
 | `block` | `Uint8Array` | the block of data to transmit in this data exchange |
-| `walletAgent` | [`WalletAgentOrig`](../interfaces/Signers.WalletAgentOrig.md) | a wallet agent providing connection to a wallet (that can actually sign and deploy transactions to the ledger) |
+| `dltAgent` | [`NrpDltAgentOrig`](../interfaces/Signers.NrpDltAgentOrig.md) | a DLT agent providing read-write connection to NRP smart contract |
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L31)
-
-• **new NonRepudiationOrig**(`agreement`, `privateJwk`, `block`, `privateLedgerKeyHex`)
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `agreement` | [`DataExchangeAgreement`](../interfaces/DataExchangeAgreement.md) | a DataExchangeAgreement |
-| `privateJwk` | [`JWK`](../interfaces/JWK.md) | the private key that will be used to sign the proofs |
-| `block` | `Uint8Array` | the block of data to transmit in this data exchange |
-| `privateLedgerKeyHex` | `string` | the private key to use for sign transactions to the ledger. An EthersWalletAgent will be created internally for that purpose. |
-
-#### Defined in
-
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L38)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L31)
 
 ## Properties
 
@@ -71,7 +56,7 @@ likely to be a Provider.
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L17)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L17)
 
 ___
 
@@ -81,7 +66,17 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L21)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L21)
+
+___
+
+### dltAgent
+
+• **dltAgent**: [`NrpDltAgentOrig`](../interfaces/Signers.NrpDltAgentOrig.md)
+
+#### Defined in
+
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L22)
 
 ___
 
@@ -91,7 +86,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L18)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L18)
 
 ___
 
@@ -101,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L23)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L23)
 
 ___
 
@@ -111,7 +106,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L19)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L19)
 
 ___
 
@@ -121,17 +116,7 @@ ___
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L20)
-
-___
-
-### wallet
-
-• **wallet**: [`WalletAgentOrig`](../interfaces/Signers.WalletAgentOrig.md)
-
-#### Defined in
-
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L22)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L20)
 
 ## Methods
 
@@ -150,7 +135,7 @@ a compact JWS with the PoO along with its decoded payload
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L118)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:106](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L106)
 
 ___
 
@@ -169,7 +154,7 @@ a compact JWS with the PoP
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:174](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L174)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:162](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L162)
 
 ___
 
@@ -188,7 +173,7 @@ the verification request as a compact JWS signed with 'orig's private key
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:201](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L201)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:189](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L189)
 
 ___
 
@@ -214,4 +199,4 @@ the verified payload and protected header
 
 #### Defined in
 
-[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:137](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L137)
+[src/ts/non-repudiation-protocol/NonRepudiationOrig.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/non-repudiation-protocol/NonRepudiationOrig.ts#L125)

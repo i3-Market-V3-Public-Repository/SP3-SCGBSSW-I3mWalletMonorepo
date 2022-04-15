@@ -15,8 +15,8 @@ The Conflict Resolver is an external entity that can:
 
 ### Properties
 
+- [dltAgent](ConflictResolution.ConflictResolver.md#dltagent)
 - [jwkPair](ConflictResolution.ConflictResolver.md#jwkpair)
-- [wallet](ConflictResolution.ConflictResolver.md#wallet)
 
 ### Methods
 
@@ -27,20 +27,30 @@ The Conflict Resolver is an external entity that can:
 
 ### constructor
 
-• **new ConflictResolver**(`jwkPair`, `walletAgent?`)
+• **new ConflictResolver**(`jwkPair`, `dltAgent`)
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `jwkPair` | [`JwkPair`](../interfaces/JwkPair.md) | a pair of public/private keys in JWK format |
-| `walletAgent?` | [`WalletAgentDest`](../interfaces/Signers.WalletAgentDest.md) | a wallet agent providing read-only access to the non-repudiation protocol smart contract |
+| `dltAgent` | [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md) | a DLT agent providing read-only access to the non-repudiation protocol smart contract |
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/ConflictResolver.ts#L26)
+[src/ts/conflict-resolution/ConflictResolver.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/ConflictResolver.ts#L26)
 
 ## Properties
+
+### dltAgent
+
+• **dltAgent**: [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md)
+
+#### Defined in
+
+[src/ts/conflict-resolution/ConflictResolver.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/ConflictResolver.ts#L18)
+
+___
 
 ### jwkPair
 
@@ -48,17 +58,7 @@ The Conflict Resolver is an external entity that can:
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/ConflictResolver.ts#L17)
-
-___
-
-### wallet
-
-• **wallet**: [`WalletAgentDest`](../interfaces/Signers.WalletAgentDest.md)
-
-#### Defined in
-
-[src/ts/conflict-resolution/ConflictResolver.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/ConflictResolver.ts#L18)
+[src/ts/conflict-resolution/ConflictResolver.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/ConflictResolver.ts#L17)
 
 ## Methods
 
@@ -82,7 +82,7 @@ a signed resolution
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/ConflictResolver.ts#L57)
+[src/ts/conflict-resolution/ConflictResolver.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/ConflictResolver.ts#L52)
 
 ___
 
@@ -109,4 +109,4 @@ a signed resolution
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/1ca8f93/src/ts/conflict-resolution/ConflictResolver.ts#L103)
+[src/ts/conflict-resolution/ConflictResolver.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/b9a6c2f/src/ts/conflict-resolution/ConflictResolver.ts#L98)

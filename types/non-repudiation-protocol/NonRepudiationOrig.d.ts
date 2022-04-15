@@ -1,5 +1,5 @@
 import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types';
-import { WalletAgentOrig } from '../dlt/wallet-agents';
+import { NrpDltAgentOrig } from '../dlt/agents';
 /**
  * The base class that should be instantiated by the origin of a data
  * exchange when non-repudiation is required. In the i3-MARKET ecosystem it is
@@ -11,22 +11,15 @@ export declare class NonRepudiationOrig {
     jwkPairOrig: JwkPair;
     publicJwkDest: JWK;
     block: OrigBlock;
-    wallet: WalletAgentOrig;
+    dltAgent: NrpDltAgentOrig;
     readonly initialized: Promise<boolean>;
     /**
      * @param agreement - a DataExchangeAgreement
      * @param privateJwk - the private key that will be used to sign the proofs
      * @param block - the block of data to transmit in this data exchange
-     * @param walletAgent - a wallet agent providing connection to a wallet (that can actually sign and deploy transactions to the ledger)
+     * @param dltAgent - a DLT agent providing read-write connection to NRP smart contract
      */
-    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, walletAgent: WalletAgentOrig);
-    /**
-     * @param agreement - a DataExchangeAgreement
-     * @param privateJwk - the private key that will be used to sign the proofs
-     * @param block - the block of data to transmit in this data exchange
-     * @param privateLedgerKeyHex - the private key to use for sign transactions to the ledger. An EthersWalletAgent will be created internally for that purpose.
-     */
-    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, privateLedgerKeyHex: string);
+    constructor(agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltAgent: NrpDltAgentOrig);
     private init;
     private _dltSetup;
     /**
