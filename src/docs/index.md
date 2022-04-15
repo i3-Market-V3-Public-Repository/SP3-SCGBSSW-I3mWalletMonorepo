@@ -96,7 +96,7 @@ async nrp() => {
   }
   
   // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an external Wallet, such as the i3-MARKET one
-  const providerDltSigningKeyHex = '***REMOVED***'
+  const providerDltSigningKeyHex = '0x4b7903c8fe18e4ba5329939c7d1c4318307794a544f3eb5fb3b6536210c98676'
 
   // Create a NRP DLT Agent for the provider. We are going to use the Ethers.io one
   providerDltAgent = new {{PKG_CAMELCASE}}.EthersIoAgentOrig(dltConfig, providerDltSigningKeyHex)
