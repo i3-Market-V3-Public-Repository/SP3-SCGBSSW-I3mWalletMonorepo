@@ -13,9 +13,6 @@ node_modules
 .nyc_output
 coverage
 
-# NPM.rc
-.npmrc
-
 # Environment files
 *.env
 
@@ -25,12 +22,3 @@ coverage
 
 # docs temporal files
 .nojekyll
-
-# The i3m wallet DID and pairing token
-i3mWalletSetup.json
-i3mWalletSetup.kids.json
-i3mWalletSetup.castefa.json
-i3mWalletSetup.thinkjuan.json
-
-# the ethers wallet address and private key
-ethersWalletSetup.json

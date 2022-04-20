@@ -1,10 +1,16 @@
 import { NrError } from '../errors'
 
-export function parseHex (a: string, prefix0x: boolean = false): string {
+export function parseHex (a: string, prefix0x: boolean = false, byteLength?: number): string {
   const hexMatch = a.match(/^(0x)?([\da-fA-F]+)$/)
   if (hexMatch == null) {
     throw new NrError(new RangeError('input must be a hexadecimal string, e.g. \'0x124fe3a\' or \'0214f1b2\''), ['invalid format'])
   }
-  const hex = hexMatch[2].toLocaleLowerCase()
+  let hex = hexMatch[2].toLocaleLowerCase()
+  if (byteLength !== undefined) {
+    if (byteLength < hex.length / 2) {
+      throw new NrError(new RangeError(`expected byte length ${byteLength} < input hex byte length ${Math.ceil(hex.length / 2)}`), ['invalid format'])
+    }
+    hex = hex.padStart(byteLength * 2, '0')
+  }
   return (prefix0x) ? '0x' + hex : hex
 }

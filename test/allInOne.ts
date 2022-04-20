@@ -2,11 +2,16 @@ import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { VerificationResolutionPayload } from '../src/ts'
-import ethersWalletSetup from './ethersWalletSetup.json'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
+
+  const ethersWalletSetup = {
+    address: process.env.ethersWalletAddress as string,
+    privateKey: process.env.ethersWalletPrivateKey as string,
+    rpcProviderUrl: process.env.rpcProviderUrl as string
+  }
 
   let providerDltAgent: _pkg.EthersIoAgentOrig
   let consumerDltAgent: _pkg.EthersIoAgentDest

@@ -10,13 +10,13 @@ const glob = require('glob')
 // First let us prepare the args to pass to mocha.
 // ts.files will be replaced by their js-transpiled counterparts
 // a watch file to our semaphore will be added
-const processedArgs = processArgs(process.argv.slice(2))
+const processedArgs = processArgs()
 
 // Now we can run a script and invoke a callback when complete, e.g.
 runScript(path.join(rootDir, 'node_modules/mocha/bin/mocha'), processedArgs)
 
-function processArgs (args) {
-  args = process.argv.slice(2).map(arg => {
+function processArgs () {
+  const args = process.argv.slice(2).map(arg => {
     // Let us first remove surrounding quotes in string (it gives issues in windows)
     arg = arg.replace(/^['"]/, '').replace(/['"]$/, '')
     const filenames = glob.sync(arg, { cwd: rootDir, matchBase: true })

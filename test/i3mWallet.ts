@@ -2,15 +2,16 @@ import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { I3mWalletAgentOrig, I3mWalletAgentDest } from '../src/ts/dlt/agents'
-import walletSetup from './i3mWalletSetup.json'
 
 const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
 describe('testing signing transactions with i3M-Wallet', function () {
   const transport = new HttpInitiatorTransport()
-  const sessionObj = walletSetup.token
-  const did = walletSetup.did
-  const rpcProviderUrl = walletSetup.rpcProviderUrl
+
+  const sessionObj = JSON.parse(process.env.i3mWalletSessionToken as string)
+  const did = process.env.i3mWalletDid as string
+  const rpcProviderUrl = process.env.rpcProviderUrl as string
+
   let session: Session<HttpInitiatorTransport>
   let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
   let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest

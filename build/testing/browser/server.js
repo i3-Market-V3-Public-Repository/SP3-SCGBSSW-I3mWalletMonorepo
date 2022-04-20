@@ -4,6 +4,7 @@ const fs = require('fs')
 const http = require('http')
 const path = require('path')
 const pkgJson = require('../../../package.json')
+require('dotenv').config()
 
 const rollup = require('rollup')
 const resolve = require('@rollup/plugin-node-resolve').nodeResolve
@@ -55,10 +56,11 @@ const tsBundleOptions = {
   exclude: ['test-vectors/**/*']
 }
 
-async function buildTests () {
+async function buildTests (testFiles) {
   // create a bundle
+  const input = testFiles ?? [path.join(rootDir, pkgJson.directories.test, '**/*.ts'), path.join(rootDir, pkgJson.directories.src, '**/*.spec.ts')]
   const inputOptions = {
-    input: [path.join(rootDir, pkgJson.directories.test, '**/*.ts'), path.join(rootDir, pkgJson.directories.src, '**/*.spec.ts')],
+    input,
     plugins: [
       multi({ exports: true }),
       replace({
@@ -78,7 +80,12 @@ async function buildTests () {
   const bundle = await rollup.rollup(inputOptions)
   const { output } = await bundle.generate({ format: 'esm' })
   await bundle.close()
-  return output[0].code
+  let bundledCode = output[0].code
+  const replacements = _getEnvVarsReplacements(bundledCode)
+  for (const replacement in replacements) {
+    bundledCode = bundledCode.replaceAll(replacement, replacements[replacement])
+  }
+  return bundledCode
 }
 
 class TestServer {
@@ -86,8 +93,8 @@ class TestServer {
     this.server = http.createServer()
   }
 
-  async init () {
-    const tests = await buildTests()
+  async init (testFiles) {
+    const tests = await buildTests(testFiles)
     this.server.on('request', function (req, res) {
       if (req.url === `/${name}.esm.js`) {
         fs.readFile(path.join(rootDir, pkgJson.directories.dist, 'bundles/esm.js'), function (err, data) {
@@ -147,6 +154,31 @@ class TestServer {
       this.server.close(error => (error) ? reject(error) : resolve())
     })
   }
+}
+
+function _getEnvVarsReplacements (testsCode) {
+  const replacements = {}
+  const missingEnvVars = []
+  for (const match of testsCode.matchAll(/process\.env\.(\w+)/g)) {
+    const envVar = match[1]
+    if (process.env[envVar] !== undefined) {
+      replacements[match[0]] = '`' + process.env[envVar] + '`'
+    } else {
+      missingEnvVars.push(envVar)
+    }
+  }
+  for (const match of testsCode.matchAll(/process\.env\[['"](\w+)['"]\]/g)) {
+    const envVar = match[1]
+    if (process.env[envVar] !== undefined) {
+      replacements[match[0]] = '`' + process.env[envVar] + '`'
+    } else {
+      missingEnvVars.push(envVar)
+    }
+  }
+  if (missingEnvVars.length > 0) {
+    throw EvalError('The folloinwg environment variables are missing in your .env file: ' + missingEnvVars)
+  }
+  return replacements
 }
 
 exports.server = new TestServer()

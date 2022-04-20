@@ -18,7 +18,7 @@ The library enables implementation of:
 
 ## Usage
 
-Once you set up the i3-MARKET NPM, `{{PKG_NAME}}` can be imported to your project with `npm`:
+`{{PKG_NAME}}` can be imported to your project with `npm`:
 
 ```console
 npm install {{PKG_NAME}}
@@ -58,9 +58,9 @@ Before starting the agreement you need:
   >const providerJwks = await {{PKG_CAMELCASE}}.generateKeys(SIGNING_ALG)
   >```
 
-- An Ethereum address with enough funds on the ledger and a NrpDltAgentOrig instance that can handle signing of the transactions needed to publish the secret to the ledger.
+- An Ethereum address with enough funds on the ledger and a `NrpDltAgentOrig` instance that can handle signing of the transactions needed to publish the secret to the ledger.
 
-And now you are ready to start a dataExchange for a given block of a given dataExchangeAgreement.
+And now you are ready to start a `dataExchange` for a given block of a given `DataExchangeAgreement`.
 
 ```typescript
 async nrp() => {
@@ -152,7 +152,7 @@ Before starting the agreement, you need a pair of public private keys. You can e
   const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256')
 ```
 
-And now you are ready to start a DataExchange for a given block of a given dataExchangeAgreement.
+And now you are ready to start a `DataExchange` for a given block of a given `DataExchangeAgreement`.
 
 ```typescript
 async nrp() => {
@@ -182,7 +182,7 @@ async nrp() => {
     pooToSecretDelay: 180000
   }
   
-  // Let us define the RPC endopint to the ledger (just in case we don't want to use the default one)
+  // Let us define the RPC endopint to the ledger
   const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
     rpcProviderUrl: 'http://89.111.35.214:8545'
   }

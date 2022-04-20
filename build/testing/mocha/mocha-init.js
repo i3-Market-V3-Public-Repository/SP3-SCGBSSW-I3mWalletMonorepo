@@ -8,6 +8,8 @@ const rimraf = require('rimraf')
 const RollupBuilder = require('./builders/RollupBuilder.js')
 const TestsBuilder = require('./builders/TestsBuilder.js')
 
+require('dotenv').config()
+
 const rootDir = path.join(__dirname, '../../../')
 
 global.chai = chai

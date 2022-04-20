@@ -4,6 +4,7 @@ import { bufToHex, hexToBuf } from 'bigint-conversion'
 import { exportJWK, generateSecret, KeyLike } from 'jose'
 import { NrError } from '../errors'
 import { Block, EncryptionAlg, JWK } from '../types'
+import { parseHex } from '../utils'
 
 /**
  * Create a JWK random (high entropy) symmetric secret
@@ -33,7 +34,7 @@ export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|
       if (base64 === true) {
         key = b64.decode(secret) as Uint8Array
       } else {
-        key = new Uint8Array(hexToBuf(secret))
+        key = new Uint8Array(hexToBuf(parseHex(secret, undefined, secretLength)))
       }
     } else {
       key = secret
