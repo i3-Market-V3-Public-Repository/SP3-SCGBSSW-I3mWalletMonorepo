@@ -1,3 +1,6 @@
+# Another solution is to use: npx lerna exec --scope "@i3m/*" npm publish
+# The problem is that it doesn't manage the errors properly
+
 REPO_FOLDER=$PWD
 ERROR=0
 
