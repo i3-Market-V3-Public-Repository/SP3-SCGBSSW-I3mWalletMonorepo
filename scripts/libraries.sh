@@ -6,7 +6,7 @@ ERROR=0
 
 publish() {
   cd $1
-  npm publish || ERROR=1
+  npm publish --access public || ERROR=1
   cd $REPO_FOLDER
 }
 
