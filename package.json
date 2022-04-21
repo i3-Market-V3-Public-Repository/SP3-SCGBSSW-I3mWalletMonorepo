@@ -21,12 +21,12 @@
   "license": "EUPL-1.2",
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library.git"
+    "url": "git+https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary.git"
   },
   "bugs": {
-    "url": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/issues"
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/issues"
   },
-  "homepage": "https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library#readme",
+  "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary#readme",
   "author": {
     "name": "Juan Hernández Serrano",
     "email": "j.hernandez@upc.edu",
@@ -101,7 +101,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
     "@rollup/plugin-node-resolve": "^13.1.1",
-    "@rollup/plugin-replace": "^3.0.0",
+    "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^8.2.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.4",
@@ -112,9 +112,9 @@
     "chai-as-promised": "^7.1.1",
     "dotenv": "^16.0.0",
     "fs-extra": "^10.0.0",
-    "glob": "^7.2.0",
+    "glob": "^8.0.1",
     "json5": "^2.2.0",
-    "minimatch": "^3.0.4",
+    "minimatch": "^5.0.1",
     "mocha": "^9.1.1",
     "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",

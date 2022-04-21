@@ -52,8 +52,7 @@ const indexHtml = `<!DOCTYPE html>
 
 const tsBundleOptions = {
   tsconfig: path.join(rootDir, 'tsconfig.json'),
-  outDir: undefined, // ignore outDir in tsconfig.json
-  exclude: ['test-vectors/**/*']
+  outDir: undefined // ignore outDir in tsconfig.json
 }
 
 async function buildTests (testFiles) {

@@ -54,7 +54,7 @@ EthersIoAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L22)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L22)
 
 ## Properties
 
@@ -68,7 +68,7 @@ EthersIoAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/EthersIoAgent.ts#L11)
 
 ___
 
@@ -80,7 +80,7 @@ The nonce of the next transaction to send to the blockchain. It keep track also 
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L20)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L20)
 
 ___
 
@@ -94,7 +94,7 @@ EthersIoAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/EthersIoAgent.ts#L10)
 
 ___
 
@@ -108,7 +108,7 @@ EthersIoAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/EthersIoAgent.ts#L12)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L15)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L15)
 
 ## Methods
 
@@ -147,7 +147,7 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L44)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L44)
 
 ___
 
@@ -167,7 +167,7 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L64)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L64)
 
 ___
 
@@ -191,7 +191,7 @@ EthersIoAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/EthersIoAgent.ts#L26)
+[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/EthersIoAgent.ts#L26)
 
 ___
 
@@ -205,4 +205,4 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f267a5d/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L68)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/667e852/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L68)

@@ -1,7 +1,8 @@
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-green.svg)](LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-
+[![Node.js CI](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/workflows/Node.js%20CI/badge.svg)](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions?query=workflow%3A%22Node.js+CI%22)
+[![Coverage Status](https://coveralls.io/repos/github/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/badge.svg?branch=master)](https://coveralls.io/github/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary?branch=master)
 
 # @i3m/non-repudiation-library
 
@@ -44,7 +45,7 @@ import * as nonRepudiationLibrary from '@i3m/non-repudiation-library'
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/iife.js?inline=false), the [ESM bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/esm.min.js?inline=false) or the [UMD bundle](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/raw/master/dist/bundles/umd.js?inline=false) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
+You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
 
 ### Example for an i3-MARKET Provider using the Non-Repudiation Protocol
 

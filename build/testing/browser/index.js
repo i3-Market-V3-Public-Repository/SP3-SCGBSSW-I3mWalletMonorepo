@@ -82,6 +82,9 @@ const browserTests = async (
 }
 
 function processedTestFiles (testFilesStr) {
+  if (testFilesStr === undefined) {
+    return undefined
+  }
   // Let us first remove surrounding quotes in string (it gives issues in windows)
   testFilesStr = testFilesStr.replace(/^['"]/, '').replace(/['"]$/, '')
   const filenames = glob.sync(testFilesStr, { cwd: rootDir, matchBase: true })
