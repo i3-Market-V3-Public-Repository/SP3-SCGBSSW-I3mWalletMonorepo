@@ -31,11 +31,11 @@ jobs:
       - name: docs
         run: npm run docs
       
-      - name: browser tests
-        run: npm run test:browser-headless
-      
       - name: node tests
-        run: npm run test:node
+        run: npm run mocha-ts  -- test/allInOne.ts
+
+      - name: browser tests
+        run: npm run test:browser-headless -- test/allInOne.ts
       
       - name: publish to NPM
         run: npm publish --access public
