@@ -81,20 +81,14 @@ jobs:
         if: steps.check.outputs.changed == 'true'
         run: npm run docs
       
+      - name: node tests
+        if: steps.check.outputs.changed == 'true'
+        run: npm run mocha-ts -- test/allInOne.ts
+        
       - name: browser tests
         if: steps.check.outputs.changed == 'true'
-        run: npm run test:browser-headless
+        run: npm run test:browser-headless -- test/allInOne.ts
       
-      - name: node tests and coverage
-        if: steps.check.outputs.changed == 'true'
-        run: npm run coverage
-      
-      # - name: send report to coveralls.io
-      #   if: steps.check.outputs.changed == 'true'
-      #   uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: publish to NPM
         if: steps.check.outputs.changed == 'true'
         run: npm publish --access public
