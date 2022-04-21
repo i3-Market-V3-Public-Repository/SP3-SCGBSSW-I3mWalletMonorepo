@@ -1,4 +1,3 @@
-
 name: Coveralls.io
 
 on:
@@ -21,6 +20,10 @@ jobs:
     - run: npm run build --if-present
 
     - run: npm run coverage
+      env:
+        RPC_PROVIDER_URL: ${{ secrets.RPC_PROVIDER_URL }}
+        ETHERS_WALLET_ADDRESS: ${{ secrets.ETHERS_WALLET_ADDRESS }}
+        ETHERS_WALLET_PRIVATE_KEY: ${{ secrets.ETHERS_WALLET_PRIVATE_KEY }}
 
     - name: send report to coveralls.io
       uses: coverallsapp/github-action@master

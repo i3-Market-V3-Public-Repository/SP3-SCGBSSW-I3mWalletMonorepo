@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  RPC_PROVIDER_URL: ${{ secrets.RPC_PROVIDER_URL }}
+  ETHERS_WALLET_ADDRESS: ${{ secrets.ETHERS_WALLET_ADDRESS }}
+  ETHERS_WALLET_PRIVATE_KEY: ${{ secrets.ETHERS_WALLET_PRIVATE_KEY }}
+
 jobs:
   build:
     name: build and node tests
@@ -14,6 +19,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
         node-version: [14.x, 16.x, 18.x]
+    environment: tests
     steps:
       - uses: actions/checkout@v2
 

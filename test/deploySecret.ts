@@ -6,9 +6,9 @@ describe('Non-repudiation protocol', function () {
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
   const ethersWalletSetup = {
-    address: process.env.ethersWalletAddress as string,
-    privateKey: process.env.ethersWalletPrivateKey as string,
-    rpcProviderUrl: process.env.rpcProviderUrl as string
+    address: process.env.ETHERS_WALLET_ADDRESS as string,
+    privateKey: process.env.ETHERS_WALLET_PRIVATE_KEY as string,
+    rpcProviderUrl: process.env.RPC_PROVIDER_URL as string
   }
 
   let providerDltAgent: _pkg.EthersIoAgentOrig

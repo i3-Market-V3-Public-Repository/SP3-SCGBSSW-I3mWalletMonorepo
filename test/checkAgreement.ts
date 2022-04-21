@@ -6,7 +6,7 @@ describe('checkAgreement', function () {
     signingAlg: 'ES256',
     hashAlg: 'SHA-256',
     ledgerContractAddress: '8d407a1722633bdd1dcf221474be7a44c05d7c2f',
-    ledgerSignerAddress: process.env.ethersWalletAddress as string,
+    ledgerSignerAddress: process.env.ETHERS_WALLET_ADDRESS as string,
     pooToPorDelay: 10000,
     pooToPopDelay: 20000,
     pooToSecretDelay: 180000

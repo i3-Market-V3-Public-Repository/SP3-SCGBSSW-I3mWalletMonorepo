@@ -8,9 +8,9 @@ const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 describe('testing signing transactions with i3M-Wallet', function () {
   const transport = new HttpInitiatorTransport()
 
-  const sessionObj = JSON.parse(process.env.i3mWalletSessionToken as string)
-  const did = process.env.i3mWalletDid as string
-  const rpcProviderUrl = process.env.rpcProviderUrl as string
+  const sessionObj = JSON.parse(process.env.I3M_WALLET_SESSION_TOKEN as string)
+  const did = process.env.I3M_WALLET_DID as string
+  const rpcProviderUrl = process.env.RPC_PROVIDER_URL as string
 
   let session: Session<HttpInitiatorTransport>
   let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
