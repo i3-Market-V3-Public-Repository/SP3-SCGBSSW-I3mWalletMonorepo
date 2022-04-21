@@ -1,4 +1,4 @@
-import { Wallet, TestDialog, TestStore, Veramo, Resource } from '@i3m/base-wallet'
+import { Wallet, TestDialog, TestStore, TestToast, Veramo, Resource } from '@i3m/base-wallet'
 import Debug from 'debug'
 
 import swBuilder from '..'
@@ -8,6 +8,7 @@ const debug = Debug('i3-market:sw-wallet:test')
 describe('@i3m/sw-wallet', () => {
   const dialog = new TestDialog()
   const store = new TestStore()
+  const toast = new TestToast()
   let wallet: Wallet
   let veramo: Veramo
 
@@ -18,7 +19,7 @@ describe('@i3m/sw-wallet', () => {
     await dialog.setValues({
       text: 'zebra jelly kick pattern depth foam enter alone quote seed alpha road ripple enable wheel'
     }, async () => {
-      wallet = await swBuilder({ dialog, store })
+      wallet = await swBuilder({ dialog, store, toast })
       veramo = (wallet as any).veramo // TODO: Hacky access to veramo. Maybe expose it?
     })
   })
