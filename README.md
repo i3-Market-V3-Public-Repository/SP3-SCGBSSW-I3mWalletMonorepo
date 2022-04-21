@@ -1,12 +1,11 @@
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-green.svg)](LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Node.js CI](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/workflows/Node.js%20CI/badge.svg)](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions?query=workflow%3A%22Node.js+CI%22)
-[![Coverage Status](https://coveralls.io/repos/github/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/badge.svg?branch=master)](https://coveralls.io/github/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary?branch=master)
+[![Build and test](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/workflows/build/badge.svg)](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions?query=workflow%3A%22build%22)
 
 # @i3m/non-repudiation-library
 
-Library for handling non-repudiation proofs in the i3-MARKET ecosystem. It is a core element of the Conflict Resolution system in i3-MARKET ([Read more here](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/documentation#conflict-resolution-non-repudiation-protocol)).
+Library for handling non-repudiation proofs in the i3-MARKET ecosystem. It is a core element of the Conflict Resolution system in i3-MARKET ([Read more here](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-Documentation#conflict-resolution-non-repudiation-protocol)).
 
 The library enables implementation of:
 
@@ -23,12 +22,6 @@ The library enables implementation of:
 
 ```console
 npm install @i3m/non-repudiation-library
-```
-
-Alternatively, you can just download the [latest release](./releases/i3m-non-repudiation-library-latest.tgz) and install into your project with:
-
-```console
-npm install <path to i3m-non-repudiation-library-latest.tgz>
 ```
 
 Then either require (Node.js CJS):
@@ -56,7 +49,7 @@ Before starting the agreement you need:
   >You can easily create the key pair with the `generateKeys` utility function. For example:
   >
   >```typescript
-  >const providerJwks = await nonRepudiationLibrary.generateKeys(SIGNING_ALG)
+  >const providerJwks = await nonRepudiationLibrary.generateKeys('ES256')
   >```
 
 - An Ethereum address with enough funds on the ledger and a `NrpDltAgentOrig` instance that can handle signing of the transactions needed to publish the secret to the ledger.

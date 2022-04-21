@@ -77,15 +77,15 @@ const iifeBundlePath = path.relative('.', pkgJson.exports['./iife-browser-bundle
 const esmBundlePath = path.relative('.', pkgJson.exports['./esm-browser-bundle'])
 const umdBundlePath = path.relative('.', pkgJson.exports['./umd-browser-bundle'])
 
-let iifeBundle, esmBundle, umdBundle, workflowBadget, coverallsBadge
+let iifeBundle, esmBundle, umdBundle, workflowBadget
 if (repoProvider) {
   switch (repoProvider) {
     case 'github':
       iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/${iifeBundlePath})`
       esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/${esmBundlePath})`
       umdBundle = `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/master/${umdBundlePath})`
-      workflowBadget = `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/workflows/Node.js%20CI/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions?query=workflow%3A%22Node.js+CI%22)`
-      coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
+      workflowBadget = `[![Build and test](https://github.com/${repoUsername}/${repoName}/workflows/build/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions?query=workflow%3A%22build%22)`
+      // coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=master)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=master)`
       break
 
     case 'gitlab':
@@ -108,7 +108,7 @@ let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
 if (repoProvider && repoProvider === 'github') {
-  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget + '\n' + coverallsBadge)
+  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget)
 } else {
   template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, '')
 }
