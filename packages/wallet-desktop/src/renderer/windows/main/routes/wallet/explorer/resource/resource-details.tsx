@@ -6,15 +6,23 @@ interface Props {
   resource: Resource
 }
 
-export function ResourceDetails (props: Props): JSX.Element {
+function ResourceSelector (props: Props): JSX.Element | null {
   const { resource } = props
 
+  switch (props.resource.type) {
+    case 'VerifiableCredential':
+      return <VerifiableCredentialDetails vc={resource} />
+
+    default:
+      return <div>Unknown resource type</div>
+  }
+}
+
+export function ResourceDetails (props: Props): JSX.Element {
   return (
     <Extendible className='details'>
       <Section title='Details'>
-        {resource.type === 'VerifiableCredential'
-          ? <VerifiableCredentialDetails vc={resource} />
-          : <div>Unknown resource type</div>}
+        <ResourceSelector {...props} />
       </Section>
     </Extendible>
   )
