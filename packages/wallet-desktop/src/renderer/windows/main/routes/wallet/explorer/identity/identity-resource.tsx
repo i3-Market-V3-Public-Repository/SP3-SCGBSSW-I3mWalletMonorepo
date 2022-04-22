@@ -24,7 +24,7 @@ export function IdentityResource (props: Props): JSX.Element {
           <span>Claims: </span>
           <input type='text' disabled value={claims} />
         </div>
-        <button onClick={copy}>
+        <button onClick={copy} style={{ display: 'none' }}>
           Extract
         </button>
       </div>
