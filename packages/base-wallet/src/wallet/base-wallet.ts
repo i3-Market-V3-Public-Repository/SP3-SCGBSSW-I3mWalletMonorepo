@@ -522,6 +522,14 @@ export class BaseWallet<
     }))
   }
 
+  async deleteResource (id: string): Promise<void> {
+    await this.store.delete(`resources.${id}`)
+  }
+
+  async deleteIdentity (did: string): Promise<void> {
+    await this.store.delete(`identities.${did}`)
+  }
+
   async resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201> {
     const resource = requestBody
 

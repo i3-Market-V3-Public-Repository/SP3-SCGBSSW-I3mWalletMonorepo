@@ -9,6 +9,9 @@ export interface Wallet {
   getResources: () => Promise<BaseWalletModel['resources']>
   getIdentities: () => Promise<BaseWalletModel['identities']>
 
+  deleteResource: (id: string) => Promise<void>
+  deleteIdentity: (did: string) => Promise<void>
+
   // Api methods
   identityList: (queryParameters: WalletPaths.IdentityList.QueryParameters) => Promise<WalletPaths.IdentityList.Responses.$200>
   identityCreate: (requestBody: WalletPaths.IdentityCreate.RequestBody) => Promise<WalletPaths.IdentityCreate.Responses.$201>

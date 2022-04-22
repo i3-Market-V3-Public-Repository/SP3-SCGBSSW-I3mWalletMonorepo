@@ -24,14 +24,24 @@ function getResourceProperties (resource: Resource): Partial<TreeListItem> {
           .filter((key) => key !== 'id')
           .join(', '),
         menu: {
-          items: [
-            {
-              text: 'Copy credential',
-              async onClick () {
-                await navigator.clipboard.writeText(JSON.stringify(resource, undefined, 2))
-              }
+          items: [{
+            type: 'button',
+            text: 'Copy ID',
+            async onClick () {
+              await navigator.clipboard.writeText(resource.id)
             }
-          ]
+          }, {
+            type: 'button',
+            text: 'Copy credential',
+            async onClick () {
+              await navigator.clipboard.writeText(JSON.stringify(resource, undefined, 2))
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
+            text: 'Delete',
+            disabled: true,
+            onClick () { }
+          }]
         }
       }
   }
@@ -73,15 +83,28 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
       menu: {
         items: [{
           text: 'Select wallet',
+          type: 'button',
           onClick () {
             dispatch(selectWalletAction.create({ wallet }))
           }
         }, {
           text: 'Create identity...',
+          type: 'button',
           onClick () {
             dispatch(selectWalletAction.create({ wallet }))
             dispatch(createIdentityAction.create())
           }
+        }, { type: 'separator' }, {
+          type: 'button',
+          text: 'Copy name',
+          async onClick () {
+            await navigator.clipboard.writeText(wallet)
+          }
+        }, { type: 'separator' }, {
+          type: 'button',
+          text: 'Delete',
+          disabled: true,
+          async onClick () { }
         }]
       },
       onSelect,
@@ -114,14 +137,25 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
           parent: walletItem,
           children: [],
           menu: {
-            items: [
-              {
-                text: 'Copy DID',
-                async onClick () {
-                  await navigator.clipboard.writeText(identity.did)
-                }
+            items: [{
+              text: 'Copy DID',
+              type: 'button',
+              async onClick () {
+                await navigator.clipboard.writeText(identity.did)
               }
-            ]
+            }, {
+              text: 'Copy ethereum address',
+              type: 'button',
+              async onClick () {
+                const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
+                await navigator.clipboard.writeText(address)
+              }
+            }, { type: 'separator' }, {
+              type: 'button',
+              text: 'Delete',
+              disabled: true,
+              async onClick () { }
+            }]
           },
           onSelect
         }

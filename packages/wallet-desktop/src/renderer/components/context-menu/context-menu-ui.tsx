@@ -1,10 +1,6 @@
+import { ContextMenuItem, ContextMenuItemUI } from './context-menu-item'
 
 import './context-menu.scss'
-
-export interface ContextMenuItem {
-  text: string
-  onClick: () => void
-}
 
 export interface Menu {
   items: ContextMenuItem[]
@@ -22,7 +18,7 @@ interface Props {
 }
 
 export function ContextMenuUI (props: Props): JSX.Element | null {
-  const { ctx } = props
+  const { ctx, onClose } = props
   if (ctx === undefined) {
     return null
   }
@@ -36,13 +32,7 @@ export function ContextMenuUI (props: Props): JSX.Element | null {
       onMouseDown={(ev) => ev.stopPropagation()}
     >
       {contextMenu.items.map((item, i) => (
-        <span
-          onClick={(ev) => {
-            item.onClick()
-            props.onClose()
-          }} key={i}
-        >{item.text}
-        </span>
+        <ContextMenuItemUI key={i} onClose={onClose} item={item} />
       ))}
     </div>
   )
