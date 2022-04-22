@@ -15,12 +15,25 @@
   font-size: 15px;
   box-shadow: 2px 2px 20px 1px rgba(0,0,0,0.75);
 
-  > span {
-    cursor: pointer;
+  > span.separator {
+    height: 1px;
+    margin: 3px 5px;
+    background-color: #00000022;
+  }
+
+  > span.button {
     padding: 5px 20px;
 
-    &:hover {
-      background-color: #00000022;
+    &:not(.disabled) {
+      cursor: pointer;
+
+      &:hover {
+        background-color: #00000022;
+      }
+    }
+
+    &.disabled {
+      opacity: 0.4;
     }
   }
 }

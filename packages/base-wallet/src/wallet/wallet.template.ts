@@ -9,6 +9,9 @@ export interface Wallet {
   getResources: () => Promise<BaseWalletModel['resources']>
   getIdentities: () => Promise<BaseWalletModel['identities']>
 
+  deleteResource: (id: string) => Promise<void>
+  deleteIdentity: (did: string) => Promise<void>
+
   // Api methods
   // @wallet-methods
 }
