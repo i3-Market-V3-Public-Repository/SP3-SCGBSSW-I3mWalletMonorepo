@@ -92,6 +92,7 @@ export class ConnectManager {
   startWalletProtocol (): void {
     this.walletProtocol.run().then(() => {
       // Pairing correct
+      this.locals.windowManager.openMainWindow('/wallet/explorer')
       this.locals.toast.show({
         message: 'Successful pairing',
         type: 'success'
