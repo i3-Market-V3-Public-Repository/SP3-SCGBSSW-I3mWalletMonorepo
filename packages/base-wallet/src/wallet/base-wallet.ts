@@ -523,11 +523,25 @@ export class BaseWallet<
   }
 
   async deleteResource (id: string): Promise<void> {
-    await this.store.delete(`resources.${id}`)
+    const confirmation = await this.dialog.confirmation({
+      message: 'Once deleted you will not be able to recover it. Proceed?',
+      acceptMsg: 'Ok',
+      rejectMsg: 'Cancel'
+    })
+    if (confirmation === true) {
+      await this.store.delete(`resources.${id}`)
+    }
   }
 
   async deleteIdentity (did: string): Promise<void> {
-    await this.store.delete(`identities.${did}`)
+    const confirmation = await this.dialog.confirmation({
+      message: 'Once deleted you will not be able to recover it. Proceed?',
+      acceptMsg: 'Ok',
+      rejectMsg: 'Cancel'
+    })
+    if (confirmation === true) {
+      await this.store.delete(`identities.${did}`)
+    }
   }
 
   async resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201> {

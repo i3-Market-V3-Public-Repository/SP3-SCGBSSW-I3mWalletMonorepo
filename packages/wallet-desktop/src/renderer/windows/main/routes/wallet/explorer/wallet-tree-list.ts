@@ -1,7 +1,7 @@
 import { faWallet, faUser, faAddressCard } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3m/base-wallet'
 
-import { SharedMemory, selectWalletAction, createIdentityAction } from '@wallet/lib'
+import { SharedMemory, selectWalletAction, createIdentityAction, exportResourceAction, importResourceAction, deleteResourceAction, deleteIdentityAction } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 import { InterfaceObject, TreeListItem } from '@wallet/renderer/components'
 
@@ -14,7 +14,7 @@ interface TreeListProps {
 
 type WalletTreeItem = TreeListItem<string>
 
-function getResourceProperties (resource: Resource): Partial<TreeListItem> {
+function getResourceProperties (resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
   switch (resource.type) {
     case 'VerifiableCredential':
       return {
@@ -38,9 +38,16 @@ function getResourceProperties (resource: Resource): Partial<TreeListItem> {
             }
           }, { type: 'separator' }, {
             type: 'button',
+            text: 'Export...',
+            onClick () {
+              dispatch(exportResourceAction.create(resource.id))
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
             text: 'Delete',
-            disabled: true,
-            onClick () { }
+            async onClick () {
+              dispatch(deleteResourceAction.create(resource.id))
+            }
           }]
         }
       }
@@ -152,9 +159,16 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
               }
             }, { type: 'separator' }, {
               type: 'button',
+              text: 'Import resource...',
+              async onClick () {
+                dispatch(importResourceAction.create(identity.did))
+              }
+            }, { type: 'separator' }, {
+              type: 'button',
               text: 'Delete',
-              disabled: true,
-              async onClick () { }
+              async onClick () {
+                dispatch(deleteIdentityAction.create(identity.did))
+              }
             }]
           },
           onSelect
@@ -176,7 +190,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
               icon: faAddressCard,
               parent: identityItem,
               children: [],
-              ...getResourceProperties(resource),
+              ...getResourceProperties(resource, dispatch),
               onSelect
             }
             prevResource = updatePrevious(prevResource, resourceItem)
