@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs'
 import { catchError, first, pluck, switchMap } from 'rxjs/operators'
 
 import { ActionRequest, SharedMemorySync, TypedObject, WindowInput, WindowOutput, withType } from '@wallet/lib'
-import { Locals, logger } from '@wallet/main/internal'
+import { Locals, logger, ActionError } from '@wallet/main/internal'
 
 export type Mapper<T> = (...args: any[]) => T
 
@@ -56,6 +56,19 @@ export class CustomWindow<
         }),
         catchError((err, caught) => {
           logger.error(err)
+          if (err instanceof ActionError) {
+            this.locals.toast.show({
+              message: 'Action Error',
+              details: err.message,
+              type: 'error'
+            })
+          } else if (err instanceof Error) {
+            this.locals.toast.show({
+              message: 'Error',
+              details: err.message,
+              type: 'error'
+            })
+          }
           return caught
         })
       )

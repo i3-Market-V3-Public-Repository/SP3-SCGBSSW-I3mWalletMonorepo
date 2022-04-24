@@ -25,19 +25,6 @@ export class Module {
       const handler = hBuilder(locals)
       handlers.set(handler.type, handler)
     }
-
-    // this.subscriptions.push(handler(reducer$, locals)
-    //   .subscribe((res) => {
-
-    //   }, (err) => {
-    //     if (err instanceof Error) {
-    //       logger.error(err.message)
-    //     } else {
-    //       logger.error(err)
-    //     }
-    //   }, () => {
-    //     logger.debug('Action handler completed??')
-    //   }))
   }
 
   // TODO: We might need to implement this??
