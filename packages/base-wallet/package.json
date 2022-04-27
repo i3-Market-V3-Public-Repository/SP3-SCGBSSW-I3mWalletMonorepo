@@ -1,6 +1,6 @@
 {
   "name": "@i3m/base-wallet",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "The abstract class defining an i3-market wallet",
   "main": "dist/index.js",
   "directories": {
@@ -45,7 +45,7 @@
     ]
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.1.0",
+    "@i3m/wallet-desktop-openapi": "^1.1.1",
     "@veramo/core": "^1.2.0",
     "@veramo/credential-w3c": "^1.2.0",
     "@veramo/did-jwt": "^1.2.0",

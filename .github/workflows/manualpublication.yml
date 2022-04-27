@@ -1,0 +1,71 @@
+name: publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publication:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+      fail-fast: true
+      max-parallel: 1
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+
+      - name: install
+        run: npm ci
+
+      - name: build linux
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run pack:lin
+
+      - name: build windows
+        if: matrix.os == 'windows-latest'
+        run: npm run pack:win
+
+      - name: build macos
+        if: matrix.os == 'macos-latest'
+        run: npm run pack:mac
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: v${{ github.ref }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Release Asset
+        if: matrix.os == 'ubuntu-latest'
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_name: wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_content_type: application/zip
+
+      - name: Upload Release Asset
+        if: matrix.os == 'ubuntu-latest'
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_name: wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_content_type: application/zip
+
