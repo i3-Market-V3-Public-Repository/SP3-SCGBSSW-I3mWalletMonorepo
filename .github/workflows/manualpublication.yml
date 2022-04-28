@@ -4,29 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Branch name
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
-          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-
-      - name: create release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
-          release_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
-          draft: true
-          prerelease: false
-
-  publication:
-    needs: prepare
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -61,7 +39,35 @@ jobs:
         if: matrix.os == 'macos-latest'
         run: npm run pack:mac
 
-      - name: Upload Release Asset
+      - name: Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.os }}-artifact
+          path: packages/wallet-desktop/release
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+
+      - name: create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+          release_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+          draft: true
+          prerelease: false
+
+      - name: Upload Release DEB
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
@@ -72,7 +78,7 @@ jobs:
           asset_name: wallet-desktop-${{ steps.branch_name.outputs.SOURCE_TAG }}-amd64.deb
           asset_content_type: application/zip
 
-      - name: Upload Release Asset
+      - name: Upload Release AppImage
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-release-asset@v1
         env:
