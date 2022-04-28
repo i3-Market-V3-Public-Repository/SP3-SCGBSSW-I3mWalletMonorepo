@@ -9,7 +9,7 @@ directories:
 mac:
   target:
     - dmg
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
   category: public.app-category.productivity
 
 # Windows configurations
@@ -17,7 +17,7 @@ win:
   target:
     - zip
     - nsis
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
 
 # Linux configurations
 linux:
@@ -33,14 +33,14 @@ linux:
     Type: Application
     GenericName: Smart Wallet
 deb:
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
 appImage:
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
 rpm:
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
 snap:
   autoStart: true
-  artifactName: ${name}-${version}-${arch}.${ext}
+  artifactName: ${name}-v${version}-${arch}.${ext}
   confinement: strict
   plugs:
     - default
