@@ -8,6 +8,7 @@
     "install:libs": "lerna bootstrap --scope=\"@i3m/*\"",
     "build:libs": "lerna run build --scope=\"@i3m/*\"",
     "install:desktop": "lerna exec --scope \"wallet-desktop\" --no-bail -- npm ci",
+    "build:desktop": "lerna run build --scope \"wallet-desktop\" --no-bail",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
     "build:watch": "lerna run --parallel --stream build:watch",
@@ -16,7 +17,6 @@
     "start:dev:desktop": "lerna run --stream start:dev",
     "start:dev": "run-p build:watch start:dev:desktop",
     "test": "lerna run test --parallel --stream",
-    "publish:nexus": "dotenv -- ./scripts/publish.sh",
     "pack:lin": "lerna run --stream pack:lin",
     "pack:mac": "lerna run --stream pack:mac",
     "pack:win": "lerna run --stream pack:win"
