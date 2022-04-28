@@ -7,7 +7,7 @@
     "init:dev": "run-s bootstrap build",
     "install:libs": "lerna bootstrap --scope=\"@i3m/*\"",
     "build:libs": "lerna run build --scope=\"@i3m/*\"",
-    "install:desktop": "lerna exec --scope \"wallet-desktop\" --no-bail -- npm ci",
+    "install:desktop": "lerna exec --scope \"wallet-desktop\" --no-bail -- npm i",
     "build:desktop": "lerna run build --scope \"wallet-desktop\" --no-bail",
     "bootstrap": "lerna bootstrap",
     "build": "lerna run build",
