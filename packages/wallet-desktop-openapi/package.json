@@ -22,7 +22,8 @@
     "lint": "ts-standard --fix",
     "postbuild": "npm run lint",
     "prepublishOnly": "npm run build",
-    "postversion": "run-s build commit"
+    "postversion": "run-s build commit",
+    "test": "echo \"Warning: You must specify tests for this package\""
   },
   "repository": {
     "type": "git",

@@ -16,7 +16,8 @@
     "build": "run-s build:iwallet build:ts",
     "lint": "ts-standard --fix",
     "postbuild": "npm run lint",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Warning: You must specify tests for this package\""
   },
   "repository": {
     "type": "git",

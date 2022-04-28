@@ -17,7 +17,7 @@
     "pack:win": "npm run clean:rel && electron-builder --win --x64 --arm64 --ia32 -p never",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "start": "electron ./dist/main",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Warning: You must specify tests for this package\""
   },
   "keywords": [],
   "author": {
