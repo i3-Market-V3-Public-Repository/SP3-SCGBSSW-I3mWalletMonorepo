@@ -18,6 +18,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Branch name
+        id: branch_name
+        run: |
+          echo ::set-output name=SOURCE_NAME::${GITHUB_REF#refs/*/}
+          echo ::set-output name=SOURCE_BRANCH::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+
       - name: Install root dependecies
         run: npm ci
 
@@ -45,8 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: v${{ github.ref }}
+          tag_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
+          release_name: ${{ steps.branch_name.outputs.SOURCE_TAG }}
           draft: true
           prerelease: false
 
@@ -57,8 +64,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ github.ref }}-amd64.deb
-          asset_name: wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ steps.branch_name.outputs.SOURCE_TAG }}-amd64.deb
+          asset_name: wallet-desktop-${{ steps.branch_name.outputs.SOURCE_TAG }}-amd64.deb
           asset_content_type: application/zip
 
       - name: Upload Release Asset
@@ -68,6 +75,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ github.ref }}-amd64.deb
-          asset_name: wallet-desktop-${{ github.ref }}-amd64.deb
+          asset_path: ./packages/wallet-desktop/release/wallet-desktop-${{ github.ref }}-x86_64.AppImage
+          asset_name: wallet-desktop-${{ steps.branch_name.outputs.SOURCE_TAG }}-x86_64.AppImage
           asset_content_type: application/zip
