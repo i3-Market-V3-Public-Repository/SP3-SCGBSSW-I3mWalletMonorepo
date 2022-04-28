@@ -108,7 +108,7 @@ export class HttpResponderTransport extends ResponderTransport<http.IncomingMess
             const ciphertext = await masterKey.encrypt(buffer)
             const ciphertextBase64 = format.u8Arr2Base64(ciphertext)
             res.setHeader('Content-Length', ciphertextBase64.length)
-            target.call(thisArg, ciphertextBase64, ...argsArray)
+            target.call(thisArg, ciphertextBase64, ...argsArray.slice(1))
           }
 
           send().catch(err => { console.error(err) })

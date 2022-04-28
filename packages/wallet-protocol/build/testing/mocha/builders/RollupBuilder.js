@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 const rollup = require('rollup')
-const loadAndParseConfigFile = require('rollup/dist/loadConfigFile')
+const loadAndParseConfigFile = require('rollup/dist/loadConfigFile.js')
 
 const Builder = require('./Builder.js')
 
