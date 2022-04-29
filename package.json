@@ -1,6 +1,6 @@
 {
   "name": "i3m-wallet-monorepo",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,8 @@
     "test": "lerna run test --parallel --stream",
     "pack:lin": "lerna run --stream pack:lin",
     "pack:mac": "lerna run --stream pack:mac",
-    "pack:win": "lerna run --stream pack:win"
+    "pack:win": "lerna run --stream pack:win",
+    "preversion": "lerna version"
   },
   "private": true,
   "keywords": [],
