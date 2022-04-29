@@ -19,8 +19,7 @@
     "test": "lerna run test --concurrency 1 --stream",
     "pack:lin": "lerna run --stream pack:lin",
     "pack:mac": "lerna run --stream pack:mac",
-    "pack:win": "lerna run --stream pack:win",
-    "preversion": "lerna version"
+    "pack:win": "lerna run --stream pack:win"
   },
   "private": true,
   "keywords": [],
