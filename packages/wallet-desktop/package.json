@@ -54,6 +54,7 @@
     "@types/swagger-ui-express": "^4.1.2",
     "@types/uuid": "^8.3.0",
     "chokidar": "^3.5.1",
+    "cli-truncate": "^3.1.0",
     "concurrently": "^6.0.2",
     "dotenv": "^8.2.0",
     "electron": "^12.0.15",
