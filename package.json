@@ -16,7 +16,7 @@
     "start": "lerna run --scope wallet-desktop start",
     "start:dev:desktop": "lerna run --stream start:dev",
     "start:dev": "run-p build:watch start:dev:desktop",
-    "test": "lerna run test --parallel --stream",
+    "test": "lerna run test --concurrency 1 --stream",
     "pack:lin": "lerna run --stream pack:lin",
     "pack:mac": "lerna run --stream pack:mac",
     "pack:win": "lerna run --stream pack:win",
