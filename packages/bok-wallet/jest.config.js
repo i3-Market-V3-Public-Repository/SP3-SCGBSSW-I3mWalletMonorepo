@@ -27,7 +27,7 @@ module.exports = {
     ...tsjPreset.transform
   },
   testMatch: [
-    '**/__tests__/**/*.spec.*'
+    '**/__tests__/**/*.spec.ts'
   ],
   globals: {
     'ts-jest': {

@@ -95,11 +95,18 @@ describe('@i3m/sw-wallet', () => {
     })
 
     it('should resolve selective disclosure requests', async () => {
-      const sdrResp = await wallet.selectiveDisclosure({ jwt: sdr })
-      sdrRespJwt = sdrResp.jwt as string
-      expect(sdrRespJwt).toBeDefined()
-
-      debug('Selective Disclosure Response:', sdrResp)
+      await dialog.setValues({
+        // Select dispacth claim with the last identity
+        // The first one is cancel
+        selectMap (values) {
+          return values[values.length - 1]
+        }
+      }, async () => {
+        const sdrResp = await wallet.selectiveDisclosure({ jwt: sdr })
+        sdrRespJwt = sdrResp.jwt as string
+        expect(sdrRespJwt).toBeDefined()
+        debug('Selective Disclosure Response:', sdrResp)
+      })
     }, 10000)
 
     it('should respond with a proper signature', async () => {

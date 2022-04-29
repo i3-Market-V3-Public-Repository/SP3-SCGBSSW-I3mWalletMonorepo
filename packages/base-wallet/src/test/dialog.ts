@@ -62,6 +62,29 @@ export class TestDialog implements Dialog {
   }
 
   async form<T> (options: FormOptions<T>): DialogResponse<T> {
-    throw new Error('Method not implemented.')
+    const formValue: Partial<T> = {}
+
+    const keys = Object.keys(options.descriptors) as Array<keyof Partial<T>>
+    for (const key of keys) {
+      let response: DialogResponse<any> | undefined
+      const descriptor = options.descriptors[key]
+      switch (descriptor.type) {
+        case 'confirmation':
+          response = this.confirmation(descriptor)
+          break
+        case 'select':
+          response = this.select(descriptor)
+          break
+        case 'text':
+          response = this.text(descriptor)
+          break
+      }
+
+      if (response !== undefined) {
+        formValue[key] = await response
+      }
+    }
+
+    return formValue as T
   }
 }

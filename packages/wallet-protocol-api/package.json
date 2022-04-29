@@ -47,7 +47,7 @@
     "mocha": "node ./build/bin/mocha-ts.js --require build/testing/mocha/mocha-init.js ",
     "version": "run-s build git:add",
     "postversion": "git push --follow-tags",
-    "test": "run-s test:browser-headless test:node",
+    "test:interactive": "run-s test:browser-headless test:node",
     "test:browser": "node build/testing/browser/index.js",
     "test:browser-headless": "node build/testing/browser/index.js headless",
     "test:node": "npm run mocha -- '{src/ts/**/*.spec.ts,test/**/*.ts}'",
