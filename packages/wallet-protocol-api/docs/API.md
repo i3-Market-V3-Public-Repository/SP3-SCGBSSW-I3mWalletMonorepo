@@ -1,4 +1,4 @@
-# @i3m/wallet-protocol-api - v1.1.2
+# @i3m/wallet-protocol-api - v1.1.5
 
 My module description. Please update with your module data.
 
