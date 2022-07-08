@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-utils",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Wallet protocol utilities",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
