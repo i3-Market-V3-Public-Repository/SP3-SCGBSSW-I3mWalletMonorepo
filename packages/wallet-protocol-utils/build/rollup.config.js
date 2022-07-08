@@ -59,7 +59,7 @@ module.exports = [
       // },
       // ESM for browsers and declarations
       {
-        file: join(rootDir, exports['.'].default),
+        file: path.join(rootDir, exports['.'].default),
         ...sourcemapOutputOptions,
         format: 'es'
       },
