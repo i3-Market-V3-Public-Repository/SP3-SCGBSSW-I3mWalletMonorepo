@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-utils",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "description": "Wallet protocol utilities",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
@@ -43,7 +43,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@i3m/wallet-protocol": "1.1.7",
+    "@i3m/wallet-protocol": "1.1.8",
     "rollup-plugin-import-css": "^3.0.3",
     "rxjs": "^7.5.5"
   }
