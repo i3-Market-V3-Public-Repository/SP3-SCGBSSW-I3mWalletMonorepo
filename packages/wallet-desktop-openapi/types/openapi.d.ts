@@ -242,6 +242,7 @@ export namespace WalletPaths {
       export interface $200 {
         [name: string]: any
       }
+      export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }
   }
   export namespace IdentityList {

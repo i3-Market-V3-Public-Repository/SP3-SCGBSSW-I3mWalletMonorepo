@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  version: '1.1.6'
+  version: '1.1.7'
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -182,6 +182,12 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /identities/{did}/deploy-tx:
     post:
       summary: Signs and deploys a transaction
@@ -513,6 +519,11 @@ components:
         transaction:
           type: string
           pattern: ^0x(?:[A-Fa-f0-9])+$
+    did:
+      title: DID
+      type: string
+      example: >-
+        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
     ApiError:
       type: object
       title: Error
@@ -525,8 +536,3 @@ components:
           format: int32
         message:
           type: string
-    did:
-      title: DID
-      type: string
-      example: >-
-        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863

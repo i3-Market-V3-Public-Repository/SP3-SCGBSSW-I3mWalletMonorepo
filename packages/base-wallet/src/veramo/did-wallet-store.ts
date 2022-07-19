@@ -3,6 +3,7 @@ import { AbstractDIDStore } from '@veramo/did-manager'
 import Debug from 'debug'
 
 import { BaseWalletModel, Store } from '../app'
+import { WalletError } from '../errors'
 
 const debug = Debug('base-wallet:DidWalletStore')
 
@@ -23,15 +24,15 @@ export default class DIDWalletStore<T extends BaseWalletModel> extends AbstractD
     const ddos = await this.store.get('identities', {})
     if (args.did !== undefined) {
       if (ddos[args.did] === undefined) {
-        throw new Error('DID not found')
+        throw new WalletError('DID not found', { status: 404 })
       }
       return ddos[args.did]
     } else if (args.alias !== undefined) {
-      throw new Error('Get by alias not implemented.')
+      throw new WalletError('Get by alias not implemented.', { status: 500 })
     } else {
       const dids = Object.keys(ddos)
       if (dids.length === 0) {
-        throw new Error('DID not found')
+        throw new WalletError('DID not found', { status: 404 })
       }
       return ddos[dids[0]] // Return a random ddo
     }

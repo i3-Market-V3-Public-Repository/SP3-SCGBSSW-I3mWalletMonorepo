@@ -82,6 +82,13 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
 
   /identities/select:
     get:

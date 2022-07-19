@@ -31,7 +31,7 @@ export const identitySign = asyncHandler<WalletPaths.IdentitySign.PathParameters
 
 export const identityInfo = asyncHandler<WalletPaths.IdentityInfo.PathParameters, WalletPaths.IdentityInfo.Responses.$200>(async (req, res) => {
   const { walletFactory } = extractLocals(req.app)
-  const response = await walletFactory.wallet.identityInfo(req.query)
+  const response = await walletFactory.wallet.identityInfo(req.params)
   res.json(response)
 })
 
