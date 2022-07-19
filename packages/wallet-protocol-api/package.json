@@ -72,8 +72,8 @@
     ]
   },
   "devDependencies": {
-    "@i3m/base-wallet": "^1.1.7",
-    "@i3m/bok-wallet": "^1.1.7",
+    "@i3m/base-wallet": "1.1.7",
+    "@i3m/bok-wallet": "1.1.7",
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
@@ -102,7 +102,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.1.7",
-    "@i3m/wallet-protocol": "^1.1.6"
+    "@i3m/wallet-desktop-openapi": "1.1.7",
+    "@i3m/wallet-protocol": "1.1.7"
   }
 }
