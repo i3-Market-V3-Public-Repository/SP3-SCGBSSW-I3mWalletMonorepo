@@ -15,6 +15,16 @@ Then, to start the i3m-wallet execute commands:
 
 ```bash
 npm i
+
+# for development of all packages
+npm run init:dev
+
+# for development of wallet:desktop
+npm run install:desktop
+
+# for development of libraries
+npm run install:libs
+
 npm start
 ```
 
