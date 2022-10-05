@@ -519,11 +519,6 @@ components:
         transaction:
           type: string
           pattern: ^0x(?:[A-Fa-f0-9])+$
-    did:
-      title: DID
-      type: string
-      example: >-
-        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
     ApiError:
       type: object
       title: Error
@@ -536,3 +531,8 @@ components:
           format: int32
         message:
           type: string
+    did:
+      title: DID
+      type: string
+      example: >-
+        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
