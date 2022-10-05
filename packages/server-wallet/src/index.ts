@@ -9,7 +9,7 @@ export interface ServerWalletOptions {
   filepath?: string
   password?: string
 }
-export async function serverWallet (options?: ServerWalletOptions): Promise<Wallet> {
+export async function serverWalletBuilder (options?: ServerWalletOptions): Promise<Wallet> {
   let filepath: string
   if (options?.filepath === undefined) {
     const filedir = join(homedir(), '.server-wallet')

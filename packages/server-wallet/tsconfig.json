@@ -24,7 +24,6 @@
         "outDir": "dist",
         "resolveJsonModule": true
     },
-    "exclude": [
-        "**/*.template.ts", "types"
-    ]
-}
+    "include": [ "./src/**/*.ts", "./test" ]
+  }
+  
