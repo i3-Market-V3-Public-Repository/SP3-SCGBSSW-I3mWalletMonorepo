@@ -28,7 +28,7 @@ export class FileStore implements Store<BaseWalletModel> {
   }
 
   private kdf (password: string, salt: crypto.BinaryLike): Buffer {
-    return crypto.scryptSync(password, salt, 256)
+    return crypto.scryptSync(password, salt, 32)
   }
 
   private async init (): Promise<void> {
@@ -65,8 +65,6 @@ export class FileStore implements Store<BaseWalletModel> {
   }
 
   private async encryptModel (model: BaseWalletModel): Promise<Buffer> {
-    await this.init()
-
     if (this.password === undefined) {
       throw new Error('For the store to be encrypted you must provide a password')
     }
@@ -94,8 +92,6 @@ export class FileStore implements Store<BaseWalletModel> {
   }
 
   private async decryptModel (encryptedModel: ArrayBufferLike): Promise<BaseWalletModel> {
-    await this.init()
-
     if (this.password === undefined) {
       throw new Error('For the store to be encrypted you must provide a password')
     }
@@ -130,6 +126,7 @@ export class FileStore implements Store<BaseWalletModel> {
   async set (key: any, value: any): Promise<void> {
     await this.init()
     const model = await this.getModel()
+    _.set(model, key, value)
     await this.setModel(model)
   }
 

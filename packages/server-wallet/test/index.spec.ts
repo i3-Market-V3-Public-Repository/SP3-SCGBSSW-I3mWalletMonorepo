@@ -11,7 +11,8 @@ describe('@i3m/server-wallet', () => {
   let veramo: Veramo
 
   beforeAll(async () => {
-    wallet = await serverWalletBuilder()
+    wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1' })
+    veramo = (wallet as any).veramo // TODO: Hacky access to veramo. Maybe expose it?
   })
 
   describe('identities', () => {
