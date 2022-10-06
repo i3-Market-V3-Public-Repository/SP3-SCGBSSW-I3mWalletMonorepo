@@ -45,6 +45,6 @@
   "dependencies": {
     "@i3m/wallet-protocol": "1.1.8",
     "rollup-plugin-import-css": "^3.0.3",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.5.6"
   }
 }
