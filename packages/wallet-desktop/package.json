@@ -82,7 +82,7 @@
     "cors": "^2.8.5",
     "electron-connect": "^0.6.3",
     "electron-store": "^7.0.3",
-    "ethers": "^5.4.7",
+    "ethers": "^5.7.1",
     "express": "^4.17.1",
     "express-openapi-validator": "^4.11.0",
     "jose": "^4.3.7",
