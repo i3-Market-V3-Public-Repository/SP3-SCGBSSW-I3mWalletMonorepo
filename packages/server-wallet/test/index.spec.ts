@@ -58,7 +58,6 @@ describe('@i3m/server-wallet', () => {
         type: 'VerifiableCredential',
         resource: credential
       })
-
       debug('Resource with id: ', resource.id)
       expect(resource.id).toBeDefined()
     })
