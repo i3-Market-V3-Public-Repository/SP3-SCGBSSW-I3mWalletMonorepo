@@ -36,9 +36,23 @@ type PluginMap =
   IDIDManager & IKeyManager & IResolver & IMessageHandler &
   ISelectiveDisclosure & ICredentialIssuer
 
-export const DEFAULT_PROVIDER = 'did:ethr:rinkeby'
+export type ProviderData = Omit<ConstructorParameters<typeof EthrDIDProvider>[0], 'defaultKms'>
 
-type ProviderData = ConstructorParameters<typeof EthrDIDProvider>[0]
+export const DEFAULT_PROVIDER = 'did:ethr:rinkeby'
+export const DEFAULT_PROVIDERS_DATA = {
+  'did:ethr:rinkeby': {
+    network: 'rinkeby',
+    rpcUrl: 'https://rpc.ankr.com/eth_rinkeby'
+  },
+  'did:ethr:i3m': {
+    network: 'i3m',
+    rpcUrl: 'http://95.211.3.250:8545'
+  },
+  'did:ethr:ganache': {
+    network: 'ganache',
+    rpcUrl: 'http://127.0.0.1:7545'
+  }
+}
 
 export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   public agent: TAgent<PluginMap>
@@ -46,24 +60,8 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   public defaultKms = 'keyWallet'
   public providersData: Record<string, ProviderData>
 
-  constructor (store: Store<T>, keyWallet: KeyWallet) {
-    this.providersData = {
-      'did:ethr:rinkeby': {
-        defaultKms: this.defaultKms,
-        network: 'rinkeby',
-        rpcUrl: 'https://rinkeby.infura.io/ethr-did'
-      },
-      'did:ethr:i3m': {
-        defaultKms: this.defaultKms,
-        network: 'i3m',
-        rpcUrl: 'http://95.211.3.250:8545'
-      },
-      'did:ethr:ganache': {
-        defaultKms: this.defaultKms,
-        network: 'ganache',
-        rpcUrl: 'http://127.0.0.1:7545'
-      }
-    }
+  constructor (store: Store<T>, keyWallet: KeyWallet, providersData: Record<string, ProviderData>) {
+    this.providersData = providersData
 
     const resolver = new Resolver({
       ...ethrDidResolver({
@@ -80,7 +78,10 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
       'did:web': new WebDIDProvider({ defaultKms: this.defaultKms })
     }
     for (const [key, provider] of Object.entries(this.providersData)) {
-      this.providers[key] = new EthrDIDProvider(provider)
+      this.providers[key] = new EthrDIDProvider({
+        defaultKms: this.defaultKms,
+        ...provider
+      })
     }
 
     this.agent = createAgent<PluginMap>({

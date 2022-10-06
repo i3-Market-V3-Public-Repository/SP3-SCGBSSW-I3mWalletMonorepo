@@ -11,8 +11,7 @@ import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { displayDid } from '../utils/display-did'
-import Veramo from '../veramo'
-import { DEFAULT_PROVIDER } from '../veramo/veramo'
+import Veramo, { ProviderData, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA } from '../veramo'
 
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
@@ -71,6 +70,7 @@ export class BaseWallet<
   protected keyWallet: KeyWallet
   protected resourceValidator: ResourceValidator
   protected provider: string
+  protected providersData: Record<string, ProviderData>
 
   constructor (opts: Options) {
     this.dialog = opts.dialog
@@ -79,9 +79,10 @@ export class BaseWallet<
     this.keyWallet = opts.keyWallet
     this.resourceValidator = new ResourceValidator()
     this.provider = opts.provider ?? DEFAULT_PROVIDER
+    this.providersData = opts.providersData ?? DEFAULT_PROVIDERS_DATA
 
     // Init veramo framework
-    this.veramo = new Veramo(this.store, this.keyWallet)
+    this.veramo = new Veramo(this.store, this.keyWallet, this.providersData)
   }
 
   prepareForJWSSigning (messageToSign: any): any {
@@ -467,7 +468,6 @@ export class BaseWallet<
           throw new WalletError('No transaction present on the request', { code: 400 })
         }
         const identity = await this.veramo.agent.didManagerGet(pathParameters)
-        // transaction.from = `0x${identity.keys[0].publicKeyHex}`
         const signature = await this.veramo.agent.keyManagerSignEthTX({
           kid: identity.keys[0].kid,
           transaction

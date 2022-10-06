@@ -1,5 +1,6 @@
 import { Dialog, Store, BaseWalletModel, Toast } from '../app'
 import { KeyWallet } from '../keywallet'
+import { ProviderData } from '../veramo'
 
 export interface WalletOptionsCryptoWallet {
   keyWallet: KeyWallet
@@ -9,6 +10,7 @@ export interface WalletOptionsSettings<T extends BaseWalletModel> {
   store: Store<T>
   toast: Toast
   provider?: string
+  providersData?: Record<string, ProviderData>
 }
 
 export type WalletOptions<T extends BaseWalletModel> = WalletOptionsSettings<T> & WalletOptionsCryptoWallet

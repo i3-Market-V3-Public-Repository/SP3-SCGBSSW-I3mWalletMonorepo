@@ -24,5 +24,9 @@ export async function serverWalletBuilder (options?: ServerWalletOptions): Promi
   const dialog = new NullDialog()
   const store = new FileStore(filepath, options?.password)
   const toast = new ConsoleToast()
-  return await walletBuilder({ dialog, store, toast })
+  return await walletBuilder({
+    dialog,
+    store,
+    toast
+  })
 }

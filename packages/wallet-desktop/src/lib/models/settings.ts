@@ -1,6 +1,7 @@
 
 import { JWK } from 'jose'
 import { JSONObject } from './json-object'
+import { ProviderData } from '@i3m/base-wallet'
 
 export interface WalletInfo {
   name: string
@@ -17,7 +18,7 @@ export interface WalletSettings {
   packages: string[]
 }
 
-export interface Provider {
+export interface Provider extends ProviderData {
   name: string
   provider: string
 }
@@ -38,6 +39,7 @@ export interface AuthSettings {
 }
 
 export interface Settings {
+  version: string
   wallet: WalletSettings
   providers: Provider[]
   developer: DeveloperSettings
@@ -48,6 +50,7 @@ export interface Settings {
 
 export function createDefaultSettings (): Settings {
   return {
+    version: '',
     wallet: {
       wallets: {},
       packages: ['@i3m/sw-wallet']

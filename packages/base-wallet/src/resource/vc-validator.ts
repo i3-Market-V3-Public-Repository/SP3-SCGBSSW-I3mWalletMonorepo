@@ -16,7 +16,7 @@ export const verifiableClaimValidator: Validator = async (resource, veramo) => {
         raw: resource.resource.proof.jwt
       })
     } catch (ex) {
-      errors.push(ex)
+      errors.push(ex as Error)
     }
   }
 

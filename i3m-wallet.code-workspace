@@ -13,6 +13,9 @@
 			"path": "packages/bok-wallet"
 		},
 		{
+			"path": "packages/server-wallet"
+		},
+		{
 			"path": "packages/wallet-protocol"
 		},
 		{

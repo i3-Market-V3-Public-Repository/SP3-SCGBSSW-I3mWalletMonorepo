@@ -1,4 +1,4 @@
-import { Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
+import { ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
 import { WalletMetadataMap } from '@wallet/lib'
 import {
   logger,
@@ -89,6 +89,12 @@ export class WalletFactory {
   async buildWallet (walletName: string): Promise<Wallet> {
     const { settings, featureContext, featureManager, dialog, toast } = this.locals
     const { wallets } = settings.get('wallet')
+    const providersData = settings.get('providers').reduce(
+      (prev, curr) => {
+        prev[curr.provider] = curr
+        return prev
+      }, {} as Record<string, ProviderData>)
+
     const walletInfo = wallets[walletName]
     if (walletInfo === undefined) {
       throw new Error('Inconsistent data!')
@@ -113,7 +119,8 @@ export class WalletFactory {
 
         store: featureContext.store,
         toast,
-        dialog
+        dialog,
+        providersData
       })
 
       return wallet

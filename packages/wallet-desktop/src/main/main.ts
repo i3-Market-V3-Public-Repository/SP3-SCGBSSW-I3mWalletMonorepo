@@ -35,8 +35,8 @@ async function getAppSettings (locals: Locals): Promise<MainContext> {
   // Setup default providers
   if (providers === undefined || providers.length === 0) {
     settings.set('providers', [
-      { name: 'Rinkeby', provider: 'did:ethr:rinkeby' },
-      { name: 'i3Market', provider: 'did:ethr:i3m' }
+      { name: 'Rinkeby', provider: 'did:ethr:rinkeby', network: 'rinkeby', rpcUrl: 'https://rpc.ankr.com/eth_rinkeby' },
+      { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' }
     ])
   }
 
