@@ -25,4 +25,5 @@ publish packages/wallet-desktop-openapi
 publish packages/base-wallet
 publish packages/sw-wallet
 publish packages/bok-wallet
+publish packages/server-wallet
 exit $ERROR
