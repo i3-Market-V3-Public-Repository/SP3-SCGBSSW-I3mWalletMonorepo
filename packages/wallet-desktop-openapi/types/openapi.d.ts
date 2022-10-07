@@ -9,6 +9,30 @@ export namespace WalletComponents {
       message: string
     }
     /**
+         * JwtPayload
+         */
+    export interface DecodedJwt {
+      header?: {
+        [name: string]: any
+        typ: 'JWT'
+        alg: 'ES256K'
+      }
+      payload?: {
+        [name: string]: any
+        iss: /**
+                 * DID
+                 * example:
+                 * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        Did
+      }
+      signature: string // ^[A-Za-z0-9_-]+$
+      /**
+             * <base64url(header)>.<base64url(payload)>
+             */
+      data: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+    }
+    /**
          * DID
          * example:
          * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
@@ -54,18 +78,6 @@ export namespace WalletComponents {
          */
     export interface IdentitySelectOutput {
       did: /**
-             * DID
-             * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      Did
-    }
-    /**
-         * JwtPayload
-         */
-    export interface JwtPayload {
-      [name: string]: any
-      iss?: /**
              * DID
              * example:
              * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
@@ -234,9 +246,9 @@ export namespace WalletComponents {
              */
       error?: string
       /**
-             * the decoded payload of the provided JWT
+             * the decoded JWT
              */
-      payload: any
+      decodedJwt?: any
     }
   }
 }

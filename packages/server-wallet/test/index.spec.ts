@@ -1,8 +1,7 @@
-import { Veramo, Resource, NullDialog } from '@i3m/base-wallet'
+import { NullDialog, Resource, Veramo } from '@i3m/base-wallet'
 import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
-import { verifyJWT } from 'did-jwt'
 
 import { ServerWallet, serverWalletBuilder } from '../src'
 
@@ -12,6 +11,7 @@ describe('@i3m/server-wallet', () => {
   const identities: { [k: string]: string } = {}
   let wallet: ServerWallet
   let veramo: Veramo
+  let jwt: string
 
   beforeAll(async () => {
     wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
@@ -43,15 +43,48 @@ describe('@i3m/server-wallet', () => {
     })
 
     it('should generate a signed JWT', async () => {
-      const header = { test: 'hola' }
-      const payload = { rabo: 'gordo' }
-      const { signature } = await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })
-      expect(signature).toBeDefined()
-      debug('generated JWT: ' + signature)
-      const resolver = { resolve: (didUrl: string) => veramo.agent.resolveDid({ didUrl }) }
-      const verification = await verifyJWT(signature, { resolver })
-      debug('JWT verification: ' + JSON.stringify(verification, undefined, 2))
-      expect(verification).toBeDefined()
+      const header = { headerField1: 'hello' }
+      const payload = { payloadField1: 'yellow', payloadField2: 'brown' }
+      jwt = (await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })).signature
+      expect(jwt).toBeDefined()
+      debug('generated JWT: ' + jwt)
+    })
+
+    it('a JWT with a DID (that is resolved in the connected DLT) as issuer can be verified by the wallet', async () => {
+      const verification = await wallet.didJwtVerify({ jwt })
+      debug('verification: ' + JSON.stringify(verification, undefined, 2))
+      expect(verification.verification).toEqual('success')
+    })
+
+    it('verification of the JWT will also succeed if a expected claim is found in the payload', async () => {
+      const verification = await wallet.didJwtVerify({
+        jwt,
+        expectedPayloadClaims: {
+          payloadField1: 'yellow',
+          payloadField2: ''
+        }
+      })
+      debug('verification: ' + JSON.stringify(verification, undefined, 2))
+      expect(verification.verification).toEqual('success')
+    })
+
+    it('verification of the JWT will fail if a expected claim is not in the payload', async () => {
+      const verification = await wallet.didJwtVerify({
+        jwt,
+        expectedPayloadClaims: {
+          noneExistingField: ''
+        }
+      })
+      debug('verification: ' + JSON.stringify(verification, undefined, 2))
+      expect(verification.verification).toEqual('failed')
+    })
+
+    it('verification of the JWT will fail if the signature is invalid', async () => {
+      const verification = await wallet.didJwtVerify({
+        jwt: jwt.slice(0, -10) + 'aAbBcCdDeE'
+      })
+      debug('verification: ' + JSON.stringify(verification, undefined, 2))
+      expect(verification.verification).toEqual('failed')
     })
   })
 

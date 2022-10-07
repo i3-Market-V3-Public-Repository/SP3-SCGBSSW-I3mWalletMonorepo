@@ -646,13 +646,43 @@ components:
         transaction:
           type: string
           pattern: ^0x(?:[A-Fa-f0-9])+$
-    JwtPayload:
+    DecodedJwt:
       title: JwtPayload
       type: object
       properties:
-        iss:
-          $ref: '#/components/schemas/did'
-      additionalProperties: true
+        header:
+          type: object
+          properties:
+            typ:
+              type: string
+              enum:
+                - JWT
+            alg:
+              type: string
+              enum:
+                - ES256K
+          required:
+            - typ
+            - alg
+          additionalProperties: true
+        payload:
+          type: object
+          properties:
+            iss:
+              $ref: '#/components/schemas/did'
+          required:
+            - iss
+          additionalProperties: true
+        signature:
+          type: string
+          format: ^[A-Za-z0-9_-]+$
+        data:
+          type: string
+          format: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+          description: <base64url(header)>.<base64url(payload)>
+      required:
+        - signature
+        - data
     VerificationOutput:
       title: VerificationOutput
       type: object
@@ -666,11 +696,10 @@ components:
         error:
           type: string
           description: error message if verification failed
-        payload:
-          description: the decoded payload of the provided JWT
+        decodedJwt:
+          description: the decoded JWT
       required:
         - verification
-        - payload
     did:
       title: DID
       type: string

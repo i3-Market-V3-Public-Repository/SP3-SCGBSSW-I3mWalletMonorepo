@@ -812,15 +812,58 @@
           }
         }
       },
-      "JwtPayload": {
+      "DecodedJwt": {
         "title": "JwtPayload",
         "type": "object",
         "properties": {
-          "iss": {
-            "$ref": "#/components/schemas/did"
+          "header": {
+            "type": "object",
+            "properties": {
+              "typ": {
+                "type": "string",
+                "enum": [
+                  "JWT"
+                ]
+              },
+              "alg": {
+                "type": "string",
+                "enum": [
+                  "ES256K"
+                ]
+              }
+            },
+            "required": [
+              "typ",
+              "alg"
+            ],
+            "additionalProperties": true
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "iss": {
+                "$ref": "#/components/schemas/did"
+              }
+            },
+            "required": [
+              "iss"
+            ],
+            "additionalProperties": true
+          },
+          "signature": {
+            "type": "string",
+            "format": "^[A-Za-z0-9_-]+$"
+          },
+          "data": {
+            "type": "string",
+            "format": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
+            "description": "<base64url(header)>.<base64url(payload)>"
           }
         },
-        "additionalProperties": true
+        "required": [
+          "signature",
+          "data"
+        ]
       },
       "VerificationOutput": {
         "title": "VerificationOutput",
@@ -838,13 +881,12 @@
             "type": "string",
             "description": "error message if verification failed"
           },
-          "payload": {
-            "description": "the decoded payload of the provided JWT"
+          "decodedJwt": {
+            "description": "the decoded JWT"
           }
         },
         "required": [
-          "verification",
-          "payload"
+          "verification"
         ]
       },
       "did": {

@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
-import { decodeJWT, verifyJWT } from 'did-jwt'
+import { verifyJWT } from 'did-jwt'
 
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
 import { WalletError } from '../errors'
@@ -12,7 +12,7 @@ import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { displayDid } from '../utils/display-did'
-import { jwsSignInput } from '../utils/jws'
+import { decodeJWS, jwsSignInput } from '../utils/jws'
 import Veramo, { ProviderData, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA } from '../veramo'
 
 import { Wallet } from './wallet'
@@ -634,21 +634,33 @@ export class BaseWallet<
   }
 
   async didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
-    const payload = decodeJWT(requestBody.jwt) as any
+    let decodedJwt
+    try {
+      decodedJwt = decodeJWS(requestBody.jwt)
+    } catch (error) {
+      return {
+        verification: 'failed',
+        error: 'Invalid JWT format'
+      }
+    }
+
+    const payload = decodedJwt.payload
+
     if (requestBody.expectedPayloadClaims !== undefined) {
       const expectedClaimsDict: Dict<typeof requestBody.expectedPayloadClaims> = requestBody.expectedPayloadClaims
+
       let error: string|undefined
       for (const key in expectedClaimsDict) {
-        if (payload[key] === undefined) error = `Expected key '${key}' not found in proof`
+        if (payload[key] === undefined) error = `Expected key '${key}' not found in payload`
         if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
-          error = `Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
+          error = `Payload's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
         }
       }
       if (error !== undefined) {
         return {
           verification: 'failed',
           error,
-          payload
+          decodedJwt
         }
       }
     }
@@ -657,14 +669,14 @@ export class BaseWallet<
       const verifiedJWT = await verifyJWT(requestBody.jwt, { resolver })
       return {
         verification: 'success',
-        payload: verifiedJWT.payload
+        decodedJwt: verifiedJWT.payload
       }
     } catch (error) {
       if (error instanceof Error) {
         return {
           verification: 'failed',
           error: error.message,
-          payload
+          decodedJwt: decodedJwt
         }
       } else throw new WalletError('unknown error during verification')
     }

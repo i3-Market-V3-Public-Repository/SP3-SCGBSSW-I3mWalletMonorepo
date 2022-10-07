@@ -90,13 +90,43 @@ paths:
 
 components:
   schemas:
-    JwtPayload:
+    DecodedJwt:
       title: JwtPayload
       type: object
       properties:
-        iss:
-          $ref: "../schema/identity.yaml#/components/schemas/did"
-      additionalProperties: true
+        header: 
+          type: object
+          properties:
+            typ:
+              type: string
+              enum:
+                - JWT
+            alg: 
+              type: string
+              enum:
+                - ES256K
+          required:
+            - typ
+            - alg
+          additionalProperties: true
+        payload:
+          type: object
+          properties:
+            iss:
+              $ref: "../schema/identity.yaml#/components/schemas/did"
+          required:
+            - iss
+          additionalProperties: true
+        signature:
+          type: string
+          format: ^[A-Za-z0-9_-]+$
+        data:
+          type: string
+          format: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+          description: <base64url(header)>.<base64url(payload)>
+      required:
+        - signature
+        - data
     
     VerificationOutput: 
       title: VerificationOutput
@@ -111,9 +141,8 @@ components:
         error:
           type: string
           description: error message if verification failed
-        payload:
-          $ref: "#/components/schemas/JwtPayload"
-          description: the decoded payload of the provided JWT
+        decodedJwt:
+          $ref: "#/components/schemas/DecodedJwt"
+          description: the decoded JWT
       required:
         - verification
-        - payload
