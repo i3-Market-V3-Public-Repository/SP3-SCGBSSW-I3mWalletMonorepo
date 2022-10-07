@@ -417,6 +417,9 @@ components:
               pattern: ^[A-Za-z0-9_-]+$
           required:
             - payload
+      required:
+        - type
+        - data
     SignTransaction:
       title: SignTransaction
       type: object
@@ -426,6 +429,9 @@ components:
             - Transaction
         data:
           $ref: '#/components/schemas/Transaction'
+      required:
+        - type
+        - data
     SignJWT:
       title: SignJWT
       type: object
@@ -453,6 +459,9 @@ components:
               additionalProperties: true
           required:
             - payload
+      required:
+        - type
+        - data
     Transaction:
       title: Transaction
       type: object

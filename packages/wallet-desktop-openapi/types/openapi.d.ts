@@ -111,8 +111,8 @@ export namespace WalletComponents {
          * SignJWT
          */
     export interface SignJWT {
-      type?: 'JWT'
-      data?: {
+      type: 'JWT'
+      data: {
         /**
                  * header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
                  */
@@ -137,8 +137,8 @@ export namespace WalletComponents {
          * SignRaw
          */
     export interface SignRaw {
-      type?: 'Raw'
-      data?: {
+      type: 'Raw'
+      data: {
         /**
                  * Base64Url encoded data to sign
                  */
@@ -149,8 +149,8 @@ export namespace WalletComponents {
          * SignTransaction
          */
     export interface SignTransaction {
-      type?: 'Transaction'
-      data?: /* Transaction */ Transaction
+      type: 'Transaction'
+      data: /* Transaction */ Transaction
     }
     /**
          * SignTypes

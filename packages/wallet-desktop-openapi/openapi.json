@@ -543,7 +543,11 @@
               "payload"
             ]
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "SignTransaction": {
         "title": "SignTransaction",
@@ -557,7 +561,11 @@
           "data": {
             "$ref": "#/components/schemas/Transaction"
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "SignJWT": {
         "title": "SignJWT",
@@ -586,7 +594,11 @@
               "payload"
             ]
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "Transaction": {
         "title": "Transaction",
