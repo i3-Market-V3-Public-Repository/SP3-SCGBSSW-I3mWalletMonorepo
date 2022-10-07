@@ -2,7 +2,7 @@ import { app, BrowserWindow, session, dialog } from 'electron'
 import path from 'path'
 import { generateSecret, exportJWK, importJWK, JWK } from 'jose'
 
-import { initContext } from '@wallet/lib'
+import { initContext, Provider } from '@wallet/lib'
 
 import {
   logger,
@@ -23,6 +23,23 @@ import {
   ConnectManager
 } from './internal'
 
+function validProviders(providers: Provider[]): boolean {
+  if(providers === undefined || providers.length === 0) {
+    return false
+  }
+
+  // Creates an object which parameters say if all providers have this field set
+  const filledArguments = providers.reduce((prev, curr) => ({
+    name: prev.name || curr.name === undefined,
+    provider: prev.provider || curr.provider === undefined,
+    network: prev.network || curr.network === undefined,
+    rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined,
+  }), { name: false, provider: false, network: false, rpcUrl: false })
+
+
+  return Object.values(filledArguments).reduce((prev, curr) => prev && curr, true)
+}
+
 async function getAppSettings (locals: Locals): Promise<MainContext> {
   const sharedMemoryManager = new SharedMemoryManager()
   locals.sharedMemoryManager = sharedMemoryManager
@@ -33,7 +50,7 @@ async function getAppSettings (locals: Locals): Promise<MainContext> {
   const providers = settings.get('providers')
 
   // Setup default providers
-  if (providers === undefined || providers.length === 0) {
+  if (!validProviders(providers)) {
     settings.set('providers', [
       { name: 'Rinkeby', provider: 'did:ethr:rinkeby', network: 'rinkeby', rpcUrl: 'https://rpc.ankr.com/eth_rinkeby' },
       { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' }

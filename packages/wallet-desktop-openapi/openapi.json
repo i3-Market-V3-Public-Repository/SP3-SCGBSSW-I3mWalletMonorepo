@@ -439,7 +439,7 @@
       "post": {
         "summary": "Verify a JWT resolving the public key from the signer DID",
         "operationId": "didJwtVerify",
-        "x-eov-operation-handler": "didJwt",
+        "x-eov-operation-handler": "did-jwt",
         "tags": [
           "verification"
         ],

@@ -7,6 +7,7 @@ import { importResource } from './import-resource.handler'
 import { exportResource } from './export-resource.handler'
 import { deleteResource } from './delete-resource.handler'
 import { sign } from './sign.handler'
+import { verifyJWT } from './verify-jwt.handler'
 import { callWalletFunction } from './call-wallet-function.handler'
 
 export const walletModule = new Module({
@@ -19,6 +20,7 @@ export const walletModule = new Module({
     exportResource,
     deleteResource,
     sign,
+    verifyJWT,
     callWalletFunction
   ]
 })
