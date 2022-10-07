@@ -635,20 +635,21 @@ export class BaseWallet<
 
   async didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
     const payload = decodeJWT(requestBody.jwt) as any
-    const expectedPayloadClaims = requestBody.expectedPayloadClaims as any
-    const expectedClaimsDict: Dict<typeof requestBody.expectedPayloadClaims> = expectedPayloadClaims
-    let error: string|undefined
-    for (const key in expectedClaimsDict) {
-      if (payload[key] === undefined) error = `Expected key '${key}' not found in proof`
-      if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
-        error = `Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
+    if (requestBody.expectedPayloadClaims !== undefined) {
+      const expectedClaimsDict: Dict<typeof requestBody.expectedPayloadClaims> = requestBody.expectedPayloadClaims
+      let error: string|undefined
+      for (const key in expectedClaimsDict) {
+        if (payload[key] === undefined) error = `Expected key '${key}' not found in proof`
+        if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
+          error = `Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
+        }
       }
-    }
-    if (error !== undefined) {
-      return {
-        verification: 'failed',
-        error,
-        payload
+      if (error !== undefined) {
+        return {
+          verification: 'failed',
+          error,
+          payload
+        }
       }
     }
     const resolver = { resolve: async (didUrl: string) => await this.veramo.agent.resolveDid({ didUrl }) }

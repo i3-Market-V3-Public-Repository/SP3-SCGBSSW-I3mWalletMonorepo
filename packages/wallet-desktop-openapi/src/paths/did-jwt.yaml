@@ -13,7 +13,7 @@ paths:
       tags:
         - did-jwt
       requestBody:
-        description: Creation option. Whether an 'identity' or a 'secret', an optional name and comment, and addtional wallet-provider's specific options
+        description: Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims
         required: false
         content:
           application/json:
@@ -25,6 +25,7 @@ paths:
                   pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
                 expectedPayloadClaims:
                   type: object
+                  additionalProperties: true
                   description: |
                     The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
 
@@ -70,7 +71,6 @@ paths:
               "verification": "failed",
               "error": "invalid_jwt: JWT iss is required"
               "payload": {
-                "iss": "did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898",
                 "iat": 1665138018,
                 "action": "buy 1457adf6"
               }
@@ -79,8 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: true
+                $ref: "#/components/schemas/VerificationOutput"
 
         default:
           description: unexpected error
@@ -88,3 +87,33 @@ paths:
             application/json:
               schema:
                 $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+components:
+  schemas:
+    JwtPayload:
+      title: JwtPayload
+      type: object
+      properties:
+        iss:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+      additionalProperties: true
+    
+    VerificationOutput: 
+      title: VerificationOutput
+      type: object
+      properties:
+        verification:
+          type: string
+          enum:
+            - success
+            - failed
+          description: whether verification has been successful or has failed
+        error:
+          type: string
+          description: error message if verification failed
+        payload:
+          $ref: "#/components/schemas/JwtPayload"
+          description: the decoded payload of the provided JWT
+      required:
+        - verification
+        - payload
