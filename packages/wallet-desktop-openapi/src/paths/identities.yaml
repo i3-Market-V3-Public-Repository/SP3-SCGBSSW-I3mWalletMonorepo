@@ -200,6 +200,10 @@ components:
               pattern: ^[A-Za-z0-9_-]+$
           required:
             - payload
+      required:
+        - type
+        - data
+
 
     SignTransaction:
       title: SignTransaction
@@ -211,6 +215,9 @@ components:
             - Transaction
         data:
           $ref: '#/components/schemas/Transaction'
+      required:
+        - type
+        - data
     
     SignJWT:
       title: SignJWT
@@ -226,11 +233,16 @@ components:
             header: 
               description: header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
               type: object
+              additionalProperties: true
             payload:
-              description: A JSON object to be signed by the wallet. It will become the payload of the generated JWS
+              description: A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.
               type: object
+              additionalProperties: true
           required:
             - payload
+      required:
+        - type
+        - data
 
     Transaction:
       title: Transaction

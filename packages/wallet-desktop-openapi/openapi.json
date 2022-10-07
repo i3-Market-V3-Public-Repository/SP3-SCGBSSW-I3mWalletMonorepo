@@ -10,20 +10,28 @@
     "license": {
       "name": "MIT"
     },
-    "description": "i3M-Wallet interface. i3M-Wallet will run as a microservice that will be called by the i3M-SDK. It is going to be developed as a desktop or mobile app.\n\nThere will be a SW implemetation of all the funcionalities and all the i3M-Wallet providers, namely the Cloud Wallet and the HW Wallet, will replace some of them.\n\ni3m-wallet should support the use of:\n- *accounts*: two kinds of accounts:\n  - identity: a public-private key pair with some contextual information\n  - secrets: cryptographic keys for symmetric crypto with some contextual information\n- *vault*: a secure storage for arbitrary objects\n"
+    "description": "i3M-Wallet API that can be used to interact with the i3M-Wallet. Most of the functionalities will also require end-user interaction with the wallet app.\n"
   },
   "tags": [
-    {
-      "name": "accounts",
-      "description": "A wallet account refers to a cryptographic [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) with some addtional context, e.g. a name, comments, associated blockchain address.\n\nAn account can be of two types:\n- `identity`, made of a public-private key pair (owned account) or just a public key (external account) and some contextual information.\n\n  Identities are mainly used to prove ownership of digital resources (such as DIDs, verifiable claims, or cryptotokens) in i3M. Main funcionalities of an identity account are:\n  - `sign`: sign an arbitrary object using the account's private key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature using the account's public key.\n  - `encrypt`: encrypt an arbitrary object using the account's public key.\n  - `decrypt`: decrypt a ciphertext using the account's private key. Implementation SHOULD require explicit user consent.\n\n- `secret`, made of a cryptographic symmetric key that will be protected and operated by the wallet. \n\n  Secrets are mainly used in i3-market for securely managing symmetric keys that have been used to encrypt arbitrary data stored elsewhere. Main funcionalities of a `secret` account are:\n  - `sign`: generate a MAC of an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature (MAC) using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `encrypt`: sign an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `decrypt`: decrypt a ciphertext using the account's secret key. Implementation SHOULD require explicit user consent.\n\nA wallet SHOULD BE able to hold multiple accounts.\n"
-    },
     {
       "name": "identities",
       "description": "Endpoints to manage identities (DIDs).\n"
     },
     {
+      "name": "resources",
+      "description": "Besides identities, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request. Currently storing verifiable credentials\n"
+    },
+    {
       "name": "selectiveDisclosure",
-      "description": "Besides identities and secrets, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request.\n"
+      "description": "Ednpoints for the selective disclosure process (used to present verifiable credentials)\n"
+    },
+    {
+      "name": "transaction",
+      "description": "Endpoints for deploying signed transactions to the DLT the wallet is connected to.\n"
+    },
+    {
+      "name": "verification",
+      "description": "Use the wallet to verify a JWT. The Wallet only support DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.\n"
     }
   ],
   "paths": {
@@ -433,10 +441,10 @@
         "operationId": "didJwtVerify",
         "x-eov-operation-handler": "did-jwt",
         "tags": [
-          "did-jwt"
+          "verification"
         ],
         "requestBody": {
-          "description": "Creation option. Whether an 'identity' or a 'secret', an optional name and comment, and addtional wallet-provider's specific options",
+          "description": "Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims",
           "required": false,
           "content": {
             "application/json": {
@@ -449,6 +457,7 @@
                   },
                   "expectedPayloadClaims": {
                     "type": "object",
+                    "additionalProperties": true,
                     "description": "The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:\n\n```json\n{\n  iss: 'orig',\n  exchange: {\n    id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',\n    orig: '{\"kty\":\"EC\",\"x\":\"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY\",\"y\":\"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0\",\"crv\":\"P-256\"}', // Public key in JSON.stringify(JWK) of the block origin (sender)\n    dest: '{\"kty\":\"EC\",\"x\":\"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA\",\"y\":\"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY\",\"crv\":\"P-256\"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)\n    hash_alg: 'SHA-256',\n    cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding\n    block_commitment: '', // hash of the plaintext block in base64url with no padding\n    secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding\n  }\n}\n```\n"
                   }
                 },
@@ -461,12 +470,11 @@
         },
         "responses": {
           "200": {
-            "description": "A verification object. If `verification` equals `success` all checkings have passed; if it is `failed`, you can access the error message in `èrror`. In either case, the decoded JWT payload can be accessed in `payload`.\n\nExample of success:\n\n```json\n{\n  \"verification\": \"success\",\n  \"payload\": {\n    \"iss\": \"did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898\",\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n\nExample of failure:\n\n```json\n{\n  \"verification\": \"failed\",\n  \"error\": \"invalid_jwt: JWT iss is required\"\n  \"payload\": {\n    \"iss\": \"did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898\",\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n",
+            "description": "A verification object. If `verification` equals `success` all checkings have passed; if it is `failed`, you can access the error message in `èrror`. In either case, the decoded JWT payload can be accessed in `payload`.\n\nExample of success:\n\n```json\n{\n  \"verification\": \"success\",\n  \"payload\": {\n    \"iss\": \"did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898\",\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n\nExample of failure:\n\n```json\n{\n  \"verification\": \"failed\",\n  \"error\": \"invalid_jwt: JWT iss is required\"\n  \"payload\": {\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "$ref": "#/components/schemas/VerificationOutput"
                 }
               }
             }
@@ -535,7 +543,11 @@
               "payload"
             ]
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "SignTransaction": {
         "title": "SignTransaction",
@@ -549,7 +561,11 @@
           "data": {
             "$ref": "#/components/schemas/Transaction"
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "SignJWT": {
         "title": "SignJWT",
@@ -565,18 +581,24 @@
             "properties": {
               "header": {
                 "description": "header fields to be added to the JWS header. \"alg\" and \"kid\" will be ignored since they are automatically added by the wallet.",
-                "type": "object"
+                "type": "object",
+                "additionalProperties": true
               },
               "payload": {
-                "description": "A JSON object to be signed by the wallet. It will become the payload of the generated JWS",
-                "type": "object"
+                "description": "A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.",
+                "type": "object",
+                "additionalProperties": true
               }
             },
             "required": [
               "payload"
             ]
           }
-        }
+        },
+        "required": [
+          "type",
+          "data"
+        ]
       },
       "Transaction": {
         "title": "Transaction",
@@ -809,6 +831,83 @@
             "pattern": "^0x(?:[A-Fa-f0-9])+$"
           }
         }
+      },
+      "DecodedJwt": {
+        "title": "JwtPayload",
+        "type": "object",
+        "properties": {
+          "header": {
+            "type": "object",
+            "properties": {
+              "typ": {
+                "type": "string",
+                "enum": [
+                  "JWT"
+                ]
+              },
+              "alg": {
+                "type": "string",
+                "enum": [
+                  "ES256K"
+                ]
+              }
+            },
+            "required": [
+              "typ",
+              "alg"
+            ],
+            "additionalProperties": true
+          },
+          "payload": {
+            "type": "object",
+            "properties": {
+              "iss": {
+                "$ref": "#/components/schemas/did"
+              }
+            },
+            "required": [
+              "iss"
+            ],
+            "additionalProperties": true
+          },
+          "signature": {
+            "type": "string",
+            "format": "^[A-Za-z0-9_-]+$"
+          },
+          "data": {
+            "type": "string",
+            "format": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
+            "description": "<base64url(header)>.<base64url(payload)>"
+          }
+        },
+        "required": [
+          "signature",
+          "data"
+        ]
+      },
+      "VerificationOutput": {
+        "title": "VerificationOutput",
+        "type": "object",
+        "properties": {
+          "verification": {
+            "type": "string",
+            "enum": [
+              "success",
+              "failed"
+            ],
+            "description": "whether verification has been successful or has failed"
+          },
+          "error": {
+            "type": "string",
+            "description": "error message if verification failed"
+          },
+          "decodedJwt": {
+            "description": "the decoded JWT"
+          }
+        },
+        "required": [
+          "verification"
+        ]
       },
       "did": {
         "title": "DID",

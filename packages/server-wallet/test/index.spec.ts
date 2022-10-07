@@ -1,8 +1,7 @@
-import { Veramo, Resource, NullDialog } from '@i3m/base-wallet'
+import { NullDialog, Resource, Veramo } from '@i3m/base-wallet'
 import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
-import { verifyJWT } from 'did-jwt'
 
 import { ServerWallet, serverWalletBuilder } from '../src'
 
@@ -12,6 +11,7 @@ describe('@i3m/server-wallet', () => {
   const identities: { [k: string]: string } = {}
   let wallet: ServerWallet
   let veramo: Veramo
+  let jwt: string
 
   beforeAll(async () => {
     wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
@@ -48,7 +48,7 @@ describe('@i3m/server-wallet', () => {
       const { signature } = await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })
       expect(signature).toBeDefined()
       debug('generated JWT: ' + signature)
-      const resolver = { resolve: async (didUrl: string) => await veramo.agent.resolveDid({ didUrl }) }
+      const resolver = { resolve: (didUrl: string) => veramo.agent.resolveDid({ didUrl }) }
       const verification = await verifyJWT(signature, { resolver })
       debug('JWT verification: ' + JSON.stringify(verification, undefined, 2))
       expect(verification).toBeDefined()

@@ -9,6 +9,30 @@ export namespace WalletComponents {
       message: string
     }
     /**
+         * JwtPayload
+         */
+    export interface DecodedJwt {
+      header?: {
+        [name: string]: any
+        typ: 'JWT'
+        alg: 'ES256K'
+      }
+      payload?: {
+        [name: string]: any
+        iss: /**
+                 * DID
+                 * example:
+                 * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        Did
+      }
+      signature: string // ^[A-Za-z0-9_-]+$
+      /**
+             * <base64url(header)>.<base64url(payload)>
+             */
+      data: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+    }
+    /**
          * DID
          * example:
          * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
@@ -87,16 +111,20 @@ export namespace WalletComponents {
          * SignJWT
          */
     export interface SignJWT {
-      type?: 'JWT'
-      data?: {
+      type: 'JWT'
+      data: {
         /**
                  * header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
                  */
-        header?: unknown
+        header?: {
+          [name: string]: any
+        }
         /**
-                 * A JSON object to be signed by the wallet. It will become the payload of the generated JWS
+                 * A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.
                  */
-        payload: unknown
+        payload: {
+          [name: string]: any
+        }
       }
     }
     /**
@@ -109,8 +137,8 @@ export namespace WalletComponents {
          * SignRaw
          */
     export interface SignRaw {
-      type?: 'Raw'
-      data?: {
+      type: 'Raw'
+      data: {
         /**
                  * Base64Url encoded data to sign
                  */
@@ -121,8 +149,8 @@ export namespace WalletComponents {
          * SignTransaction
          */
     export interface SignTransaction {
-      type?: 'Transaction'
-      data?: /* Transaction */ Transaction
+      type: 'Transaction'
+      data: /* Transaction */ Transaction
     }
     /**
          * SignTypes
@@ -205,6 +233,23 @@ export namespace WalletComponents {
         }
       }
     }
+    /**
+         * VerificationOutput
+         */
+    export interface VerificationOutput {
+      /**
+             * whether verification has been successful or has failed
+             */
+      verification: 'success' | 'failed'
+      /**
+             * error message if verification failed
+             */
+      error?: string
+      /**
+             * the decoded JWT
+             */
+      decodedJwt?: any
+    }
   }
 }
 export namespace WalletPaths {
@@ -230,12 +275,12 @@ export namespace WalletPaths {
              * ```
              *
              */
-      expectedPayloadClaims?: unknown
-    }
-    export namespace Responses {
-      export interface $200 {
+      expectedPayloadClaims?: {
         [name: string]: any
       }
+    }
+    export namespace Responses {
+      export type $200 = /* VerificationOutput */ WalletComponents.Schemas.VerificationOutput
       export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }
   }
