@@ -12,6 +12,7 @@ export interface Wallet {
   deleteResource: (id: string) => Promise<void>
   deleteIdentity: (did: string) => Promise<void>
 
+  wipe: () => Promise<void>
   // Api methods
   identityList: (queryParameters: WalletPaths.IdentityList.QueryParameters) => Promise<WalletPaths.IdentityList.Responses.$200>
   identityCreate: (requestBody: WalletPaths.IdentityCreate.RequestBody) => Promise<WalletPaths.IdentityCreate.Responses.$201>
@@ -23,4 +24,5 @@ export interface Wallet {
   resourceCreate: (requestBody: WalletPaths.ResourceCreate.RequestBody) => Promise<WalletPaths.ResourceCreate.Responses.$201>
   selectiveDisclosure: (pathParameters: WalletPaths.SelectiveDisclosure.PathParameters) => Promise<WalletPaths.SelectiveDisclosure.Responses.$200>
   transactionDeploy: (requestBody: WalletPaths.TransactionDeploy.RequestBody) => Promise<WalletPaths.TransactionDeploy.Responses.$200>
+  didJwtVerify: (requestBody: WalletPaths.DidJwtVerify.RequestBody) => Promise<WalletPaths.DidJwtVerify.Responses.$200>
 }

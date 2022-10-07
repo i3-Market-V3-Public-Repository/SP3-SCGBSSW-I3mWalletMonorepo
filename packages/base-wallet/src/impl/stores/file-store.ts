@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import { Store, BaseWalletModel } from '../../app'
-import { readFile, writeFile } from 'fs/promises'
+import { readFile, writeFile, rm, mkdir } from 'fs/promises'
 import * as crypto from 'crypto'
+import { dirname } from 'path'
 
 /**
  * A class that implements a storage in a file to be used by a wallet
@@ -32,6 +33,7 @@ export class FileStore implements Store<BaseWalletModel> {
   }
 
   private async init (): Promise<void> {
+    await mkdir(dirname(this.filepath), { recursive: true }).catch()
     const model = await this.getModel()
     await this.setModel(model)
   }
@@ -145,7 +147,6 @@ export class FileStore implements Store<BaseWalletModel> {
 
   async clear (): Promise<void> {
     await this.init()
-    const model = this.defaultModel()
-    await this.setModel(model)
+    await rm(this.filepath)
   }
 }

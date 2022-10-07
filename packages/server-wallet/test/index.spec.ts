@@ -1,18 +1,25 @@
-import { Veramo, Resource, Wallet } from '@i3m/base-wallet'
+import { Veramo, Resource, NullDialog } from '@i3m/base-wallet'
 import Debug from 'debug'
+import { homedir } from 'os'
+import { join } from 'path'
+import { verifyJWT } from 'did-jwt'
 
-import { serverWalletBuilder } from '../src'
+import { ServerWallet, serverWalletBuilder } from '../src'
 
 const debug = Debug('@i3m/server-wallet:test')
 
 describe('@i3m/server-wallet', () => {
   const identities: { [k: string]: string } = {}
-  let wallet: Wallet
+  let wallet: ServerWallet
   let veramo: Veramo
 
   beforeAll(async () => {
-    wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1' })
+    wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
     veramo = (wallet as any).veramo // TODO: Hacky access to veramo. Maybe expose it?
+  })
+
+  afterAll(async () => {
+    await wallet.wipe()
   })
 
   describe('identities', () => {
@@ -33,6 +40,18 @@ describe('@i3m/server-wallet', () => {
       const ddos = await wallet.identityList({})
       debug('List of DIDs: ', ddos)
       expect(ddos.length).toBe(2)
+    })
+
+    it('should generate a signed JWT', async () => {
+      const header = { test: 'hola' }
+      const payload = { rabo: 'gordo' }
+      const { signature } = await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })
+      expect(signature).toBeDefined()
+      debug('generated JWT: ' + signature)
+      const resolver = { resolve: (didUrl: string) => veramo.agent.resolveDid({ didUrl }) }
+      const verification = await verifyJWT(signature, { resolver })
+      debug('JWT verification: ' + JSON.stringify(verification, undefined, 2))
+      expect(verification).toBeDefined()
     })
   })
 
@@ -68,41 +87,42 @@ describe('@i3m/server-wallet', () => {
     })
   })
 
-  // describe('selectiveDisclosure', () => {
-  //   let sdrRespJwt: string
-  //   let sdr: string
+  describe('selectiveDisclosure', () => {
+    let sdrRespJwt: string
+    let sdr: string
 
-  //   beforeAll(async () => {
-  //     // Generate a sdr generated on the fly
-  //     sdr = await veramo.agent.createSelectiveDisclosureRequest({
-  //       data: {
-  //         issuer: identities.bob,
-  //         claims: [{
-  //           claimType: 'consumer'
-  //         }]
-  //       }
-  //     })
-  //   })
+    beforeAll(async () => {
+      // Generate a sdr generated on the fly
+      sdr = await veramo.agent.createSelectiveDisclosureRequest({
+        data: {
+          issuer: identities.bob,
+          claims: [{
+            claimType: 'consumer'
+          }]
+        }
+      })
+    })
 
-  //   it('should resolve selective disclosure requests', async () => {
-  //     await dialog.setValues({
-  //       // Select dispacth claim with the last identity
-  //       // The first one is cancel
-  //       selectMap (values) {
-  //         return values[values.length - 1]
-  //       }
-  //     }, async () => {
-  //       const sdrResp = await wallet.selectiveDisclosure({ jwt: sdr })
-  //       sdrRespJwt = sdrResp.jwt as string
-  //       expect(sdrRespJwt).toBeDefined()
-  //       debug('Selective Disclosure Response:', sdrResp)
-  //     })
-  //   }, 10000)
+    it('should resolve selective disclosure requests', async () => {
+      const dialog = (wallet as any).dialog as NullDialog
+      await dialog.setValues({
+        // Select dispacth claim with the last identity
+        // The first one is cancel
+        selectMap (values) {
+          return values[values.length - 1]
+        }
+      }, async () => {
+        const sdrResp = await wallet.selectiveDisclosure({ jwt: sdr })
+        sdrRespJwt = sdrResp.jwt as string
+        expect(sdrRespJwt).toBeDefined()
+        debug('Selective Disclosure Response:', sdrResp)
+      })
+    }, 10000)
 
-  //   it('should respond with a proper signature', async () => {
-  //     await veramo.agent.handleMessage({
-  //       raw: sdrRespJwt
-  //     })
-  //   })
-  // })
+    it('should respond with a proper signature', async () => {
+      await veramo.agent.handleMessage({
+        raw: sdrRespJwt
+      })
+    })
+  })
 })

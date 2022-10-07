@@ -73,3 +73,6 @@ paths:
 
   /transaction/deploy:
     $ref: "./paths/transaction.yaml#/paths/~1transaction~1deploy"
+
+  /did-jwt/verify:
+    $ref: "./paths/did-jwt.yaml#/paths/~1did-jwt~1verify"

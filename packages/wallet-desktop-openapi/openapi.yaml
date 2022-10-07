@@ -316,6 +316,105 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /did-jwt/verify:
+    post:
+      summary: Verify a JWT resolving the public key from the signer DID
+      operationId: didJwtVerify
+      x-eov-operation-handler: didJwt
+      tags:
+        - did-jwt
+      requestBody:
+        description: >-
+          Creation option. Whether an 'identity' or a 'secret', an optional name
+          and comment, and addtional wallet-provider's specific options
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                jwt:
+                  type: string
+                  pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+                expectedPayloadClaims:
+                  type: object
+                  description: >
+                    The expected values of the proof's payload claims. An
+                    expected value of '' can be use to just check that the claim
+                    is in the payload. An example could be:
+
+
+                    ```json
+
+                    {
+                      iss: 'orig',
+                      exchange: {
+                        id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+                        orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)
+                        dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
+                        hash_alg: 'SHA-256',
+                        cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding
+                        block_commitment: '', // hash of the plaintext block in base64url with no padding
+                        secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding
+                      }
+                    }
+
+                    ```
+              required:
+                - jwt
+      responses:
+        '200':
+          description: >
+            A verification object. If `verification` equals `success` all
+            checkings have passed; if it is `failed`, you can access the error
+            message in `èrror`. In either case, the decoded JWT payload can be
+            accessed in `payload`.
+
+
+            Example of success:
+
+
+            ```json
+
+            {
+              "verification": "success",
+              "payload": {
+                "iss": "did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898",
+                "iat": 1665138018,
+                "action": "buy 1457adf6"
+              }
+            }
+
+            ```
+
+
+            Example of failure:
+
+
+            ```json
+
+            {
+              "verification": "failed",
+              "error": "invalid_jwt: JWT iss is required"
+              "payload": {
+                "iss": "did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898",
+                "iat": 1665138018,
+                "action": "buy 1457adf6"
+              }
+            }
+
+            ```
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
 components:
   schemas:
     IdentitySelectOutput:
@@ -331,6 +430,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/SignTransaction'
         - $ref: '#/components/schemas/SignRaw'
+        - $ref: '#/components/schemas/SignJWT'
     SignRaw:
       title: SignRaw
       type: object
@@ -356,6 +456,29 @@ components:
             - Transaction
         data:
           $ref: '#/components/schemas/Transaction'
+    SignJWT:
+      title: SignJWT
+      type: object
+      properties:
+        type:
+          enum:
+            - JWT
+        data:
+          type: object
+          properties:
+            header:
+              description: >-
+                header fields to be added to the JWS header. "alg" and "kid"
+                will be ignored since they are automatically added by the
+                wallet.
+              type: object
+            payload:
+              description: >-
+                A JSON object to be signed by the wallet. It will become the
+                payload of the generated JWS
+              type: object
+          required:
+            - payload
     Transaction:
       title: Transaction
       type: object
@@ -389,6 +512,7 @@ components:
       enum:
         - Transaction
         - Raw
+        - JWT
     IdentityListInput:
       title: IdentityListInput
       description: A list of DIDs

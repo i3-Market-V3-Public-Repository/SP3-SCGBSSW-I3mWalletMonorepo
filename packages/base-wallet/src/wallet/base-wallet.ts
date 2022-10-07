@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
+import { decodeJWT, verifyJWT } from 'did-jwt'
 
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
 import { WalletError } from '../errors'
@@ -11,11 +12,13 @@ import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { displayDid } from '../utils/display-did'
+import { jwsSignInput } from '../utils/jws'
 import Veramo, { ProviderData, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA } from '../veramo'
 
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
+import { hashable } from 'object-sha'
 
 interface SdrClaim {
   claimType: string
@@ -58,6 +61,10 @@ interface TransactionOptions {
   notifyUser?: boolean
 }
 
+type Dict<T> = T & {
+  [key: string]: any | undefined
+}
+
 export class BaseWallet<
   Options extends WalletOptions<Model>,
   Model extends BaseWalletModel = BaseWalletModel
@@ -83,10 +90,6 @@ export class BaseWallet<
 
     // Init veramo framework
     this.veramo = new Veramo(this.store, this.keyWallet, this.providersData)
-  }
-
-  prepareForJWSSigning (messageToSign: any): any {
-
   }
 
   async executeTransaction (options: TransactionOptions = {}): Promise<void> {
@@ -488,6 +491,30 @@ export class BaseWallet<
         response = { signature }
         break
       }
+      case 'JWT': {
+        const { data } = requestBody
+        if (data === undefined) {
+          throw new WalletError('No data present on the request', { code: 400 })
+        }
+        const identity = await this.veramo.agent.didManagerGet(pathParameters)
+        const header = {
+          ...(data.header as object) ?? undefined,
+          alg: 'ES256K',
+          typ: 'JWT'
+        }
+        const payload = {
+          ...(data.payload as object),
+          iss: pathParameters.did,
+          iat: Math.floor(Date.now() / 1000)
+        }
+        const jwsDataToSign = jwsSignInput(header, payload)
+        const signature = await this.veramo.agent.keyManagerSignJWT({
+          kid: identity.keys[0].kid,
+          data: jwsDataToSign
+        })
+        response = { signature: `${jwsDataToSign}.${signature}` }
+        break
+      }
       default:
         throw new WalletError('Unknown sign data type')
     }
@@ -604,5 +631,41 @@ export class BaseWallet<
       transaction: requestBody.transaction
     })
     return {}
+  }
+
+  async didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
+    const payload = decodeJWT(requestBody.jwt) as any
+    const expectedPayloadClaims = requestBody.expectedPayloadClaims as any
+    const expectedClaimsDict: Dict<typeof requestBody.expectedPayloadClaims> = expectedPayloadClaims
+    let error: string|undefined
+    for (const key in expectedClaimsDict) {
+      if (payload[key] === undefined) error = `Expected key '${key}' not found in proof`
+      if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
+        error = `Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
+      }
+    }
+    if (error !== undefined) {
+      return {
+        verification: 'failed',
+        error,
+        payload
+      }
+    }
+    const resolver = { resolve: async (didUrl: string) => await this.veramo.agent.resolveDid({ didUrl }) }
+    try {
+      const verifiedJWT = await verifyJWT(requestBody.jwt, { resolver })
+      return {
+        verification: 'success',
+        payload: verifiedJWT.payload
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        return {
+          verification: 'failed',
+          error: error.message,
+          payload
+        }
+      } else throw new WalletError('unknown error during verification')
+    }
   }
 }

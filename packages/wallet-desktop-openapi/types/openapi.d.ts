@@ -82,7 +82,23 @@ export namespace WalletComponents {
     /**
          * SignInput
          */
-    export type SignInput = /* SignInput */ /* SignTransaction */ SignTransaction | /* SignRaw */ SignRaw
+    export type SignInput = /* SignInput */ /* SignTransaction */ SignTransaction | /* SignRaw */ SignRaw | /* SignJWT */ SignJWT
+    /**
+         * SignJWT
+         */
+    export interface SignJWT {
+      type?: 'JWT'
+      data?: {
+        /**
+                 * header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
+                 */
+        header?: unknown
+        /**
+                 * A JSON object to be signed by the wallet. It will become the payload of the generated JWS
+                 */
+        payload: unknown
+      }
+    }
     /**
          * SignOutput
          */
@@ -111,7 +127,7 @@ export namespace WalletComponents {
     /**
          * SignTypes
          */
-    export type SignTypes = 'Transaction' | 'Raw'
+    export type SignTypes = 'Transaction' | 'Raw' | 'JWT'
     /**
          * SignedTransaction
          * A list of resources
@@ -192,6 +208,37 @@ export namespace WalletComponents {
   }
 }
 export namespace WalletPaths {
+  export namespace DidJwtVerify {
+    export interface RequestBody {
+      jwt: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      /**
+             * The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
+             *
+             * ```json
+             * {
+             *   iss: 'orig',
+             *   exchange: {
+             *     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',
+             *     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)
+             *     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)
+             *     hash_alg: 'SHA-256',
+             *     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding
+             *     block_commitment: '', // hash of the plaintext block in base64url with no padding
+             *     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding
+             *   }
+             * }
+             * ```
+             *
+             */
+      expectedPayloadClaims?: unknown
+    }
+    export namespace Responses {
+      export interface $200 {
+        [name: string]: any
+      }
+      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+    }
+  }
   export namespace IdentityCreate {
     export type RequestBody = /**
          * IdentityCreateInput

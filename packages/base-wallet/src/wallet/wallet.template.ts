@@ -12,6 +12,7 @@ export interface Wallet {
   deleteResource: (id: string) => Promise<void>
   deleteIdentity: (did: string) => Promise<void>
 
+  wipe (): Promise<void>
   // Api methods
   // @wallet-methods
 }

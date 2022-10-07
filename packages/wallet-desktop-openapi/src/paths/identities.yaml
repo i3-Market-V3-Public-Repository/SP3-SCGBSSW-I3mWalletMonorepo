@@ -181,6 +181,7 @@ components:
       oneOf:
         - $ref: '#/components/schemas/SignTransaction'
         - $ref: '#/components/schemas/SignRaw'
+        - $ref: '#/components/schemas/SignJWT'
 
     SignRaw:
       title: SignRaw
@@ -210,6 +211,26 @@ components:
             - Transaction
         data:
           $ref: '#/components/schemas/Transaction'
+    
+    SignJWT:
+      title: SignJWT
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/SignTypes'
+          enum:
+            - JWT
+        data:
+          type: object
+          properties:
+            header: 
+              description: header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
+              type: object
+            payload:
+              description: A JSON object to be signed by the wallet. It will become the payload of the generated JWS
+              type: object
+          required:
+            - payload
 
     Transaction:
       title: Transaction
@@ -247,6 +268,7 @@ components:
       enum:
         - Transaction
         - Raw
+        - JWT
 
     IdentityListInput:
       title: IdentityListInput

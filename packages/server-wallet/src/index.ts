@@ -5,11 +5,14 @@ import { join } from 'path'
 import walletBuilder from '@i3m/bok-wallet'
 import { mkdirSync } from 'fs'
 
+export interface ServerWallet extends Wallet {
+  dialog: NullDialog
+}
 export interface ServerWalletOptions {
   filepath?: string
   password?: string
 }
-export async function serverWalletBuilder (options?: ServerWalletOptions): Promise<Wallet> {
+export async function serverWalletBuilder (options?: ServerWalletOptions): Promise<ServerWallet> {
   let filepath: string
   if (options?.filepath === undefined) {
     const filedir = join(homedir(), '.server-wallet')
@@ -24,9 +27,9 @@ export async function serverWalletBuilder (options?: ServerWalletOptions): Promi
   const dialog = new NullDialog()
   const store = new FileStore(filepath, options?.password)
   const toast = new ConsoleToast()
-  return await walletBuilder({
+  return await (walletBuilder({
     dialog,
     store,
     toast
-  })
+  }) as Promise<ServerWallet>)
 }
