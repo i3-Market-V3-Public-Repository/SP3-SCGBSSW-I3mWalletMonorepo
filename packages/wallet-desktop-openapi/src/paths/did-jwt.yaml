@@ -11,7 +11,7 @@ paths:
       operationId: didJwtVerify
       x-eov-operation-handler: didJwt
       tags:
-        - did-jwt
+        - verification
       requestBody:
         description: Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims
         required: false

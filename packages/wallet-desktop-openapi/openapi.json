@@ -10,20 +10,28 @@
     "license": {
       "name": "MIT"
     },
-    "description": "i3M-Wallet interface. i3M-Wallet will run as a microservice that will be called by the i3M-SDK. It is going to be developed as a desktop or mobile app.\n\nThere will be a SW implemetation of all the funcionalities and all the i3M-Wallet providers, namely the Cloud Wallet and the HW Wallet, will replace some of them.\n\ni3m-wallet should support the use of:\n- *accounts*: two kinds of accounts:\n  - identity: a public-private key pair with some contextual information\n  - secrets: cryptographic keys for symmetric crypto with some contextual information\n- *vault*: a secure storage for arbitrary objects\n"
+    "description": "i3M-Wallet API that can be used to interact with the i3M-Wallet. Most of the functionalities will also require end-user interaction with the wallet app.\n"
   },
   "tags": [
-    {
-      "name": "accounts",
-      "description": "A wallet account refers to a cryptographic [JSON Web Key (JWK)](https://tools.ietf.org/html/rfc7517) with some addtional context, e.g. a name, comments, associated blockchain address.\n\nAn account can be of two types:\n- `identity`, made of a public-private key pair (owned account) or just a public key (external account) and some contextual information.\n\n  Identities are mainly used to prove ownership of digital resources (such as DIDs, verifiable claims, or cryptotokens) in i3M. Main funcionalities of an identity account are:\n  - `sign`: sign an arbitrary object using the account's private key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature using the account's public key.\n  - `encrypt`: encrypt an arbitrary object using the account's public key.\n  - `decrypt`: decrypt a ciphertext using the account's private key. Implementation SHOULD require explicit user consent.\n\n- `secret`, made of a cryptographic symmetric key that will be protected and operated by the wallet. \n\n  Secrets are mainly used in i3-market for securely managing symmetric keys that have been used to encrypt arbitrary data stored elsewhere. Main funcionalities of a `secret` account are:\n  - `sign`: generate a MAC of an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `verify`: verify a signature (MAC) using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `encrypt`: sign an arbitrary object using the account's secret key. Implementation SHOULD require explicit user consent.\n  - `decrypt`: decrypt a ciphertext using the account's secret key. Implementation SHOULD require explicit user consent.\n\nA wallet SHOULD BE able to hold multiple accounts.\n"
-    },
     {
       "name": "identities",
       "description": "Endpoints to manage identities (DIDs).\n"
     },
     {
+      "name": "resources",
+      "description": "Besides identities, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request. Currently storing verifiable credentials\n"
+    },
+    {
       "name": "selectiveDisclosure",
-      "description": "Besides identities and secrets, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request.\n"
+      "description": "Ednpoints for the selective disclosure process (used to present verifiable credentials)\n"
+    },
+    {
+      "name": "transaction",
+      "description": "Endpoints for deploying signed transactions to the DLT the wallet is connected to.\n"
+    },
+    {
+      "name": "verification",
+      "description": "Use the wallet to verify a JWT. The Wallet only support DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.\n"
     }
   ],
   "paths": {
@@ -433,7 +441,7 @@
         "operationId": "didJwtVerify",
         "x-eov-operation-handler": "didJwt",
         "tags": [
-          "did-jwt"
+          "verification"
         ],
         "requestBody": {
           "description": "Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims",
