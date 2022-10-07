@@ -48,7 +48,7 @@ describe('@i3m/server-wallet', () => {
       const { signature } = await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })
       expect(signature).toBeDefined()
       debug('generated JWT: ' + signature)
-      const resolver = { resolve: (didUrl: string) => veramo.agent.resolveDid({ didUrl }) }
+      const resolver = { resolve: async (didUrl: string) => await veramo.agent.resolveDid({ didUrl }) }
       const verification = await verifyJWT(signature, { resolver })
       debug('JWT verification: ' + JSON.stringify(verification, undefined, 2))
       expect(verification).toBeDefined()
