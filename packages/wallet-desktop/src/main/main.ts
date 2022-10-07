@@ -37,7 +37,7 @@ function validProviders(providers: Provider[]): boolean {
   }), { name: false, provider: false, network: false, rpcUrl: false })
 
 
-  return Object.values(filledArguments).reduce((prev, curr) => prev && curr, true)
+  return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
 }
 
 async function getAppSettings (locals: Locals): Promise<MainContext> {
