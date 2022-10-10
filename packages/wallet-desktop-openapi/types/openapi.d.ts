@@ -261,7 +261,7 @@ export namespace WalletPaths {
              */
       jwt: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
       /**
-             * The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
+             * The expected values of the proof's payload claims. An expected value of '' can be used to just check that the claim is in the payload. An example could be:
              *
              * ```json
              * {

@@ -316,8 +316,8 @@ paths:
                   additionalProperties: true
                   description: >
                     The expected values of the proof's payload claims. An
-                    expected value of '' can be use to just check that the claim
-                    is in the payload. An example could be:
+                    expected value of '' can be used to just check that the
+                    claim is in the payload. An example could be:
 
 
                     ```json
@@ -343,8 +343,8 @@ paths:
           description: >
             A verification object. If `verification` equals `success` all
             checkings have passed; if it is `failed`, you can access the error
-            message in `èrror`. In either case, the decoded JWT payload can be
-            accessed in `payload`.
+            message in `error`. Unless the JWT decoding fails (invalid format),
+            the decoded JWT payload can be accessed in `payload`.
 
 
             Example of success:
@@ -684,11 +684,6 @@ components:
           description: the decoded JWT
       required:
         - verification
-    did:
-      title: DID
-      type: string
-      example: >-
-        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
     ApiError:
       type: object
       title: Error
@@ -701,3 +696,8 @@ components:
           format: int32
         message:
           type: string
+    did:
+      title: DID
+      type: string
+      example: >-
+        did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863

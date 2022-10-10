@@ -28,7 +28,7 @@ paths:
                   type: object
                   additionalProperties: true
                   description: |
-                    The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be:
+                    The expected values of the proof's payload claims. An expected value of '' can be used to just check that the claim is in the payload. An example could be:
 
                     ```json
                     {
@@ -50,7 +50,7 @@ paths:
       responses:
         "200":
           description: |
-            A verification object. If `verification` equals `success` all checkings have passed; if it is `failed`, you can access the error message in `èrror`. In either case, the decoded JWT payload can be accessed in `payload`.
+            A verification object. If `verification` equals `success` all checkings have passed; if it is `failed`, you can access the error message in `error`. Unless the JWT decoding fails (invalid format), the decoded JWT payload can be accessed in `payload`.
             
             Example of success:
 
