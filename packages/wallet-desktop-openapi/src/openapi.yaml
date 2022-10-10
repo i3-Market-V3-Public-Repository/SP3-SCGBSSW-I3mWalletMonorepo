@@ -30,7 +30,7 @@ tags:
 
   - name: verification
     description: |
-      Use the wallet to verify a JWT. The Wallet only support DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.
+      Use the wallet to verify a JWT. The Wallet only supports DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.
 
 paths:
   /identities:
