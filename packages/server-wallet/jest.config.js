@@ -34,7 +34,7 @@ module.exports = {
       tsconfig: './tsconfig.json'
     }
   },
-
+  testTimeout: 10000,
   // For main process:
   // runner: '@jest-runner/electron/main',
   testEnvironment: 'node',
