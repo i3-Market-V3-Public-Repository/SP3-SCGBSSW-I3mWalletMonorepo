@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  version: '1.2.0'
+  version: 1.2.1
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -29,7 +29,7 @@ tags:
       connected to.
   - name: verification
     description: >
-      Use the wallet to verify a JWT. The Wallet only support DID issuers and
+      Use the wallet to verify a JWT. The Wallet only supports DID issuers and
       the 'ES256K1' algorithm. Useful to verify JWT created by another wallet
       instance.
 paths:
@@ -196,7 +196,7 @@ paths:
       responses:
         '200':
           description: >-
-            A paged array of accounts. Only the props requested will be
+            A paged array of resources. Only the props requested will be
             returned. Security policies may prevent some props from being
             returned.
           content:
@@ -216,14 +216,16 @@ paths:
       tags:
         - resources
       requestBody:
-        description: Create a resource.
+        description: >-
+          Create a resource. Nowadays it only supports storage of verifiable
+          credentials.
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Resource'
       responses:
         '201':
-          description: the ID and type of the created account
+          description: the ID and type of the created resource
           content:
             application/json:
               schema:
@@ -298,7 +300,7 @@ paths:
         description: >-
           Verify a JWT resolving the public key from the signer DID and
           optionally check values for expected payload claims
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -307,6 +309,8 @@ paths:
                 jwt:
                   type: string
                   pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+                  example: >-
+                    eyJhbGciOiJFUzI1NksiLCJ0eXAiOiJKV1QifQ.eyJmaWVsZDEiOiJzYWRzYWQ3NSIsImZpZWxkMiI6ImFmZnNhczlmODdzIiwiaXNzIjoiZGlkOmV0aHI6aTNtOjB4MDNmOTcwNjRhMzUzZmFmNWRkNTQwYWE2N2I2OTE2YmY1NmMwOWM1MGNjODAzN2E0NTNlNzg1ODdmMjdmYjg4ZTk0IiwiaWF0IjoxNjY1NDAwMzYzfQ.IpQ7WprvDMk6QWcJXuPBazat-2657dWIK-iGvOOB5oAhAmMqDBm8OEtKordqeqcEWwhWw_C7_ziMMZkPz1JIkw
                 expectedPayloadClaims:
                   type: object
                   additionalProperties: true

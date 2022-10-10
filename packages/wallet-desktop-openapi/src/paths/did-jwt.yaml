@@ -14,7 +14,7 @@ paths:
         - verification
       requestBody:
         description: Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims
-        required: false
+        required: true
         content:
           application/json:
             schema:
@@ -23,6 +23,7 @@ paths:
                 jwt:
                   type: string
                   pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+                  example: eyJhbGciOiJFUzI1NksiLCJ0eXAiOiJKV1QifQ.eyJmaWVsZDEiOiJzYWRzYWQ3NSIsImZpZWxkMiI6ImFmZnNhczlmODdzIiwiaXNzIjoiZGlkOmV0aHI6aTNtOjB4MDNmOTcwNjRhMzUzZmFmNWRkNTQwYWE2N2I2OTE2YmY1NmMwOWM1MGNjODAzN2E0NTNlNzg1ODdmMjdmYjg4ZTk0IiwiaWF0IjoxNjY1NDAwMzYzfQ.IpQ7WprvDMk6QWcJXuPBazat-2657dWIK-iGvOOB5oAhAmMqDBm8OEtKordqeqcEWwhWw_C7_ziMMZkPz1JIkw
                 expectedPayloadClaims:
                   type: object
                   additionalProperties: true

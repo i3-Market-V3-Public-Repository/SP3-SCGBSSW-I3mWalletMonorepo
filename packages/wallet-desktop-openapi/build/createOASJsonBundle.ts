@@ -76,11 +76,12 @@ const bundle = async (): Promise<void> => {
   const api = await bundleSpec()
 
   const jsonBundle = path.join(rootDir, pkgJson.main)
+  api.info.version = pkgJson.version
   fs.writeFileSync(jsonBundle, JSON.stringify(api, null, 2))
   console.log(chalk.green(`OpenAPI Spec JSON bundle written to -> ${jsonBundle}`))
 
   const yamlBundle = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
-  fs.writeFileSync(yamlBundle, jsYaml.dump(api).replace('{{VERSION}}', pkgJson.version))
+  fs.writeFileSync(yamlBundle, jsYaml.dump(api))
   console.log(chalk.green(`OpenAPI Spec YAML bundle written to -> ${yamlBundle}`))
 }
 

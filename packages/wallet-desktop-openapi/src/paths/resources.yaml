@@ -14,7 +14,7 @@ paths:
         - resources
       responses:
         "200":
-          description: A paged array of accounts. Only the props requested will be returned. Security policies may prevent some props from being returned.
+          description: A paged array of resources. Only the props requested will be returned. Security policies may prevent some props from being returned.
           content:
             application/json:
               schema:
@@ -33,14 +33,14 @@ paths:
       tags:
         - resources
       requestBody:
-        description: Create a resource.
+        description: Create a resource. Nowadays it only supports storage of verifiable credentials.
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/Resource"
       responses:
         "201":
-          description: the ID and type of the created account
+          description: the ID and type of the created resource
           content:
             application/json:
               schema:
