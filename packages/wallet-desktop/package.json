@@ -60,7 +60,7 @@
     "electron": "^12.0.15",
     "electron-builder": "^22.11.7",
     "fs-extra": "^9.1.0",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.3",
     "nodemon": "^2.0.7",
     "rollup": "^2.39.1",
     "rollup-plugin-scss": "^3.0.0",
