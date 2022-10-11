@@ -719,6 +719,18 @@ components:
           type: string
           example: http://95.211.3.250:8545
       additionalProperties: true
+    ApiError:
+      type: object
+      title: Error
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
     did:
       title: DID
       type: string
@@ -746,15 +758,3 @@ components:
             - '0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7'
       required:
         - did
-    ApiError:
-      type: object
-      title: Error
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
