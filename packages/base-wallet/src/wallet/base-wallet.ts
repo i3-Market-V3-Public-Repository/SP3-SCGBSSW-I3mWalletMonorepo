@@ -526,12 +526,13 @@ export class BaseWallet<
     const ddo = await this.veramo.agent.didManagerGet({
       did: pathParameters.did
     })
-    const result = _.pick(ddo, ['did', 'alias', 'provider']) as any
+    const result = _.pick(ddo, ['did', 'alias', 'provider'])
+    let addresses: string[] = []
     if (ddo.provider.startsWith('did:ethr')) {
-      result.addresses = ddo.keys.map((key) => ethers.utils.computeAddress(`0x${key.publicKeyHex}`))
+      addresses = ddo.keys.map((key) => ethers.utils.computeAddress(`0x${key.publicKeyHex}`))
     }
 
-    return result
+    return { ...result, addresses }
   }
 
   async identityDeployTransaction (pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletComponents.Schemas.Transaction): Promise<WalletComponents.Schemas.Receipt> {
@@ -679,6 +680,14 @@ export class BaseWallet<
           decodedJwt: decodedJwt
         }
       } else throw new WalletError('unknown error during verification')
+    }
+  }
+
+  async providerinfo (): Promise<WalletPaths.Providerinfo.Responses.$200> {
+    const providerData = this.veramo.providersData[this.provider]
+    return {
+      provider: this.provider,
+      ...providerData
     }
   }
 }

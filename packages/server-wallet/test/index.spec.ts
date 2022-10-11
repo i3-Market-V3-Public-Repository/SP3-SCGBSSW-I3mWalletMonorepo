@@ -22,6 +22,14 @@ describe('@i3m/server-wallet', () => {
     await wallet.wipe()
   })
 
+  describe('get DLT provider data', () => {
+    it('should get the DLT provider darta', async () => {
+      const providerData = await wallet.providerinfo()
+      debug('Provider data:\n' + JSON.stringify(providerData, undefined, 2))
+      expect(providerData).toBeDefined()
+    })
+  })
+
   describe('identities', () => {
     it.each([
       ['alice'],

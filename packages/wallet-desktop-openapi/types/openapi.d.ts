@@ -62,6 +62,33 @@ export namespace WalletComponents {
       Did
     }
     /**
+         * Identity Data
+         */
+    export interface IdentityData {
+      /**
+             * example:
+             * did:ethr:i3m:0x03142f480f831e835822fc0cd35726844a7069d28df58fb82037f1598812e1ade8
+             */
+      did: string
+      /**
+             * example:
+             * identity1
+             */
+      alias?: string
+      /**
+             * example:
+             * did:ethr:i3m
+             */
+      provider?: string
+      /**
+             * example:
+             * [
+             *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
+             * ]
+             */
+      addresses?: string[]
+    }
+    /**
          * IdentityListInput
          * A list of DIDs
          */
@@ -83,6 +110,28 @@ export namespace WalletComponents {
              * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       Did
+    }
+    /**
+         * ProviderData
+         * A JSON object with information of the DLT provider currently in use.
+         */
+    export interface ProviderData {
+      [name: string]: any
+      /**
+             * example:
+             * did:ethr:i3m
+             */
+      provider?: string
+      /**
+             * example:
+             * i3m
+             */
+      network?: string
+      /**
+             * example:
+             * http://95.211.3.250:8545
+             */
+      rpcUrl?: string
     }
     /**
          * Receipt
@@ -335,9 +384,7 @@ export namespace WalletPaths {
       did: Parameters.Did
     }
     export namespace Responses {
-      export interface $200 {
-        [name: string]: any
-      }
+      export type $200 = /* Identity Data */ WalletComponents.Schemas.IdentityData
       export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }
   }
@@ -389,6 +436,16 @@ export namespace WalletPaths {
     export type RequestBody = /* SignInput */ WalletComponents.Schemas.SignInput
     export namespace Responses {
       export type $200 = /* SignOutput */ WalletComponents.Schemas.SignOutput
+    }
+  }
+  export namespace Providerinfo {
+    export namespace Responses {
+      export type $200 = /**
+             * ProviderData
+             * A JSON object with information of the DLT provider currently in use.
+             */
+            WalletComponents.Schemas.ProviderData
+      export type Default = /* Error */ WalletComponents.Schemas.ApiError
     }
   }
   export namespace ResourceCreate {

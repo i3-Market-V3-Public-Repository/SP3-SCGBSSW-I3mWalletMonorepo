@@ -16,3 +16,26 @@ components:
       title: DID
       type: string
       example: did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+
+    IdentityData:
+      title: Identity Data
+      type: object
+      properties:
+        did:
+          type: string
+          example: did:ethr:i3m:0x03142f480f831e835822fc0cd35726844a7069d28df58fb82037f1598812e1ade8
+        alias:
+          type: string
+          example: identity1
+        provider:
+          type: string
+          example: did:ethr:i3m
+        addresses:
+          type: array
+          items:
+            type: string
+          example: ["0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"]
+      required:
+        - did
+        
+

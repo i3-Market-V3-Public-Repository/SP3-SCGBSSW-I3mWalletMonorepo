@@ -7,11 +7,12 @@ info:
 paths:
   /did-jwt/verify:
     post:
-      summary: Verify a JWT resolving the public key from the signer DID
+      summary: |
+        Use the wallet to verify a JWT. The Wallet only supports DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.
       operationId: didJwtVerify
       x-eov-operation-handler: did-jwt
       tags:
-        - verification
+        - utils
       requestBody:
         description: Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims
         required: true

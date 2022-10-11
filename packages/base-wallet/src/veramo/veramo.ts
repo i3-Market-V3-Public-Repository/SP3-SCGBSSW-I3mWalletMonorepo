@@ -38,7 +38,7 @@ type PluginMap =
 
 export type ProviderData = Omit<ConstructorParameters<typeof EthrDIDProvider>[0], 'defaultKms'>
 
-export const DEFAULT_PROVIDER = 'did:ethr:rinkeby'
+export const DEFAULT_PROVIDER = 'did:ethr:i3m'
 export const DEFAULT_PROVIDERS_DATA = {
   'did:ethr:rinkeby': {
     network: 'rinkeby',

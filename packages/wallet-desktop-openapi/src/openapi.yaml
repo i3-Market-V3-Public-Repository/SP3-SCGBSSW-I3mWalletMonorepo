@@ -28,9 +28,9 @@ tags:
     description: | 
       Endpoints for deploying signed transactions to the DLT the wallet is connected to.
 
-  - name: verification
+  - name: utils
     description: |
-      Use the wallet to verify a JWT. The Wallet only supports DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.
+      Additional helpler functions
 
 paths:
   /identities:
@@ -59,3 +59,7 @@ paths:
 
   /did-jwt/verify:
     $ref: "./paths/did-jwt.yaml#/paths/~1did-jwt~1verify"
+  
+  /providerinfo:
+    $ref: "./paths/providerinfo.yaml#/paths/~1providerinfo"
+
