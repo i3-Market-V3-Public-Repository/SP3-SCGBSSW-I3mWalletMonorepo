@@ -1,0 +1,46 @@
+openapi: '3.0.2'
+
+info:
+  version: 1.0.0
+  title: i3M Wallet API
+
+paths:
+  /providerinfo:
+    get:
+      summary: Gets info of the DLT provider the wallet is using
+      operationId: providerinfo
+      x-eov-operation-handler: providerinfo
+      tags:
+        - utils
+      responses:
+        "200":
+          description: A JSON object with information of the DLT provider currently in use.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProviderData"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
+
+components:
+  schemas:
+    ProviderData:
+      title: ProviderData
+      description: A JSON object with information of the DLT provider currently in use.
+      type: object
+      properties:
+        provider:
+          type: string
+          example: did:ethr:i3m
+        network:
+          type: string
+          example: i3m
+        rpcUrl:
+          type: string
+          example: http://95.211.3.250:8545
+      additionalProperties: true
+
