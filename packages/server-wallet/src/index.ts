@@ -1,13 +1,16 @@
-import { Wallet, NullDialog, FileStore, ConsoleToast } from '@i3m/base-wallet'
+import { NullDialog, FileStore, ConsoleToast } from '@i3m/base-wallet'
 import { homedir } from 'os'
 import { join } from 'path'
 
 import walletBuilder from '@i3m/bok-wallet'
 import { mkdirSync } from 'fs'
+import { BokWallet } from '@i3m/bok-wallet/types'
 import { BokWalletOptions } from '@i3m/bok-wallet/types/types'
 
-export interface ServerWallet extends Wallet {
+export interface ServerWallet extends BokWallet {
   dialog: NullDialog
+  store: FileStore
+  toast: ConsoleToast
 }
 export interface ServerWalletOptions {
   filepath?: string
@@ -15,6 +18,7 @@ export interface ServerWalletOptions {
   provider?: string
   providerData?: BokWalletOptions['providersData']
 }
+
 export async function serverWalletBuilder (options?: ServerWalletOptions): Promise<ServerWallet> {
   let filepath: string
   if (options?.filepath === undefined) {

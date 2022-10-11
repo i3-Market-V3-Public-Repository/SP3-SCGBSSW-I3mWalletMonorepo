@@ -10,15 +10,17 @@ interface ImportInfo {
 }
 
 export class BokWallet extends BaseWallet<WalletOptions<BokWalletModel>> {
-  async importDid (): Promise<void> {
-    const importInfo = await this.dialog.form<ImportInfo>({
-      title: 'Import DID',
-      descriptors: {
-        alias: { type: 'text', message: 'Set an alias for your DID' },
-        privateKey: { type: 'text', message: 'Paste the private key' }
-      },
-      order: ['alias', 'privateKey']
-    })
+  async importDid (importInfo?: ImportInfo): Promise<void> {
+    if (importInfo === undefined) {
+      importInfo = await this.dialog.form<ImportInfo>({
+        title: 'Import DID',
+        descriptors: {
+          alias: { type: 'text', message: 'Set an alias for your DID' },
+          privateKey: { type: 'text', message: 'Paste the private key' }
+        },
+        order: ['alias', 'privateKey']
+      })
+    }
     if (importInfo === undefined) {
       return
     }

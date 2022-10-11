@@ -1,4 +1,4 @@
-import { NullDialog, Resource, Veramo } from '@i3m/base-wallet'
+import { Resource, Veramo } from '@i3m/base-wallet'
 import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
@@ -15,7 +15,7 @@ describe('@i3m/server-wallet', () => {
 
   beforeAll(async () => {
     wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
-    veramo = (wallet as any).veramo // TODO: Hacky access to veramo. Maybe expose it?
+    veramo = wallet.veramo
   })
 
   afterAll(async () => {
@@ -44,10 +44,22 @@ describe('@i3m/server-wallet', () => {
       debug(`DID for '${alias}' created: `, resp.did)
     })
 
+    it('Must be able to restore account from private key', async () => {
+      const privKey = process.env.PRIVATE_KEY
+      if (privKey === undefined) {
+        throw new Error('You need to setup a PRIVATE_KEY in your .env with enough funds')
+      }
+      console.log('Importing private key: ' + privKey.substring(0, 6) + '...')
+      await wallet.importDid({
+        alias: 'importedKey',
+        privateKey: privKey
+      })
+    })
+
     it('should list identities', async () => {
       const ddos = await wallet.identityList({})
       debug('List of DIDs: ', ddos)
-      expect(ddos.length).toBe(2)
+      expect(ddos.length).toBe(3)
     })
 
     it('should generate a signed JWT', async () => {
@@ -145,7 +157,7 @@ describe('@i3m/server-wallet', () => {
     })
 
     it('should resolve selective disclosure requests', async () => {
-      const dialog = (wallet as any).dialog as NullDialog
+      const dialog = wallet.dialog
       await dialog.setValues({
         // Select dispacth claim with the last identity
         // The first one is cancel
