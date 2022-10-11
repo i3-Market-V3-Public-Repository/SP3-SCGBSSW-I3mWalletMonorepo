@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-api",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Wallet protocol API",
   "keywords": [
     "i3-market",
@@ -72,8 +72,8 @@
     ]
   },
   "devDependencies": {
-    "@i3m/base-wallet": "^1.2.1",
-    "@i3m/bok-wallet": "^1.2.1",
+    "@i3m/base-wallet": "^1.3.0",
+    "@i3m/bok-wallet": "^1.3.0",
     "@rollup/plugin-commonjs": "^21.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
@@ -102,7 +102,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.2.1",
-    "@i3m/wallet-protocol": "^1.2.1"
+    "@i3m/wallet-desktop-openapi": "^1.3.0",
+    "@i3m/wallet-protocol": "^1.3.0"
   }
 }

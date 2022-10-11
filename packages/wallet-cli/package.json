@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-cli",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Wallet client",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@i3m/wallet-protocol": "^1.2.1",
+    "@i3m/wallet-protocol": "^1.3.0",
     "base58-js": "^1.0.0"
   }
 }
