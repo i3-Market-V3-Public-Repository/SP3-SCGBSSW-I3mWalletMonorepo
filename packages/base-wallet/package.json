@@ -2,48 +2,117 @@
   "name": "@i3m/base-wallet",
   "version": "1.3.4",
   "description": "The abstract class defining an i3-market wallet",
-  "main": "dist/index.js",
-  "directories": {
-    "types": "./types",
-    "src": "./src",
-    "build": "./build"
-  },
-  "types": "./types/index.d.ts",
-  "scripts": {
-    "build:ts": "tsc --project tsconfig.build.json",
-    "build:iwallet": "ts-node build/walletInterface.ts",
-    "build:watch": "tsc -w --preserveWatchOutput --project tsconfig.build.json",
-    "build": "run-s build:iwallet build:ts",
-    "lint": "ts-standard --fix",
-    "postbuild": "npm run lint",
-    "prepublishOnly": "npm run build",
-    "test": "echo \"Warning: You must specify tests for this package\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.com:i3-market/code/wp3/t3.2/i3m-wallet/base-wallet.git"
-  },
+  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "keywords": [
     "wallet",
     "i3-market"
   ],
-  "author": "Juan Hernandez Serrano",
+  "author": "Fernando Román García",
   "license": "EUPL-1.2",
-  "devDependencies": {
-    "@types/debug": "^4.1.5",
-    "@types/lodash": "^4.14.168",
-    "@types/node": "^14.14.41",
-    "@types/uuid": "^8.3.0",
-    "debug": "^4.3.1",
-    "npm-run-all": "^4.1.5",
-    "ts-node": "^9.1.1",
-    "ts-standard": "^10.0.0",
-    "typescript": "^4.2.4"
+  "type": "module",
+  "types": "./types/index.d.ts",
+  "main": "./dist/cjs/index.node.cjs",
+  "module": "./dist/esm/index.node.js",
+  "exports": {
+    ".": {
+      "node": {
+        "require": "./dist/cjs/index.node.cjs",
+        "import": "./dist/esm/index.node.js",
+        "module": "./dist/esm/index.node.js"
+      },
+      "default": "./dist/esm/index.node.js"
+    },
+    "./types": "./types/index.d.ts"
+  },
+  "imports": {
+    "#pkg": {
+      "import": "./dist/esm/index.node.js",
+      "require": "./dist/cjs/index.node.cjs"
+    }
+  },
+  "directories": {
+    "build": "./build",
+    "dist": "./dist",
+    "docs": "./docs",
+    "src": "./src",
+    "test": "./test",
+    "benchmark": "./benchmark",
+    "mocha-ts": "./.mocha-ts"
+  },
+  "scripts": {
+    "build": "run-s lint build:iwallet build:js docs",
+    "prebuild:iwallet": "tsc --esModuleInterop --resolveJsonModule prebuild/walletInterface.cts",
+    "build:iwallet": "node prebuild/walletInterface.cjs",
+    "build:js": "rollup -c build/rollup.config.js",
+    "clean": "rimraf .mocha-ts coverage dist types docs",
+    "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",
+    "docs": "node build/build.docs.cjs",
+    "git:add": "git add -A",
+    "lint": "ts-standard --fix",
+    "mocha-ts": "node --experimental-modules --es-module-specifier-resolution=node ./build/bin/mocha-ts.cjs ",
+    "mocha-ts:cjs": "node ./build/bin/mocha-ts.cjs --commonjs ",
+    "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
+    "mocha-ts:browser": "node build/testing/browser/index.cjs ",
+    "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
+    "preversion": "run-s clean lint build:js coverage test:browser-headless",
+    "version": "run-s docs git:add",
+    "postversion": "git push --follow-tags",
+    "test": "echo \"Warning: You must specify tests for this package\"",
+    "test:node-cjs": "npm run mocha-ts:cjs ",
+    "test:node-esm": "npm run mocha-ts ",
+    "watch": "npm run mocha-ts:watch "
   },
   "ts-standard": {
+    "project": "tsconfig.json",
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "IS_BROWSER",
+      "browser",
+      "page",
+      "chai"
+    ],
     "ignore": [
-      "**/*.template.ts"
+      "dist/**/*",
+      "examples/**/*",
+      "types/**/*",
+      "benchmark/**/*",
+      "build/testing/mocha/mocha-init.js",
+      "prebuild/walletInterface.cjs"
     ]
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-multi-entry": "^4.0.0",
+    "@rollup/plugin-node-resolve": "^14.1.0",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@rollup/plugin-typescript": "^8.2.0",
+    "@types/chai": "^4.2.22",
+    "@types/debug": "^4.1.7",
+    "@types/lodash": "^4.14.186",
+    "@types/mocha": "^10.0.0",
+    "@types/uuid": "^8.3.4",
+    "c8": "^7.12.0",
+    "chai": "^4.3.3",
+    "dotenv": "^16.0.3",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.1",
+    "json5": "^2.2.0",
+    "minimatch": "^5.0.1",
+    "mocha": "^10.0.0",
+    "npm-run-all": "^4.1.5",
+    "pirates": "^4.0.1",
+    "puppeteer": "^18.0.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.57.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-standard": "^12.0.1",
+    "tslib": "^2.3.1",
+    "typedoc": "^0.23.0",
+    "typedoc-plugin-markdown": "^3.11.0",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "@i3m/wallet-desktop-openapi": "^1.3.4",

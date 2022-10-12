@@ -1,0 +1,70 @@
+# Class: ConsoleToast
+
+## Implements
+
+- [`Toast`](../interfaces/Toast.md)
+
+## Table of contents
+
+### Constructors
+
+- [constructor](ConsoleToast.md#constructor)
+
+### Methods
+
+- [close](ConsoleToast.md#close)
+- [show](ConsoleToast.md#show)
+
+## Constructors
+
+### constructor
+
+• **new ConsoleToast**()
+
+## Methods
+
+### close
+
+▸ **close**(`toastId`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `toastId` | `string` |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+Toast.close
+
+#### Defined in
+
+src/ts/impl/toast/console-toast.ts:15
+
+___
+
+### show
+
+▸ **show**(`toast`): `void`
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `toast` | [`ToastOptions`](../interfaces/ToastOptions.md) |
+
+#### Returns
+
+`void`
+
+#### Implementation of
+
+Toast.show
+
+#### Defined in
+
+src/ts/impl/toast/console-toast.ts:11

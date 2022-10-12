@@ -1,0 +1,387 @@
+# Interface: Wallet
+
+## Implemented by
+
+- [`BaseWallet`](../classes/BaseWallet.md)
+
+## Table of contents
+
+### Properties
+
+- [call](Wallet.md#call)
+- [deleteIdentity](Wallet.md#deleteidentity)
+- [deleteResource](Wallet.md#deleteresource)
+- [getIdentities](Wallet.md#getidentities)
+- [getResources](Wallet.md#getresources)
+- [wipe](Wallet.md#wipe)
+
+### Methods
+
+- [didJwtVerify](Wallet.md#didjwtverify)
+- [identityCreate](Wallet.md#identitycreate)
+- [identityDeployTransaction](Wallet.md#identitydeploytransaction)
+- [identityInfo](Wallet.md#identityinfo)
+- [identityList](Wallet.md#identitylist)
+- [identitySelect](Wallet.md#identityselect)
+- [identitySign](Wallet.md#identitysign)
+- [providerinfo](Wallet.md#providerinfo)
+- [resourceCreate](Wallet.md#resourcecreate)
+- [resourceList](Wallet.md#resourcelist)
+- [selectiveDisclosure](Wallet.md#selectivedisclosure)
+- [transactionDeploy](Wallet.md#transactiondeploy)
+
+## Properties
+
+### call
+
+• **call**: (`functionMetadata`: [`WalletFunctionMetadata`](WalletFunctionMetadata.md)) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`functionMetadata`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `functionMetadata` | [`WalletFunctionMetadata`](WalletFunctionMetadata.md) |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:7
+
+___
+
+### deleteIdentity
+
+• **deleteIdentity**: (`did`: `string`) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`did`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `did` | `string` |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:13
+
+___
+
+### deleteResource
+
+• **deleteResource**: (`id`: `string`) => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (`id`): `Promise`<`void`\>
+
+##### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `id` | `string` |
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:12
+
+___
+
+### getIdentities
+
+• **getIdentities**: () => `Promise`<{ `[did: string]`: [`Identity`](../API.md#identity);  }\>
+
+#### Type declaration
+
+▸ (): `Promise`<{ `[did: string]`: [`Identity`](../API.md#identity);  }\>
+
+##### Returns
+
+`Promise`<{ `[did: string]`: [`Identity`](../API.md#identity);  }\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:10
+
+___
+
+### getResources
+
+• **getResources**: () => `Promise`<{ `[id: string]`: [`Resource`](../API.md#resource);  }\>
+
+#### Type declaration
+
+▸ (): `Promise`<{ `[id: string]`: [`Resource`](../API.md#resource);  }\>
+
+##### Returns
+
+`Promise`<{ `[id: string]`: [`Resource`](../API.md#resource);  }\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:9
+
+___
+
+### wipe
+
+• **wipe**: () => `Promise`<`void`\>
+
+#### Type declaration
+
+▸ (): `Promise`<`void`\>
+
+##### Returns
+
+`Promise`<`void`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:15
+
+## Methods
+
+### didJwtVerify
+
+▸ **didJwtVerify**(`requestBody`): `Promise`<`VerificationOutput`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `requestBody` | `RequestBody` |
+
+#### Returns
+
+`Promise`<`VerificationOutput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:27
+
+___
+
+### identityCreate
+
+▸ **identityCreate**(`requestBody`): `Promise`<`IdentityCreateOutput`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `requestBody` | `IdentityCreateInput` |
+
+#### Returns
+
+`Promise`<`IdentityCreateOutput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:18
+
+___
+
+### identityDeployTransaction
+
+▸ **identityDeployTransaction**(`pathParameters`, `requestBody`): `Promise`<`Receipt`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pathParameters` | `PathParameters` |
+| `requestBody` | `Transaction` |
+
+#### Returns
+
+`Promise`<`Receipt`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:22
+
+___
+
+### identityInfo
+
+▸ **identityInfo**(`pathParameters`): `Promise`<`IdentityData`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pathParameters` | `PathParameters` |
+
+#### Returns
+
+`Promise`<`IdentityData`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:21
+
+___
+
+### identityList
+
+▸ **identityList**(`queryParameters`): `Promise`<`IdentityListInput`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `queryParameters` | `QueryParameters` |
+
+#### Returns
+
+`Promise`<`IdentityListInput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:17
+
+___
+
+### identitySelect
+
+▸ **identitySelect**(`queryParameters`): `Promise`<`IdentitySelectOutput`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `queryParameters` | `QueryParameters` |
+
+#### Returns
+
+`Promise`<`IdentitySelectOutput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:19
+
+___
+
+### identitySign
+
+▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`SignOutput`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pathParameters` | `PathParameters` |
+| `requestBody` | `SignInput` |
+
+#### Returns
+
+`Promise`<`SignOutput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:20
+
+___
+
+### providerinfo
+
+▸ **providerinfo**(): `Promise`<`ProviderData`\>
+
+#### Returns
+
+`Promise`<`ProviderData`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:28
+
+___
+
+### resourceCreate
+
+▸ **resourceCreate**(`requestBody`): `Promise`<`ResourceId`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `requestBody` | `VerifiableCredential` |
+
+#### Returns
+
+`Promise`<`ResourceId`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:24
+
+___
+
+### resourceList
+
+▸ **resourceList**(): `Promise`<`ResourceListOutput`\>
+
+#### Returns
+
+`Promise`<`ResourceListOutput`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:23
+
+___
+
+### selectiveDisclosure
+
+▸ **selectiveDisclosure**(`pathParameters`): `Promise`<`$200`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `pathParameters` | `PathParameters` |
+
+#### Returns
+
+`Promise`<`$200`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:25
+
+___
+
+### transactionDeploy
+
+▸ **transactionDeploy**(`requestBody`): `Promise`<`$200`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `requestBody` | `SignedTransaction` |
+
+#### Returns
+
+`Promise`<`$200`\>
+
+#### Defined in
+
+src/ts/wallet/wallet.ts:26

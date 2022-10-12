@@ -1,16 +1,32 @@
+[![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-green.svg)](LICENSE)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
 # @i3m/server-wallet
 
 Get a ready-to-go Wallet requiring no user interaction and using a simple file to store wallet data. It should be used only when no human interaction is possible.
 
-## Install
+## Usage
+
+`@i3m/server-wallet` can be imported to your project with `npm`:
 
 ```console
 npm install @i3m/server-wallet
 ```
 
-## Use
+Then either require (Node.js CJS):
 
-The server wallet uses a file as storage, Optional `filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
+```javascript
+const serverWallet = require('@i3m/server-wallet')
+```
+
+or import (JavaScript ES module):
+
+```javascript
+import * as serverWallet from '@i3m/server-wallet'
+```
+
+The server wallet uses a file as storage. Optional `filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
 
 The wallet's storage-file can be encrypted for added security by passing an optional `password`.
 
@@ -77,3 +93,7 @@ if (verification.verification === 'success') {
   // failed with error msg in verification.error
 }
 ```
+
+## API reference documentation
+
+[Check the API](./docs/API.md)
