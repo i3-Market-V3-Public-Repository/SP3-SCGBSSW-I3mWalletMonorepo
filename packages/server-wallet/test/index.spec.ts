@@ -23,7 +23,7 @@ describe('@i3m/server-wallet', () => {
   })
 
   describe('get DLT provider data', () => {
-    it('should get the DLT provider darta', async () => {
+    it('should get the DLT provider data', async () => {
       const providerData = await wallet.providerinfo()
       debug('Provider data:\n' + JSON.stringify(providerData, undefined, 2))
       expect(providerData).toBeDefined()

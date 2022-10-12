@@ -5,7 +5,7 @@ build
 release
 
 # Test files
-test
+./test
 **/*.spec.ts
 __tests__
 jest*.js
