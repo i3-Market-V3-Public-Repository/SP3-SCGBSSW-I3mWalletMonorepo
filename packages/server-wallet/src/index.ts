@@ -1,11 +1,10 @@
-import { NullDialog, FileStore, ConsoleToast } from '@i3m/base-wallet'
+import { ConsoleToast, FileStore, NullDialog } from '@i3m/base-wallet'
 import { homedir } from 'os'
 import { join } from 'path'
 
-import walletBuilder from '@i3m/bok-wallet'
-import { mkdirSync } from 'fs'
-import { BokWallet } from '@i3m/bok-wallet/types'
+import walletBuilder, { BokWallet } from '@i3m/bok-wallet'
 import { BokWalletOptions } from '@i3m/bok-wallet/types/types'
+import { mkdirSync } from 'fs'
 
 export interface ServerWallet extends BokWallet {
   dialog: NullDialog

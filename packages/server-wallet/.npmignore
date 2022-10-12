@@ -1,6 +1,44 @@
-node_modules
-jest.config.js
-.env
+# Build scripts
+build
+
+# Releases
+release
+
+# Test files
 test
-tsconfig.*
+**/*.spec.ts
+__tests__
+jest*.js
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Output of 'npm pack'
 *.tgz
+
+# Visual Studio Code
+.vscode
+
+# IntelliJ
+.idea
+
+# MYC output
+.nyc_output
+coverage
+
+# GitHub
+.github
+
+# tsconfig
+tsconfig*.json
+
+# SRC docs
+src/docs
+
+# Test temporal files
+.mocha-ts
+
+# TO-DO
+TO-DO

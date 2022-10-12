@@ -31,7 +31,7 @@ export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, Http
         body
       }
     } else {
-      const http: HttpType = require('http') // eslint-disable-line
+      const http: HttpType = await import('http')
       const resp = await new Promise<HttpResponse>(resolve => {
         const postData = httpReq.body as string
         const req = http.request({

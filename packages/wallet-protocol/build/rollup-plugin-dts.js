@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from 'fs'
+import { mkdirSync, readFileSync, writeFileSync } from 'fs'
 import ts from 'typescript'
 import { join, dirname } from 'path'
 import { sync } from 'rimraf'

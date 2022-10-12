@@ -3,7 +3,7 @@ import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
 
-import { ServerWallet, serverWalletBuilder } from '../src'
+import { ServerWallet, serverWalletBuilder } from '..'
 
 const debug = Debug('@i3m/server-wallet:test')
 

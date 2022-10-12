@@ -4,9 +4,9 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "build:ts": "tsc",
+    "build:ts": "tsc --project tsconfig.build.json ",
     "build": "run-s build:ts",
-    "build:watch": "tsc -w --preserveWatchOutput --project tsconfig.json",
+    "build:watch": "tsc -w --preserveWatchOutput --project tsconfig.build.json ",
     "test": "jest --config=jest.config.js --coverage=false",
     "test:watch": "jest --config=jest.config.js --coverage=false --watch"
   },

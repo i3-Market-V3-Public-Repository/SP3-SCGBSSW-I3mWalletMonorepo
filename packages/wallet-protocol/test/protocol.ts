@@ -1,9 +1,7 @@
-
+import * as _pkg from '#pkg'
 import http from 'http'
 
 const { WalletProtocol, HttpInitiatorTransport, HttpResponderTransport, constants, Session } = _pkg
-
-type HttpType = typeof http
 
 describe('Protocol execution using HTTP', function () {
   if (IS_BROWSER) {
@@ -11,10 +9,10 @@ describe('Protocol execution using HTTP', function () {
     return
   }
 
-  const http: HttpType = require('http') // eslint-disable-line
+  // const http: HttpType = require('http') // eslint-disable-line
 
   const responderTransport = new HttpResponderTransport({
-    port: constants.INITIAL_PORT + 24
+    port: constants.INITIAL_PORT as number + 24
   })
   responderTransport.use((req: any, res: any) => {
     chai.expect(req.walletProtocol).to.be.equal(true)
@@ -47,7 +45,7 @@ describe('Protocol execution using HTTP', function () {
     }
   })
   const initiator = new WalletProtocol(initiatorTransport)
-  let session: _pkgTypes.Session<_pkgTypes.HttpInitiatorTransport> | undefined
+  let session: _pkg.Session<_pkg.HttpInitiatorTransport> | undefined
   initiator.on('masterKey', (mkey: any) => {
     console.log('master key', mkey.toJSON())
   })
@@ -64,7 +62,7 @@ describe('Protocol execution using HTTP', function () {
   it('should run properly', async () => {
     await Promise.all([
       responder.run(),
-      initiator.run().then((s: _pkgTypes.Session<any>) => {
+      initiator.run().then((s: _pkg.Session<any>) => {
         session = s
       })
     ])

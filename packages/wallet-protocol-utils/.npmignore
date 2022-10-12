@@ -7,6 +7,8 @@ release
 # Test files
 test
 **/*.spec.ts
+__tests__
+jest*.js
 
 # Logs
 logs
@@ -30,10 +32,13 @@ coverage
 .github
 
 # tsconfig
-tsconfig.json
+tsconfig*.json
 
 # SRC docs
 src/docs
 
 # Test temporal files
 .mocha-ts
+
+# TO-DO
+TO-DO

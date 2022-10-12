@@ -1,15 +1,16 @@
+import * as _pkg from '#pkg'
 const { constants, ConnectionString } = _pkg
 
 describe('ConnectionString', function () {
-  let connString: _pkgTypes.ConnectionString
+  let connString: _pkg.ConnectionString
   const portOffset = 12
 
   before(async () => {
-    connString = await ConnectionString.generate(constants.INITIAL_PORT + portOffset, constants.DEFAULT_RANDOM_LENGTH)
+    connString = await ConnectionString.generate(constants.INITIAL_PORT as number + portOffset, constants.DEFAULT_RANDOM_LENGTH)
   })
 
   it('should return the proper port', async function () {
-    chai.expect(connString.extractPort()).to.equal(constants.INITIAL_PORT + portOffset)
+    chai.expect(connString.extractPort()).to.equal(constants.INITIAL_PORT as number + portOffset)
   })
 
   it('should converted to string properly', async function () {

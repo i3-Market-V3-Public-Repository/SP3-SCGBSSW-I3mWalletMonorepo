@@ -2,6 +2,7 @@
 /dist
 /docs
 /types
+.vscode
 
 # Logs
 logs
