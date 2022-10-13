@@ -21,8 +21,6 @@
     "types": "ts-node build/openApiTypes.ts",
     "lint": "ts-standard --fix",
     "postbuild": "npm run lint",
-    "prepublishOnly": "npm run build",
-    "postversion:old": "run-s build commit",
     "test": "echo \"Warning: You must specify tests for this package\""
   },
   "repository": {

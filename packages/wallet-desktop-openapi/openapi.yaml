@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  version: 1.4.0
+  version: 1.4.1
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
