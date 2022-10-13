@@ -43,7 +43,7 @@ Toast.close
 
 #### Defined in
 
-[src/ts/impl/toast/console-toast.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f95e420/packages/base-wallet/src/ts/impl/toast/console-toast.ts#L15)
+[src/ts/impl/toast/console-toast.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/impl/toast/console-toast.ts#L15)
 
 ___
 
@@ -67,4 +67,4 @@ Toast.show
 
 #### Defined in
 
-[src/ts/impl/toast/console-toast.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f95e420/packages/base-wallet/src/ts/impl/toast/console-toast.ts#L11)
+[src/ts/impl/toast/console-toast.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/impl/toast/console-toast.ts#L11)
