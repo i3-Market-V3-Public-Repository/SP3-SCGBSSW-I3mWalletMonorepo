@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 
-import chalk from 'chalk'
 import _ from 'lodash'
 import SwaggerParser from '@apidevtools/swagger-parser'
 import { OpenAPIV3 } from 'openapi-types'
@@ -78,11 +77,11 @@ const bundle = async (): Promise<void> => {
   const jsonBundle = path.join(rootDir, pkgJson.main)
   api.info.version = pkgJson.version
   fs.writeFileSync(jsonBundle, JSON.stringify(api, null, 2))
-  console.log(chalk.green(`OpenAPI Spec JSON bundle written to -> ${jsonBundle}`))
+  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundle}`)
 
   const yamlBundle = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
   fs.writeFileSync(yamlBundle, jsYaml.dump(api))
-  console.log(chalk.green(`OpenAPI Spec YAML bundle written to -> ${yamlBundle}`))
+  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec YAML bundle written to -> ${yamlBundle}`)
 }
 
 export default bundle

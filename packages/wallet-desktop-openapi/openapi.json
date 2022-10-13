@@ -961,23 +961,6 @@
         },
         "additionalProperties": true
       },
-      "ApiError": {
-        "type": "object",
-        "title": "Error",
-        "required": [
-          "code",
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      },
       "did": {
         "title": "DID",
         "type": "string",
@@ -1012,6 +995,23 @@
         "required": [
           "did"
         ]
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
       }
     }
   }

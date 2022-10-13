@@ -16,10 +16,9 @@ import { BaseWalletModel, Store } from '../app'
 
 //
 import { DIDResolverPlugin } from '@veramo/did-resolver'
-import didResolver from 'did-resolver'
-import ethrDidResolverPkg from 'ethr-did-resolver'
-
-import { getResolver as webDidResolver } from 'web-did-resolver'
+import { Resolver } from 'did-resolver'
+import { getResolver as ethrDidGetResolver } from 'ethr-did-resolver'
+import { getResolver as webDidGetResolver } from 'web-did-resolver'
 
 // SDR
 import { ISelectiveDisclosure, SelectiveDisclosure, SdrMessageHandler } from '@veramo/selective-disclosure'
@@ -32,9 +31,6 @@ import DIDWalletStore from './did-wallet-store'
 import KeyWalletManagementSystem from './key-wallet-management-system'
 import KeyWalletStore from './key-wallet-store'
 import { WalletError } from '../errors'
-
-const { Resolver } = didResolver
-const ethrDidResolver = ethrDidResolverPkg.getResolver
 
 type PluginMap =
   IDIDManager & IKeyManager & IResolver & IMessageHandler &
@@ -67,16 +63,17 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   constructor (store: Store<T>, keyWallet: KeyWallet, providersData: Record<string, ProviderData>) {
     this.providersData = providersData
 
-    const resolver = new Resolver({
-      ...ethrDidResolver({
-        networks: Object.values(this.providersData)
-          .map(({ network, rpcUrl }) => ({
-            name: network,
-            rpcUrl
-          }))
-      }),
-      ...webDidResolver()
+    const ethrDidResolver = ethrDidGetResolver({
+      networks: Object.values(this.providersData)
+        .map(({ network, rpcUrl }) => ({
+          name: network,
+          rpcUrl
+        }))
     })
+
+    const webDidResolver = webDidGetResolver()
+
+    const resolver = new Resolver({ ...ethrDidResolver, ...webDidResolver as any })
 
     this.providers = {
       'did:web': new WebDIDProvider({ defaultKms: this.defaultKms })

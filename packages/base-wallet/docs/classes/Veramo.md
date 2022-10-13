@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L67)
+[src/ts/veramo/veramo.ts:63](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L63)
 
 ## Properties
 
@@ -55,7 +55,7 @@
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:62](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L62)
+[src/ts/veramo/veramo.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L58)
 
 ___
 
@@ -65,7 +65,7 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L64)
+[src/ts/veramo/veramo.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L60)
 
 ___
 
@@ -75,7 +75,7 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:63](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L63)
+[src/ts/veramo/veramo.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L59)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L65)
+[src/ts/veramo/veramo.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L61)
 
 ## Methods
 
@@ -105,4 +105,4 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/veramo/veramo.ts#L122)
+[src/ts/veramo/veramo.ts:119](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/veramo/veramo.ts#L119)

@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/errors.ts#L11)
+[src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/errors.ts#L11)
 
 ## Properties
 
@@ -55,7 +55,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/errors.ts#L8)
+[src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/errors.ts#L8)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/errors.ts#L9)
+[src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/errors.ts#L9)
 
 ___
 
@@ -142,7 +142,7 @@ Error.prepareStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:11
+node_modules/@types/node/ts4.8/globals.d.ts:11
 
 ___
 
@@ -156,7 +156,7 @@ Error.stackTraceLimit
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:13
+node_modules/@types/node/ts4.8/globals.d.ts:13
 
 ## Methods
 
@@ -183,4 +183,4 @@ Error.captureStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:4
+node_modules/@types/node/ts4.8/globals.d.ts:4

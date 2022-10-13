@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { Wallet, TestDialog, TestStore, TestToast, Veramo, Resource } from '@i3m/base-wallet'
+import { Wallet, NullDialog, RamStore, ConsoleToast, Veramo, Resource } from '@i3m/base-wallet'
 import Debug from 'debug'
 
 import swBuilder from '#pkg'
 
-const debug = Debug('i3-market:sw-wallet:test')
+const debug = Debug('i3-market:bok-wallet:test')
 
 describe('@i3m/sw-wallet', () => {
-  const dialog = new TestDialog()
-  const store = new TestStore()
-  const toast = new TestToast()
+  const dialog = new NullDialog()
+  const store = new RamStore()
+  const toast = new ConsoleToast()
   let wallet: Wallet
   let veramo: Veramo
 

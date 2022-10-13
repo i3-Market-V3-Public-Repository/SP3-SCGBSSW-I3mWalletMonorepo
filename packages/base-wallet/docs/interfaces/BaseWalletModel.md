@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[src/ts/app/store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/app/store.ts#L11)
+[src/ts/app/store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/app/store.ts#L11)
 
 ___
 
@@ -33,4 +33,4 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7a4bb44/packages/base-wallet/src/ts/app/store.ts#L8)
+[src/ts/app/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/66def55/packages/base-wallet/src/ts/app/store.ts#L8)

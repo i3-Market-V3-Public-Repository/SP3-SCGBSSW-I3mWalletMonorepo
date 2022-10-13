@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 
-import chalk from 'chalk'
 import dtsGenerator, { parseSchema } from 'dtsgenerator'
 import ts from 'typescript'
 
@@ -49,7 +48,7 @@ const generateDTS = async (): Promise<void> => {
       if (err !== null) {
         return console.trace(err)
       }
-      console.log(chalk.green(`${openApiJsonPath}: TS definitions generated in -> ${typesFilePath}`))
+      console.log('\x1b[32m%s\x1b[0m', `${openApiJsonPath}: TS definitions generated in -> ${typesFilePath}`)
     }
   )
 }
