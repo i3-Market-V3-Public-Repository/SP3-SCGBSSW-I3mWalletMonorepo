@@ -17,25 +17,25 @@ describe('@i3m/server-wallet', function () {
   let veramo: Veramo
   let jwt: string
 
-  before(async () => {
+  before(async function () {
     wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
     veramo = wallet.veramo
   })
 
-  after(async () => {
+  after(async function () {
     await wallet.wipe()
   })
 
-  describe('get DLT provider data', () => {
-    it('should get the DLT provider data', async () => {
+  describe('get DLT provider data', function () {
+    it('should get the DLT provider data', async function () {
       const providerData = await wallet.providerinfo()
       debug('Provider data:\n' + JSON.stringify(providerData, undefined, 2))
       chai.expect(providerData).to.not.be.undefined
     })
   })
 
-  describe('identities', () => {
-    it('should create identities', async () => {
+  describe('identities', function () {
+    it('should create identities', async function () {
       const resp = await wallet.identityCreate({
         alias: 'alice'
       })
@@ -53,25 +53,25 @@ describe('@i3m/server-wallet', function () {
       debug('DID for \'bob\' created: ', resp2.did)
     })
 
-    it('Must be able to restore account from private key', async () => {
+    it('Must be able to restore account from private key', async function () {
       const privKey = process.env.PRIVATE_KEY
       if (privKey === undefined) {
-        throw new Error('You need to setup a PRIVATE_KEY in your .env with enough funds')
+        throw new Error('You need to setup a PRIVATE_KEY as an env variable')
       }
-      console.log('Importing private key: ' + privKey.substring(0, 6) + '...')
+      debug('Importing private key: ', privKey.substring(0, 6) + '...')
       await wallet.importDid({
         alias: 'importedKey',
         privateKey: privKey
       })
     })
 
-    it('should list identities', async () => {
+    it('should list identities', async function () {
       const ddos = await wallet.identityList({})
       debug('List of DIDs: ', ddos)
       chai.expect(ddos.length).to.equal(3)
     })
 
-    it('should generate a signed JWT', async () => {
+    it('should generate a signed JWT', async function () {
       const header = { headerField1: 'hello' }
       const payload = { payloadField1: 'yellow', payloadField2: 'brown' }
       jwt = (await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { header, payload } })).signature
@@ -79,13 +79,13 @@ describe('@i3m/server-wallet', function () {
       debug('generated JWT: ' + jwt)
     })
 
-    it('a JWT with a DID (that is resolved in the connected DLT) as issuer can be verified by the wallet', async () => {
+    it('a JWT with a DID (that is resolved in the connected DLT) as issuer can be verified by the wallet', async function () {
       const verification = await wallet.didJwtVerify({ jwt })
       debug('verification: ' + JSON.stringify(verification, undefined, 2))
       chai.expect(verification.verification).to.equal('success')
     })
 
-    it('verification of the JWT will also succeed if a expected claim is found in the payload', async () => {
+    it('verification of the JWT will also succeed if a expected claim is found in the payload', async function () {
       const verification = await wallet.didJwtVerify({
         jwt,
         expectedPayloadClaims: {
@@ -97,7 +97,7 @@ describe('@i3m/server-wallet', function () {
       chai.expect(verification.verification).to.equal('success')
     })
 
-    it('verification of the JWT will fail if a expected claim is not in the payload', async () => {
+    it('verification of the JWT will fail if a expected claim is not in the payload', async function () {
       const verification = await wallet.didJwtVerify({
         jwt,
         expectedPayloadClaims: {
@@ -108,7 +108,7 @@ describe('@i3m/server-wallet', function () {
       chai.expect(verification.verification).to.equal('failed')
     })
 
-    it('verification of the JWT will fail if the signature is invalid', async () => {
+    it('verification of the JWT will fail if the signature is invalid', async function () {
       const verification = await wallet.didJwtVerify({
         jwt: jwt.slice(0, -10) + 'aAbBcCdDeE'
       })
@@ -117,10 +117,10 @@ describe('@i3m/server-wallet', function () {
     })
   })
 
-  describe('resources', () => {
+  describe('resources', function () {
     let credential: Resource['resource']
 
-    before(async () => {
+    before(async function () {
       credential = await veramo.agent.createVerifiableCredential({
         credential: {
           issuer: { id: identities.bob },
@@ -134,7 +134,7 @@ describe('@i3m/server-wallet', function () {
       }) as Resource['resource'] // TODO: Force type.
     })
 
-    it('should store verifiable credentials', async () => {
+    it('should store verifiable credentials', async function () {
       const resource = await wallet.resourceCreate({
         type: 'VerifiableCredential',
         resource: credential
@@ -143,17 +143,17 @@ describe('@i3m/server-wallet', function () {
       chai.expect(resource.id).to.not.be.undefined
     })
 
-    it('should list created resources', async () => {
+    it('should list created resources', async function () {
       const resources = await wallet.resourceList()
       chai.expect(resources.length).to.equal(1)
     })
   })
 
-  describe('selectiveDisclosure', () => {
+  describe('selectiveDisclosure', function () {
     let sdrRespJwt: string
     let sdr: string
 
-    before(async () => {
+    before(async function () {
       // Generate a sdr generated on the fly
       sdr = await veramo.agent.createSelectiveDisclosureRequest({
         data: {
@@ -165,7 +165,7 @@ describe('@i3m/server-wallet', function () {
       })
     })
 
-    it('should resolve selective disclosure requests', async () => {
+    it('should resolve selective disclosure requests', async function () {
       const dialog = wallet.dialog
       await dialog.setValues({
         // Select dispacth claim with the last identity
@@ -173,7 +173,7 @@ describe('@i3m/server-wallet', function () {
         selectMap (values: any[]) {
           return values[values.length - 1]
         }
-      }, async () => {
+      }, async function () {
         const sdrResp = await wallet.selectiveDisclosure({ jwt: sdr })
         sdrRespJwt = sdrResp.jwt as string
         chai.expect(sdrRespJwt).to.not.be.undefined
@@ -181,7 +181,7 @@ describe('@i3m/server-wallet', function () {
       })
     })
 
-    it('should respond with a proper signature', async () => {
+    it('should respond with a proper signature', async function () {
       await veramo.agent.handleMessage({
         raw: sdrRespJwt
       })

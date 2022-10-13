@@ -438,16 +438,32 @@ export class BaseWallet<
   }
 
   // API METHODS
+
+  /**
+   * Gets a list of identities managed by this wallet
+   * @returns
+   */
   async getIdentities (): Promise<BaseWalletModel['identities']> {
     return await this.store.get('identities', {})
   }
 
+  /**
+   * Returns a list of DIDs managed by this wallet
+   *
+   * @param queryParameters. You can filter by alias.
+   * @returns
+   */
   async identityList (queryParameters: WalletPaths.IdentityList.QueryParameters): Promise<WalletPaths.IdentityList.Responses.$200> {
     const { alias } = queryParameters
     const identities = await this.veramo.agent.didManagerFind({ alias })
     return identities.map(ddo => ({ did: ddo.did }))
   }
 
+  /**
+   * Creates an identity
+   * @param requestBody
+   * @returns the DID of the created identity
+   */
   async identityCreate (requestBody: WalletPaths.IdentityCreate.RequestBody): Promise<WalletPaths.IdentityCreate.Responses.$201> {
     const { alias } = requestBody
     const { did } = await this.veramo.agent.didManagerCreate({
@@ -462,6 +478,12 @@ export class BaseWallet<
     return { did }
   }
 
+  /**
+   * Signs using the identity set in pathParameters. Currently suporting RAW signatures of base64url-encoded data, arbritrary JSON objects (it returns a JWT); and transactions for the DLT.
+   * @param pathParameters
+   * @param requestBody
+   * @returns
+   */
   async identitySign (pathParameters: WalletPaths.IdentitySign.PathParameters, requestBody: WalletPaths.IdentitySign.RequestBody): Promise<WalletPaths.IdentitySign.Responses.$200> {
     let response: WalletPaths.IdentitySign.Responses.$200
     switch (requestBody.type) {
@@ -522,6 +544,12 @@ export class BaseWallet<
     return response
   }
 
+  /**
+   * Returns info regarding an identity. It includes DLT addresses bounded to the identity
+   *
+   * @param pathParameters
+   * @returns
+   */
   async identityInfo (pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200> {
     const ddo = await this.veramo.agent.didManagerGet({
       did: pathParameters.did
@@ -539,10 +567,18 @@ export class BaseWallet<
     throw new Error('Method not implemented.')
   }
 
+  /**
+   * Gets a resource securey stored in the wallet's vaulr. It is the place where to find stored verfiable credentials.
+   * @returns
+   */
   async getResources (): Promise<BaseWalletModel['resources']> {
     return await this.store.get('resources', {})
   }
 
+  /**
+   * Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
+   * @returns
+   */
   async resourceList (): Promise<WalletPaths.ResourceList.Responses.$200> {
     const resources = await this.getResources()
     return Object.keys(resources).map(key => ({
@@ -550,6 +586,10 @@ export class BaseWallet<
     }))
   }
 
+  /**
+   * Deletes a given resource
+   * @param id
+   */
   async deleteResource (id: string): Promise<void> {
     const confirmation = await this.dialog.confirmation({
       message: 'Once deleted you will not be able to recover it. Proceed?',
@@ -561,6 +601,10 @@ export class BaseWallet<
     }
   }
 
+  /**
+   * Deletes a given identity (DID)
+   * @param did
+   */
   async deleteIdentity (did: string): Promise<void> {
     const confirmation = await this.dialog.confirmation({
       message: 'Once deleted you will not be able to recover it. Proceed?',
@@ -572,6 +616,12 @@ export class BaseWallet<
     }
   }
 
+  /**
+   * Securely stores in the wallet a new resource. Currently only supporting verifiable credentials, which are properly verified before storing them.
+   *
+   * @param requestBody
+   * @returns and identifier of the created resource
+   */
   async resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201> {
     const resource = requestBody
 
@@ -602,10 +652,15 @@ export class BaseWallet<
       id: uuid()
     }
     const returnResource = Object.assign(resource, resourceId)
-    await this.store.set(`resources.${resourceId.id as string}`, returnResource)
+    await this.store.set(`resources.${resourceId.id}`, returnResource)
     return resourceId
   }
 
+  /**
+   * Initiates the flow of choosing which credentials to present after a selective disclosure request.
+   * @param pathParameters
+   * @returns
+   */
   async selectiveDisclosure (pathParameters: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200> {
     const sdrRaw = pathParameters.jwt
     const sdrMessage = await this.veramo.agent.handleMessage({
@@ -627,6 +682,11 @@ export class BaseWallet<
     }
   }
 
+  /**
+   * Deploys a transaction to the connected DLT
+   * @param requestBody
+   * @returns
+   */
   async transactionDeploy (requestBody: WalletComponents.Schemas.SignedTransaction): Promise<WalletPaths.TransactionDeploy.Responses.$200> {
     await this.executeTransaction({
       transaction: requestBody.transaction
@@ -634,6 +694,15 @@ export class BaseWallet<
     return {}
   }
 
+  /**
+   * Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
+   *
+   * The Wallet only supports the 'ES256K1' algorithm.
+   *
+   * Useful to verify JWT created by another wallet instance.
+   * @param requestBody
+   * @returns
+   */
   async didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
     let decodedJwt
     try {
@@ -683,6 +752,10 @@ export class BaseWallet<
     }
   }
 
+  /**
+   * Retrieves information regarding the current connection to the DLT.
+   * @returns
+   */
   async providerinfo (): Promise<WalletPaths.Providerinfo.Responses.$200> {
     const providerData = this.veramo.providersData[this.provider]
     return {
