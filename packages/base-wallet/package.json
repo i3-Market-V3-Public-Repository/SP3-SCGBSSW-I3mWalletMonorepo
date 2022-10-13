@@ -54,7 +54,7 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
-    "version": "node build/build.docs.cjs && git:add",
+    "version": "node build/build.docs.cjs && git add -A ",
     "test": "echo \"Warning: You must specify tests for this package\"",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
