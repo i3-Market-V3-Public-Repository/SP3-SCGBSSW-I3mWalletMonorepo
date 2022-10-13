@@ -1,6 +1,6 @@
 {
   "name": "@i3m/base-wallet",
-  "version": "1.3.4",
+  "version": "1.4.0",
   "description": "The abstract class defining an i3-market wallet",
   "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "keywords": [
@@ -54,7 +54,7 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
-    "version": "run-s docs git:add",
+    "version": "node build/build.docs.cjs && git:add",
     "test": "echo \"Warning: You must specify tests for this package\"",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
@@ -113,7 +113,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.3.4",
+    "@i3m/wallet-desktop-openapi": "^1.4.0",
     "@veramo/core": "^1.2.0",
     "@veramo/credential-w3c": "^1.2.0",
     "@veramo/did-jwt": "^1.2.0",
