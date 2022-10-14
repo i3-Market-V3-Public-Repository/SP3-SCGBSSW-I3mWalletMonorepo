@@ -1,6 +1,6 @@
 {
   "name": "@i3m/non-repudiation-library",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data",
   "keywords": [
     "non-repudiation",
@@ -80,7 +80,7 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
-    "version": "run-s docs release git:add",
+    "version": "run-s docs git:add",
     "postversion": "git push --follow-tags",
     "test": "run-s test:node test:browser-headless",
     "test:browser": "npm run mocha-ts:browser",
