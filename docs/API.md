@@ -14,6 +14,8 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 
 - [EthersIoAgentDest](classes/EthersIoAgentDest.md)
 - [EthersIoAgentOrig](classes/EthersIoAgentOrig.md)
+- [I3mServerWalletAgentDest](classes/I3mServerWalletAgentDest.md)
+- [I3mServerWalletAgentOrig](classes/I3mServerWalletAgentOrig.md)
 - [I3mWalletAgentDest](classes/I3mWalletAgentDest.md)
 - [I3mWalletAgentOrig](classes/I3mWalletAgentOrig.md)
 - [NrError](classes/NrError.md)
@@ -46,7 +48,7 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 - [VerificationRequestPayload](interfaces/VerificationRequestPayload.md)
 - [VerificationResolutionPayload](interfaces/VerificationResolutionPayload.md)
 
-### Type aliases
+### Type Aliases
 
 - [ContractInterface](API.md#contractinterface)
 - [Dict](API.md#dict)
@@ -83,7 +85,7 @@ i3-Market implementation of the non-repudiation proofs of a data exchange
 - [verifyKeyPair](API.md#verifykeypair)
 - [verifyProof](API.md#verifyproof)
 
-## Type aliases
+## Type Aliases
 
 ### ContractInterface
 
@@ -107,7 +109,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L12)
+[src/ts/types.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L12)
 
 ___
 
@@ -117,7 +119,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L10)
+[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L10)
 
 ___
 
@@ -127,7 +129,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L8)
+[src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L8)
 
 ___
 
@@ -135,41 +137,36 @@ ___
 
 Ƭ **KeyLike**: `Object`
 
-KeyLike are runtime-specific classes representing asymmetric keys or symmetric secrets.
-These are instances of
-[CryptoKey](https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey) and additionally
-[KeyObject](https://nodejs.org/api/crypto.html#crypto_class_keyobject)
-in Node.js runtime.
+KeyLike are runtime-specific classes representing asymmetric keys or symmetric secrets. These are
+instances of [CryptoKey](https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey) and
+additionally [KeyObject](https://nodejs.org/api/crypto.html#class-keyobject) in Node.js runtime.
 [Uint8Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)
 instances are also accepted as symmetric secret representation only.
 
-[Key Import Functions](../modules/key_import.md#readme) can be used to import PEM,
-or JWK formatted asymmetric keys and certificates to these runtime-specific representations.
+[Key Import Functions](../modules/key_import.md#readme) can be used to import PEM, or JWK
+formatted asymmetric keys and certificates to these runtime-specific representations.
 
-In Node.js the
-[Buffer](https://nodejs.org/api/buffer.html#buffer_buffer) class is a subclass of Uint8Array
-and so Buffer can be provided for symmetric secrets as well.
+In Node.js the [Buffer](https://nodejs.org/api/buffer.html#buffer) class is a subclass of
+Uint8Array and so Buffer can be provided for symmetric secrets as well.
 
----
-
-[KeyObject](https://nodejs.org/api/crypto.html#crypto_class_keyobject) is a representation of a
-key/secret available in the Node.js runtime.
-In addition to the import functions of this library you may use the
-runtime APIs
-[crypto.createPublicKey](https://nodejs.org/api/crypto.html#crypto_crypto_createpublickey_key),
-[crypto.createPrivateKey](https://nodejs.org/api/crypto.html#crypto_crypto_createprivatekey_key), and
-[crypto.createSecretKey](https://nodejs.org/api/crypto.html#crypto_crypto_createsecretkey_key_encoding)
-to obtain a KeyObject from your existing key material.
+[KeyObject](https://nodejs.org/api/crypto.html#class-keyobject) is a representation of a
+key/secret available in the Node.js runtime. In addition to the import functions of this library
+you may use the runtime APIs
+[crypto.createPublicKey](https://nodejs.org/api/crypto.html#cryptocreatepublickeykey),
+[crypto.createPrivateKey](https://nodejs.org/api/crypto.html#cryptocreateprivatekeykey), and
+[crypto.createSecretKey](https://nodejs.org/api/crypto.html#cryptocreatesecretkeykey-encoding) to
+obtain a KeyObject from your existing key material.
 
 [CryptoKey](https://developer.mozilla.org/en-US/docs/Web/API/CryptoKey) is a representation of a
-key/secret available in the Browser and Deno runtimes.
-In addition to the import functions of this library you may use the
-[SubtleCrypto.importKey](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey) API
-to obtain a CryptoKey from your existing key material.
+key/secret available in the Browser and Web-interoperable runtimes. In addition to the import
+functions of this library you may use the
+[SubtleCrypto.importKey](https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto/importKey)
+API to obtain a CryptoKey from your existing key material.
 
----
+**`Example`**
 
-**`example`** Import a PEM-encoded SPKI Public Key
+Import a PEM-encoded SPKI Public Key
+
 ```js
 const algorithm = 'ES256'
 const spki = `-----BEGIN PUBLIC KEY-----
@@ -179,7 +176,10 @@ YJepMC+Q+Dd6RBmBiA41evUsNMwLeN+PNFqib+xwi9JkJ8qhZkq8Y/IzGg==
 const ecPublicKey = await jose.importSPKI(spki, algorithm)
 ```
 
-**`example`** Import a X.509 Certificate
+**`Example`**
+
+Import a X.509 Certificate
+
 ```js
 const algorithm = 'ES256'
 const x509 = `-----BEGIN CERTIFICATE-----
@@ -195,7 +195,10 @@ v+A1QWZMuTWqYt+uh/YSRNDn
 const ecPublicKey = await jose.importX509(x509, algorithm)
 ```
 
-**`example`** Import a PEM-encoded PKCS8 Private Key
+**`Example`**
+
+Import a PEM-encoded PKCS8 Private Key
+
 ```js
 const algorithm = 'ES256'
 const pkcs8 = `-----BEGIN PRIVATE KEY-----
@@ -206,20 +209,29 @@ l6kwL5D4N3pEGYGIDjV69Sw0zAt43480WqJv7HCL0mQnyqFmSrxj8jMa
 const ecPrivateKey = await jose.importPKCS8(pkcs8, algorithm)
 ```
 
-**`example`** Import a JSON Web Key (JWK)
-```js
-const ecPublicKey = await jose.importJWK({
-  crv: 'P-256',
-  kty: 'EC',
-  x: 'ySK38C1jBdLwDsNWKzzBHqKYEE5Cgv-qjWvorUXk9fw',
-  y: '_LeQBw07cf5t57Iavn4j-BqJsAD1dpoz8gokd3sBsOo'
-}, 'ES256')
+**`Example`**
 
-const rsaPublicKey = await jose.importJWK({
-  kty: 'RSA',
-  e: 'AQAB',
-  n: '12oBZRhCiZFJLcPg59LkZZ9mdhSMTKAQZYq32k_ti5SBB6jerkh-WzOMAO664r_qyLkqHUSp3u5SbXtseZEpN3XPWGKSxjsy-1JyEFTdLSYe6f9gfrmxkUF_7DTpq0gn6rntP05g2-wFW50YO7mosfdslfrTJYWHFhJALabAeYirYD7-9kqq9ebfFMF4sRRELbv9oi36As6Q9B3Qb5_C1rAzqfao_PCsf9EPsTZsVVVkA5qoIAr47lo1ipfiBPxUCCNSdvkmDTYgvvRm6ZoMjFbvOtgyts55fXKdMWv7I9HMD5HwE9uW839PWA514qhbcIsXEYSFMPMV6fnlsiZvQQ'
-}, 'PS256')
+Import a JSON Web Key (JWK)
+
+```js
+const ecPublicKey = await jose.importJWK(
+  {
+    crv: 'P-256',
+    kty: 'EC',
+    x: 'ySK38C1jBdLwDsNWKzzBHqKYEE5Cgv-qjWvorUXk9fw',
+    y: '_LeQBw07cf5t57Iavn4j-BqJsAD1dpoz8gokd3sBsOo',
+  },
+  'ES256',
+)
+
+const rsaPublicKey = await jose.importJWK(
+  {
+    kty: 'RSA',
+    e: 'AQAB',
+    n: '12oBZRhCiZFJLcPg59LkZZ9mdhSMTKAQZYq32k_ti5SBB6jerkh-WzOMAO664r_qyLkqHUSp3u5SbXtseZEpN3XPWGKSxjsy-1JyEFTdLSYe6f9gfrmxkUF_7DTpq0gn6rntP05g2-wFW50YO7mosfdslfrTJYWHFhJALabAeYirYD7-9kqq9ebfFMF4sRRELbv9oi36As6Q9B3Qb5_C1rAzqfao_PCsf9EPsTZsVVVkA5qoIAr47lo1ipfiBPxUCCNSdvkmDTYgvvRm6ZoMjFbvOtgyts55fXKdMWv7I9HMD5HwE9uW839PWA514qhbcIsXEYSFMPMV6fnlsiZvQQ',
+  },
+  'PS256',
+)
 ```
 
 #### Type declaration
@@ -230,7 +242,7 @@ const rsaPublicKey = await jose.importJWK({
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:89
+node_modules/jose/dist/types/types.d.ts:91
 
 ___
 
@@ -240,7 +252,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:170](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L170)
+[src/ts/types.ts:170](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L170)
 
 ___
 
@@ -250,7 +262,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L9)
+[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L9)
 
 ___
 
@@ -281,7 +293,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:168](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L168)
+[src/ts/types.ts:168](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L168)
 
 ## Variables
 
@@ -291,7 +303,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/constants.ts#L3)
+[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/constants.ts#L3)
 
 ___
 
@@ -301,7 +313,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/constants.ts#L1)
+[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/constants.ts#L1)
 
 ___
 
@@ -311,7 +323,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/constants.ts#L2)
+[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/constants.ts#L2)
 
 ___
 
@@ -321,7 +333,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/defaultDltConfig.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/defaultDltConfig.ts#L4)
+[src/ts/dlt/defaultDltConfig.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/defaultDltConfig.ts#L4)
 
 ## Functions
 
@@ -344,7 +356,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/timestamps.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/timestamps.ts#L3)
+[src/ts/utils/timestamps.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/timestamps.ts#L3)
 
 ___
 
@@ -375,7 +387,7 @@ a proof as a compact JWS formatted JWT string
 
 #### Defined in
 
-[src/ts/proofs/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/proofs/createProof.ts#L14)
+[src/ts/proofs/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/proofs/createProof.ts#L14)
 
 ___
 
@@ -401,7 +413,7 @@ the exchange id in hexadecimal
 
 #### Defined in
 
-[src/ts/exchange/exchangeId.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/exchange/exchangeId.ts#L13)
+[src/ts/exchange/exchangeId.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/exchange/exchangeId.ts#L13)
 
 ___
 
@@ -425,7 +437,7 @@ Generates a pair of JWK signing/verification keys
 
 #### Defined in
 
-[src/ts/crypto/generateKeys.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/generateKeys.ts#L16)
+[src/ts/crypto/generateKeys.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/generateKeys.ts#L17)
 
 ___
 
@@ -446,7 +458,7 @@ ___
 
 #### Defined in
 
-[src/ts/crypto/importJwk.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/importJwk.ts#L5)
+[src/ts/crypto/importJwk.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/importJwk.ts#L5)
 
 ___
 
@@ -466,7 +478,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/jsonSort.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/jsonSort.ts#L5)
+[src/ts/utils/jsonSort.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/jsonSort.ts#L5)
 
 ___
 
@@ -492,7 +504,7 @@ the plaintext
 
 #### Defined in
 
-[src/ts/crypto/jwe.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/jwe.ts#L37)
+[src/ts/crypto/jwe.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/jwe.ts#L37)
 
 ___
 
@@ -518,7 +530,7 @@ a Compact JWE
 
 #### Defined in
 
-[src/ts/crypto/jwe.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/jwe.ts#L14)
+[src/ts/crypto/jwe.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/jwe.ts#L14)
 
 ___
 
@@ -547,7 +559,7 @@ Decodes and optionally verifies a JWS, and returns the decoded header, payload.
 
 #### Defined in
 
-[src/ts/crypto/jwsDecode.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/jwsDecode.ts#L12)
+[src/ts/crypto/jwsDecode.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/jwsDecode.ts#L12)
 
 ___
 
@@ -573,7 +585,7 @@ a promise that resolves to the secret in JWK and raw hex string
 
 #### Defined in
 
-[src/ts/crypto/oneTimeSecret.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/oneTimeSecret.ts#L18)
+[src/ts/crypto/oneTimeSecret.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/oneTimeSecret.ts#L18)
 
 ___
 
@@ -593,7 +605,7 @@ ___
 
 #### Defined in
 
-[src/ts/exchange/checkAgreement.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/exchange/checkAgreement.ts#L14)
+[src/ts/exchange/checkAgreement.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/exchange/checkAgreement.ts#L14)
 
 ___
 
@@ -615,7 +627,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseHex.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/parseHex.ts#L3)
+[src/ts/utils/parseHex.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/parseHex.ts#L3)
 
 ___
 
@@ -636,7 +648,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/parseJwk.ts#L6)
+[src/ts/utils/parseJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/parseJwk.ts#L6)
 
 ▸ **parseJwk**(`jwk`, `stringify`): `Promise`<[`JWK`](interfaces/JWK.md)\>
 
@@ -653,7 +665,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseJwk.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/parseJwk.ts#L7)
+[src/ts/utils/parseJwk.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/parseJwk.ts#L7)
 
 ___
 
@@ -674,7 +686,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/sha.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/utils/sha.ts#L4)
+[src/ts/utils/sha.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/utils/sha.ts#L4)
 
 ___
 
@@ -695,7 +707,7 @@ ___
 
 #### Defined in
 
-[src/ts/crypto/verifyKeyPair.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/crypto/verifyKeyPair.ts#L7)
+[src/ts/crypto/verifyKeyPair.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/crypto/verifyKeyPair.ts#L7)
 
 ___
 
@@ -727,4 +739,4 @@ The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-[src/ts/proofs/verifyProof.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/proofs/verifyProof.ts#L29)
+[src/ts/proofs/verifyProof.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/proofs/verifyProof.ts#L29)

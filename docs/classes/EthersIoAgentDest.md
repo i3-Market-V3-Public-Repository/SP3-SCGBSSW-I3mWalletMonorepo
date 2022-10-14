@@ -47,7 +47,7 @@ EthersIoAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/EthersIoAgent.ts#L14)
+[src/ts/dlt/agents/EthersIoAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/EthersIoAgent.ts#L14)
 
 ## Properties
 
@@ -61,7 +61,7 @@ EthersIoAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/EthersIoAgent.ts#L11)
 
 ___
 
@@ -75,7 +75,7 @@ EthersIoAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/EthersIoAgent.ts#L10)
 
 ___
 
@@ -89,7 +89,7 @@ EthersIoAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/EthersIoAgent.ts#L12)
 
 ## Methods
 
@@ -113,7 +113,7 @@ EthersIoAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/EthersIoAgent.ts#L26)
+[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/EthersIoAgent.ts#L26)
 
 ___
 
@@ -126,11 +126,11 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `signerAddress` | `string` |
-| `exchangeId` | `string` |
-| `timeout` | `number` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `signerAddress` | `string` | the address (hexadecimal) of the entity publishing the secret. |
+| `exchangeId` | `string` | the id of the data exchange |
+| `timeout` | `number` | the timeout in seconds for waiting for the secret to be published on the ledger |
 
 #### Returns
 
@@ -140,8 +140,8 @@ the secret in hex and when it was published to the blockchain as a NumericDate
 
 #### Implementation of
 
-[NrpDltAgentDest](../interfaces/Signers.NrpDltAgentDest.md).[getSecretFromLedger](../interfaces/Signers.NrpDltAgentDest.md#getsecretfromledger)
+NrpDltAgentDest.getSecretFromLedger
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/EthersIoAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/dlt/agents/dest/EthersIoAgentDest.ts#L13)
+[src/ts/dlt/agents/dest/EthersIoAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/dlt/agents/dest/EthersIoAgentDest.ts#L13)

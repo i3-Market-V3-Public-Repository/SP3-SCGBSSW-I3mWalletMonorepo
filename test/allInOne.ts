@@ -2,6 +2,7 @@ import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { VerificationResolutionPayload } from '../src/ts'
+import * as _pkg from '#pkg'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)

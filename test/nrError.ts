@@ -1,4 +1,5 @@
 import { hashable } from 'object-sha'
+import * as _pkg from '#pkg'
 
 describe('Class NrError', function () {
   let nrError1, nrError2

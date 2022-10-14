@@ -1,4 +1,5 @@
 import { randBytes } from 'bigint-crypto-utils'
+import * as _pkg from '#pkg'
 
 describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean)', function () {
   it('should work with AES-128-GCM', async function () {

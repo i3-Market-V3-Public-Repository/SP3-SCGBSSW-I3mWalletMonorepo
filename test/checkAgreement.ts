@@ -1,3 +1,5 @@
+import * as _pkg from '#pkg'
+
 describe('checkAgreement', function () {
   const agreement: _pkg.DataExchangeAgreement = {
     orig: '{"kty":"EC","crv":"P-256","x":"Qcg51QcqVM7x2m7U_8cM7-Cndo5SVcRFXhrkSC2n_bM","y":"KLONuQwA0Tv8DeQlteWQ1Yy64iwBMCvtXOJwns1NL_8","alg":"ES256"}',

@@ -1,10 +1,11 @@
 import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { randBytes } from 'bigint-crypto-utils'
-import { ec as Ec } from 'elliptic'
+import elliptic from 'elliptic'
 import { NrError } from '../errors'
 import { JWK, JwkPair, SigningAlg } from '../types'
 
+const { ec: Ec } = elliptic
 /**
  * Generates a pair of JWK signing/verification keys
  *

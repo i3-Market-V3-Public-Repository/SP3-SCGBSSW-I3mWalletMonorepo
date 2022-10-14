@@ -46,7 +46,7 @@ JWKjose.alg
 
 #### Defined in
 
-[src/ts/types.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/types.ts#L23)
+[src/ts/types.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/types.ts#L23)
 
 ___
 
@@ -132,7 +132,7 @@ JWKjose.ext
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:108
+node_modules/jose/dist/types/types.d.ts:106
 
 ___
 
@@ -146,7 +146,7 @@ JWKjose.k
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:109
+node_modules/jose/dist/types/types.d.ts:107
 
 ___
 
@@ -162,7 +162,7 @@ JWKjose.key\_ops
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:113
+node_modules/jose/dist/types/types.d.ts:109
 
 ___
 
@@ -178,7 +178,7 @@ JWKjose.kid
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:117
+node_modules/jose/dist/types/types.d.ts:111
 
 ___
 
@@ -194,7 +194,7 @@ JWKjose.kty
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:121
+node_modules/jose/dist/types/types.d.ts:113
 
 ___
 
@@ -208,7 +208,7 @@ JWKjose.n
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:122
+node_modules/jose/dist/types/types.d.ts:114
 
 ___
 
@@ -222,7 +222,7 @@ JWKjose.oth
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:123
+node_modules/jose/dist/types/types.d.ts:115
 
 ___
 
@@ -236,7 +236,7 @@ JWKjose.p
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:128
+node_modules/jose/dist/types/types.d.ts:120
 
 ___
 
@@ -250,7 +250,7 @@ JWKjose.q
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:129
+node_modules/jose/dist/types/types.d.ts:121
 
 ___
 
@@ -264,7 +264,7 @@ JWKjose.qi
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:130
+node_modules/jose/dist/types/types.d.ts:122
 
 ___
 
@@ -280,7 +280,7 @@ JWKjose.use
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:134
+node_modules/jose/dist/types/types.d.ts:124
 
 ___
 
@@ -294,7 +294,7 @@ JWKjose.x
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:135
+node_modules/jose/dist/types/types.d.ts:125
 
 ___
 
@@ -310,7 +310,7 @@ JWKjose.x5c
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:140
+node_modules/jose/dist/types/types.d.ts:128
 
 ___
 
@@ -326,7 +326,7 @@ JWKjose.x5t
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:144
+node_modules/jose/dist/types/types.d.ts:130
 
 ___
 
@@ -342,7 +342,7 @@ JWKjose.x5t#S256
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:148
+node_modules/jose/dist/types/types.d.ts:132
 
 ___
 
@@ -358,7 +358,7 @@ JWKjose.x5u
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:152
+node_modules/jose/dist/types/types.d.ts:134
 
 ___
 
@@ -372,4 +372,4 @@ JWKjose.y
 
 #### Defined in
 
-node_modules/jose/dist/types/types.d.ts:136
+node_modules/jose/dist/types/types.d.ts:126

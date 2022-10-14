@@ -16,7 +16,7 @@ export async function sha (input: string|Uint8Array, algorithm: HashAlg): Promis
       digest = new Uint8Array(await crypto.subtle.digest(algorithm, hashInput))
     } else {
       const nodeAlg = algorithm.toLowerCase().replace('-', '')
-      digest = new Uint8Array(require('crypto').createHash(nodeAlg).update(Buffer.from(hashInput)).digest()) // eslint-disable-line
+      digest = new Uint8Array((await import('crypto')).createHash(nodeAlg).update(Buffer.from(hashInput)).digest()) // eslint-disable-line
     }
     return digest
   } catch (error) {

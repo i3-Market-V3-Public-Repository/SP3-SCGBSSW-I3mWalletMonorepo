@@ -1,3 +1,5 @@
+import * as _pkg from '#pkg'
+
 describe('parseHex', function () {
   const vectors = [
     {

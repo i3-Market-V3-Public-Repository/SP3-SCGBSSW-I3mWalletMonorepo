@@ -1,8 +1,3 @@
-/**
- * i3-Market implementation of the non-repudiation proofs of a data exchange
- *
- * @packageDocumentation
- */
 export * as ConflictResolution from './conflict-resolution';
 export * from './crypto';
 export * from './dlt';

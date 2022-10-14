@@ -1,7 +1,8 @@
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-green.svg)](LICENSE)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
-[![Build and test](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/workflows/build/badge.svg)](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions?query=workflow%3A%22build%22)
+[![Node.js CI](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/actions/workflows/build-and-test.yml)
+undefined
 
 # @i3m/non-repudiation-library
 
@@ -38,7 +39,7 @@ import * as nonRepudiationLibrary from '@i3m/non-repudiation-library'
 
 The appropriate version for browser or node is automatically exported.
 
-You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/master/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
+You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
 
 ### Example for an i3-MARKET Provider using the Non-Repudiation Protocol
 
@@ -84,16 +85,19 @@ async nrp() => {
     pooToSecretDelay: 150000
   }
 
-  // Let us define the RPC endopint to the ledger
-  const dltConfig: Partial<nonRepudiationLibrary.DltConfig> = {
-    rpcProviderUrl: 'http://89.111.35.214:8545'
-  }
-  
-  // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an external Wallet, such as the i3-MARKET one
-  const providerDltSigningKeyHex = '0x4b7903c8fe18e4ba5329939c7d1c4318307794a544f3eb5fb3b6536210c98676'
+  // We are going to asume that the provider is using an instance of @i3m/server-wallet as wallet which is stored in the providerWallet variable
 
-  // Create a NRP DLT Agent for the provider. We are going to use the Ethers.io one
-  providerDltAgent = new nonRepudiationLibrary.EthersIoAgentOrig(dltConfig, providerDltSigningKeyHex)
+  // Select the identity of the wallet that will be in charge of performing the NRP. Let us suppose that it is the first one:
+  const identities = await providerWallet.identityList({})
+  const identity = identities[0]
+
+  // Now let us create a NRP DLT Agent for the provider. 
+  providerDltAgent = new nonRepudiationLibrary.I3mServerWalletAgentOrig(providerWallet, identity.did)
+  
+  // dataExchangeAgreement.ledgerSignerAddress should match (await providerWallet.getAddress())
+  if (dataExchangeAgreement.ledgerSignerAddress !== await providerWallet.getAddress()) {
+    throw new Error('not maching')
+  }
 
   /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
@@ -181,7 +185,7 @@ async nrp() => {
     rpcProviderUrl: 'http://89.111.35.214:8545'
   }
 
-  // Init the Consumer's agent to get published secrets from the DLT.
+  // Init the Consumer's agent to get published secrets from the DLT. Notice that since the consumer does not need to write to the DLT, they do not need to use a Wallet and the EthersIoAgentDest is enough
   consumerDltAgent = new nonRepudiationLibrary.EthersIoAgentDest(dltConfig)
 
   /**

@@ -1,3 +1,5 @@
+import * as _pkg from '#pkg'
+
 describe('testing (input: string|Uint8Array, algorithm: HashAlg)', function () {
   it('should fail if algorithm is not supported', async function () {
     let err

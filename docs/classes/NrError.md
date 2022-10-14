@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/errors/NrError.ts#L6)
+[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/errors/NrError.ts#L6)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1023
+node_modules/typescript/lib/lib.es5.d.ts:1041
 
 ___
 
@@ -73,7 +73,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1022
+node_modules/typescript/lib/lib.es5.d.ts:1040
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/errors/NrError.ts#L4)
+[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/errors/NrError.ts#L4)
 
 ___
 
@@ -97,7 +97,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1024
+node_modules/typescript/lib/lib.es5.d.ts:1042
 
 ___
 
@@ -111,7 +111,9 @@ ___
 
 Optional override for formatting stack traces
 
-**`see`** https://v8.dev/docs/stack-trace-api#customizing-stack-traces
+**`See`**
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 ##### Parameters
 
@@ -130,7 +132,7 @@ Error.prepareStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:11
+node_modules/@types/node/ts4.8/globals.d.ts:11
 
 ___
 
@@ -144,7 +146,7 @@ Error.stackTraceLimit
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:13
+node_modules/@types/node/ts4.8/globals.d.ts:13
 
 ## Methods
 
@@ -164,7 +166,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ef637a6/src/ts/errors/NrError.ts#L16)
+[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/59d622a/src/ts/errors/NrError.ts#L16)
 
 ___
 
@@ -191,4 +193,4 @@ Error.captureStackTrace
 
 #### Defined in
 
-node_modules/@types/node/globals.d.ts:4
+node_modules/@types/node/ts4.8/globals.d.ts:4

@@ -84,16 +84,19 @@ async nrp() => {
     pooToSecretDelay: 150000
   }
 
-  // Let us define the RPC endopint to the ledger
-  const dltConfig: Partial<{{PKG_CAMELCASE}}.DltConfig> = {
-    rpcProviderUrl: 'http://89.111.35.214:8545'
-  }
-  
-  // We are going to directly provide the private key associated to the dataExchange.ledgerSignerAddress. You could also have pass a DltSigner instance to dltConfig.signer in order to use an external Wallet, such as the i3-MARKET one
-  const providerDltSigningKeyHex = '0x4b7903c8fe18e4ba5329939c7d1c4318307794a544f3eb5fb3b6536210c98676'
+  // We are going to asume that the provider is using an instance of @i3m/server-wallet as wallet which is stored in the providerWallet variable
 
-  // Create a NRP DLT Agent for the provider. We are going to use the Ethers.io one
-  providerDltAgent = new {{PKG_CAMELCASE}}.EthersIoAgentOrig(dltConfig, providerDltSigningKeyHex)
+  // Select the identity of the wallet that will be in charge of performing the NRP. Let us suppose that it is the first one:
+  const identities = await providerWallet.identityList({})
+  const identity = identities[0]
+
+  // Now let us create a NRP DLT Agent for the provider. 
+  providerDltAgent = new {{PKG_CAMELCASE}}.I3mServerWalletAgentOrig(providerWallet, identity.did)
+  
+  // dataExchangeAgreement.ledgerSignerAddress should match (await providerWallet.getAddress())
+  if (dataExchangeAgreement.ledgerSignerAddress !== await providerWallet.getAddress()) {
+    throw new Error('not maching')
+  }
 
   /**
    * Intialize the non-repudiation protocol as the origin. Internally, a one-time secret is created and the block is encrypted. They could be found in npProvider.block.secret and npProvide.block.jwe respectively.
@@ -181,7 +184,7 @@ async nrp() => {
     rpcProviderUrl: 'http://89.111.35.214:8545'
   }
 
-  // Init the Consumer's agent to get published secrets from the DLT.
+  // Init the Consumer's agent to get published secrets from the DLT. Notice that since the consumer does not need to write to the DLT, they do not need to use a Wallet and the EthersIoAgentDest is enough
   consumerDltAgent = new {{PKG_CAMELCASE}}.EthersIoAgentDest(dltConfig)
 
   /**

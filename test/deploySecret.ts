@@ -1,5 +1,5 @@
 import { randBytes } from 'bigint-crypto-utils'
-import { EthersIoAgentOrig } from '../src/ts'
+import * as _pkg from '#pkg'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
@@ -88,7 +88,7 @@ describe('Non-repudiation protocol', function () {
       const retrievedSecrets: string[] = []
       for (let i = 0; i < 3; i++) {
         const block = new Uint8Array(await randBytes(256))
-        const nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, new EthersIoAgentOrig({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl }, ethersWalletSetup.privateKey))
+        const nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, new _pkg.EthersIoAgentOrig({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl }, ethersWalletSetup.privateKey))
         nrpProviders.push(nrpProvider)
         await nrpProvider.initialized
         await nrpProvider.dltAgent.deploySecret(nrpProvider.block.secret.hex, nrpProvider.exchange.id)

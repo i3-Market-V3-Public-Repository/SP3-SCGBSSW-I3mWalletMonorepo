@@ -1,3 +1,5 @@
+import * as _pkg from '#pkg'
+
 describe('verifyKeyPair for different signing algorithms', function () {
   this.timeout(20000)
   const signingAlgsToTest: _pkg.SigningAlg[] = ['ES256', 'ES384', 'ES512']
