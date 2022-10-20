@@ -12,7 +12,7 @@ The complete documentation can be found [here](https://i3-market.gitlab.io/code/
 npm i
 
 # for development of all packages
-npm run init:dev
+npm run install:dev
 
 # for development of wallet:desktop
 npm run install:desktop
