@@ -9,6 +9,7 @@ import { deleteResource } from './delete-resource.handler'
 import { sign } from './sign.handler'
 import { verifyJWT } from './verify-jwt.handler'
 import { callWalletFunction } from './call-wallet-function.handler'
+import { getProviderinfo } from './get-providerinfo.handler'
 
 export const walletModule = new Module({
   handlersBuilders: [
@@ -21,6 +22,7 @@ export const walletModule = new Module({
     deleteResource,
     sign,
     verifyJWT,
-    callWalletFunction
+    callWalletFunction,
+    getProviderinfo
   ]
 })

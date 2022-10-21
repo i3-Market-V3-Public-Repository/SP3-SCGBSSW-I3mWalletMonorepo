@@ -8,7 +8,7 @@ paths:
   /providerinfo:
     get:
       summary: Gets info of the DLT provider the wallet is using
-      operationId: providerinfo
+      operationId: providerinfoGet
       x-eov-operation-handler: providerinfo
       tags:
         - utils

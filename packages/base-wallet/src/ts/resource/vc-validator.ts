@@ -1,7 +1,8 @@
+import { VerifiableCredentialResource } from '../app'
 import { WalletError } from '../errors'
 import { Validator } from './resource-validator'
 
-export const verifiableClaimValidator: Validator = async (resource, veramo) => {
+export const verifiableClaimValidator: Validator<VerifiableCredentialResource> = async (resource, veramo) => {
   const errors: Error[] = []
 
   const subject = resource.resource.credentialSubject.id

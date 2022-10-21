@@ -6,9 +6,14 @@ interface Props {
 
 export function IdentityResource (props: Props): JSX.Element {
   const { resource } = props
-  const claims = Object.keys(resource.resource.credentialSubject)
-    .filter(key => key !== 'id')
-    .join(', ')
+  const resourceProps: Map<string, string> = new Map()
+  switch(resource.type) {
+    case 'VerifiableCredential':
+      resourceProps.set('Claims',
+        Object.keys(resource.resource.credentialSubject)
+          .filter(key => key !== 'id')
+          .join(', '))
+  }
 
   const copy: React.MouseEventHandler = async (ev) => {
     await navigator.clipboard.writeText(JSON.stringify(resource, undefined, 2))
@@ -20,10 +25,12 @@ export function IdentityResource (props: Props): JSX.Element {
         <div className='identity-param inline'>
           <span>Type: {resource.type}</span>
         </div>
-        <div className='identity-param inline'>
-          <span>Claims: </span>
-          <input type='text' disabled value={claims} />
-        </div>
+        { [...resourceProps.entries()].map(([key, value]) => (
+          <div key={key} className='identity-param inline'>
+            <span>{key}: </span>
+            <input type='text' disabled value={value} />
+          </div>
+        ))}
         <button onClick={copy} style={{ display: 'none' }}>
           Extract
         </button>

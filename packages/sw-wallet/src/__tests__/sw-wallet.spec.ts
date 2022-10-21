@@ -1,4 +1,4 @@
-import { Wallet, TestDialog, TestStore, TestToast, Veramo, Resource } from '@i3m/base-wallet'
+import { Wallet, TestDialog, TestStore, TestToast, Veramo, VerifiableCredential } from '@i3m/base-wallet'
 import Debug from 'debug'
 
 import swBuilder from '..'
@@ -46,7 +46,7 @@ describe('@i3m/sw-wallet', () => {
   })
 
   describe('resources', () => {
-    let credential: Resource['resource']
+    let credential: VerifiableCredential
 
     beforeAll(async () => {
       credential = await veramo.agent.createVerifiableCredential({
@@ -59,7 +59,7 @@ describe('@i3m/sw-wallet', () => {
         },
         proofFormat: 'jwt',
         save: false
-      }) as Resource['resource'] // TODO: Force type.
+      }) as VerifiableCredential
     })
 
     it('should store verifiable credentials', async () => {

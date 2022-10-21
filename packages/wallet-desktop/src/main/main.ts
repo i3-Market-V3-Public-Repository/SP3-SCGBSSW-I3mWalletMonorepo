@@ -23,8 +23,8 @@ import {
   ConnectManager
 } from './internal'
 
-function validProviders(providers: Provider[]): boolean {
-  if(providers === undefined || providers.length === 0) {
+function validProviders (providers: Provider[]): boolean {
+  if (providers === undefined || providers.length === 0) {
     return false
   }
 
@@ -35,7 +35,6 @@ function validProviders(providers: Provider[]): boolean {
     network: prev.network || curr.network === undefined,
     rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined,
   }), { name: false, provider: false, network: false, rpcUrl: false })
-
 
   return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
 }

@@ -41,7 +41,7 @@ export const importResource: ActionHandlerBuilder<typeof importResourceAction> =
         return { response: undefined }
       }
 
-      if (resource.type !== 'VerifiableCredential') {
+      if (!['VerifiableCredential', 'Contract', 'Object'].includes(resource.type)) {
         locals.toast.show({
           message: 'Could not import',
           type: 'warning',

@@ -1,8 +1,8 @@
-import { Identity, Resource } from '@i3m/base-wallet'
+import { Identity, VerifiableCredentialResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 
 interface Props {
-  vc: Resource & { type: 'VerifiableCredential' }
+  vc: VerifiableCredentialResource
 }
 
 export function VerifiableCredentialDetails (props: Props): JSX.Element {

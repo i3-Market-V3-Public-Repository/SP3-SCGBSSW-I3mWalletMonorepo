@@ -119,7 +119,7 @@ export declare class BaseWallet<Options extends WalletOptions<Model>, Model exte
      * Retrieves information regarding the current connection to the DLT.
      * @returns
      */
-    providerinfo(): Promise<WalletPaths.Providerinfo.Responses.$200>;
+    providerinfoGet(): Promise<WalletPaths.ProviderinfoGet.Responses.$200>;
 }
 export {};
 //# sourceMappingURL=base-wallet.d.ts.map

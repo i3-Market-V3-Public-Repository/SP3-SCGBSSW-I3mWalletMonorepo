@@ -68,6 +68,8 @@ components:
       title: Resource
       anyOf:
         - $ref: "#/components/schemas/VerifiableCredential"
+        - $ref: "#/components/schemas/ObjectResource"
+        - $ref: "#/components/schemas/Contract"
 
     VerifiableCredential:
       title: VerifiableCredential
@@ -137,6 +139,40 @@ components:
         - type
         - resource
 
+    ObjectResource:
+      title: ObjectResource
+      type: object
+      properties:
+        type:
+          $ref:  "#/components/schemas/ResourceType"
+          enum:
+            - Object
+        identity:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+        resource:
+          type: object
+          additionalProperties: true
+      required:
+        - type
+        - resource
+
+    Contract:
+      title: Contract
+      type: object
+      properties:
+        type:
+          $ref:  "#/components/schemas/ResourceType"
+          enum:
+            - Contract
+        identity:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+        resource:
+          type: object
+          additionalProperties: true
+      required:
+        - type
+        - resource
+
     ResourceId:
       type: object
       properties:
@@ -149,3 +185,5 @@ components:
       type: string
       enum:
         - VerifiableCredential
+        - Object
+        - Contract

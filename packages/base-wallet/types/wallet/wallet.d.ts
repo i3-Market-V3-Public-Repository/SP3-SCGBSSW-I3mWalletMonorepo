@@ -19,6 +19,6 @@ export interface Wallet {
     selectiveDisclosure(pathParameters: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200>;
     transactionDeploy(requestBody: WalletPaths.TransactionDeploy.RequestBody): Promise<WalletPaths.TransactionDeploy.Responses.$200>;
     didJwtVerify(requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200>;
-    providerinfo(): Promise<WalletPaths.Providerinfo.Responses.$200>;
+    providerinfoGet(): Promise<WalletPaths.ProviderinfoGet.Responses.$200>;
 }
 //# sourceMappingURL=wallet.d.ts.map

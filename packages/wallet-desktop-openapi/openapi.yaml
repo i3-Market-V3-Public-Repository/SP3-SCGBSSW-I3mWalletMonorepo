@@ -392,7 +392,7 @@ paths:
   /providerinfo:
     get:
       summary: Gets info of the DLT provider the wallet is using
-      operationId: providerinfo
+      operationId: providerinfoGet
       x-eov-operation-handler: providerinfo
       tags:
         - utils
@@ -563,6 +563,8 @@ components:
       title: Resource
       anyOf:
         - $ref: '#/components/schemas/VerifiableCredential'
+        - $ref: '#/components/schemas/ObjectResource'
+        - $ref: '#/components/schemas/Contract'
     VerifiableCredential:
       title: VerifiableCredential
       type: object
@@ -631,6 +633,36 @@ components:
       required:
         - type
         - resource
+    ObjectResource:
+      title: ObjectResource
+      type: object
+      properties:
+        type:
+          enum:
+            - Object
+        identity:
+          $ref: '#/components/schemas/did'
+        resource:
+          type: object
+          additionalProperties: true
+      required:
+        - type
+        - resource
+    Contract:
+      title: Contract
+      type: object
+      properties:
+        type:
+          enum:
+            - Contract
+        identity:
+          $ref: '#/components/schemas/did'
+        resource:
+          type: object
+          additionalProperties: true
+      required:
+        - type
+        - resource
     ResourceId:
       type: object
       properties:
@@ -642,6 +674,8 @@ components:
       type: string
       enum:
         - VerifiableCredential
+        - Object
+        - Contract
     SignedTransaction:
       title: SignedTransaction
       description: A list of resources

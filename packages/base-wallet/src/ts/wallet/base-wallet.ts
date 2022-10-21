@@ -635,16 +635,40 @@ export class BaseWallet<
       throw new WalletError('Wrong resource format', { status: 400 })
     }
 
-    if (resource.type === 'VerifiableCredential') {
-      const credentialSubject = getCredentialClaims(resource.resource)
-        .map(claim => `  - ${claim}: ${JSON.stringify(resource.resource.credentialSubject[claim])}`)
-        .join('\n')
-      const confirmation = await this.dialog.confirmation({
-        message: `Do you want to add the following verifiable credential: \n${credentialSubject}`
-      })
-      if (confirmation !== true) {
-        throw new WalletError('User cannceled the operation', { status: 403 })
+    switch (resource.type) {
+      case 'VerifiableCredential': {
+        const credentialSubject = getCredentialClaims(resource.resource)
+          .map(claim => `  - ${claim}: ${JSON.stringify(resource.resource.credentialSubject[claim])}`)
+          .join('\n')
+        const confirmation = await this.dialog.confirmation({
+          message: `Do you want to add the following verifiable credential: \n${credentialSubject}`
+        })
+        if (confirmation !== true) {
+          throw new WalletError('User cannceled the operation', { status: 403 })
+        }
+        break
       }
+      case 'Object': {
+        const confirmation = await this.dialog.confirmation({
+          message: 'Do you want to add an object into your wallet?'
+        })
+        if (confirmation !== true) {
+          throw new WalletError('User cannceled the operation', { status: 403 })
+        }
+        break
+      }
+      case 'Contract': {
+        const confirmation = await this.dialog.confirmation({
+          message: 'Do you want to add a contract into your wallet?'
+        })
+        if (confirmation !== true) {
+          throw new WalletError('User cannceled the operation', { status: 403 })
+        }
+        break
+      }
+
+      default:
+        throw new Error('Resource type not supported')
     }
 
     // Store resource
@@ -756,7 +780,7 @@ export class BaseWallet<
    * Retrieves information regarding the current connection to the DLT.
    * @returns
    */
-  async providerinfo (): Promise<WalletPaths.Providerinfo.Responses.$200> {
+  async providerinfoGet (): Promise<WalletPaths.ProviderinfoGet.Responses.$200> {
     const providerData = this.veramo.providersData[this.provider]
     return {
       provider: this.provider,

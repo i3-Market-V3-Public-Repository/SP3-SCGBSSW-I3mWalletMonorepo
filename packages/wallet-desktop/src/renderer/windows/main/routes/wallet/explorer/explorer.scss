@@ -42,9 +42,18 @@
         &.inline {
           flex-direction: row;
           align-items: center;
-  
+
           input:disabled {
             margin-left: 5px;          
+          }
+        }
+
+        &.expand {
+          flex: 1;
+
+          textarea {
+            height: 100%;
+            resize: none;
           }
         }
   
@@ -60,12 +69,11 @@
   
         .resources {
           width: 100%;
-  
+
           .resource::before {
             content: "•";
             margin-right: 10px;
             margin-left: 20px;
-            margin-top: 4px;
           }
   
           .resource {

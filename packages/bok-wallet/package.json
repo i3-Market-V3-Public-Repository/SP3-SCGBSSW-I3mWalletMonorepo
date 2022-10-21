@@ -69,6 +69,7 @@
       },
       "default": "./dist/esm/index.node.js"
     },
+    "./package.json": "./package.json",
     "./types": "./types/index.d.ts"
   },
   "imports": {

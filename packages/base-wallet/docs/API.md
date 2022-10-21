@@ -37,16 +37,22 @@
 ### Type Aliases
 
 - [CanBePromise](API.md#canbepromise)
+- [Contract](API.md#contract)
+- [ContractResource](API.md#contractresource)
 - [Descriptors](API.md#descriptors)
 - [DescriptorsMap](API.md#descriptorsmap)
 - [DialogOptionContext](API.md#dialogoptioncontext)
 - [DialogResponse](API.md#dialogresponse)
 - [Identity](API.md#identity)
 - [KeyLike](API.md#keylike)
+- [Object](API.md#object)
+- [ObjectResource](API.md#objectresource)
 - [ProviderData](API.md#providerdata)
 - [Resource](API.md#resource)
 - [ToastType](API.md#toasttype)
 - [TypedArray](API.md#typedarray)
+- [VerifiableCredential](API.md#verifiablecredential)
+- [VerifiableCredentialResource](API.md#verifiablecredentialresource)
 - [WalletBuilder](API.md#walletbuilder)
 - [WalletOptions](API.md#walletoptions)
 
@@ -73,7 +79,27 @@
 
 #### Defined in
 
-[src/ts/utils/types.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/types.ts#L1)
+[src/ts/utils/types.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/types.ts#L1)
+
+___
+
+### Contract
+
+Ƭ **Contract**: `WalletComponents.Schemas.Contract`[``"resource"``]
+
+#### Defined in
+
+[src/ts/app/store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L11)
+
+___
+
+### ContractResource
+
+Ƭ **ContractResource**: [`Resource`](API.md#resource) & { `type`: ``"Contract"``  }
+
+#### Defined in
+
+[src/ts/app/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L8)
 
 ___
 
@@ -89,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/dialog.ts#L42)
+[src/ts/app/dialog.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/dialog.ts#L42)
 
 ___
 
@@ -105,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/dialog.ts#L43)
+[src/ts/app/dialog.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/dialog.ts#L43)
 
 ___
 
@@ -115,7 +141,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/dialog.ts#L40)
+[src/ts/app/dialog.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/dialog.ts#L40)
 
 ___
 
@@ -131,7 +157,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/dialog.ts#L52)
+[src/ts/app/dialog.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/dialog.ts#L52)
 
 ___
 
@@ -141,7 +167,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/store.ts#L6)
+[src/ts/app/store.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L13)
 
 ___
 
@@ -151,7 +177,27 @@ ___
 
 #### Defined in
 
-[src/ts/utils/types.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/types.ts#L5)
+[src/ts/utils/types.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/types.ts#L5)
+
+___
+
+### Object
+
+Ƭ **Object**: `WalletComponents.Schemas.ObjectResource`[``"resource"``]
+
+#### Defined in
+
+[src/ts/app/store.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L12)
+
+___
+
+### ObjectResource
+
+Ƭ **ObjectResource**: [`Resource`](API.md#resource) & { `type`: ``"Object"``  }
+
+#### Defined in
+
+[src/ts/app/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L7)
 
 ___
 
@@ -161,7 +207,7 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/veramo/veramo.ts#L39)
+[src/ts/veramo/veramo.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/veramo/veramo.ts#L39)
 
 ___
 
@@ -171,7 +217,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/store.ts#L5)
+[src/ts/app/store.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L5)
 
 ___
 
@@ -181,7 +227,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/toast.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/app/toast.ts#L2)
+[src/ts/app/toast.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/toast.ts#L2)
 
 ___
 
@@ -191,7 +237,27 @@ ___
 
 #### Defined in
 
-[src/ts/utils/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/types.ts#L3)
+[src/ts/utils/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/types.ts#L3)
+
+___
+
+### VerifiableCredential
+
+Ƭ **VerifiableCredential**: `WalletComponents.Schemas.VerifiableCredential`[``"resource"``]
+
+#### Defined in
+
+[src/ts/app/store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L10)
+
+___
+
+### VerifiableCredentialResource
+
+Ƭ **VerifiableCredentialResource**: [`Resource`](API.md#resource) & { `type`: ``"VerifiableCredential"``  }
+
+#### Defined in
+
+[src/ts/app/store.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/app/store.ts#L6)
 
 ___
 
@@ -221,7 +287,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-builder.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/wallet/wallet-builder.ts#L4)
+[src/ts/wallet/wallet-builder.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/wallet/wallet-builder.ts#L4)
 
 ___
 
@@ -237,7 +303,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L16)
+[src/ts/wallet/wallet-options.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/wallet/wallet-options.ts#L16)
 
 ## Variables
 
@@ -254,7 +320,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/base64url.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/base64url.ts#L9)
+[src/ts/utils/base64url.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/base64url.ts#L9)
 
 ## Functions
 
@@ -274,7 +340,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/credential-claims.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/credential-claims.ts#L3)
+[src/ts/utils/credential-claims.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/credential-claims.ts#L3)
 
 ___
 
@@ -294,4 +360,4 @@ ___
 
 #### Defined in
 
-[src/ts/utils/generate-secret.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/245406f/packages/base-wallet/src/ts/utils/generate-secret.ts#L11)
+[src/ts/utils/generate-secret.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3790df1/packages/base-wallet/src/ts/utils/generate-secret.ts#L11)

@@ -9,6 +9,21 @@ export namespace WalletComponents {
       message: string
     }
     /**
+         * Contract
+         */
+    export interface Contract {
+      type: 'Contract'
+      identity?: /**
+             * DID
+             * example:
+             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Did
+      resource: {
+        [name: string]: any
+      }
+    }
+    /**
          * JwtPayload
          */
     export interface DecodedJwt {
@@ -112,6 +127,21 @@ export namespace WalletComponents {
       Did
     }
     /**
+         * ObjectResource
+         */
+    export interface ObjectResource {
+      type: 'Object'
+      identity?: /**
+             * DID
+             * example:
+             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Did
+      resource: {
+        [name: string]: any
+      }
+    }
+    /**
          * ProviderData
          * A JSON object with information of the DLT provider currently in use.
          */
@@ -142,7 +172,7 @@ export namespace WalletComponents {
     /**
          * Resource
          */
-    export type Resource = /* Resource */ /* VerifiableCredential */ VerifiableCredential
+    export type Resource = /* Resource */ /* VerifiableCredential */ VerifiableCredential | /* ObjectResource */ ObjectResource | /* Contract */ Contract
     export interface ResourceId {
       id: string
     }
@@ -151,7 +181,7 @@ export namespace WalletComponents {
          * A list of resources
          */
     export type ResourceListOutput = ResourceId[]
-    export type ResourceType = 'VerifiableCredential'
+    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract'
     /**
          * SignInput
          */
@@ -438,7 +468,7 @@ export namespace WalletPaths {
       export type $200 = /* SignOutput */ WalletComponents.Schemas.SignOutput
     }
   }
-  export namespace Providerinfo {
+  export namespace ProviderinfoGet {
     export namespace Responses {
       export type $200 = /**
              * ProviderData

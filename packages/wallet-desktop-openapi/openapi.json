@@ -495,7 +495,7 @@
     "/providerinfo": {
       "get": {
         "summary": "Gets info of the DLT provider the wallet is using",
-        "operationId": "providerinfo",
+        "operationId": "providerinfoGet",
         "x-eov-operation-handler": "providerinfo",
         "tags": [
           "utils"
@@ -735,6 +735,12 @@
         "anyOf": [
           {
             "$ref": "#/components/schemas/VerifiableCredential"
+          },
+          {
+            "$ref": "#/components/schemas/ObjectResource"
+          },
+          {
+            "$ref": "#/components/schemas/Contract"
           }
         ]
       },
@@ -836,6 +842,50 @@
           "resource"
         ]
       },
+      "ObjectResource": {
+        "title": "ObjectResource",
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "Object"
+            ]
+          },
+          "identity": {
+            "$ref": "#/components/schemas/did"
+          },
+          "resource": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
+      "Contract": {
+        "title": "Contract",
+        "type": "object",
+        "properties": {
+          "type": {
+            "enum": [
+              "Contract"
+            ]
+          },
+          "identity": {
+            "$ref": "#/components/schemas/did"
+          },
+          "resource": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
       "ResourceId": {
         "type": "object",
         "properties": {
@@ -850,7 +900,9 @@
       "ResourceType": {
         "type": "string",
         "enum": [
-          "VerifiableCredential"
+          "VerifiableCredential",
+          "Object",
+          "Contract"
         ]
       },
       "SignedTransaction": {
