@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { Resource, Veramo } from '@i3m/base-wallet'
+import { Veramo, VerifiableCredential } from '@i3m/base-wallet'
 import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
@@ -28,7 +28,7 @@ describe('@i3m/server-wallet', function () {
 
   describe('get DLT provider data', function () {
     it('should get the DLT provider data', async function () {
-      const providerData = await wallet.providerinfo()
+      const providerData = await wallet.providerinfoGet()
       debug('Provider data:\n' + JSON.stringify(providerData, undefined, 2))
       chai.expect(providerData).to.not.be.undefined
     })
@@ -118,7 +118,7 @@ describe('@i3m/server-wallet', function () {
   })
 
   describe('resources', function () {
-    let credential: Resource['resource']
+    let credential: VerifiableCredential
 
     before(async function () {
       credential = await veramo.agent.createVerifiableCredential({
@@ -131,7 +131,7 @@ describe('@i3m/server-wallet', function () {
         },
         proofFormat: 'jwt',
         save: false
-      }) as Resource['resource'] // TODO: Force type.
+      }) as VerifiableCredential // TODO: Force type.
     })
 
     it('should store verifiable credentials', async function () {
@@ -144,7 +144,10 @@ describe('@i3m/server-wallet', function () {
     })
 
     it('should list created resources', async function () {
-      const resources = await wallet.resourceList()
+      const resources = await wallet.resourceList({
+        type: 'VerifiableCredential',
+        identity: identities.alice
+      })
       chai.expect(resources.length).to.equal(1)
     })
   })

@@ -47,7 +47,7 @@
     "mocha-ts": "./.mocha-ts"
   },
   "scripts": {
-    "build": "run-s lint build:js docs",
+    "build": "run-s build:js lint docs",
     "build:js": "rollup -c build/rollup.config.js",
     "clean": "rimraf .mocha-ts coverage dist types docs",
     "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",

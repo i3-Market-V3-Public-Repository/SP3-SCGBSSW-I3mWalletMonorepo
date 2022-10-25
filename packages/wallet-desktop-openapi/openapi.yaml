@@ -185,11 +185,29 @@ paths:
                 $ref: '#/components/schemas/Receipt'
   /resources:
     get:
-      summary: List all resources
+      summary: >-
+        Lists the resources that match the filter specified in the query
+        parameters.
       operationId: resourceList
       x-eov-operation-handler: resources
       tags:
         - resources
+      parameters:
+        - in: query
+          name: type
+          example: Contract
+          schema:
+            $ref: '#/components/schemas/ResourceType'
+          description: Filter the resources by resource type.
+        - in: query
+          name: identity
+          example: ''
+          allowEmptyValue: true
+          schema:
+            $ref: '#/components/schemas/did'
+          description: >-
+            Filter the resource associated to an identity DID. Send empty value
+            to get all the resources that are not associated to any identity.
       responses:
         '200':
           description: >-
@@ -558,7 +576,7 @@ components:
       description: A list of resources
       type: array
       items:
-        $ref: '#/components/schemas/ResourceId'
+        $ref: '#/components/schemas/Resource'
     Resource:
       title: Resource
       anyOf:
@@ -570,6 +588,7 @@ components:
       type: object
       properties:
         type:
+          example: VerifiableCredential
           enum:
             - VerifiableCredential
         identity:
@@ -638,6 +657,7 @@ components:
       type: object
       properties:
         type:
+          example: Object
           enum:
             - Object
         identity:
@@ -653,6 +673,8 @@ components:
       type: object
       properties:
         type:
+          type: string
+          example: Contract
           enum:
             - Contract
         identity:

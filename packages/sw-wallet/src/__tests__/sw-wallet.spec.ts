@@ -73,7 +73,10 @@ describe('@i3m/sw-wallet', () => {
     })
 
     it('should list created resources', async () => {
-      const resources = await wallet.resourceList()
+      const resources = await wallet.resourceList({
+        type: 'VerifiableCredential',
+        identity: identities.alice
+      })
       expect(resources.length).toBe(1)
     })
   })

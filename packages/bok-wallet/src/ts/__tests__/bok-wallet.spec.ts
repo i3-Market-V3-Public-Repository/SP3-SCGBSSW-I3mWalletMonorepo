@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { Wallet, NullDialog, RamStore, ConsoleToast, Veramo, Resource } from '@i3m/base-wallet'
+import { Wallet, NullDialog, RamStore, ConsoleToast, Veramo, VerifiableCredential } from '@i3m/base-wallet'
 import Debug from 'debug'
 
 import swBuilder from '#pkg'
@@ -53,7 +53,7 @@ describe('@i3m/sw-wallet', () => {
   })
 
   describe('resources', () => {
-    let credential: Resource['resource']
+    let credential: VerifiableCredential
 
     before(async () => {
       credential = await veramo.agent.createVerifiableCredential({
@@ -66,7 +66,7 @@ describe('@i3m/sw-wallet', () => {
         },
         proofFormat: 'jwt',
         save: false
-      }) as Resource['resource'] // TODO: Force type.
+      }) as VerifiableCredential // TODO: Force type.
     })
 
     it('should store verifiable credentials', async () => {
@@ -80,7 +80,10 @@ describe('@i3m/sw-wallet', () => {
     })
 
     it('should list created resources', async () => {
-      const resources = await wallet.resourceList()
+      const resources = await wallet.resourceList({
+        type: 'VerifiableCredential',
+        identity: identities.alice
+      })
       chai.expect(resources.length).to.equal(1)
     })
   })

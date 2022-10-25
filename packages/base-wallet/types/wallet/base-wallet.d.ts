@@ -14,6 +14,7 @@ interface TransactionOptions {
     transaction?: string;
     notifyUser?: boolean;
 }
+declare type ResourceMap = BaseWalletModel['resources'];
 export declare class BaseWallet<Options extends WalletOptions<Model>, Model extends BaseWalletModel = BaseWalletModel> implements Wallet {
     dialog: Dialog;
     store: Store<Model>;
@@ -70,12 +71,12 @@ export declare class BaseWallet<Options extends WalletOptions<Model>, Model exte
      * Gets a resource securey stored in the wallet's vaulr. It is the place where to find stored verfiable credentials.
      * @returns
      */
-    getResources(): Promise<BaseWalletModel['resources']>;
+    getResources(): Promise<ResourceMap>;
     /**
      * Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
      * @returns
      */
-    resourceList(): Promise<WalletPaths.ResourceList.Responses.$200>;
+    resourceList(query: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200>;
     /**
      * Deletes a given resource
      * @param id

@@ -12,6 +12,10 @@ export namespace WalletComponents {
          * Contract
          */
     export interface Contract {
+      /**
+             * example:
+             * Contract
+             */
       type: 'Contract'
       identity?: /**
              * DID
@@ -130,6 +134,10 @@ export namespace WalletComponents {
          * ObjectResource
          */
     export interface ObjectResource {
+      /**
+             * example:
+             * Object
+             */
       type: 'Object'
       identity?: /**
              * DID
@@ -180,7 +188,7 @@ export namespace WalletComponents {
          * ResourceListOutput
          * A list of resources
          */
-    export type ResourceListOutput = ResourceId[]
+    export type ResourceListOutput = /* Resource */ Resource[]
     export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract'
     /**
          * SignInput
@@ -255,6 +263,10 @@ export namespace WalletComponents {
          * VerifiableCredential
          */
     export interface VerifiableCredential {
+      /**
+             * example:
+             * VerifiableCredential
+             */
       type: 'VerifiableCredential'
       identity?: /**
              * DID
@@ -486,6 +498,19 @@ export namespace WalletPaths {
     }
   }
   export namespace ResourceList {
+    export namespace Parameters {
+      export type Identity = /**
+             * DID
+             * example:
+             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+            WalletComponents.Schemas.Did
+      export type Type = WalletComponents.Schemas.ResourceType
+    }
+    export interface QueryParameters {
+      type?: Parameters.Type
+      identity?: Parameters.Identity
+    }
     export namespace Responses {
       export type $200 = /**
              * ResourceListOutput

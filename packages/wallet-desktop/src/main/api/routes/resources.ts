@@ -4,9 +4,9 @@ import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { WindowManager, extractLocals } from '@wallet/main/internal'
 import { asyncHandler } from './async-handler'
 
-export const resourceList = asyncHandler<never, WalletPaths.ResourceList.Responses.$200, never, never>(async (req, res) => {
+export const resourceList = asyncHandler<never, WalletPaths.ResourceList.Responses.$200, never, WalletPaths.ResourceList.QueryParameters>(async (req, res) => {
   const { walletFactory } = extractLocals(req.app)
-  const resp = await walletFactory.wallet.resourceList()
+  const resp = await walletFactory.wallet.resourceList(req.query)
   res.json(resp)
 })
 

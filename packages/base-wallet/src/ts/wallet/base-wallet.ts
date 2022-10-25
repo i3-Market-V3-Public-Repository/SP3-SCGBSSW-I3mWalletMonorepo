@@ -9,7 +9,7 @@ import { verifyJWT } from 'did-jwt'
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
-import { ResourceValidator } from '../resource'
+import { ResourceValidator, Resource } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { displayDid } from '../utils/display-did'
 import { decodeJWS, jwsSignInput } from '../utils/jws'
@@ -64,6 +64,8 @@ interface TransactionOptions {
 type Dict<T> = T & {
   [key: string]: any | undefined
 }
+
+type ResourceMap = BaseWalletModel['resources']
 
 export class BaseWallet<
   Options extends WalletOptions<Model>,
@@ -571,7 +573,7 @@ export class BaseWallet<
    * Gets a resource securey stored in the wallet's vaulr. It is the place where to find stored verfiable credentials.
    * @returns
    */
-  async getResources (): Promise<BaseWalletModel['resources']> {
+  async getResources (): Promise<ResourceMap> {
     return await this.store.get('resources', {})
   }
 
@@ -579,11 +581,42 @@ export class BaseWallet<
    * Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
    * @returns
    */
-  async resourceList (): Promise<WalletPaths.ResourceList.Responses.$200> {
-    const resources = await this.getResources()
-    return Object.keys(resources).map(key => ({
-      id: resources[key].id
-    }))
+  async resourceList (query: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200> {
+    const queries = Object.keys(query) as Array<keyof (typeof query)>
+    const extraConsent: string[] = []
+    const filters: Array<(resource: Resource) => boolean> = []
+
+    if (queries.includes('type')) {
+      extraConsent.push(`type '<code>${query.type ?? 'unknown'}</code>'`)
+      filters.push((resource) => resource.type === query.type)
+    }
+    if (queries.includes('identity')) {
+      if (query.identity !== '' && query.identity !== undefined) {
+        extraConsent.push(`identity '<code>${query.identity}</code>'`)
+        filters.push((resource) => resource.identity === query.identity)
+      } else {
+        extraConsent.push('not liked to any identity')
+        filters.push((resource) => resource.identity === undefined)
+      }
+    }
+    // TODO: Use wallet-protocol token to get the application name
+    const consentText = `One application wants to get all the resources${extraConsent.length > 0 ? ' with ' + extraConsent.join(' and ') : ''}.\nDo you agree?`
+    const confirmation = await this.dialog.confirmation({
+      message: consentText,
+      acceptMsg: 'Yes',
+      rejectMsg: 'No'
+    })
+    if (confirmation === false) {
+      throw new WalletError('User cannceled the operation', { status: 403 })
+    }
+
+    const resourcesMap = await this.getResources()
+    const resources = Object
+      .keys(resourcesMap)
+      .map(key => resourcesMap[key])
+      .filter((resource) => filters.reduce((success, filter) => success && filter(resource), true))
+
+    return resources
   }
 
   /**
