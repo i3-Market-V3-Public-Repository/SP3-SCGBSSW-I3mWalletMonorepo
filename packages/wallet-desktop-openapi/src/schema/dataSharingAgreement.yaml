@@ -1,0 +1,237 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    Address:
+      title: Ethereum Address
+      type: string
+      pattern: '^0x([0-9A-Fa-f]){40}$'
+      example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
+
+    CompactJWS:
+      title: CompactJWS
+      type: string
+      pattern: '^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$'
+    
+    dataExchangeAgreement:
+      type: object
+      required:
+      - orig
+      - dest
+      - encAlg
+      - signingAlg
+      - hashAlg
+      - ledgerContractAddress
+      - ledgerSignerAddress
+      - pooToPorDelay
+      - pooToPopDelay
+      - pooToSecretDelay
+      properties:
+        orig:
+          $ref: "./identity.yaml#/components/schemas/did"
+        dest:
+          $ref: "./identity.yaml#/components/schemas/did"
+        encAlg:
+          type: string
+        signingAlg:
+          type: string
+        hashAlg:
+          type: string
+        ledgerContractAddress:
+          $ref: "#/components/schemas/Address"
+        ledgerSignerAddress:
+          $ref: "#/components/schemas/Address"
+        pooToPorDelay:
+          type: integer
+        pooToPopDelay:
+          type: integer
+        pooToSecretDelay:
+          type: integer
+
+    dataSharingAgreement:
+      type: object
+      required:
+      - dataOfferingDescription
+      - parties
+      - purpose
+      - duration
+      - intendedUse
+      - licenseGrant
+      - dataStream
+      - personalData
+      - pricingModel
+      - dataExchangeAgreement
+      - signatures
+      properties:
+        dataOfferingDescription:
+          type: object
+          required:
+          - dataOfferingId
+          - dataOfferingVersion
+          - active
+          properties:
+            dataOfferingId:
+              type: string
+            version:
+              type: integer
+            category:
+              type: string
+            active:
+              type: boolean
+            title:
+              type: string
+        parties:
+          type: object
+          required:
+          - providerDid
+          - consumerDid
+          properties:
+            providerDid:
+              type: string
+            consumerDid:
+              type: string
+        purpose:
+          type: string
+        duration:
+          type: object
+          required:
+          - creationDate
+          - startDate
+          - endDate
+          properties:
+            creationDate:
+              type: integer
+            startDate:
+              type: integer
+            endDate:
+              type: integer
+        intendedUse:
+          type: object
+          required:
+          - processData
+          - shareDataWithThirdParty
+          - editData
+          properties:
+            processData:
+              type: boolean
+            shareDataWithThirdParty:
+              type: boolean
+            editData:
+              type: boolean
+        licenseGrant:
+          type: object
+          required:
+          - transferable
+          - exclusiveness
+          - paidUp
+          - revocable
+          - processing
+          - modifying
+          - analyzing
+          - storingData
+          - storingCopy
+          - reproducing
+          - distributing
+          - loaning
+          - selling
+          - renting
+          - furtherLicensing
+          - leasing
+          properties:
+            transferable:
+              type: boolean
+            exclusiveness:
+              type: boolean
+            paidUp:
+              type: boolean
+            revocable:
+              type: boolean
+            processing:
+              type: boolean
+            modifying:
+              type: boolean
+            analyzing:
+              type: boolean
+            storingData:
+              type: boolean
+            storingCopy:
+              type: boolean
+            reproducing:
+              type: boolean
+            distributing:
+              type: boolean
+            loaning:
+              type: boolean
+            selling:
+              type: boolean
+            renting:
+              type: boolean
+            furtherLicensing:
+              type: boolean
+            leasing:
+              type: boolean
+        dataStream:
+          type: boolean
+        personalData:
+          type: boolean
+        pricingModel:
+          type: object
+          required:
+          - basicPrice
+          - currency
+          - hasFreePrice
+          properties:
+            paymentType:
+              type: string
+            pricingModelName:
+              type: string
+            basicPrice:
+              type: number
+              format: float
+            currency:
+              type: string
+            fee:
+              type: number
+              format: float
+            hasPaymentOnSubscription:
+              type: object
+              properties:
+                paymentOnSubscriptionName:
+                  type: string
+                paymentType:
+                  type: string
+                timeDuration:
+                  type: string
+                description:
+                  type: string
+                repeat:
+                  type: string
+                hasSubscriptionPrice:
+                  type: integer
+            hasFreePrice:
+              type: object
+              properties:
+                hasPriceFree:
+                  type: boolean
+        dataExchangeAgreement:
+          $ref: "#/components/schemas/dataExchangeAgreement"
+        signatures:
+          type: object
+          required:
+          - providerSigniture
+          - consumerSigniture
+          properties:
+            providerSigniture:
+              $ref: "#/components/schemas/CompactJWS"
+            consumerSigniture:
+              $ref: "#/components/schemas/CompactJWS"
