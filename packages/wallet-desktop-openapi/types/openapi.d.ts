@@ -9,6 +9,10 @@ export namespace WalletComponents {
       message: string
     }
     /**
+         * CompactJWS
+         */
+    export type CompactJWS = string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+    /**
          * Contract
          */
     export interface Contract {
@@ -17,14 +21,271 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
-      identity?: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
       resource: {
-        [name: string]: any
+        dataOfferingDescription: {
+          dataOfferingId: string
+          version?: number
+          category?: string
+          active: boolean
+          title?: string
+        }
+        parties: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        purpose: string
+        duration: {
+          creationDate: number
+          startDate: number
+          endDate: number
+        }
+        intendedUse: {
+          processData: boolean
+          shareDataWithThirdParty: boolean
+          editData: boolean
+        }
+        licenseGrant: {
+          transferable: boolean
+          exclusiveness: boolean
+          paidUp: boolean
+          revocable: boolean
+          processing: boolean
+          modifying: boolean
+          analyzing: boolean
+          storingData: boolean
+          storingCopy: boolean
+          reproducing: boolean
+          distributing: boolean
+          loaning: boolean
+          selling: boolean
+          renting: boolean
+          furtherLicensing: boolean
+          leasing: boolean
+        }
+        dataStream: boolean
+        personalData: boolean
+        pricingModel: {
+          paymentType?: string
+          pricingModelName?: string
+          basicPrice: number // float
+          currency: string
+          fee?: number // float
+          hasPaymentOnSubscription?: {
+            paymentOnSubscriptionName?: string
+            paymentType?: string
+            timeDuration?: string
+            description?: string
+            repeat?: string
+            hasSubscriptionPrice?: number
+          }
+          hasFreePrice: {
+            hasPriceFree?: boolean
+          }
+        }
+        dataExchangeAgreement: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          encAlg: string
+          signingAlg: string
+          hashAlg: string
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          pooToPorDelay: number
+          pooToPopDelay: number
+          pooToSecretDelay: number
+        }
+        signatures: {
+          /**
+                     * CompactJWS
+                     */
+          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          /**
+                     * CompactJWS
+                     */
+          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+        }
+      }
+    }
+    export interface DataExchangeAgreement {
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      encAlg: string
+      signingAlg: string
+      hashAlg: string
+      /**
+             * Ethereum Address
+             * example:
+             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+             */
+      ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+      /**
+             * Ethereum Address
+             * example:
+             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+             */
+      ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+      pooToPorDelay: number
+      pooToPopDelay: number
+      pooToSecretDelay: number
+    }
+    export interface DataSharingAgreement {
+      dataOfferingDescription: {
+        dataOfferingId: string
+        version?: number
+        category?: string
+        active: boolean
+        title?: string
+      }
+      parties: {
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      }
+      purpose: string
+      duration: {
+        creationDate: number
+        startDate: number
+        endDate: number
+      }
+      intendedUse: {
+        processData: boolean
+        shareDataWithThirdParty: boolean
+        editData: boolean
+      }
+      licenseGrant: {
+        transferable: boolean
+        exclusiveness: boolean
+        paidUp: boolean
+        revocable: boolean
+        processing: boolean
+        modifying: boolean
+        analyzing: boolean
+        storingData: boolean
+        storingCopy: boolean
+        reproducing: boolean
+        distributing: boolean
+        loaning: boolean
+        selling: boolean
+        renting: boolean
+        furtherLicensing: boolean
+        leasing: boolean
+      }
+      dataStream: boolean
+      personalData: boolean
+      pricingModel: {
+        paymentType?: string
+        pricingModelName?: string
+        basicPrice: number // float
+        currency: string
+        fee?: number // float
+        hasPaymentOnSubscription?: {
+          paymentOnSubscriptionName?: string
+          paymentType?: string
+          timeDuration?: string
+          description?: string
+          repeat?: string
+          hasSubscriptionPrice?: number
+        }
+        hasFreePrice: {
+          hasPriceFree?: boolean
+        }
+      }
+      dataExchangeAgreement: {
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        encAlg: string
+        signingAlg: string
+        hashAlg: string
+        /**
+                 * Ethereum Address
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Ethereum Address
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        pooToPorDelay: number
+        pooToPopDelay: number
+        pooToSecretDelay: number
+      }
+      signatures: {
+        /**
+                 * CompactJWS
+                 */
+        providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+        /**
+                 * CompactJWS
+                 */
+        consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
       }
     }
     /**
@@ -38,12 +299,12 @@ export namespace WalletComponents {
       }
       payload?: {
         [name: string]: any
-        iss: /**
+        /**
                  * DID
                  * example:
-                 * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        Did
+        iss: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
       }
       signature: string // ^[A-Za-z0-9_-]+$
       /**
@@ -54,9 +315,15 @@ export namespace WalletComponents {
     /**
          * DID
          * example:
-         * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
          */
-    export type Did = string
+    export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+    /**
+         * Ethereum Address
+         * example:
+         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+         */
+    export type EthereumAddress = string // ^0x([0-9A-Fa-f]){40}$
     /**
          * IdentityCreateInput
          * Besides the here defined options, provider specific properties should be added here if necessary, e.g. "path" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).
@@ -73,12 +340,12 @@ export namespace WalletComponents {
          */
     export interface IdentityCreateOutput {
       [name: string]: any
-      did: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }
     /**
          * Identity Data
@@ -105,30 +372,30 @@ export namespace WalletComponents {
              *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
              * ]
              */
-      addresses?: string[]
+      addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
     }
     /**
          * IdentityListInput
          * A list of DIDs
          */
     export type IdentityListInput = Array<{
-      did: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }>
     /**
          * IdentitySelectOutput
          */
     export interface IdentitySelectOutput {
-      did: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }
     /**
          * ObjectResource
@@ -139,12 +406,12 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
-      identity?: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
       resource: {
         [name: string]: any
       }
@@ -180,7 +447,209 @@ export namespace WalletComponents {
     /**
          * Resource
          */
-    export type Resource = /* Resource */ /* VerifiableCredential */ VerifiableCredential | /* ObjectResource */ ObjectResource | /* Contract */ Contract
+    export type Resource = /* Resource */ {
+      /**
+             * example:
+             * VerifiableCredential
+             */
+      type: 'VerifiableCredential'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+        /**
+                 * example:
+                 * [
+                 *   "https://www.w3.org/2018/credentials/v1"
+                 * ]
+                 */
+        '@context': string[]
+        /**
+                 * example:
+                 * http://example.edu/credentials/1872
+                 */
+        id?: string
+        /**
+                 * example:
+                 * [
+                 *   "VerifiableCredential"
+                 * ]
+                 */
+        type: string[]
+        issuer: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        /**
+                 * example:
+                 * 2021-06-10T19:07:28.000Z
+                 */
+        issuanceDate: string // date-time
+        credentialSubject: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        proof: {
+          [name: string]: any
+          type: 'JwtProof2020'
+        }
+      }
+    } | {
+      /**
+             * example:
+             * Object
+             */
+      type: 'Object'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+      }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'Contract'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        dataOfferingDescription: {
+          dataOfferingId: string
+          version?: number
+          category?: string
+          active: boolean
+          title?: string
+        }
+        parties: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        purpose: string
+        duration: {
+          creationDate: number
+          startDate: number
+          endDate: number
+        }
+        intendedUse: {
+          processData: boolean
+          shareDataWithThirdParty: boolean
+          editData: boolean
+        }
+        licenseGrant: {
+          transferable: boolean
+          exclusiveness: boolean
+          paidUp: boolean
+          revocable: boolean
+          processing: boolean
+          modifying: boolean
+          analyzing: boolean
+          storingData: boolean
+          storingCopy: boolean
+          reproducing: boolean
+          distributing: boolean
+          loaning: boolean
+          selling: boolean
+          renting: boolean
+          furtherLicensing: boolean
+          leasing: boolean
+        }
+        dataStream: boolean
+        personalData: boolean
+        pricingModel: {
+          paymentType?: string
+          pricingModelName?: string
+          basicPrice: number // float
+          currency: string
+          fee?: number // float
+          hasPaymentOnSubscription?: {
+            paymentOnSubscriptionName?: string
+            paymentType?: string
+            timeDuration?: string
+            description?: string
+            repeat?: string
+            hasSubscriptionPrice?: number
+          }
+          hasFreePrice: {
+            hasPriceFree?: boolean
+          }
+        }
+        dataExchangeAgreement: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          encAlg: string
+          signingAlg: string
+          hashAlg: string
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          pooToPorDelay: number
+          pooToPopDelay: number
+          pooToSecretDelay: number
+        }
+        signatures: {
+          /**
+                     * CompactJWS
+                     */
+          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          /**
+                     * CompactJWS
+                     */
+          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+        }
+      }
+    }
     export interface ResourceId {
       id: string
     }
@@ -188,12 +657,249 @@ export namespace WalletComponents {
          * ResourceListOutput
          * A list of resources
          */
-    export type ResourceListOutput = /* Resource */ Resource[]
+    export type ResourceListOutput = /* Resource */ Array<{
+      /**
+             * example:
+             * VerifiableCredential
+             */
+      type: 'VerifiableCredential'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+        /**
+                 * example:
+                 * [
+                 *   "https://www.w3.org/2018/credentials/v1"
+                 * ]
+                 */
+        '@context': string[]
+        /**
+                 * example:
+                 * http://example.edu/credentials/1872
+                 */
+        id?: string
+        /**
+                 * example:
+                 * [
+                 *   "VerifiableCredential"
+                 * ]
+                 */
+        type: string[]
+        issuer: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        /**
+                 * example:
+                 * 2021-06-10T19:07:28.000Z
+                 */
+        issuanceDate: string // date-time
+        credentialSubject: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        proof: {
+          [name: string]: any
+          type: 'JwtProof2020'
+        }
+      }
+    } | {
+      /**
+             * example:
+             * Object
+             */
+      type: 'Object'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+      }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'Contract'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        dataOfferingDescription: {
+          dataOfferingId: string
+          version?: number
+          category?: string
+          active: boolean
+          title?: string
+        }
+        parties: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        purpose: string
+        duration: {
+          creationDate: number
+          startDate: number
+          endDate: number
+        }
+        intendedUse: {
+          processData: boolean
+          shareDataWithThirdParty: boolean
+          editData: boolean
+        }
+        licenseGrant: {
+          transferable: boolean
+          exclusiveness: boolean
+          paidUp: boolean
+          revocable: boolean
+          processing: boolean
+          modifying: boolean
+          analyzing: boolean
+          storingData: boolean
+          storingCopy: boolean
+          reproducing: boolean
+          distributing: boolean
+          loaning: boolean
+          selling: boolean
+          renting: boolean
+          furtherLicensing: boolean
+          leasing: boolean
+        }
+        dataStream: boolean
+        personalData: boolean
+        pricingModel: {
+          paymentType?: string
+          pricingModelName?: string
+          basicPrice: number // float
+          currency: string
+          fee?: number // float
+          hasPaymentOnSubscription?: {
+            paymentOnSubscriptionName?: string
+            paymentType?: string
+            timeDuration?: string
+            description?: string
+            repeat?: string
+            hasSubscriptionPrice?: number
+          }
+          hasFreePrice: {
+            hasPriceFree?: boolean
+          }
+        }
+        dataExchangeAgreement: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          encAlg: string
+          signingAlg: string
+          hashAlg: string
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          pooToPorDelay: number
+          pooToPopDelay: number
+          pooToSecretDelay: number
+        }
+        signatures: {
+          /**
+                     * CompactJWS
+                     */
+          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          /**
+                     * CompactJWS
+                     */
+          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+        }
+      }
+    }>
     export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract'
     /**
          * SignInput
          */
-    export type SignInput = /* SignInput */ /* SignTransaction */ SignTransaction | /* SignRaw */ SignRaw | /* SignJWT */ SignJWT
+    export type SignInput = /* SignInput */ {
+      type: 'Transaction'
+      /**
+             * Transaction
+             */
+      data: {
+        [name: string]: any
+        from?: string
+        to?: string
+        nonce?: number
+      }
+    } | {
+      type: 'Raw'
+      data: {
+        /**
+                 * Base64Url encoded data to sign
+                 */
+        payload: string // ^[A-Za-z0-9_-]+$
+      }
+    } | {
+      type: 'JWT'
+      data: {
+        /**
+                 * header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
+                 */
+        header?: {
+          [name: string]: any
+        }
+        /**
+                 * A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.
+                 */
+        payload: {
+          [name: string]: any
+        }
+      }
+    }
     /**
          * SignJWT
          */
@@ -237,7 +943,15 @@ export namespace WalletComponents {
          */
     export interface SignTransaction {
       type: 'Transaction'
-      data: /* Transaction */ Transaction
+      /**
+             * Transaction
+             */
+      data: {
+        [name: string]: any
+        from?: string
+        to?: string
+        nonce?: number
+      }
     }
     /**
          * SignTypes
@@ -268,12 +982,12 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
-      identity?: /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Did
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
       resource: {
         [name: string]: any
         /**
@@ -297,12 +1011,12 @@ export namespace WalletComponents {
         type: string[]
         issuer: {
           [name: string]: any
-          id: /**
+          /**
                      * DID
                      * example:
-                     * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          Did
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
         }
         /**
                  * example:
@@ -311,12 +1025,12 @@ export namespace WalletComponents {
         issuanceDate: string // date-time
         credentialSubject: {
           [name: string]: any
-          id: /**
+          /**
                      * DID
                      * example:
-                     * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          Did
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
         }
         proof: {
           [name: string]: any
@@ -375,59 +1089,153 @@ export namespace WalletPaths {
       }
     }
     export namespace Responses {
-      export type $200 = /* VerificationOutput */ WalletComponents.Schemas.VerificationOutput
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      /**
+             * VerificationOutput
+             */
+      export interface $200 {
+        /**
+                 * whether verification has been successful or has failed
+                 */
+        verification: 'success' | 'failed'
+        /**
+                 * error message if verification failed
+                 */
+        error?: string
+        /**
+                 * the decoded JWT
+                 */
+        decodedJwt?: any
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentityCreate {
-    export type RequestBody = /**
+    /**
          * IdentityCreateInput
          * Besides the here defined options, provider specific properties should be added here if necessary, e.g. "path" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).
          *
          */
-        WalletComponents.Schemas.IdentityCreateInput
+    export interface RequestBody {
+      [name: string]: any
+      alias?: string
+    }
     export namespace Responses {
-      export type $201 = /**
+      /**
              * IdentityCreateOutput
              * It returns the account id and type
              *
              */
-            WalletComponents.Schemas.IdentityCreateOutput
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      export interface $201 {
+        [name: string]: any
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentityDeployTransaction {
     export namespace Parameters {
-      export type Did = /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-            WalletComponents.Schemas.Did
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }
     export interface PathParameters {
-      did: Parameters.Did
+      did: /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
     }
-    export type RequestBody = /* Transaction */ WalletComponents.Schemas.Transaction
+    /**
+         * Transaction
+         */
+    export interface RequestBody {
+      [name: string]: any
+      from?: string
+      to?: string
+      nonce?: number
+    }
     export namespace Responses {
-      export type $200 = /* Receipt */ WalletComponents.Schemas.Receipt
+      /**
+             * Receipt
+             */
+      export interface $200 {
+        receipt: string
+      }
     }
   }
   export namespace IdentityInfo {
     export namespace Parameters {
-      export type Did = /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-            WalletComponents.Schemas.Did
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }
     export interface PathParameters {
-      did: Parameters.Did
+      did: /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
     }
     export namespace Responses {
-      export type $200 = /* Identity Data */ WalletComponents.Schemas.IdentityData
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      /**
+             * Identity Data
+             */
+      export interface $200 {
+        /**
+                 * example:
+                 * did:ethr:i3m:0x03142f480f831e835822fc0cd35726844a7069d28df58fb82037f1598812e1ade8
+                 */
+        did: string
+        /**
+                 * example:
+                 * identity1
+                 */
+        alias?: string
+        /**
+                 * example:
+                 * did:ethr:i3m
+                 */
+        provider?: string
+        /**
+                 * example:
+                 * [
+                 *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
+                 * ]
+                 */
+        addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentityList {
@@ -441,12 +1249,25 @@ export namespace WalletPaths {
       alias?: /* An alias for the identity */ Parameters.Alias
     }
     export namespace Responses {
-      export type $200 = /**
+      /**
              * IdentityListInput
              * A list of DIDs
              */
-            WalletComponents.Schemas.IdentityListInput
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      export type $200 = Array<{
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      }>
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentitySelect {
@@ -460,64 +1281,571 @@ export namespace WalletPaths {
       reason?: /* Message to show to the user with the reason to pick an identity */ Parameters.Reason
     }
     export namespace Responses {
-      export type $200 = /* IdentitySelectOutput */ WalletComponents.Schemas.IdentitySelectOutput
+      /**
+             * IdentitySelectOutput
+             */
+      export interface $200 {
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      }
     }
   }
   export namespace IdentitySign {
     export namespace Parameters {
-      export type Did = /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-            WalletComponents.Schemas.Did
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
     }
     export interface PathParameters {
-      did: Parameters.Did
+      did: /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
     }
-    export type RequestBody = /* SignInput */ WalletComponents.Schemas.SignInput
+    /**
+         * SignInput
+         */
+    export type RequestBody = /* SignInput */ {
+      type: 'Transaction'
+      /**
+             * Transaction
+             */
+      data: {
+        [name: string]: any
+        from?: string
+        to?: string
+        nonce?: number
+      }
+    } | {
+      type: 'Raw'
+      data: {
+        /**
+                 * Base64Url encoded data to sign
+                 */
+        payload: string // ^[A-Za-z0-9_-]+$
+      }
+    } | {
+      type: 'JWT'
+      data: {
+        /**
+                 * header fields to be added to the JWS header. "alg" and "kid" will be ignored since they are automatically added by the wallet.
+                 */
+        header?: {
+          [name: string]: any
+        }
+        /**
+                 * A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.
+                 */
+        payload: {
+          [name: string]: any
+        }
+      }
+    }
     export namespace Responses {
-      export type $200 = /* SignOutput */ WalletComponents.Schemas.SignOutput
+      /**
+             * SignOutput
+             */
+      export interface $200 {
+        signature: string
+      }
     }
   }
   export namespace ProviderinfoGet {
     export namespace Responses {
-      export type $200 = /**
+      /**
              * ProviderData
              * A JSON object with information of the DLT provider currently in use.
              */
-            WalletComponents.Schemas.ProviderData
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      export interface $200 {
+        [name: string]: any
+        /**
+                 * example:
+                 * did:ethr:i3m
+                 */
+        provider?: string
+        /**
+                 * example:
+                 * i3m
+                 */
+        network?: string
+        /**
+                 * example:
+                 * http://95.211.3.250:8545
+                 */
+        rpcUrl?: string
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace ResourceCreate {
-    export type RequestBody = /* Resource */ WalletComponents.Schemas.Resource
+    /**
+         * Resource
+         */
+    export type RequestBody = /* Resource */ {
+      /**
+             * example:
+             * VerifiableCredential
+             */
+      type: 'VerifiableCredential'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+        /**
+                 * example:
+                 * [
+                 *   "https://www.w3.org/2018/credentials/v1"
+                 * ]
+                 */
+        '@context': string[]
+        /**
+                 * example:
+                 * http://example.edu/credentials/1872
+                 */
+        id?: string
+        /**
+                 * example:
+                 * [
+                 *   "VerifiableCredential"
+                 * ]
+                 */
+        type: string[]
+        issuer: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        /**
+                 * example:
+                 * 2021-06-10T19:07:28.000Z
+                 */
+        issuanceDate: string // date-time
+        credentialSubject: {
+          [name: string]: any
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        proof: {
+          [name: string]: any
+          type: 'JwtProof2020'
+        }
+      }
+    } | {
+      /**
+             * example:
+             * Object
+             */
+      type: 'Object'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        [name: string]: any
+      }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'Contract'
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      resource: {
+        dataOfferingDescription: {
+          dataOfferingId: string
+          version?: number
+          category?: string
+          active: boolean
+          title?: string
+        }
+        parties: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        }
+        purpose: string
+        duration: {
+          creationDate: number
+          startDate: number
+          endDate: number
+        }
+        intendedUse: {
+          processData: boolean
+          shareDataWithThirdParty: boolean
+          editData: boolean
+        }
+        licenseGrant: {
+          transferable: boolean
+          exclusiveness: boolean
+          paidUp: boolean
+          revocable: boolean
+          processing: boolean
+          modifying: boolean
+          analyzing: boolean
+          storingData: boolean
+          storingCopy: boolean
+          reproducing: boolean
+          distributing: boolean
+          loaning: boolean
+          selling: boolean
+          renting: boolean
+          furtherLicensing: boolean
+          leasing: boolean
+        }
+        dataStream: boolean
+        personalData: boolean
+        pricingModel: {
+          paymentType?: string
+          pricingModelName?: string
+          basicPrice: number // float
+          currency: string
+          fee?: number // float
+          hasPaymentOnSubscription?: {
+            paymentOnSubscriptionName?: string
+            paymentType?: string
+            timeDuration?: string
+            description?: string
+            repeat?: string
+            hasSubscriptionPrice?: number
+          }
+          hasFreePrice: {
+            hasPriceFree?: boolean
+          }
+        }
+        dataExchangeAgreement: {
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          /**
+                     * DID
+                     * example:
+                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                     */
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          encAlg: string
+          signingAlg: string
+          hashAlg: string
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Ethereum Address
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          pooToPorDelay: number
+          pooToPopDelay: number
+          pooToSecretDelay: number
+        }
+        signatures: {
+          /**
+                     * CompactJWS
+                     */
+          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          /**
+                     * CompactJWS
+                     */
+          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+        }
+      }
+    }
     export namespace Responses {
-      export type $201 = WalletComponents.Schemas.ResourceId
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      export interface $201 {
+        id: string
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace ResourceList {
     export namespace Parameters {
-      export type Identity = /**
+      /**
              * DID
              * example:
-             * did:ethr:rinkeby:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-            WalletComponents.Schemas.Did
-      export type Type = WalletComponents.Schemas.ResourceType
+      export type Identity = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      export type Type = 'VerifiableCredential' | 'Object' | 'Contract'
     }
     export interface QueryParameters {
       type?: Parameters.Type
-      identity?: Parameters.Identity
+      identity?: /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      Parameters.Identity /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
     }
     export namespace Responses {
-      export type $200 = /**
+      /**
              * ResourceListOutput
              * A list of resources
              */
-            WalletComponents.Schemas.ResourceListOutput
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      export type $200 = /* Resource */ Array<{
+        /**
+                 * example:
+                 * VerifiableCredential
+                 */
+        type: 'VerifiableCredential'
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        resource: {
+          [name: string]: any
+          /**
+                     * example:
+                     * [
+                     *   "https://www.w3.org/2018/credentials/v1"
+                     * ]
+                     */
+          '@context': string[]
+          /**
+                     * example:
+                     * http://example.edu/credentials/1872
+                     */
+          id?: string
+          /**
+                     * example:
+                     * [
+                     *   "VerifiableCredential"
+                     * ]
+                     */
+          type: string[]
+          issuer: {
+            [name: string]: any
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          }
+          /**
+                     * example:
+                     * 2021-06-10T19:07:28.000Z
+                     */
+          issuanceDate: string // date-time
+          credentialSubject: {
+            [name: string]: any
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          }
+          proof: {
+            [name: string]: any
+            type: 'JwtProof2020'
+          }
+        }
+      } | {
+        /**
+                 * example:
+                 * Object
+                 */
+        type: 'Object'
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        resource: {
+          [name: string]: any
+        }
+      } | {
+        /**
+                 * example:
+                 * Contract
+                 */
+        type: 'Contract'
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        resource: {
+          dataOfferingDescription: {
+            dataOfferingId: string
+            version?: number
+            category?: string
+            active: boolean
+            title?: string
+          }
+          parties: {
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          }
+          purpose: string
+          duration: {
+            creationDate: number
+            startDate: number
+            endDate: number
+          }
+          intendedUse: {
+            processData: boolean
+            shareDataWithThirdParty: boolean
+            editData: boolean
+          }
+          licenseGrant: {
+            transferable: boolean
+            exclusiveness: boolean
+            paidUp: boolean
+            revocable: boolean
+            processing: boolean
+            modifying: boolean
+            analyzing: boolean
+            storingData: boolean
+            storingCopy: boolean
+            reproducing: boolean
+            distributing: boolean
+            loaning: boolean
+            selling: boolean
+            renting: boolean
+            furtherLicensing: boolean
+            leasing: boolean
+          }
+          dataStream: boolean
+          personalData: boolean
+          pricingModel: {
+            paymentType?: string
+            pricingModelName?: string
+            basicPrice: number // float
+            currency: string
+            fee?: number // float
+            hasPaymentOnSubscription?: {
+              paymentOnSubscriptionName?: string
+              paymentType?: string
+              timeDuration?: string
+              description?: string
+              repeat?: string
+              hasSubscriptionPrice?: number
+            }
+            hasFreePrice: {
+              hasPriceFree?: boolean
+            }
+          }
+          dataExchangeAgreement: {
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            /**
+                         * DID
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            encAlg: string
+            signingAlg: string
+            hashAlg: string
+            /**
+                         * Ethereum Address
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Ethereum Address
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            pooToPorDelay: number
+            pooToPopDelay: number
+            pooToSecretDelay: number
+          }
+          signatures: {
+            /**
+                         * CompactJWS
+                         */
+            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            /**
+                         * CompactJWS
+                         */
+            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          }
+        }
+      }>
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace SelectiveDisclosure {
@@ -531,19 +1859,33 @@ export namespace WalletPaths {
       export interface $200 {
         jwt?: string
       }
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace TransactionDeploy {
-    export type RequestBody = /**
+    /**
          * SignedTransaction
          * A list of resources
          */
-        WalletComponents.Schemas.SignedTransaction
+    export interface RequestBody {
+      transaction?: string // ^0x(?:[A-Fa-f0-9])+$
+    }
     export namespace Responses {
       export interface $200 {
       }
-      export type Default = /* Error */ WalletComponents.Schemas.ApiError
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
 }

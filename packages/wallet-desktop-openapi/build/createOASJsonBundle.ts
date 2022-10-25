@@ -52,7 +52,11 @@ function removeIgnoredPaths (spec: OpenAPIV3.Document): void {
 //   return bundleSpec
 // }
 
-const bundleSpec = async function (): Promise<OpenAPIV3.Document> {
+interface SpecBundles {
+  api: OpenAPIV3.Document
+  dereferencedApi: OpenAPIV3.Document
+}
+const bundleSpec = async function (): Promise<SpecBundles> {
   const openApiPath = path.join(rootDir, 'src', 'openapi.yaml')
 
   const parser = new SwaggerParser()
@@ -68,20 +72,31 @@ const bundleSpec = async function (): Promise<OpenAPIV3.Document> {
   const bundledSpec: OpenAPIV3.Document = _.defaultsDeep(rootApi, ...specs)
   fixRefs(bundledSpec)
   removeIgnoredPaths(bundledSpec)
-  return bundledSpec
+
+  const dereferencedBundledSpec = await parser.dereference(bundledSpec) as OpenAPIV3.Document
+
+  return {
+    api: bundledSpec,
+    dereferencedApi: dereferencedBundledSpec
+  }
 }
 
 const bundle = async (): Promise<void> => {
-  const api = await bundleSpec()
+  const { api, dereferencedApi } = await bundleSpec()
 
-  const jsonBundle = path.join(rootDir, pkgJson.main)
+  const jsonBundlePath = path.join(rootDir, pkgJson.main)
   api.info.version = pkgJson.version
-  fs.writeFileSync(jsonBundle, JSON.stringify(api, null, 2))
-  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundle}`)
+  fs.writeFileSync(jsonBundlePath, JSON.stringify(api, null, 2))
+  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundlePath}`)
 
-  const yamlBundle = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
-  fs.writeFileSync(yamlBundle, jsYaml.dump(api))
-  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec YAML bundle written to -> ${yamlBundle}`)
+  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
+  dereferencedApi.info.version = pkgJson.version
+  fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(api, null, 2))
+  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
+
+  const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
+  fs.writeFileSync(yamlBundlePath, jsYaml.dump(api))
+  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec YAML bundle written to -> ${yamlBundlePath}`)
 }
 
 export default bundle

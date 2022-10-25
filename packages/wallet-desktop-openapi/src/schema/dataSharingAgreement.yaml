@@ -91,9 +91,9 @@ components:
           - consumerDid
           properties:
             providerDid:
-              type: string
+              $ref: "./identity.yaml#/components/schemas/did"
             consumerDid:
-              type: string
+              $ref: "./identity.yaml#/components/schemas/did"
         purpose:
           type: string
         duration:
@@ -222,10 +222,10 @@ components:
         signatures:
           type: object
           required:
-          - providerSigniture
-          - consumerSigniture
+          - providerSignature
+          - consumerSignature
           properties:
-            providerSigniture:
+            providerSignature:
               $ref: "#/components/schemas/CompactJWS"
-            consumerSigniture:
+            consumerSignature:
               $ref: "#/components/schemas/CompactJWS"

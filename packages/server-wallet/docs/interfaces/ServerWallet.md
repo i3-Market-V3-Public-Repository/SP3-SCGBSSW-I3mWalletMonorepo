@@ -59,7 +59,7 @@ BokWallet.dialog
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/server-wallet/src/ts/index.ts#L10)
+[server-wallet/src/ts/index.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/server-wallet/src/ts/index.ts#L10)
 
 ___
 
@@ -73,7 +73,7 @@ BokWallet.keyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
+[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
 
 ___
 
@@ -87,7 +87,7 @@ BokWallet.provider
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
+[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
 
 ___
 
@@ -101,7 +101,7 @@ BokWallet.providersData
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
+[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
 
 ___
 
@@ -115,7 +115,7 @@ BokWallet.resourceValidator
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
+[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
 
 ___
 
@@ -129,7 +129,7 @@ BokWallet.store
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/server-wallet/src/ts/index.ts#L11)
+[server-wallet/src/ts/index.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/server-wallet/src/ts/index.ts#L11)
 
 ___
 
@@ -143,7 +143,7 @@ BokWallet.toast
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/server-wallet/src/ts/index.ts#L12)
+[server-wallet/src/ts/index.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/server-wallet/src/ts/index.ts#L12)
 
 ___
 
@@ -157,7 +157,7 @@ BokWallet.veramo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
+[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
 
 ## Methods
 
@@ -181,7 +181,7 @@ BokWallet.call
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
+[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
 
 ___
 
@@ -199,7 +199,7 @@ BokWallet.createTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
+[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
 
 ___
 
@@ -225,7 +225,7 @@ BokWallet.deleteIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L89)
+[base-wallet/types/wallet/base-wallet.d.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L89)
 
 ___
 
@@ -251,13 +251,13 @@ BokWallet.deleteResource
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L84)
+[base-wallet/types/wallet/base-wallet.d.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L84)
 
 ___
 
 ### didJwtVerify
 
-▸ **didJwtVerify**(`requestBody`): `Promise`<`VerificationOutput`\>
+▸ **didJwtVerify**(`requestBody`): `Promise`<`$200`\>
 
 Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
 
@@ -273,7 +273,7 @@ Useful to verify JWT created by another wallet instance.
 
 #### Returns
 
-`Promise`<`VerificationOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -281,7 +281,7 @@ BokWallet.didJwtVerify
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L118)
+[base-wallet/types/wallet/base-wallet.d.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L118)
 
 ___
 
@@ -305,7 +305,7 @@ BokWallet.executeTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
+[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
 
 ___
 
@@ -325,7 +325,7 @@ BokWallet.getIdentities
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
+[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
 
 ___
 
@@ -349,7 +349,7 @@ BokWallet.getKeyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
+[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
 
 ___
 
@@ -369,13 +369,13 @@ BokWallet.getResources
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
+[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
 
 ___
 
 ### identityCreate
 
-▸ **identityCreate**(`requestBody`): `Promise`<`IdentityCreateOutput`\>
+▸ **identityCreate**(`requestBody`): `Promise`<`$201`\>
 
 Creates an identity
 
@@ -383,11 +383,11 @@ Creates an identity
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `IdentityCreateInput` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`IdentityCreateOutput`\>
+`Promise`<`$201`\>
 
 the DID of the created identity
 
@@ -397,7 +397,7 @@ BokWallet.identityCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
+[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
 
 ___
 
@@ -422,13 +422,13 @@ BokWallet.identityDeployTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
+[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
 
 ___
 
 ### identityInfo
 
-▸ **identityInfo**(`pathParameters`): `Promise`<`IdentityData`\>
+▸ **identityInfo**(`pathParameters`): `Promise`<`$200`\>
 
 Returns info regarding an identity. It includes DLT addresses bounded to the identity
 
@@ -440,7 +440,7 @@ Returns info regarding an identity. It includes DLT addresses bounded to the ide
 
 #### Returns
 
-`Promise`<`IdentityData`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -448,13 +448,13 @@ BokWallet.identityInfo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
+[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
 
 ___
 
 ### identityList
 
-▸ **identityList**(`queryParameters`): `Promise`<`IdentityListInput`\>
+▸ **identityList**(`queryParameters`): `Promise`<`$200`\>
 
 Returns a list of DIDs managed by this wallet
 
@@ -466,7 +466,7 @@ Returns a list of DIDs managed by this wallet
 
 #### Returns
 
-`Promise`<`IdentityListInput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -474,13 +474,13 @@ BokWallet.identityList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
+[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
 
 ___
 
 ### identitySelect
 
-▸ **identitySelect**(`queryParameters`): `Promise`<`IdentitySelectOutput`\>
+▸ **identitySelect**(`queryParameters`): `Promise`<`$200`\>
 
 #### Parameters
 
@@ -490,7 +490,7 @@ ___
 
 #### Returns
 
-`Promise`<`IdentitySelectOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -498,13 +498,13 @@ BokWallet.identitySelect
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
+[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
 
 ___
 
 ### identitySign
 
-▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`SignOutput`\>
+▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`$200`\>
 
 Signs using the identity set in pathParameters. Currently suporting RAW signatures of base64url-encoded data, arbritrary JSON objects (it returns a JWT); and transactions for the DLT.
 
@@ -513,11 +513,11 @@ Signs using the identity set in pathParameters. Currently suporting RAW signatur
 | Name | Type |
 | :------ | :------ |
 | `pathParameters` | `PathParameters` |
-| `requestBody` | `SignInput` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`SignOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -525,7 +525,7 @@ BokWallet.identitySign
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
+[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
 
 ___
 
@@ -549,19 +549,19 @@ BokWallet.importDid
 
 #### Defined in
 
-[bok-wallet/types/bok-wallet.d.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/bok-wallet/types/bok-wallet.d.ts#L8)
+[bok-wallet/types/bok-wallet.d.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/bok-wallet/types/bok-wallet.d.ts#L8)
 
 ___
 
 ### providerinfoGet
 
-▸ **providerinfoGet**(): `Promise`<`ProviderData`\>
+▸ **providerinfoGet**(): `Promise`<`$200`\>
 
 Retrieves information regarding the current connection to the DLT.
 
 #### Returns
 
-`Promise`<`ProviderData`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -569,7 +569,7 @@ BokWallet.providerinfoGet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L123)
+[base-wallet/types/wallet/base-wallet.d.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L123)
 
 ___
 
@@ -587,13 +587,13 @@ BokWallet.queryBalance
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
+[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
 
 ___
 
 ### resourceCreate
 
-▸ **resourceCreate**(`requestBody`): `Promise`<`ResourceId`\>
+▸ **resourceCreate**(`requestBody`): `Promise`<`$201`\>
 
 Securely stores in the wallet a new resource. Currently only supporting verifiable credentials, which are properly verified before storing them.
 
@@ -601,11 +601,11 @@ Securely stores in the wallet a new resource. Currently only supporting verifiab
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `Resource` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`ResourceId`\>
+`Promise`<`$201`\>
 
 and identifier of the created resource
 
@@ -615,13 +615,13 @@ BokWallet.resourceCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:96](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L96)
+[base-wallet/types/wallet/base-wallet.d.ts:96](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L96)
 
 ___
 
 ### resourceList
 
-▸ **resourceList**(`query`): `Promise`<`ResourceListOutput`\>
+▸ **resourceList**(`query`): `Promise`<`$200`\>
 
 Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
 
@@ -633,7 +633,7 @@ Gets a list of resources (currently just verifiable credentials) stored in the w
 
 #### Returns
 
-`Promise`<`ResourceListOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -641,7 +641,7 @@ BokWallet.resourceList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L79)
+[base-wallet/types/wallet/base-wallet.d.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L79)
 
 ___
 
@@ -665,7 +665,7 @@ BokWallet.selectCredentialsForSdr
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
+[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
 
 ___
 
@@ -689,7 +689,7 @@ BokWallet.selectIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
+[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
 
 ___
 
@@ -715,7 +715,7 @@ BokWallet.selectiveDisclosure
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L102)
+[base-wallet/types/wallet/base-wallet.d.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L102)
 
 ___
 
@@ -741,7 +741,7 @@ BokWallet.transactionDeploy
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L108)
+[base-wallet/types/wallet/base-wallet.d.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L108)
 
 ___
 
@@ -759,4 +759,4 @@ BokWallet.wipe
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)
+[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)

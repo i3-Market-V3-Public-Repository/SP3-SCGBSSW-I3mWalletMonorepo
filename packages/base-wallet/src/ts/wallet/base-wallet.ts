@@ -4,21 +4,20 @@ import { ethers } from 'ethers'
 import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
-import { verifyJWT } from 'did-jwt'
 
 import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
-import { ResourceValidator, Resource } from '../resource'
+import { Resource, ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
+import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
-import { decodeJWS, jwsSignInput } from '../utils/jws'
-import Veramo, { ProviderData, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA } from '../veramo'
+import { jwsSignInput } from '../utils/jws'
+import Veramo, { DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
 
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
-import { hashable } from 'object-sha'
 
 interface SdrClaim {
   claimType: string
@@ -59,10 +58,6 @@ interface TransactionData {
 interface TransactionOptions {
   transaction?: string
   notifyUser?: boolean
-}
-
-type Dict<T> = T & {
-  [key: string]: any | undefined
 }
 
 type ResourceMap = BaseWalletModel['resources']
@@ -761,51 +756,11 @@ export class BaseWallet<
    * @returns
    */
   async didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
-    let decodedJwt
     try {
-      decodedJwt = decodeJWS(requestBody.jwt)
+      return await didJwtVerifyFn(requestBody.jwt, this.veramo, requestBody.expectedPayloadClaims)
     } catch (error) {
-      return {
-        verification: 'failed',
-        error: 'Invalid JWT format'
-      }
-    }
-
-    const payload = decodedJwt.payload
-
-    if (requestBody.expectedPayloadClaims !== undefined) {
-      const expectedClaimsDict: Dict<typeof requestBody.expectedPayloadClaims> = requestBody.expectedPayloadClaims
-
-      let error: string | undefined
-      for (const key in expectedClaimsDict) {
-        if (payload[key] === undefined) error = `Expected key '${key}' not found in payload`
-        if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
-          error = `Payload's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
-        }
-      }
-      if (error !== undefined) {
-        return {
-          verification: 'failed',
-          error,
-          decodedJwt
-        }
-      }
-    }
-    const resolver = { resolve: async (didUrl: string) => await this.veramo.agent.resolveDid({ didUrl }) }
-    try {
-      const verifiedJWT = await verifyJWT(requestBody.jwt, { resolver })
-      return {
-        verification: 'success',
-        decodedJwt: verifiedJWT.payload
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        return {
-          verification: 'failed',
-          error: error.message,
-          decodedJwt
-        }
-      } else throw new WalletError('unknown error during verification')
+      if (typeof error === 'string') { throw new WalletError(error) }
+      throw new Error(typeof error === 'string' ? error : 'unknown error')
     }
   }
 

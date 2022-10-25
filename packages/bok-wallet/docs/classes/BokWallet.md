@@ -69,7 +69,7 @@ BaseWallet<WalletOptions<BokWalletModel\>\>.constructor
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L27)
+[base-wallet/types/wallet/base-wallet.d.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L27)
 
 ## Properties
 
@@ -83,7 +83,7 @@ BaseWallet.dialog
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L19)
+[base-wallet/types/wallet/base-wallet.d.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L19)
 
 ___
 
@@ -97,7 +97,7 @@ BaseWallet.keyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
+[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
 
 ___
 
@@ -111,7 +111,7 @@ BaseWallet.provider
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
+[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
 
 ___
 
@@ -125,7 +125,7 @@ BaseWallet.providersData
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
+[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
 
 ___
 
@@ -139,7 +139,7 @@ BaseWallet.resourceValidator
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
+[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
 
 ___
 
@@ -153,7 +153,7 @@ BaseWallet.store
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L20)
+[base-wallet/types/wallet/base-wallet.d.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L20)
 
 ___
 
@@ -167,7 +167,7 @@ BaseWallet.toast
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L21)
+[base-wallet/types/wallet/base-wallet.d.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L21)
 
 ___
 
@@ -181,7 +181,7 @@ BaseWallet.veramo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
+[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
 
 ## Methods
 
@@ -205,7 +205,7 @@ BaseWallet.call
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
+[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
 
 ___
 
@@ -223,7 +223,7 @@ BaseWallet.createTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
+[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
 
 ___
 
@@ -249,7 +249,7 @@ BaseWallet.deleteIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L89)
+[base-wallet/types/wallet/base-wallet.d.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L89)
 
 ___
 
@@ -275,13 +275,13 @@ BaseWallet.deleteResource
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L84)
+[base-wallet/types/wallet/base-wallet.d.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L84)
 
 ___
 
 ### didJwtVerify
 
-▸ **didJwtVerify**(`requestBody`): `Promise`<`VerificationOutput`\>
+▸ **didJwtVerify**(`requestBody`): `Promise`<`$200`\>
 
 Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
 
@@ -297,7 +297,7 @@ Useful to verify JWT created by another wallet instance.
 
 #### Returns
 
-`Promise`<`VerificationOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -305,7 +305,7 @@ BaseWallet.didJwtVerify
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L118)
+[base-wallet/types/wallet/base-wallet.d.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L118)
 
 ___
 
@@ -329,7 +329,7 @@ BaseWallet.executeTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
+[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
 
 ___
 
@@ -349,7 +349,7 @@ BaseWallet.getIdentities
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
+[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
 
 ___
 
@@ -373,7 +373,7 @@ BaseWallet.getKeyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
+[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
 
 ___
 
@@ -393,13 +393,13 @@ BaseWallet.getResources
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
+[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
 
 ___
 
 ### identityCreate
 
-▸ **identityCreate**(`requestBody`): `Promise`<`IdentityCreateOutput`\>
+▸ **identityCreate**(`requestBody`): `Promise`<`$201`\>
 
 Creates an identity
 
@@ -407,11 +407,11 @@ Creates an identity
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `IdentityCreateInput` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`IdentityCreateOutput`\>
+`Promise`<`$201`\>
 
 the DID of the created identity
 
@@ -421,7 +421,7 @@ BaseWallet.identityCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
+[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
 
 ___
 
@@ -446,13 +446,13 @@ BaseWallet.identityDeployTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
+[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
 
 ___
 
 ### identityInfo
 
-▸ **identityInfo**(`pathParameters`): `Promise`<`IdentityData`\>
+▸ **identityInfo**(`pathParameters`): `Promise`<`$200`\>
 
 Returns info regarding an identity. It includes DLT addresses bounded to the identity
 
@@ -464,7 +464,7 @@ Returns info regarding an identity. It includes DLT addresses bounded to the ide
 
 #### Returns
 
-`Promise`<`IdentityData`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -472,13 +472,13 @@ BaseWallet.identityInfo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
+[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
 
 ___
 
 ### identityList
 
-▸ **identityList**(`queryParameters`): `Promise`<`IdentityListInput`\>
+▸ **identityList**(`queryParameters`): `Promise`<`$200`\>
 
 Returns a list of DIDs managed by this wallet
 
@@ -490,7 +490,7 @@ Returns a list of DIDs managed by this wallet
 
 #### Returns
 
-`Promise`<`IdentityListInput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -498,13 +498,13 @@ BaseWallet.identityList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
+[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
 
 ___
 
 ### identitySelect
 
-▸ **identitySelect**(`queryParameters`): `Promise`<`IdentitySelectOutput`\>
+▸ **identitySelect**(`queryParameters`): `Promise`<`$200`\>
 
 #### Parameters
 
@@ -514,7 +514,7 @@ ___
 
 #### Returns
 
-`Promise`<`IdentitySelectOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -522,13 +522,13 @@ BaseWallet.identitySelect
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
+[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
 
 ___
 
 ### identitySign
 
-▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`SignOutput`\>
+▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`$200`\>
 
 Signs using the identity set in pathParameters. Currently suporting RAW signatures of base64url-encoded data, arbritrary JSON objects (it returns a JWT); and transactions for the DLT.
 
@@ -537,11 +537,11 @@ Signs using the identity set in pathParameters. Currently suporting RAW signatur
 | Name | Type |
 | :------ | :------ |
 | `pathParameters` | `PathParameters` |
-| `requestBody` | `SignInput` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`SignOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -549,7 +549,7 @@ BaseWallet.identitySign
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
+[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
 
 ___
 
@@ -569,19 +569,19 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/bok-wallet.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/bok-wallet/src/ts/bok-wallet.ts#L13)
+[bok-wallet/src/ts/bok-wallet.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/bok-wallet/src/ts/bok-wallet.ts#L13)
 
 ___
 
 ### providerinfoGet
 
-▸ **providerinfoGet**(): `Promise`<`ProviderData`\>
+▸ **providerinfoGet**(): `Promise`<`$200`\>
 
 Retrieves information regarding the current connection to the DLT.
 
 #### Returns
 
-`Promise`<`ProviderData`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -589,7 +589,7 @@ BaseWallet.providerinfoGet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L123)
+[base-wallet/types/wallet/base-wallet.d.ts:123](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L123)
 
 ___
 
@@ -607,13 +607,13 @@ BaseWallet.queryBalance
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
+[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
 
 ___
 
 ### resourceCreate
 
-▸ **resourceCreate**(`requestBody`): `Promise`<`ResourceId`\>
+▸ **resourceCreate**(`requestBody`): `Promise`<`$201`\>
 
 Securely stores in the wallet a new resource. Currently only supporting verifiable credentials, which are properly verified before storing them.
 
@@ -621,11 +621,11 @@ Securely stores in the wallet a new resource. Currently only supporting verifiab
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `Resource` |
+| `requestBody` | `RequestBody` |
 
 #### Returns
 
-`Promise`<`ResourceId`\>
+`Promise`<`$201`\>
 
 and identifier of the created resource
 
@@ -635,13 +635,13 @@ BaseWallet.resourceCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:96](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L96)
+[base-wallet/types/wallet/base-wallet.d.ts:96](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L96)
 
 ___
 
 ### resourceList
 
-▸ **resourceList**(`query`): `Promise`<`ResourceListOutput`\>
+▸ **resourceList**(`query`): `Promise`<`$200`\>
 
 Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
 
@@ -653,7 +653,7 @@ Gets a list of resources (currently just verifiable credentials) stored in the w
 
 #### Returns
 
-`Promise`<`ResourceListOutput`\>
+`Promise`<`$200`\>
 
 #### Inherited from
 
@@ -661,7 +661,7 @@ BaseWallet.resourceList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L79)
+[base-wallet/types/wallet/base-wallet.d.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L79)
 
 ___
 
@@ -685,7 +685,7 @@ BaseWallet.selectCredentialsForSdr
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
+[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
 
 ___
 
@@ -709,7 +709,7 @@ BaseWallet.selectIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
+[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
 
 ___
 
@@ -735,7 +735,7 @@ BaseWallet.selectiveDisclosure
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L102)
+[base-wallet/types/wallet/base-wallet.d.ts:102](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L102)
 
 ___
 
@@ -761,7 +761,7 @@ BaseWallet.transactionDeploy
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L108)
+[base-wallet/types/wallet/base-wallet.d.ts:108](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L108)
 
 ___
 
@@ -779,4 +779,4 @@ BaseWallet.wipe
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fae3dd4/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)
+[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)
