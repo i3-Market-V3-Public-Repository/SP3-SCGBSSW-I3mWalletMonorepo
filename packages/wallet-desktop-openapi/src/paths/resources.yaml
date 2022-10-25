@@ -188,8 +188,7 @@ components:
         identity:
           $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
-          type: object
-          additionalProperties: true
+          $ref: "../schema/dataSharingAgreement.yaml#/components/schemas/dataSharingAgreement"
       required:
         - type
         - resource
