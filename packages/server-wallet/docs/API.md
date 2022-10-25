@@ -29,4 +29,4 @@
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/server-wallet/src/ts/index.ts#L21)
+[server-wallet/src/ts/index.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/db532fe/packages/server-wallet/src/ts/index.ts#L21)
