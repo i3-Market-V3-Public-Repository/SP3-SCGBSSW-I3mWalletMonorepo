@@ -18,7 +18,11 @@ describe('@i3m/server-wallet', function () {
   let jwt: string
 
   before(async function () {
-    wallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', filepath: join(homedir(), '.server-wallet', 'testStore') })
+    wallet = await serverWalletBuilder({
+      password: 'aestqwerwwec42134642ewdqcAADFEe&/1',
+      reset: true,
+      filepath: join(homedir(), '.server-wallet', 'testStore')
+    })
     veramo = wallet.veramo
   })
 
@@ -148,45 +152,11 @@ describe('@i3m/server-wallet', function () {
         type: 'VerifiableCredential',
         identity: identities.alice
       })
+      debug('Resources: ', JSON.stringify(resources, undefined, 2))
       chai.expect(resources.length).to.equal(1)
     })
   })
 
-  describe('verifiable credentials', function () {
-    let credential: VerifiableCredential
-
-    before(async function () {
-      credential = await veramo.agent.createVerifiableCredential({
-        credential: {
-          issuer: { id: identities.bob },
-          credentialSubject: {
-            id: identities.alice,
-            consumer: true
-          }
-        },
-        proofFormat: 'jwt',
-        save: false
-      }) as VerifiableCredential // TODO: Force type.
-    })
-
-    it('should store verifiable credentials', async function () {
-      const resource = await wallet.resourceCreate({
-        type: 'VerifiableCredential',
-        resource: credential
-      })
-      debug('Resource with id: ', resource.id)
-      chai.expect(resource.id).to.not.be.undefined
-    })
-
-    it('should list created resources', async function () {
-      const resources = await wallet.resourceList({
-        type: 'VerifiableCredential',
-        identity: identities.alice
-      })
-      chai.expect(resources.length).to.equal(1)
-    })
-  })
-  
   describe('selectiveDisclosure', function () {
     let sdrRespJwt: string
     let sdr: string

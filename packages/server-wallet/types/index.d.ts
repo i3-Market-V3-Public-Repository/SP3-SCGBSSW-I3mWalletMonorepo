@@ -11,6 +11,7 @@ export interface ServerWalletOptions {
     password?: string;
     provider?: string;
     providerData?: BokWalletOptions['providersData'];
+    reset?: boolean;
 }
 export declare function serverWalletBuilder(options?: ServerWalletOptions): Promise<ServerWallet>;
 //# sourceMappingURL=index.d.ts.map

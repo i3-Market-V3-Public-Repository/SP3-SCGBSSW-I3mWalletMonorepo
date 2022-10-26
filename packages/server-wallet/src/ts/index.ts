@@ -4,7 +4,7 @@ import { join } from 'path'
 
 import walletBuilder, { BokWallet } from '@i3m/bok-wallet'
 import { BokWalletOptions } from '@i3m/bok-wallet/types/types'
-import { mkdirSync } from 'fs'
+import { mkdirSync, rmSync } from 'fs'
 
 export interface ServerWallet extends BokWallet {
   dialog: NullDialog
@@ -16,6 +16,7 @@ export interface ServerWalletOptions {
   password?: string
   provider?: string
   providerData?: BokWalletOptions['providersData']
+  reset?: boolean
 }
 
 export async function serverWalletBuilder (options?: ServerWalletOptions): Promise<ServerWallet> {
@@ -28,6 +29,11 @@ export async function serverWalletBuilder (options?: ServerWalletOptions): Promi
     filepath = join(filedir, 'store')
   } else {
     filepath = options.filepath
+  }
+  if (options?.reset === true) {
+    try {
+      rmSync(filepath)
+    } catch (error) { }
   }
   const dialog = new NullDialog()
   const store = new FileStore(filepath, options?.password)

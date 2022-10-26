@@ -1,4 +1,4 @@
-name: Build/release
+name: pack for Linux
 
 on:
   workflow_dispatch:
