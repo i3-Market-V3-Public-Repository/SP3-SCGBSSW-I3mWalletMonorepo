@@ -8,6 +8,7 @@
 - [password](ServerWalletOptions.md#password)
 - [provider](ServerWalletOptions.md#provider)
 - [providerData](ServerWalletOptions.md#providerdata)
+- [reset](ServerWalletOptions.md#reset)
 
 ## Properties
 
@@ -17,7 +18,7 @@
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/server-wallet/src/ts/index.ts#L15)
+[server-wallet/src/ts/index.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f415940/packages/server-wallet/src/ts/index.ts#L15)
 
 ___
 
@@ -27,7 +28,7 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/server-wallet/src/ts/index.ts#L16)
+[server-wallet/src/ts/index.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f415940/packages/server-wallet/src/ts/index.ts#L16)
 
 ___
 
@@ -37,7 +38,7 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/server-wallet/src/ts/index.ts#L17)
+[server-wallet/src/ts/index.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f415940/packages/server-wallet/src/ts/index.ts#L17)
 
 ___
 
@@ -47,4 +48,14 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/server-wallet/src/ts/index.ts#L18)
+[server-wallet/src/ts/index.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f415940/packages/server-wallet/src/ts/index.ts#L18)
+
+___
+
+### reset
+
+• `Optional` **reset**: `boolean`
+
+#### Defined in
+
+[server-wallet/src/ts/index.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f415940/packages/server-wallet/src/ts/index.ts#L19)
