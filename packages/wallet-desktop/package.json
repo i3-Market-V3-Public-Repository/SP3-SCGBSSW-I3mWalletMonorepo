@@ -24,6 +24,10 @@
     "name": "ISG UPC",
     "email": "fernando.roman@upc.edu"
   },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git"
+  },
   "homepage": "https://entel.upc.edu/en/research/sertel",
   "license": "EUPL-1.2",
   "ts-standard": {
