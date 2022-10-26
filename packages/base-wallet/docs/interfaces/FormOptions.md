@@ -35,7 +35,7 @@
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L6)
+[base-wallet/src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L6)
 
 ___
 
@@ -45,7 +45,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:48](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L48)
+[base-wallet/src/ts/app/dialog.ts:48](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L48)
 
 ___
 
@@ -59,7 +59,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L4)
+[base-wallet/src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L4)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L49)
+[base-wallet/src/ts/app/dialog.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L49)
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L5)
+[base-wallet/src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L5)
 
 ___
 
@@ -97,4 +97,4 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5c0f922/packages/base-wallet/src/ts/app/dialog.ts#L3)
+[base-wallet/src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38b5525/packages/base-wallet/src/ts/app/dialog.ts#L3)
