@@ -13,7 +13,7 @@ export function Settings (): JSX.Element {
         key: 'developer.enableDeveloperFunctions'
       },
       {
-        label: 'Developer API',
+        label: 'Developer API (localhost:29170)',
         type: 'checkbox',
         key: 'developer.enableDeveloperApi'
       }
