@@ -50,7 +50,7 @@ function getCredentialClaims(vc) {
 
 var openapi = "3.0.2";
 var info = {
-	version: "1.5.1",
+	version: "1.5.2",
 	title: "i3M Wallet API",
 	contact: {
 		name: "Juan Hernández Serrano",
