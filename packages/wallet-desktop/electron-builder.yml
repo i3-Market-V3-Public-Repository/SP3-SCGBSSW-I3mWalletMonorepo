@@ -7,6 +7,8 @@ directories:
 
 # MacOS configurations
 mac:
+  publish:
+    - github
   target:
     - dmg
   artifactName: ${name}-v${version}-${arch}.${ext}
@@ -14,6 +16,8 @@ mac:
 
 # Windows configurations
 win:
+  publish:
+    - github
   target:
     - zip
     - nsis
@@ -21,6 +25,8 @@ win:
 
 # Linux configurations
 linux:
+  publish:
+    - github
   category: Utility
   synopsis: A smart wallet that can be used on i3-MARKET applications.
   target:
