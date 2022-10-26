@@ -26,7 +26,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
@@ -41,13 +41,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         purpose: string
         duration: {
@@ -104,13 +104,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -148,13 +148,13 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       /**
              * DID
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       encAlg: string
       signingAlg: string
       hashAlg: string
@@ -188,13 +188,13 @@ export namespace WalletComponents {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         /**
                  * DID
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       }
       purpose: string
       duration: {
@@ -251,13 +251,13 @@ export namespace WalletComponents {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         /**
                  * DID
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         encAlg: string
         signingAlg: string
         hashAlg: string
@@ -304,7 +304,7 @@ export namespace WalletComponents {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        iss: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        iss: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       }
       signature: string // ^[A-Za-z0-9_-]+$
       /**
@@ -317,7 +317,7 @@ export namespace WalletComponents {
          * example:
          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
          */
-    export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+    export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     /**
          * Ethereum Address
          * example:
@@ -345,7 +345,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     /**
          * Identity Data
@@ -384,7 +384,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }>
     /**
          * IdentitySelectOutput
@@ -395,7 +395,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     /**
          * ObjectResource
@@ -411,7 +411,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
       }
@@ -458,7 +458,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
         /**
@@ -487,7 +487,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         /**
                  * example:
@@ -501,7 +501,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         proof: {
           [name: string]: any
@@ -519,7 +519,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
       }
@@ -534,7 +534,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
@@ -549,13 +549,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         purpose: string
         duration: {
@@ -612,13 +612,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -668,7 +668,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
         /**
@@ -697,7 +697,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         /**
                  * example:
@@ -711,7 +711,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         proof: {
           [name: string]: any
@@ -729,7 +729,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
       }
@@ -744,7 +744,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
@@ -759,13 +759,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         purpose: string
         duration: {
@@ -822,13 +822,13 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -987,7 +987,7 @@ export namespace WalletComponents {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
         /**
@@ -1016,7 +1016,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         /**
                  * example:
@@ -1030,7 +1030,7 @@ export namespace WalletComponents {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         proof: {
           [name: string]: any
@@ -1138,7 +1138,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       }
       /**
              * Error
@@ -1156,7 +1156,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     export interface PathParameters {
       did: /**
@@ -1164,7 +1164,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$ */
     }
     /**
          * Transaction
@@ -1191,7 +1191,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     export interface PathParameters {
       did: /**
@@ -1199,7 +1199,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$ */
     }
     export namespace Responses {
       /**
@@ -1259,7 +1259,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       }>
       /**
              * Error
@@ -1290,7 +1290,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       }
     }
   }
@@ -1301,7 +1301,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      export type Did = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     export interface PathParameters {
       did: /**
@@ -1309,7 +1309,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
+      Parameters.Did /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$ */
     }
     /**
          * SignInput
@@ -1407,7 +1407,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
         /**
@@ -1436,7 +1436,7 @@ export namespace WalletPaths {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         /**
                  * example:
@@ -1450,7 +1450,7 @@ export namespace WalletPaths {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         proof: {
           [name: string]: any
@@ -1468,7 +1468,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         [name: string]: any
       }
@@ -1483,7 +1483,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
@@ -1498,13 +1498,13 @@ export namespace WalletPaths {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         }
         purpose: string
         duration: {
@@ -1561,13 +1561,13 @@ export namespace WalletPaths {
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           /**
                      * DID
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -1619,7 +1619,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      export type Identity = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+      export type Identity = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
       export type Type = 'VerifiableCredential' | 'Object' | 'Contract'
     }
     export interface QueryParameters {
@@ -1629,7 +1629,7 @@ export namespace WalletPaths {
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
-      Parameters.Identity /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$ */
+      Parameters.Identity /* ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$ */
     }
     export namespace Responses {
       /**
@@ -1647,7 +1647,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         resource: {
           [name: string]: any
           /**
@@ -1676,7 +1676,7 @@ export namespace WalletPaths {
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           }
           /**
                      * example:
@@ -1690,7 +1690,7 @@ export namespace WalletPaths {
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            id: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           }
           proof: {
             [name: string]: any
@@ -1708,7 +1708,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         resource: {
           [name: string]: any
         }
@@ -1723,7 +1723,7 @@ export namespace WalletPaths {
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
-        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
         resource: {
           dataOfferingDescription: {
             dataOfferingId: string
@@ -1738,13 +1738,13 @@ export namespace WalletPaths {
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            providerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
             /**
                          * DID
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            consumerDid: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
           }
           purpose: string
           duration: {
@@ -1801,13 +1801,13 @@ export namespace WalletPaths {
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
             /**
                          * DID
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
-            dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$
+            dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
             encAlg: string
             signingAlg: string
             hashAlg: string

@@ -146,7 +146,7 @@ var paths = {
 										did: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										}
 									},
@@ -223,7 +223,7 @@ var paths = {
 									did: {
 										title: "DID",
 										type: "string",
-										pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+										pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 										example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 									}
 								},
@@ -292,7 +292,7 @@ var paths = {
 									did: {
 										title: "DID",
 										type: "string",
-										pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+										pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 										example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 									}
 								},
@@ -321,7 +321,7 @@ var paths = {
 					schema: {
 						title: "DID",
 						type: "string",
-						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 					},
 					required: true
@@ -470,7 +470,7 @@ var paths = {
 					schema: {
 						title: "DID",
 						type: "string",
-						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 					},
 					required: true
@@ -559,7 +559,7 @@ var paths = {
 					schema: {
 						title: "DID",
 						type: "string",
-						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 					},
 					required: true
@@ -643,7 +643,7 @@ var paths = {
 					schema: {
 						title: "DID",
 						type: "string",
-						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 					},
 					description: "Filter the resource associated to an identity DID. Send empty value to get all the resources that are not associated to any identity."
@@ -674,7 +674,7 @@ var paths = {
 												identity: {
 													title: "DID",
 													type: "string",
-													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 												},
 												resource: {
@@ -708,7 +708,7 @@ var paths = {
 																id: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																}
 															},
@@ -728,7 +728,7 @@ var paths = {
 																id: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																}
 															},
@@ -782,7 +782,7 @@ var paths = {
 												identity: {
 													title: "DID",
 													type: "string",
-													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 												},
 												resource: {
@@ -809,7 +809,7 @@ var paths = {
 												identity: {
 													title: "DID",
 													type: "string",
-													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+													pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 												},
 												resource: {
@@ -863,13 +863,13 @@ var paths = {
 																providerDid: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																},
 																consumerDid: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																}
 															}
@@ -1068,13 +1068,13 @@ var paths = {
 																orig: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																},
 																dest: {
 																	title: "DID",
 																	type: "string",
-																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+																	pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 																},
 																encAlg: {
@@ -1195,7 +1195,7 @@ var paths = {
 										identity: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										resource: {
@@ -1229,7 +1229,7 @@ var paths = {
 														id: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														}
 													},
@@ -1249,7 +1249,7 @@ var paths = {
 														id: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														}
 													},
@@ -1303,7 +1303,7 @@ var paths = {
 										identity: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										resource: {
@@ -1330,7 +1330,7 @@ var paths = {
 										identity: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										resource: {
@@ -1384,13 +1384,13 @@ var paths = {
 														providerDid: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														},
 														consumerDid: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														}
 													}
@@ -1589,13 +1589,13 @@ var paths = {
 														orig: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														},
 														dest: {
 															title: "DID",
 															type: "string",
-															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+															pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 														},
 														encAlg: {
@@ -1994,7 +1994,7 @@ var components = {
 				did: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				}
 			},
@@ -2250,7 +2250,7 @@ var components = {
 					did: {
 						title: "DID",
 						type: "string",
-						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+						pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 					}
 				},
@@ -2278,7 +2278,7 @@ var components = {
 				did: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				}
 			},
@@ -2307,7 +2307,7 @@ var components = {
 							identity: {
 								title: "DID",
 								type: "string",
-								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 								example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 							},
 							resource: {
@@ -2341,7 +2341,7 @@ var components = {
 											id: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											}
 										},
@@ -2361,7 +2361,7 @@ var components = {
 											id: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											}
 										},
@@ -2415,7 +2415,7 @@ var components = {
 							identity: {
 								title: "DID",
 								type: "string",
-								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 								example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 							},
 							resource: {
@@ -2442,7 +2442,7 @@ var components = {
 							identity: {
 								title: "DID",
 								type: "string",
-								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+								pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 								example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 							},
 							resource: {
@@ -2496,13 +2496,13 @@ var components = {
 											providerDid: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											},
 											consumerDid: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											}
 										}
@@ -2701,13 +2701,13 @@ var components = {
 											orig: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											},
 											dest: {
 												title: "DID",
 												type: "string",
-												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+												pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 											},
 											encAlg: {
@@ -2788,7 +2788,7 @@ var components = {
 						identity: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						resource: {
@@ -2822,7 +2822,7 @@ var components = {
 										id: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										}
 									},
@@ -2842,7 +2842,7 @@ var components = {
 										id: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										}
 									},
@@ -2896,7 +2896,7 @@ var components = {
 						identity: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						resource: {
@@ -2923,7 +2923,7 @@ var components = {
 						identity: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						resource: {
@@ -2977,13 +2977,13 @@ var components = {
 										providerDid: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										consumerDid: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										}
 									}
@@ -3182,13 +3182,13 @@ var components = {
 										orig: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										dest: {
 											title: "DID",
 											type: "string",
-											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+											pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 										},
 										encAlg: {
@@ -3265,7 +3265,7 @@ var components = {
 				identity: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				},
 				resource: {
@@ -3299,7 +3299,7 @@ var components = {
 								id: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								}
 							},
@@ -3319,7 +3319,7 @@ var components = {
 								id: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								}
 							},
@@ -3373,7 +3373,7 @@ var components = {
 				identity: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				},
 				resource: {
@@ -3400,7 +3400,7 @@ var components = {
 				identity: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				},
 				resource: {
@@ -3454,13 +3454,13 @@ var components = {
 								providerDid: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								},
 								consumerDid: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								}
 							}
@@ -3659,13 +3659,13 @@ var components = {
 								orig: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								},
 								dest: {
 									title: "DID",
 									type: "string",
-									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+									pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 								},
 								encAlg: {
@@ -3789,7 +3789,7 @@ var components = {
 						iss: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						}
 					},
@@ -3866,7 +3866,7 @@ var components = {
 		did: {
 			title: "DID",
 			type: "string",
-			pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+			pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 			example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 		},
 		IdentityData: {
@@ -3942,13 +3942,13 @@ var components = {
 				orig: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				},
 				dest: {
 					title: "DID",
 					type: "string",
-					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+					pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 				},
 				encAlg: {
@@ -4034,13 +4034,13 @@ var components = {
 						providerDid: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						consumerDid: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						}
 					}
@@ -4239,13 +4239,13 @@ var components = {
 						orig: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						dest: {
 							title: "DID",
 							type: "string",
-							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{22})?)$",
+							pattern: "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
 							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
 						},
 						encAlg: {
