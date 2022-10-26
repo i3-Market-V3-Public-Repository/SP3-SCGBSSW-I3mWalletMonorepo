@@ -1,5 +1,5 @@
 import { Session, HttpInitiatorTransport } from '@i3m/wallet-protocol'
-import { DisclosureApi, IdentitiesApi, ResourcesApi, TransactionApi } from './models'
+import { DidJwtApi, DisclosureApi, IdentitiesApi, ProviderInfoApi, ResourcesApi, TransactionApi } from './models'
 import { ApiExecutor, Params, Body, ApiMethod } from './types'
 
 export class WalletApi implements ApiExecutor {
@@ -7,12 +7,16 @@ export class WalletApi implements ApiExecutor {
   public transaction: TransactionApi
   public resources: ResourcesApi
   public disclosure: DisclosureApi
+  public didJwt: DidJwtApi
+  public providerinfo: ProviderInfoApi
 
   constructor (protected session: Session<HttpInitiatorTransport>) {
     this.identities = new IdentitiesApi(this)
     this.transaction = new TransactionApi(this)
     this.resources = new ResourcesApi(this)
     this.disclosure = new DisclosureApi(this)
+    this.didJwt = new DidJwtApi(this)
+    this.providerinfo = new ProviderInfoApi(this)
   }
 
   public async executeQuery<T>(api: ApiMethod, pathParams: Params, queryParams: Params, bodyObject: Body): Promise<T> {
