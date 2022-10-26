@@ -68,7 +68,7 @@
     "nodemon": "^2.0.7",
     "rollup": "^2.39.1",
     "rollup-plugin-scss": "^3.0.0",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.9.1",
     "ts-standard": "^10.0.0",
     "tslib": "^2.2.0",
     "typescript": "^4.2.2"
