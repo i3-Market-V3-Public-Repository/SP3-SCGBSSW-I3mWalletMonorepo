@@ -65,6 +65,8 @@
 - [didJwtVerify](API.md#didjwtverify)
 - [getCredentialClaims](API.md#getcredentialclaims)
 - [jwkSecret](API.md#jwksecret)
+- [validateDataSharingAgreeementSchema](API.md#validatedatasharingagreeementschema)
+- [verifyDataSharingAgreementSignature](API.md#verifydatasharingagreementsignature)
 
 ## Type Aliases
 
@@ -80,7 +82,7 @@
 
 #### Defined in
 
-[src/ts/utils/types.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/types.ts#L1)
+[base-wallet/src/ts/utils/types.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/types.ts#L1)
 
 ___
 
@@ -90,7 +92,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L11)
+[base-wallet/src/ts/app/store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L11)
 
 ___
 
@@ -100,7 +102,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L8)
+[base-wallet/src/ts/app/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L8)
 
 ___
 
@@ -116,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/dialog.ts#L42)
+[base-wallet/src/ts/app/dialog.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/dialog.ts#L42)
 
 ___
 
@@ -132,7 +134,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/dialog.ts#L43)
+[base-wallet/src/ts/app/dialog.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/dialog.ts#L43)
 
 ___
 
@@ -142,7 +144,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/dialog.ts#L40)
+[base-wallet/src/ts/app/dialog.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/dialog.ts#L40)
 
 ___
 
@@ -158,7 +160,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/dialog.ts#L52)
+[base-wallet/src/ts/app/dialog.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/dialog.ts#L52)
 
 ___
 
@@ -168,7 +170,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L13)
+[base-wallet/src/ts/app/store.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L13)
 
 ___
 
@@ -178,7 +180,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/types.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/types.ts#L5)
+[base-wallet/src/ts/utils/types.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/types.ts#L5)
 
 ___
 
@@ -188,7 +190,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L12)
+[base-wallet/src/ts/app/store.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L12)
 
 ___
 
@@ -198,7 +200,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L7)
+[base-wallet/src/ts/app/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L7)
 
 ___
 
@@ -208,7 +210,7 @@ ___
 
 #### Defined in
 
-[src/ts/veramo/veramo.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/veramo/veramo.ts#L39)
+[base-wallet/src/ts/veramo/veramo.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/veramo/veramo.ts#L39)
 
 ___
 
@@ -218,7 +220,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L5)
+[base-wallet/src/ts/app/store.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L5)
 
 ___
 
@@ -228,7 +230,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/toast.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/toast.ts#L2)
+[base-wallet/src/ts/app/toast.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/toast.ts#L2)
 
 ___
 
@@ -238,7 +240,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/types.ts#L3)
+[base-wallet/src/ts/utils/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/types.ts#L3)
 
 ___
 
@@ -248,7 +250,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L10)
+[base-wallet/src/ts/app/store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L10)
 
 ___
 
@@ -258,7 +260,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/store.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/app/store.ts#L6)
+[base-wallet/src/ts/app/store.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/app/store.ts#L6)
 
 ___
 
@@ -288,7 +290,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-builder.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/wallet/wallet-builder.ts#L4)
+[base-wallet/src/ts/wallet/wallet-builder.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/wallet/wallet-builder.ts#L4)
 
 ___
 
@@ -304,7 +306,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/wallet/wallet-options.ts#L16)
+[base-wallet/src/ts/wallet/wallet-options.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/wallet/wallet-options.ts#L16)
 
 ## Variables
 
@@ -321,7 +323,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/base64url.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/base64url.ts#L9)
+[base-wallet/src/ts/utils/base64url.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/base64url.ts#L9)
 
 ## Functions
 
@@ -349,7 +351,7 @@ Useful to verify JWT created by another wallet instance.
 
 #### Defined in
 
-src/ts/utils/did-jwt-verify.ts:20
+[base-wallet/src/ts/utils/did-jwt-verify.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/did-jwt-verify.ts#L20)
 
 ___
 
@@ -369,7 +371,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/credential-claims.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/credential-claims.ts#L3)
+[base-wallet/src/ts/utils/credential-claims.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/credential-claims.ts#L3)
 
 ___
 
@@ -389,4 +391,178 @@ ___
 
 #### Defined in
 
-[src/ts/utils/generate-secret.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9dba545/packages/base-wallet/src/ts/utils/generate-secret.ts#L11)
+[base-wallet/src/ts/utils/generate-secret.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/generate-secret.ts#L11)
+
+___
+
+### validateDataSharingAgreeementSchema
+
+▸ **validateDataSharingAgreeementSchema**(`agreement`): `Promise`<`Error`[]\>
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `agreement` | `Object` | - |
+| `agreement.dataExchangeAgreement` | `Object` | - |
+| `agreement.dataExchangeAgreement.dest` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.dataExchangeAgreement.encAlg` | `string` | - |
+| `agreement.dataExchangeAgreement.hashAlg` | `string` | - |
+| `agreement.dataExchangeAgreement.ledgerContractAddress` | `string` | Ethereum Address example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
+| `agreement.dataExchangeAgreement.ledgerSignerAddress` | `string` | Ethereum Address example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
+| `agreement.dataExchangeAgreement.orig` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.dataExchangeAgreement.pooToPopDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.pooToPorDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.pooToSecretDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.signingAlg` | `string` | - |
+| `agreement.dataOfferingDescription` | `Object` | - |
+| `agreement.dataOfferingDescription.active` | `boolean` | - |
+| `agreement.dataOfferingDescription.category?` | `string` | - |
+| `agreement.dataOfferingDescription.dataOfferingId` | `string` | - |
+| `agreement.dataOfferingDescription.title?` | `string` | - |
+| `agreement.dataOfferingDescription.version?` | `number` | - |
+| `agreement.dataStream` | `boolean` | - |
+| `agreement.duration` | `Object` | - |
+| `agreement.duration.creationDate` | `number` | - |
+| `agreement.duration.endDate` | `number` | - |
+| `agreement.duration.startDate` | `number` | - |
+| `agreement.intendedUse` | `Object` | - |
+| `agreement.intendedUse.editData` | `boolean` | - |
+| `agreement.intendedUse.processData` | `boolean` | - |
+| `agreement.intendedUse.shareDataWithThirdParty` | `boolean` | - |
+| `agreement.licenseGrant` | `Object` | - |
+| `agreement.licenseGrant.analyzing` | `boolean` | - |
+| `agreement.licenseGrant.distributing` | `boolean` | - |
+| `agreement.licenseGrant.exclusiveness` | `boolean` | - |
+| `agreement.licenseGrant.furtherLicensing` | `boolean` | - |
+| `agreement.licenseGrant.leasing` | `boolean` | - |
+| `agreement.licenseGrant.loaning` | `boolean` | - |
+| `agreement.licenseGrant.modifying` | `boolean` | - |
+| `agreement.licenseGrant.paidUp` | `boolean` | - |
+| `agreement.licenseGrant.processing` | `boolean` | - |
+| `agreement.licenseGrant.renting` | `boolean` | - |
+| `agreement.licenseGrant.reproducing` | `boolean` | - |
+| `agreement.licenseGrant.revocable` | `boolean` | - |
+| `agreement.licenseGrant.selling` | `boolean` | - |
+| `agreement.licenseGrant.storingCopy` | `boolean` | - |
+| `agreement.licenseGrant.storingData` | `boolean` | - |
+| `agreement.licenseGrant.transferable` | `boolean` | - |
+| `agreement.parties` | `Object` | - |
+| `agreement.parties.consumerDid` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.parties.providerDid` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.personalData` | `boolean` | - |
+| `agreement.pricingModel` | `Object` | - |
+| `agreement.pricingModel.basicPrice` | `number` | - |
+| `agreement.pricingModel.currency` | `string` | - |
+| `agreement.pricingModel.fee?` | `number` | - |
+| `agreement.pricingModel.hasFreePrice` | `Object` | - |
+| `agreement.pricingModel.hasFreePrice.hasPriceFree?` | `boolean` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription?` | `Object` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.description?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.hasSubscriptionPrice?` | `number` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.paymentOnSubscriptionName?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.paymentType?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.repeat?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.timeDuration?` | `string` | - |
+| `agreement.pricingModel.paymentType?` | `string` | - |
+| `agreement.pricingModel.pricingModelName?` | `string` | - |
+| `agreement.purpose` | `string` | - |
+| `agreement.signatures` | `Object` | - |
+| `agreement.signatures.consumerSignature` | `string` | CompactJWS |
+| `agreement.signatures.providerSignature` | `string` | CompactJWS |
+
+#### Returns
+
+`Promise`<`Error`[]\>
+
+#### Defined in
+
+[base-wallet/src/ts/utils/data-sharing-agreement-validation.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/data-sharing-agreement-validation.ts#L8)
+
+___
+
+### verifyDataSharingAgreementSignature
+
+▸ **verifyDataSharingAgreementSignature**(`agreement`, `veramo`, `signer`): `Promise`<`Error`[]\>
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `agreement` | `Object` | - |
+| `agreement.dataExchangeAgreement` | `Object` | - |
+| `agreement.dataExchangeAgreement.dest` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.dataExchangeAgreement.encAlg` | `string` | - |
+| `agreement.dataExchangeAgreement.hashAlg` | `string` | - |
+| `agreement.dataExchangeAgreement.ledgerContractAddress` | `string` | Ethereum Address example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
+| `agreement.dataExchangeAgreement.ledgerSignerAddress` | `string` | Ethereum Address example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
+| `agreement.dataExchangeAgreement.orig` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.dataExchangeAgreement.pooToPopDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.pooToPorDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.pooToSecretDelay` | `number` | - |
+| `agreement.dataExchangeAgreement.signingAlg` | `string` | - |
+| `agreement.dataOfferingDescription` | `Object` | - |
+| `agreement.dataOfferingDescription.active` | `boolean` | - |
+| `agreement.dataOfferingDescription.category?` | `string` | - |
+| `agreement.dataOfferingDescription.dataOfferingId` | `string` | - |
+| `agreement.dataOfferingDescription.title?` | `string` | - |
+| `agreement.dataOfferingDescription.version?` | `number` | - |
+| `agreement.dataStream` | `boolean` | - |
+| `agreement.duration` | `Object` | - |
+| `agreement.duration.creationDate` | `number` | - |
+| `agreement.duration.endDate` | `number` | - |
+| `agreement.duration.startDate` | `number` | - |
+| `agreement.intendedUse` | `Object` | - |
+| `agreement.intendedUse.editData` | `boolean` | - |
+| `agreement.intendedUse.processData` | `boolean` | - |
+| `agreement.intendedUse.shareDataWithThirdParty` | `boolean` | - |
+| `agreement.licenseGrant` | `Object` | - |
+| `agreement.licenseGrant.analyzing` | `boolean` | - |
+| `agreement.licenseGrant.distributing` | `boolean` | - |
+| `agreement.licenseGrant.exclusiveness` | `boolean` | - |
+| `agreement.licenseGrant.furtherLicensing` | `boolean` | - |
+| `agreement.licenseGrant.leasing` | `boolean` | - |
+| `agreement.licenseGrant.loaning` | `boolean` | - |
+| `agreement.licenseGrant.modifying` | `boolean` | - |
+| `agreement.licenseGrant.paidUp` | `boolean` | - |
+| `agreement.licenseGrant.processing` | `boolean` | - |
+| `agreement.licenseGrant.renting` | `boolean` | - |
+| `agreement.licenseGrant.reproducing` | `boolean` | - |
+| `agreement.licenseGrant.revocable` | `boolean` | - |
+| `agreement.licenseGrant.selling` | `boolean` | - |
+| `agreement.licenseGrant.storingCopy` | `boolean` | - |
+| `agreement.licenseGrant.storingData` | `boolean` | - |
+| `agreement.licenseGrant.transferable` | `boolean` | - |
+| `agreement.parties` | `Object` | - |
+| `agreement.parties.consumerDid` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.parties.providerDid` | `string` | DID example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| `agreement.personalData` | `boolean` | - |
+| `agreement.pricingModel` | `Object` | - |
+| `agreement.pricingModel.basicPrice` | `number` | - |
+| `agreement.pricingModel.currency` | `string` | - |
+| `agreement.pricingModel.fee?` | `number` | - |
+| `agreement.pricingModel.hasFreePrice` | `Object` | - |
+| `agreement.pricingModel.hasFreePrice.hasPriceFree?` | `boolean` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription?` | `Object` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.description?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.hasSubscriptionPrice?` | `number` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.paymentOnSubscriptionName?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.paymentType?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.repeat?` | `string` | - |
+| `agreement.pricingModel.hasPaymentOnSubscription.timeDuration?` | `string` | - |
+| `agreement.pricingModel.paymentType?` | `string` | - |
+| `agreement.pricingModel.pricingModelName?` | `string` | - |
+| `agreement.purpose` | `string` | - |
+| `agreement.signatures` | `Object` | - |
+| `agreement.signatures.consumerSignature` | `string` | CompactJWS |
+| `agreement.signatures.providerSignature` | `string` | CompactJWS |
+| `veramo` | [`Veramo`](classes/Veramo.md)<[`BaseWalletModel`](interfaces/BaseWalletModel.md)\> | - |
+| `signer` | ``"provider"`` \| ``"consumer"`` | - |
+
+#### Returns
+
+`Promise`<`Error`[]\>
+
+#### Defined in
+
+[base-wallet/src/ts/utils/data-sharing-agreement-validation.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7492a72/packages/base-wallet/src/ts/utils/data-sharing-agreement-validation.ts#L21)
