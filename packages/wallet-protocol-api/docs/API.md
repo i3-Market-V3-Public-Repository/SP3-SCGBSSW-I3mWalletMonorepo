@@ -1,8 +1,9 @@
-# @i3m/wallet-protocol-api - v1.2.1
+# @i3m/wallet-protocol-api - v1.5.3
 
 My module description. Please update with your module data.
 
-**`remarks`**
+**`Remarks`**
+
 This module runs perfectly in node.js and browsers
 
 ## Table of contents

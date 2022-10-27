@@ -2,13 +2,16 @@ import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
 import data from './data'
 import createWallet from './wallet'
 import sessionJSON from './session-token'
+import identities from './identities'
+import credentials from './credentials'
+import disclosure from './disclosure'
 
-const { WalletApi } = _pkg
+import { WalletApi } from '#pkg'
 
-function importTest (name: string, path: string): void {
-  const test = require(path) // eslint-disable-line
-  describe(name, test.default)
-}
+// async function importTest (name: string, path: string): Promise<void> {
+//   const test = await import(path)
+//   describe(name, test.default)
+// }
 
 describe('WalletApi', function () {
   this.timeout(30000)
@@ -23,7 +26,8 @@ describe('WalletApi', function () {
     data.signer = await data.wallet.identityCreate({ alias: 'Signer' })
   })
 
-  importTest('#identities', './identities')
-  importTest('#credentials', './credentials')
-  importTest('#disclosure', './disclosure')
+  describe('#identities', identities)
+  describe('#credentials', credentials)
+  describe('#disclosure', disclosure)
+  // importTest('#disclosure', './disclosure')
 })

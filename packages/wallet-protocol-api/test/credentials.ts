@@ -1,7 +1,5 @@
 import data from './data'
 
-// const { expect } = chai
-
 export default function (): void {
   it('should store verifiable credentials', async function () {
     const { api, wallet, signer, user } = data
