@@ -120,9 +120,9 @@ let template = fs.readFileSync(templateFile, { encoding: 'UTF-8' })
   .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
 if (repoProvider && repoProvider === 'github') {
-  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, workflowBadget + '\n' + coverallsBadge)
+  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, (workflowBadget ?? '') + (coverallsBadge ? '\n' + coverallsBadge : '') + '\n')
 } else {
-  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}/g, '')
+  template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, '')
 }
 
 const readmeFile = path.join(rootDir, 'README.md')
