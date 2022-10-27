@@ -594,6 +594,10 @@
                               "VerifiableCredential"
                             ]
                           },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
+                          },
                           "parentResource": {
                             "type": "string"
                           },
@@ -705,6 +709,10 @@
                               "Object"
                             ]
                           },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
+                          },
                           "parentResource": {
                             "type": "string"
                           },
@@ -734,6 +742,10 @@
                             "enum": [
                               "Contract"
                             ]
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
                           },
                           "parentResource": {
                             "type": "string"
@@ -1079,6 +1091,10 @@
                               "NonRepudiationProof"
                             ]
                           },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
+                          },
                           "parentResource": {
                             "type": "string"
                           },
@@ -1153,6 +1169,10 @@
                         "enum": [
                           "VerifiableCredential"
                         ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
                       },
                       "parentResource": {
                         "type": "string"
@@ -1265,6 +1285,10 @@
                           "Object"
                         ]
                       },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
+                      },
                       "parentResource": {
                         "type": "string"
                       },
@@ -1294,6 +1318,10 @@
                         "enum": [
                           "Contract"
                         ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
                       },
                       "parentResource": {
                         "type": "string"
@@ -1638,6 +1666,10 @@
                         "enum": [
                           "NonRepudiationProof"
                         ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
                       },
                       "parentResource": {
                         "type": "string"
@@ -2305,6 +2337,10 @@
                     "VerifiableCredential"
                   ]
                 },
+                "name": {
+                  "type": "string",
+                  "example": "Resource name"
+                },
                 "parentResource": {
                   "type": "string"
                 },
@@ -2416,6 +2452,10 @@
                     "Object"
                   ]
                 },
+                "name": {
+                  "type": "string",
+                  "example": "Resource name"
+                },
                 "parentResource": {
                   "type": "string"
                 },
@@ -2445,6 +2485,10 @@
                   "enum": [
                     "Contract"
                   ]
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Resource name"
                 },
                 "parentResource": {
                   "type": "string"
@@ -2790,6 +2834,10 @@
                     "NonRepudiationProof"
                   ]
                 },
+                "name": {
+                  "type": "string",
+                  "example": "Resource name"
+                },
                 "parentResource": {
                   "type": "string"
                 },
@@ -2824,6 +2872,10 @@
                 "enum": [
                   "VerifiableCredential"
                 ]
+              },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
               },
               "parentResource": {
                 "type": "string"
@@ -2936,6 +2988,10 @@
                   "Object"
                 ]
               },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
+              },
               "parentResource": {
                 "type": "string"
               },
@@ -2965,6 +3021,10 @@
                 "enum": [
                   "Contract"
                 ]
+              },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
               },
               "parentResource": {
                 "type": "string"
@@ -3310,6 +3370,10 @@
                   "NonRepudiationProof"
                 ]
               },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
+              },
               "parentResource": {
                 "type": "string"
               },
@@ -3340,6 +3404,10 @@
             "enum": [
               "VerifiableCredential"
             ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
           },
           "parentResource": {
             "type": "string"
@@ -3452,6 +3520,10 @@
               "Object"
             ]
           },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
           "parentResource": {
             "type": "string"
           },
@@ -3481,6 +3553,10 @@
             "enum": [
               "Contract"
             ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
           },
           "parentResource": {
             "type": "string"
@@ -3825,6 +3901,10 @@
             "enum": [
               "NonRepudiationProof"
             ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
           },
           "parentResource": {
             "type": "string"

@@ -21,6 +21,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -407,6 +412,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'NonRepudiationProof'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -427,6 +437,11 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -475,6 +490,11 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -537,6 +557,11 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -553,6 +578,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -680,6 +710,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'NonRepudiationProof'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -704,6 +739,11 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -766,6 +806,11 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -782,6 +827,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -909,6 +959,11 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'NonRepudiationProof'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1042,6 +1097,11 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1463,6 +1523,11 @@ export namespace WalletPaths {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1525,6 +1590,11 @@ export namespace WalletPaths {
              * Object
              */
       type: 'Object'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1541,6 +1611,11 @@ export namespace WalletPaths {
              * Contract
              */
       type: 'Contract'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1668,6 +1743,11 @@ export namespace WalletPaths {
              * Contract
              */
       type: 'NonRepudiationProof'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
       parentResource?: string
       /**
              * DID
@@ -1722,6 +1802,11 @@ export namespace WalletPaths {
                  * VerifiableCredential
                  */
         type: 'VerifiableCredential'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
         parentResource?: string
         /**
                  * DID
@@ -1784,6 +1869,11 @@ export namespace WalletPaths {
                  * Object
                  */
         type: 'Object'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
         parentResource?: string
         /**
                  * DID
@@ -1800,6 +1890,11 @@ export namespace WalletPaths {
                  * Contract
                  */
         type: 'Contract'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
         parentResource?: string
         /**
                  * DID
@@ -1927,6 +2022,11 @@ export namespace WalletPaths {
                  * Contract
                  */
         type: 'NonRepudiationProof'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
         parentResource?: string
         /**
                  * DID

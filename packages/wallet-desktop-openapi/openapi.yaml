@@ -382,6 +382,9 @@ paths:
                           example: VerifiableCredential
                           enum:
                             - VerifiableCredential
+                        name:
+                          type: string
+                          example: Resource name
                         parentResource:
                           type: string
                         identity: *ref_0
@@ -450,6 +453,9 @@ paths:
                           example: Object
                           enum:
                             - Object
+                        name:
+                          type: string
+                          example: Resource name
                         parentResource:
                           type: string
                         identity: *ref_0
@@ -468,6 +474,9 @@ paths:
                           example: Contract
                           enum:
                             - Contract
+                        name:
+                          type: string
+                          example: Resource name
                         parentResource:
                           type: string
                         identity: *ref_0
@@ -688,6 +697,9 @@ paths:
                           example: Contract
                           enum:
                             - NonRepudiationProof
+                        name:
+                          type: string
+                          example: Resource name
                         parentResource:
                           type: string
                         identity: *ref_0
