@@ -9,9 +9,11 @@ node_modules
 # Output of 'npm pack'
 *.tgz
 
-# MYC output
-.nyc_output
+# Coverage
 coverage
+
+# Environment files
+*.env
 
 # Test temporal files
 .mocha-ts
@@ -19,5 +21,3 @@ coverage
 
 # docs temporal files
 .nojekyll
-
-/types

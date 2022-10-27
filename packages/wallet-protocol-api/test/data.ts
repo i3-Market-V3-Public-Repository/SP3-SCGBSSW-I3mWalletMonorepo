@@ -1,4 +1,5 @@
-import { BaseWallet } from '@i3m/base-wallet'
+import { BaseWallet } from '@i3m/base-wallet/types'
+import { WalletApi } from '#pkg'
 
 interface Identity {
   did: string
@@ -6,7 +7,7 @@ interface Identity {
 }
 
 export interface Data {
-  api: _pkg.WalletApi
+  api: WalletApi
   wallet: BaseWallet<any>
 
   // basic data

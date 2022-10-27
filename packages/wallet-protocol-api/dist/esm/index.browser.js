@@ -1,12 +1,153 @@
-/**
- * My module description. Please update with your module data.
- *
- * @remarks
- * This module runs perfectly in node.js and browsers
- *
- * @packageDocumentation
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-(0, tslib_1.__exportStar)(require("./api"), exports);
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguYnJvd3Nlci5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL2luZGV4LnRzIl0sInNvdXJjZXNDb250ZW50IjpudWxsLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7OztBQVNBIn0=
+class IdentitiesApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async list(queryParams) {
+        return await this.api.executeQuery({
+            path: '/identities',
+            method: 'GET'
+        }, undefined, queryParams, undefined);
+    }
+    async select(queryParams) {
+        return await this.api.executeQuery({
+            path: '/identities/select',
+            method: 'GET'
+        }, undefined, queryParams, undefined);
+    }
+    async create(body) {
+        return await this.api.executeQuery({
+            path: '/identities',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }, undefined, undefined, body);
+    }
+    async sign(pathParams, body) {
+        return await this.api.executeQuery({
+            path: '/identities/{did}/sign',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }, pathParams, undefined, body);
+    }
+    async info(pathParams) {
+        return await this.api.executeQuery({
+            path: '/identities/{did}/info',
+            method: 'GET'
+        }, pathParams, undefined, undefined);
+    }
+    async deployTransaction(pathParams, body) {
+        return await this.api.executeQuery({
+            path: '/identities/{did}/deploy-tx',
+            method: 'POST'
+        }, pathParams, undefined, body);
+    }
+}
+
+class ResourcesApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async list() {
+        return await this.api.executeQuery({
+            path: '/resources',
+            method: 'GET'
+        }, undefined, undefined, undefined);
+    }
+    async create(body) {
+        return await this.api.executeQuery({
+            path: '/resources',
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        }, undefined, undefined, body);
+    }
+}
+
+class DisclosureApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async disclose(pathParams) {
+        return await this.api.executeQuery({
+            path: '/disclosure/{jwt}',
+            method: 'GET'
+        }, pathParams, undefined, undefined);
+    }
+}
+
+class TransactionApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async deploy(body) {
+        return await this.api.executeQuery({
+            path: '/transaction/deploy',
+            method: 'POST'
+        }, undefined, undefined, body);
+    }
+}
+
+class DidJwtApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async verify(body) {
+        return await this.api.executeQuery({
+            path: '/did-jwt/verify',
+            method: 'POST'
+        }, undefined, undefined, body);
+    }
+}
+
+class ProviderInfoApi {
+    constructor(api) {
+        this.api = api;
+    }
+    async get() {
+        return await this.api.executeQuery({
+            path: '/providerinfo',
+            method: 'GET'
+        }, undefined, undefined, undefined);
+    }
+}
+
+class WalletApi {
+    constructor(session) {
+        this.session = session;
+        this.identities = new IdentitiesApi(this);
+        this.transaction = new TransactionApi(this);
+        this.resources = new ResourcesApi(this);
+        this.disclosure = new DisclosureApi(this);
+        this.didJwt = new DidJwtApi(this);
+        this.providerinfo = new ProviderInfoApi(this);
+    }
+    async executeQuery(api, pathParams, queryParams, bodyObject) {
+        let queryParamsString = '';
+        if (queryParams !== undefined) {
+            queryParamsString = '?' + Object
+                .keys(queryParams)
+                .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+                .join('&');
+        }
+        let body;
+        if (bodyObject !== undefined) {
+            body = JSON.stringify(bodyObject);
+        }
+        let url = api.path + queryParamsString;
+        if (pathParams !== undefined) {
+            for (const [key, value] of Object.entries(pathParams)) {
+                url = url.replace(`{${key}}`, value);
+            }
+        }
+        const resp = await this.session.send({
+            url,
+            init: {
+                headers: api.headers,
+                method: api.method,
+                body
+            }
+        });
+        return JSON.parse(resp.body);
+    }
+}
+
+export { WalletApi };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguYnJvd3Nlci5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL21vZGVscy9pZGVudGl0aWVzLnRzIiwiLi4vLi4vc3JjL3RzL21vZGVscy9yZXNvdXJjZXMudHMiLCIuLi8uLi9zcmMvdHMvbW9kZWxzL2Rpc2Nsb3N1cmUudHMiLCIuLi8uLi9zcmMvdHMvbW9kZWxzL3RyYW5zYWN0aW9uLnRzIiwiLi4vLi4vc3JjL3RzL21vZGVscy9kaWQtand0LnRzIiwiLi4vLi4vc3JjL3RzL21vZGVscy9wcm92aWRlcmluZm8udHMiLCIuLi8uLi9zcmMvdHMvYXBpLnRzIl0sInNvdXJjZXNDb250ZW50IjpudWxsLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiTUFJYSxhQUFhLENBQUE7QUFDeEIsSUFBQSxXQUFBLENBQXVCLEdBQWdCLEVBQUE7UUFBaEIsSUFBRyxDQUFBLEdBQUEsR0FBSCxHQUFHLENBQWE7S0FBSztJQUU1QyxNQUFNLElBQUksQ0FBRSxXQUFzRCxFQUFBO0FBQ2hFLFFBQUEsT0FBTyxNQUFNLElBQUksQ0FBQyxHQUFHLENBQUMsWUFBWSxDQUFDO0FBQ2pDLFlBQUEsSUFBSSxFQUFFLGFBQWE7QUFDbkIsWUFBQSxNQUFNLEVBQUUsS0FBSztBQUNkLFNBQUEsRUFBRSxTQUFTLEVBQUUsV0FBcUIsRUFBRSxTQUFTLENBQUMsQ0FBQTtLQUNoRDtJQUVELE1BQU0sTUFBTSxDQUFFLFdBQXdELEVBQUE7QUFDcEUsUUFBQSxPQUFPLE1BQU0sSUFBSSxDQUFDLEdBQUcsQ0FBQyxZQUFZLENBQUM7QUFDakMsWUFBQSxJQUFJLEVBQUUsb0JBQW9CO0FBQzFCLFlBQUEsTUFBTSxFQUFFLEtBQUs7QUFDZCxTQUFBLEVBQUUsU0FBUyxFQUFFLFdBQXFCLEVBQUUsU0FBUyxDQUFDLENBQUE7S0FDaEQ7SUFFRCxNQUFNLE1BQU0sQ0FBRSxJQUE0QyxFQUFBO0FBQ3hELFFBQUEsT0FBTyxNQUFNLElBQUksQ0FBQyxHQUFHLENBQUMsWUFBWSxDQUFDO0FBQ2pDLFlBQUEs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
