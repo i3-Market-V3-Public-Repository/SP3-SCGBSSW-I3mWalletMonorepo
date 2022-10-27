@@ -87,6 +87,7 @@ components:
         - $ref: "#/components/schemas/VerifiableCredential"
         - $ref: "#/components/schemas/ObjectResource"
         - $ref: "#/components/schemas/Contract"
+        - $ref: "#/components/schemas/NonRepudiationProof"
 
     VerifiableCredential:
       title: VerifiableCredential
@@ -97,6 +98,8 @@ components:
           example: VerifiableCredential
           enum:
             - VerifiableCredential
+        parentResource:
+          type: string
         identity:
           $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
@@ -166,6 +169,8 @@ components:
           example: Object
           enum:
             - Object
+        parentResource:
+          type: string
         identity:
           $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
@@ -185,10 +190,33 @@ components:
           example: Contract
           enum:
             - Contract
+        parentResource:
+          type: string
         identity:
           $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
           $ref: "../schema/dataSharingAgreement.yaml#/components/schemas/dataSharingAgreement"
+      required:
+        - type
+        - resource
+
+    NonRepudiationProof:
+      title: NonRepudiationProof
+      type: object
+      properties:
+        type:
+          type: string
+          $ref:  "#/components/schemas/ResourceType"
+          example: Contract
+          enum:
+            - NonRepudiationProof
+        parentResource:
+          type: string
+        identity:
+          $ref: "../schema/identity.yaml#/components/schemas/did"
+        resource:
+          type: object
+          additionalProperties: true
       required:
         - type
         - resource
@@ -207,3 +235,4 @@ components:
         - VerifiableCredential
         - Object
         - Contract
+        - NonRepudiationProof

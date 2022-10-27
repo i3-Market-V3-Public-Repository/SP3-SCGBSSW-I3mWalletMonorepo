@@ -1,6 +1,5 @@
-import { faWallet, faUser, faAddressCard, faCode, faFileSignature, faQuestionCircle } from '@fortawesome/free-solid-svg-icons'
+import { faWallet, faUser, faAddressCard, faCode, faFileSignature, faQuestionCircle, faReceipt } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3m/base-wallet'
-import _ from 'lodash'
 
 import { SharedMemory, selectWalletAction, createIdentityAction, exportResourceAction, importResourceAction, deleteResourceAction, deleteIdentityAction } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
@@ -15,8 +14,33 @@ interface TreeListProps {
 
 type WalletTreeItem = TreeListItem<string>
 
-function getResourceProperties (resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
+function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<any>, resource: Resource, resources: Resource[]): TreeListItem<any> {
+  const { onSelect, dispatch } = props
+  const resourceId = `${parent.id}.${resource.id}`
+  const resourceChildren: Array<TreeListItem<any>> = []
+  const resourceItem: TreeListItem<any> = {
+    item: resource,
+    id: resourceId,
+    type: 'resource',
+    text: resource.id,
+    icon: faQuestionCircle,
+    parent,
+    children: resourceChildren,
+    ...getResourceProperties(resource, dispatch),
+    onSelect
+  }
 
+  resources
+    .filter(child => resource.id === child.parentResource)
+    .map((child) => buildResourceTreeListItem(props, resourceItem, child, resources))
+    .forEach((child) => resourceChildren.push(child))
+
+  sortTreeListItem(resourceChildren)
+
+  return resourceItem
+}
+
+function getResourceProperties (resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
   switch (resource.type) {
     case 'VerifiableCredential':
       return {
@@ -81,37 +105,63 @@ function getResourceProperties (resource: Resource, dispatch: ActionDispatcher):
         }
       }
 
-      case 'Contract':
-        return {
-          icon: faFileSignature,
-          menu: {
-            items: [{
-              type: 'button',
-              text: 'Copy ID',
-              async onClick () {
-                await navigator.clipboard.writeText(resource.id)
-              }
-            }, { type: 'separator' }, {
-              type: 'button',
-              text: 'Export...',
-              onClick () {
-                dispatch(exportResourceAction.create(resource.id))
-              }
-            }, { type: 'separator' }, {
-              type: 'button',
-              text: 'Delete',
-              async onClick () {
-                dispatch(deleteResourceAction.create(resource.id))
-              }
-            }]
-          }
+    case 'Contract':
+      return {
+        icon: faFileSignature,
+        menu: {
+          items: [{
+            type: 'button',
+            text: 'Copy ID',
+            async onClick () {
+              await navigator.clipboard.writeText(resource.id)
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
+            text: 'Export...',
+            onClick () {
+              dispatch(exportResourceAction.create(resource.id))
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
+            text: 'Delete',
+            async onClick () {
+              dispatch(deleteResourceAction.create(resource.id))
+            }
+          }]
         }
+      }
+
+    case 'NonRepudiationProof':
+      return {
+        icon: faReceipt,
+        menu: {
+          items: [{
+            type: 'button',
+            text: 'Copy ID',
+            async onClick () {
+              await navigator.clipboard.writeText(resource.id)
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
+            text: 'Export...',
+            onClick () {
+              dispatch(exportResourceAction.create(resource.id))
+            }
+          }, { type: 'separator' }, {
+            type: 'button',
+            text: 'Delete',
+            async onClick () {
+              dispatch(deleteResourceAction.create(resource.id))
+            }
+          }]
+        }
+      }
   }
 
   return {}
 }
 
-function sortTreeListItem (list: TreeListItem[]) {
+function sortTreeListItem (list: TreeListItem[]): void {
   const compareTreeListItem = (a: TreeListItem, b: TreeListItem): number => {
     if (a.text.toLowerCase() > b.text.toLowerCase()) {
       return 1
@@ -129,7 +179,6 @@ function sortTreeListItem (list: TreeListItem[]) {
     }
     return curr
   }
-
 
   let prev: TreeListItem | undefined
   list.sort(compareTreeListItem).forEach((curr) => {
@@ -252,41 +301,16 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
         const identityChildren: Array<TreeListItem<any>> = identityItem.children
         resources
           .filter(resource => resource.identity === did)
-          .forEach((resource) => {
-            const resourceId = `${identityId}.${resource.id}`
-            const resourceItem: TreeListItem<any> = {
-              item: resource,
-              id: resourceId,
-              type: 'resource',
-              text: resource.id,
-              icon: faQuestionCircle,
-              parent: identityItem,
-              children: [],
-              ...getResourceProperties(resource, dispatch),
-              onSelect
-            }
-            identityChildren.push(resourceItem)
-          })
+          .map((resource) => buildResourceTreeListItem(props, identityItem, resource, resources))
+          .forEach((resource) => identityChildren.push(resource))
+
         sortTreeListItem(identityChildren)
       })
 
       resources
-        .filter(resource => resource.identity === undefined)
-        .forEach((resource) => {
-          const resourceId = `${walletId}.${resource.id}`
-          const resourceItem: TreeListItem<any> = {
-            item: resource,
-            id: resourceId,
-            type: 'resource',
-            text: resource.id,
-            icon: faQuestionCircle,
-            parent: walletItem,
-            children: [],
-            ...getResourceProperties(resource, dispatch),
-            onSelect
-          }
-          walletChildren.push(resourceItem)
-        })
+        .filter(resource => resource.identity === undefined && resource.parentResource === undefined)
+        .map((resource) => buildResourceTreeListItem(props, walletItem, resource, resources))
+        .forEach((resource) => walletChildren.push(resource))
     }
 
     sortTreeListItem(walletChildren)

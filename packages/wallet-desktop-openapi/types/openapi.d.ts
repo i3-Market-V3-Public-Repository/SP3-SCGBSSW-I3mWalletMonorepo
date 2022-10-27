@@ -21,6 +21,7 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -398,6 +399,26 @@ export namespace WalletComponents {
       did: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
     }
     /**
+         * NonRepudiationProof
+         */
+    export interface NonRepudiationProof {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'NonRepudiationProof'
+      parentResource?: string
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+      resource: {
+        [name: string]: any
+      }
+    }
+    /**
          * ObjectResource
          */
     export interface ObjectResource {
@@ -406,6 +427,7 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -453,6 +475,7 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -514,6 +537,7 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -529,6 +553,7 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -648,6 +673,22 @@ export namespace WalletComponents {
                      */
           consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
         }
+      }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'NonRepudiationProof'
+      parentResource?: string
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+      resource: {
+        [name: string]: any
       }
     }
     export interface ResourceId {
@@ -663,6 +704,7 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -724,6 +766,7 @@ export namespace WalletComponents {
              * Object
              */
       type: 'Object'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -739,6 +782,7 @@ export namespace WalletComponents {
              * Contract
              */
       type: 'Contract'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -859,8 +903,24 @@ export namespace WalletComponents {
           consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
         }
       }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'NonRepudiationProof'
+      parentResource?: string
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+      resource: {
+        [name: string]: any
+      }
     }>
-    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract'
+    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
     /**
          * SignInput
          */
@@ -982,6 +1042,7 @@ export namespace WalletComponents {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -1402,6 +1463,7 @@ export namespace WalletPaths {
              * VerifiableCredential
              */
       type: 'VerifiableCredential'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -1463,6 +1525,7 @@ export namespace WalletPaths {
              * Object
              */
       type: 'Object'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -1478,6 +1541,7 @@ export namespace WalletPaths {
              * Contract
              */
       type: 'Contract'
+      parentResource?: string
       /**
              * DID
              * example:
@@ -1598,6 +1662,22 @@ export namespace WalletPaths {
           consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
         }
       }
+    } | {
+      /**
+             * example:
+             * Contract
+             */
+      type: 'NonRepudiationProof'
+      parentResource?: string
+      /**
+             * DID
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+      resource: {
+        [name: string]: any
+      }
     }
     export namespace Responses {
       export interface $201 {
@@ -1620,7 +1700,7 @@ export namespace WalletPaths {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       export type Identity = string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      export type Type = 'VerifiableCredential' | 'Object' | 'Contract'
+      export type Type = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
     }
     export interface QueryParameters {
       type?: Parameters.Type
@@ -1642,6 +1722,7 @@ export namespace WalletPaths {
                  * VerifiableCredential
                  */
         type: 'VerifiableCredential'
+        parentResource?: string
         /**
                  * DID
                  * example:
@@ -1703,6 +1784,7 @@ export namespace WalletPaths {
                  * Object
                  */
         type: 'Object'
+        parentResource?: string
         /**
                  * DID
                  * example:
@@ -1718,6 +1800,7 @@ export namespace WalletPaths {
                  * Contract
                  */
         type: 'Contract'
+        parentResource?: string
         /**
                  * DID
                  * example:
@@ -1837,6 +1920,22 @@ export namespace WalletPaths {
                          */
             consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
+        }
+      } | {
+        /**
+                 * example:
+                 * Contract
+                 */
+        type: 'NonRepudiationProof'
+        parentResource?: string
+        /**
+                 * DID
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+        resource: {
+          [name: string]: any
         }
       }>
       /**

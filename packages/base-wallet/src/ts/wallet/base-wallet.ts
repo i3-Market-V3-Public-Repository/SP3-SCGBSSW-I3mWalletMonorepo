@@ -694,18 +694,27 @@ export class BaseWallet<
         }
         break
       }
+      case 'NonRepudiationProof': {
+        const confirmation = await this.dialog.confirmation({
+          message: 'Do you want to add a non repudiation proof into your wallet?'
+        })
+        if (confirmation !== true) {
+          throw new WalletError('User cannceled the operation', { status: 403 })
+        }
+        break
+      }
 
       default:
         throw new Error('Resource type not supported')
     }
 
     // Store resource
-    const resourceId = {
+    const defaultResource = {
       id: uuid()
     }
-    const returnResource = Object.assign(resource, resourceId)
-    await this.store.set(`resources.${resourceId.id}`, returnResource)
-    return resourceId
+    const returnResource = Object.assign(defaultResource, resource)
+    await this.store.set(`resources.${defaultResource.id}`, returnResource)
+    return defaultResource
   }
 
   /**

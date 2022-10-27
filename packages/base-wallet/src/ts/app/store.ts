@@ -6,6 +6,7 @@ export type Resource = WalletComponents.Schemas.Resource & WalletComponents.Sche
 export type VerifiableCredentialResource = Resource & { type: 'VerifiableCredential' }
 export type ObjectResource = Resource & { type: 'Object' }
 export type ContractResource = Resource & { type: 'Contract' }
+export type NonRepudiationProofResource = Resource & { type: 'NonRepudiationProof' }
 
 export type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource']
 export type Contract = WalletComponents.Schemas.Contract['resource']
