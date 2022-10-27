@@ -109,6 +109,8 @@
     ]
   },
   "devDependencies": {
+    "@i3m/server-wallet": "^1.4.1",
+    "@i3m/wallet-protocol": "^1.0.0",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
@@ -140,8 +142,6 @@
   },
   "dependencies": {
     "@i3m/non-repudiation-protocol-smart-contract": "^1.0.1",
-    "@i3m/server-wallet": "^1.4.1",
-    "@i3m/wallet-protocol": "^1.0.0",
     "@juanelas/base64": "^1.0.4",
     "bigint-conversion": "^2.2.1",
     "bigint-crypto-utils": "^3.0.21",

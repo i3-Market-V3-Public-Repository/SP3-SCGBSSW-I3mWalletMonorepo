@@ -1,4 +1,4 @@
-import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
+import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol/types'
 import { EthersIoAgent } from './EthersIoAgent'
 import { DltConfig } from '../../types'
 
