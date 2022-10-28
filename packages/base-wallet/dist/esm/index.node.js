@@ -51,7 +51,7 @@ function getCredentialClaims(vc) {
 
 var openapi = "3.0.2";
 var info = {
-	version: "1.5.3",
+	version: "1.6.0",
 	title: "i3M Wallet API",
 	contact: {
 		name: "Juan Hernández Serrano",
@@ -474,7 +474,7 @@ var paths = {
 										items: {
 											title: "Ethereum Address",
 											type: "string",
-											pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
 											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 										},
 										example: [
@@ -1077,13 +1077,13 @@ var paths = {
 																ledgerContractAddress: {
 																	title: "Ethereum Address",
 																	type: "string",
-																	pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
 																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 																},
 																ledgerSignerAddress: {
 																	title: "Ethereum Address",
 																	type: "string",
-																	pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
 																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 																},
 																pooToPorDelay: {
@@ -1647,13 +1647,13 @@ var paths = {
 														ledgerContractAddress: {
 															title: "Ethereum Address",
 															type: "string",
-															pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+															pattern: "^0x([0-9A-Fa-f]){40}$",
 															example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 														},
 														ledgerSignerAddress: {
 															title: "Ethereum Address",
 															type: "string",
-															pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+															pattern: "^0x([0-9A-Fa-f]){40}$",
 															example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 														},
 														pooToPorDelay: {
@@ -2808,13 +2808,13 @@ var components = {
 											ledgerContractAddress: {
 												title: "Ethereum Address",
 												type: "string",
-												pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+												pattern: "^0x([0-9A-Fa-f]){40}$",
 												example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 											},
 											ledgerSignerAddress: {
 												title: "Ethereum Address",
 												type: "string",
-												pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+												pattern: "^0x([0-9A-Fa-f]){40}$",
 												example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 											},
 											pooToPorDelay: {
@@ -3338,13 +3338,13 @@ var components = {
 										ledgerContractAddress: {
 											title: "Ethereum Address",
 											type: "string",
-											pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
 											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 										},
 										ledgerSignerAddress: {
 											title: "Ethereum Address",
 											type: "string",
-											pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
 											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 										},
 										pooToPorDelay: {
@@ -3864,13 +3864,13 @@ var components = {
 								ledgerContractAddress: {
 									title: "Ethereum Address",
 									type: "string",
-									pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+									pattern: "^0x([0-9A-Fa-f]){40}$",
 									example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 								},
 								ledgerSignerAddress: {
 									title: "Ethereum Address",
 									type: "string",
-									pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+									pattern: "^0x([0-9A-Fa-f]){40}$",
 									example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 								},
 								pooToPorDelay: {
@@ -4079,7 +4079,7 @@ var components = {
 		EthereumAddress: {
 			title: "Ethereum Address",
 			type: "string",
-			pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+			pattern: "^0x([0-9A-Fa-f]){40}$",
 			example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 		},
 		did: {
@@ -4109,7 +4109,7 @@ var components = {
 					items: {
 						title: "Ethereum Address",
 						type: "string",
-						pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+						pattern: "^0x([0-9A-Fa-f]){40}$",
 						example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 					},
 					example: [
@@ -4176,13 +4176,13 @@ var components = {
 				ledgerContractAddress: {
 					title: "Ethereum Address",
 					type: "string",
-					pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+					pattern: "^0x([0-9A-Fa-f]){40}$",
 					example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 				},
 				ledgerSignerAddress: {
 					title: "Ethereum Address",
 					type: "string",
-					pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+					pattern: "^0x([0-9A-Fa-f]){40}$",
 					example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 				},
 				pooToPorDelay: {
@@ -4467,13 +4467,13 @@ var components = {
 						ledgerContractAddress: {
 							title: "Ethereum Address",
 							type: "string",
-							pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
 							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 						},
 						ledgerSignerAddress: {
 							title: "Ethereum Address",
 							type: "string",
-							pattern: "^(0x)?([0-9A-Fa-f]){40}$",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
 							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
 						},
 						pooToPorDelay: {

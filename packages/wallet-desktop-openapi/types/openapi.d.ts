@@ -115,13 +115,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -149,13 +149,13 @@ export namespace WalletComponents {
              * example:
              * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
              */
-      ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+      ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
       /**
              * Ethereum Address
              * example:
              * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
              */
-      ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+      ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
       pooToPorDelay: number
       pooToPopDelay: number
       pooToSecretDelay: number
@@ -242,13 +242,13 @@ export namespace WalletComponents {
                  * example:
                  * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                  */
-        ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
         /**
                  * Ethereum Address
                  * example:
                  * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                  */
-        ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
         pooToPorDelay: number
         pooToPopDelay: number
         pooToSecretDelay: number
@@ -299,7 +299,7 @@ export namespace WalletComponents {
          * example:
          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
          */
-    export type EthereumAddress = string // ^(0x)?([0-9A-Fa-f]){40}$
+    export type EthereumAddress = string // ^0x([0-9A-Fa-f]){40}$
     /**
          * IdentityCreateInput
          * Besides the here defined options, provider specific properties should be added here if necessary, e.g. "path" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).
@@ -348,7 +348,7 @@ export namespace WalletComponents {
              *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
              * ]
              */
-      addresses?: string /* ^(0x)?([0-9A-Fa-f]){40}$ */[]
+      addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
     }
     /**
          * IdentityListInput
@@ -640,13 +640,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -877,13 +877,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -1292,7 +1292,7 @@ export namespace WalletPaths {
                  *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
                  * ]
                  */
-        addresses?: string /* ^(0x)?([0-9A-Fa-f]){40}$ */[]
+        addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
       }
       /**
              * Error
@@ -1649,13 +1649,13 @@ export namespace WalletPaths {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -1916,13 +1916,13 @@ export namespace WalletPaths {
                          * example:
                          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                          */
-            ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
             /**
                          * Ethereum Address
                          * example:
                          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                          */
-            ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
             pooToPorDelay: number
             pooToPopDelay: number
             pooToSecretDelay: number

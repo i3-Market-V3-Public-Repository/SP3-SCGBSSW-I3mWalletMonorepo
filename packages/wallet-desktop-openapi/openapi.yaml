@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  version: 1.5.3
+  version: 1.6.0
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -288,7 +288,7 @@ paths:
                     items: &ref_3
                       title: Ethereum Address
                       type: string
-                      pattern: ^(0x)?([0-9A-Fa-f]){40}$
+                      pattern: ^0x([0-9A-Fa-f]){40}$
                       example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
                     example:
                       - '0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7'
