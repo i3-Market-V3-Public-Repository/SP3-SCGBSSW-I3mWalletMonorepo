@@ -110,6 +110,7 @@
   },
   "devDependencies": {
     "@i3m/server-wallet": "^1.4.1",
+    "@i3m/wallet-desktop-openapi": "^1.5.3",
     "@i3m/wallet-protocol": "^1.0.0",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",

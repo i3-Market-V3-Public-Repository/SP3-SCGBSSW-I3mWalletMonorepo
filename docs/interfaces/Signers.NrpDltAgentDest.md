@@ -12,6 +12,10 @@
 
 - [`EthersIoAgentDest`](../classes/Signers.EthersIoAgentDest.md)
 - [`EthersIoAgentDest`](../classes/EthersIoAgentDest.md)
+- [`I3mServerWalletAgentDest`](../classes/Signers.I3mServerWalletAgentDest.md)
+- [`I3mServerWalletAgentDest`](../classes/I3mServerWalletAgentDest.md)
+- [`I3mWalletAgentDest`](../classes/Signers.I3mWalletAgentDest.md)
+- [`I3mWalletAgentDest`](../classes/I3mWalletAgentDest.md)
 
 ## Table of contents
 
@@ -52,7 +56,7 @@ the secret in hex and when it was published to the blockchain as a NumericDate
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/NrpDltAgentDest.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/dest/NrpDltAgentDest.ts#L12)
+[src/ts/dlt/agents/dest/NrpDltAgentDest.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/dest/NrpDltAgentDest.ts#L12)
 
 ## Methods
 
@@ -72,4 +76,4 @@ NrpDltAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/NrpDltAgent.ts#L9)
+[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/NrpDltAgent.ts#L9)

@@ -2,13 +2,17 @@
 
 [Signers](../modules/Signers.md).I3mWalletAgentDest
 
-A DLT agent for the NRP dest using ethers.io.
+A DLT agent for the NRP dest using the i3M-Wallet
 
 ## Hierarchy
 
-- [`EthersIoAgentDest`](Signers.EthersIoAgentDest.md)
+- `I3mWalletAgent`
 
   ↳ **`I3mWalletAgentDest`**
+
+## Implements
+
+- [`NrpDltAgentDest`](../interfaces/Signers.NrpDltAgentDest.md)
 
 ## Table of contents
 
@@ -19,8 +23,10 @@ A DLT agent for the NRP dest using ethers.io.
 ### Properties
 
 - [contract](Signers.I3mWalletAgentDest.md#contract)
+- [did](Signers.I3mWalletAgentDest.md#did)
 - [dltConfig](Signers.I3mWalletAgentDest.md#dltconfig)
 - [provider](Signers.I3mWalletAgentDest.md#provider)
+- [session](Signers.I3mWalletAgentDest.md#session)
 
 ### Methods
 
@@ -31,21 +37,23 @@ A DLT agent for the NRP dest using ethers.io.
 
 ### constructor
 
-• **new I3mWalletAgentDest**(`dltConfig`)
+• **new I3mWalletAgentDest**(`session`, `did`, `dltConfig`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
+| `session` | `Session`<`HttpInitiatorTransport`\> |
+| `did` | `string` |
 | `dltConfig` | `Partial`<[`DltConfig`](../interfaces/DltConfig.md)\> & `Pick`<[`DltConfig`](../interfaces/DltConfig.md), ``"rpcProviderUrl"``\> |
 
 #### Inherited from
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[constructor](Signers.EthersIoAgentDest.md#constructor)
+I3mWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/EthersIoAgent.ts#L14)
+[src/ts/dlt/agents/I3mWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/I3mWalletAgent.ts#L12)
 
 ## Properties
 
@@ -55,11 +63,25 @@ A DLT agent for the NRP dest using ethers.io.
 
 #### Inherited from
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[contract](Signers.EthersIoAgentDest.md#contract)
+I3mWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+
+___
+
+### did
+
+• **did**: `string`
+
+#### Inherited from
+
+I3mWalletAgent.did
+
+#### Defined in
+
+[src/ts/dlt/agents/I3mWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/I3mWalletAgent.ts#L10)
 
 ___
 
@@ -69,11 +91,11 @@ ___
 
 #### Inherited from
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[dltConfig](Signers.EthersIoAgentDest.md#dltconfig)
+I3mWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L10)
 
 ___
 
@@ -83,11 +105,25 @@ ___
 
 #### Inherited from
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[provider](Signers.EthersIoAgentDest.md#provider)
+I3mWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+
+___
+
+### session
+
+• **session**: `Session`<`HttpInitiatorTransport`\>
+
+#### Inherited from
+
+I3mWalletAgent.session
+
+#### Defined in
+
+[src/ts/dlt/agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/I3mWalletAgent.ts#L9)
 
 ## Methods
 
@@ -101,13 +137,17 @@ Returns the address of the smart contract in use
 
 `Promise`<`string`\>
 
+#### Implementation of
+
+[NrpDltAgentDest](../interfaces/Signers.NrpDltAgentDest.md).[getContractAddress](../interfaces/Signers.NrpDltAgentDest.md#getcontractaddress)
+
 #### Inherited from
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[getContractAddress](Signers.EthersIoAgentDest.md#getcontractaddress)
+I3mWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/EthersIoAgent.ts#L26)
+[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L26)
 
 ___
 
@@ -132,10 +172,10 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 the secret in hex and when it was published to the blockchain as a NumericDate
 
-#### Inherited from
+#### Implementation of
 
-[EthersIoAgentDest](Signers.EthersIoAgentDest.md).[getSecretFromLedger](Signers.EthersIoAgentDest.md#getsecretfromledger)
+NrpDltAgentDest.getSecretFromLedger
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/EthersIoAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/2d55682/src/ts/dlt/agents/dest/EthersIoAgentDest.ts#L13)
+[src/ts/dlt/agents/dest/I3mWalletAgentDest.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/dest/I3mWalletAgentDest.ts#L9)
