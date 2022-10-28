@@ -288,7 +288,7 @@ paths:
                     items: &ref_3
                       title: Ethereum Address
                       type: string
-                      pattern: ^0x([0-9A-Fa-f]){40}$
+                      pattern: ^(0x)?([0-9A-Fa-f]){40}$
                       example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
                     example:
                       - '0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7'
@@ -499,7 +499,7 @@ paths:
                               type: object
                               required:
                                 - dataOfferingId
-                                - dataOfferingVersion
+                                - version
                                 - active
                               properties:
                                 dataOfferingId:
@@ -657,8 +657,10 @@ paths:
                                 - pooToPopDelay
                                 - pooToSecretDelay
                               properties:
-                                orig: *ref_0
-                                dest: *ref_0
+                                orig:
+                                  type: string
+                                dest:
+                                  type: string
                                 encAlg:
                                   type: string
                                 signingAlg:
@@ -694,7 +696,7 @@ paths:
                       properties:
                         type:
                           type: string
-                          example: Contract
+                          example: NonRepudiationProof
                           enum:
                             - NonRepudiationProof
                         name:
@@ -704,8 +706,8 @@ paths:
                           type: string
                         identity: *ref_0
                         resource:
-                          type: object
-                          additionalProperties: true
+                          type: string
+                          pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
                       required:
                         - type
                         - resource

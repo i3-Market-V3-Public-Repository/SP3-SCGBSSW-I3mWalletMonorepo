@@ -216,7 +216,7 @@ components:
         type:
           type: string
           $ref:  "#/components/schemas/ResourceType"
-          example: Contract
+          example: NonRepudiationProof
           enum:
             - NonRepudiationProof
         name:
@@ -227,8 +227,8 @@ components:
         identity:
           $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
-          type: object
-          additionalProperties: true
+          type: string
+          pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
       required:
         - type
         - resource

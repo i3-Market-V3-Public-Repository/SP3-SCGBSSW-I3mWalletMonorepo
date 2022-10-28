@@ -36,7 +36,7 @@ export namespace WalletComponents {
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
-          version?: number
+          version: number
           category?: string
           active: boolean
           title?: string
@@ -105,18 +105,8 @@ export namespace WalletComponents {
           }
         }
         dataExchangeAgreement: {
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+          orig: string
+          dest: string
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -125,13 +115,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -149,18 +139,8 @@ export namespace WalletComponents {
       }
     }
     export interface DataExchangeAgreement {
-      /**
-             * DID
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      /**
-             * DID
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+      orig: string
+      dest: string
       encAlg: string
       signingAlg: string
       hashAlg: string
@@ -169,13 +149,13 @@ export namespace WalletComponents {
              * example:
              * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
              */
-      ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+      ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
       /**
              * Ethereum Address
              * example:
              * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
              */
-      ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+      ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
       pooToPorDelay: number
       pooToPopDelay: number
       pooToSecretDelay: number
@@ -183,7 +163,7 @@ export namespace WalletComponents {
     export interface DataSharingAgreement {
       dataOfferingDescription: {
         dataOfferingId: string
-        version?: number
+        version: number
         category?: string
         active: boolean
         title?: string
@@ -252,18 +232,8 @@ export namespace WalletComponents {
         }
       }
       dataExchangeAgreement: {
-        /**
-                 * DID
-                 * example:
-                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                 */
-        orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-        /**
-                 * DID
-                 * example:
-                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                 */
-        dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+        orig: string
+        dest: string
         encAlg: string
         signingAlg: string
         hashAlg: string
@@ -272,13 +242,13 @@ export namespace WalletComponents {
                  * example:
                  * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                  */
-        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
         /**
                  * Ethereum Address
                  * example:
                  * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                  */
-        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
         pooToPorDelay: number
         pooToPopDelay: number
         pooToSecretDelay: number
@@ -329,7 +299,7 @@ export namespace WalletComponents {
          * example:
          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
          */
-    export type EthereumAddress = string // ^0x([0-9A-Fa-f]){40}$
+    export type EthereumAddress = string // ^(0x)?([0-9A-Fa-f]){40}$
     /**
          * IdentityCreateInput
          * Besides the here defined options, provider specific properties should be added here if necessary, e.g. "path" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).
@@ -378,7 +348,7 @@ export namespace WalletComponents {
              *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
              * ]
              */
-      addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
+      addresses?: string /* ^(0x)?([0-9A-Fa-f]){40}$ */[]
     }
     /**
          * IdentityListInput
@@ -409,7 +379,7 @@ export namespace WalletComponents {
     export interface NonRepudiationProof {
       /**
              * example:
-             * Contract
+             * NonRepudiationProof
              */
       type: 'NonRepudiationProof'
       /**
@@ -424,9 +394,7 @@ export namespace WalletComponents {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      resource: {
-        [name: string]: any
-      }
+      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     /**
          * ObjectResource
@@ -593,7 +561,7 @@ export namespace WalletComponents {
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
-          version?: number
+          version: number
           category?: string
           active: boolean
           title?: string
@@ -662,18 +630,8 @@ export namespace WalletComponents {
           }
         }
         dataExchangeAgreement: {
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+          orig: string
+          dest: string
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -682,13 +640,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -707,7 +665,7 @@ export namespace WalletComponents {
     } | {
       /**
              * example:
-             * Contract
+             * NonRepudiationProof
              */
       type: 'NonRepudiationProof'
       /**
@@ -722,9 +680,7 @@ export namespace WalletComponents {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      resource: {
-        [name: string]: any
-      }
+      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     export interface ResourceId {
       id: string
@@ -842,7 +798,7 @@ export namespace WalletComponents {
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
-          version?: number
+          version: number
           category?: string
           active: boolean
           title?: string
@@ -911,18 +867,8 @@ export namespace WalletComponents {
           }
         }
         dataExchangeAgreement: {
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+          orig: string
+          dest: string
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -931,13 +877,13 @@ export namespace WalletComponents {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -956,7 +902,7 @@ export namespace WalletComponents {
     } | {
       /**
              * example:
-             * Contract
+             * NonRepudiationProof
              */
       type: 'NonRepudiationProof'
       /**
@@ -971,9 +917,7 @@ export namespace WalletComponents {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      resource: {
-        [name: string]: any
-      }
+      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }>
     export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
     /**
@@ -1348,7 +1292,7 @@ export namespace WalletPaths {
                  *   "0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
                  * ]
                  */
-        addresses?: string /* ^0x([0-9A-Fa-f]){40}$ */[]
+        addresses?: string /* ^(0x)?([0-9A-Fa-f]){40}$ */[]
       }
       /**
              * Error
@@ -1626,7 +1570,7 @@ export namespace WalletPaths {
       resource: {
         dataOfferingDescription: {
           dataOfferingId: string
-          version?: number
+          version: number
           category?: string
           active: boolean
           title?: string
@@ -1695,18 +1639,8 @@ export namespace WalletPaths {
           }
         }
         dataExchangeAgreement: {
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-          /**
-                     * DID
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+          orig: string
+          dest: string
           encAlg: string
           signingAlg: string
           hashAlg: string
@@ -1715,13 +1649,13 @@ export namespace WalletPaths {
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address
                      * example:
                      * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
           pooToPorDelay: number
           pooToPopDelay: number
           pooToSecretDelay: number
@@ -1740,7 +1674,7 @@ export namespace WalletPaths {
     } | {
       /**
              * example:
-             * Contract
+             * NonRepudiationProof
              */
       type: 'NonRepudiationProof'
       /**
@@ -1755,9 +1689,7 @@ export namespace WalletPaths {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-      resource: {
-        [name: string]: any
-      }
+      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     export namespace Responses {
       export interface $201 {
@@ -1905,7 +1837,7 @@ export namespace WalletPaths {
         resource: {
           dataOfferingDescription: {
             dataOfferingId: string
-            version?: number
+            version: number
             category?: string
             active: boolean
             title?: string
@@ -1974,18 +1906,8 @@ export namespace WalletPaths {
             }
           }
           dataExchangeAgreement: {
-            /**
-                         * DID
-                         * example:
-                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                         */
-            orig: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-            /**
-                         * DID
-                         * example:
-                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                         */
-            dest: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
+            orig: string
+            dest: string
             encAlg: string
             signingAlg: string
             hashAlg: string
@@ -1994,13 +1916,13 @@ export namespace WalletPaths {
                          * example:
                          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                          */
-            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            ledgerContractAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
             /**
                          * Ethereum Address
                          * example:
                          * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                          */
-            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            ledgerSignerAddress: string // ^(0x)?([0-9A-Fa-f]){40}$
             pooToPorDelay: number
             pooToPopDelay: number
             pooToSecretDelay: number
@@ -2019,7 +1941,7 @@ export namespace WalletPaths {
       } | {
         /**
                  * example:
-                 * Contract
+                 * NonRepudiationProof
                  */
         type: 'NonRepudiationProof'
         /**
@@ -2034,9 +1956,7 @@ export namespace WalletPaths {
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
         identity?: string // ^did:ethr:(\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$
-        resource: {
-          [name: string]: any
-        }
+        resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
       }>
       /**
              * Error

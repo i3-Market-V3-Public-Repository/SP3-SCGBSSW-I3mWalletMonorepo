@@ -50,8 +50,8 @@
     "git:add": "git add -A",
     "lint": "ts-standard --fix",
     "lint:src": "ts-standard --fix 'src/**/!(*.spec).ts'",
-    "lint:test": "ts-standard --fix '{test/**/*,src/**/*.spec.ts}'",
-    "mocha-ts": "node --experimental-modules --es-module-specifier-resolution=node ./build/bin/mocha-ts.cjs ",
+    "lint:test": "ts-standard --fix '{test/**/*.ts,src/**/*.spec.ts}'",
+    "mocha-ts": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./build/bin/mocha-ts.cjs ",
     "mocha-ts:cjs": "node ./build/bin/mocha-ts.cjs --commonjs ",
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
@@ -82,6 +82,7 @@
     ]
   },
   "devDependencies": {
+    "@i3m/wallet-desktop-openapi": "^1.5.3",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",

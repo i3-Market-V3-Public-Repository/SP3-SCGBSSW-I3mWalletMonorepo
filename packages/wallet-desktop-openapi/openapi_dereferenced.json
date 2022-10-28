@@ -424,7 +424,7 @@
                       "items": {
                         "title": "Ethereum Address",
                         "type": "string",
-                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                       },
                       "example": [
@@ -776,7 +776,7 @@
                                 "type": "object",
                                 "required": [
                                   "dataOfferingId",
-                                  "dataOfferingVersion",
+                                  "version",
                                   "active"
                                 ],
                                 "properties": {
@@ -1010,16 +1010,10 @@
                                 ],
                                 "properties": {
                                   "orig": {
-                                    "title": "DID",
-                                    "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                    "type": "string"
                                   },
                                   "dest": {
-                                    "title": "DID",
-                                    "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                    "type": "string"
                                   },
                                   "encAlg": {
                                     "type": "string"
@@ -1033,13 +1027,13 @@
                                   "ledgerContractAddress": {
                                     "title": "Ethereum Address",
                                     "type": "string",
-                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                    "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                                   },
                                   "ledgerSignerAddress": {
                                     "title": "Ethereum Address",
                                     "type": "string",
-                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                    "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                                   },
                                   "pooToPorDelay": {
@@ -1086,7 +1080,7 @@
                         "properties": {
                           "type": {
                             "type": "string",
-                            "example": "Contract",
+                            "example": "NonRepudiationProof",
                             "enum": [
                               "NonRepudiationProof"
                             ]
@@ -1105,8 +1099,8 @@
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "type": "string",
+                            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
                           }
                         },
                         "required": [
@@ -1352,7 +1346,7 @@
                             "type": "object",
                             "required": [
                               "dataOfferingId",
-                              "dataOfferingVersion",
+                              "version",
                               "active"
                             ],
                             "properties": {
@@ -1586,16 +1580,10 @@
                             ],
                             "properties": {
                               "orig": {
-                                "title": "DID",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                "type": "string"
                               },
                               "dest": {
-                                "title": "DID",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                "type": "string"
                               },
                               "encAlg": {
                                 "type": "string"
@@ -1609,13 +1597,13 @@
                               "ledgerContractAddress": {
                                 "title": "Ethereum Address",
                                 "type": "string",
-                                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                               },
                               "ledgerSignerAddress": {
                                 "title": "Ethereum Address",
                                 "type": "string",
-                                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                               },
                               "pooToPorDelay": {
@@ -1662,7 +1650,7 @@
                     "properties": {
                       "type": {
                         "type": "string",
-                        "example": "Contract",
+                        "example": "NonRepudiationProof",
                         "enum": [
                           "NonRepudiationProof"
                         ]
@@ -1681,8 +1669,8 @@
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
-                        "type": "object",
-                        "additionalProperties": true
+                        "type": "string",
+                        "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
                       }
                     },
                     "required": [
@@ -2519,7 +2507,7 @@
                       "type": "object",
                       "required": [
                         "dataOfferingId",
-                        "dataOfferingVersion",
+                        "version",
                         "active"
                       ],
                       "properties": {
@@ -2753,16 +2741,10 @@
                       ],
                       "properties": {
                         "orig": {
-                          "title": "DID",
-                          "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                          "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          "type": "string"
                         },
                         "dest": {
-                          "title": "DID",
-                          "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                          "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          "type": "string"
                         },
                         "encAlg": {
                           "type": "string"
@@ -2776,13 +2758,13 @@
                         "ledgerContractAddress": {
                           "title": "Ethereum Address",
                           "type": "string",
-                          "pattern": "^0x([0-9A-Fa-f]){40}$",
+                          "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                           "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                         },
                         "ledgerSignerAddress": {
                           "title": "Ethereum Address",
                           "type": "string",
-                          "pattern": "^0x([0-9A-Fa-f]){40}$",
+                          "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                           "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                         },
                         "pooToPorDelay": {
@@ -2829,7 +2811,7 @@
               "properties": {
                 "type": {
                   "type": "string",
-                  "example": "Contract",
+                  "example": "NonRepudiationProof",
                   "enum": [
                     "NonRepudiationProof"
                   ]
@@ -2848,8 +2830,8 @@
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                 },
                 "resource": {
-                  "type": "object",
-                  "additionalProperties": true
+                  "type": "string",
+                  "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
                 }
               },
               "required": [
@@ -3055,7 +3037,7 @@
                     "type": "object",
                     "required": [
                       "dataOfferingId",
-                      "dataOfferingVersion",
+                      "version",
                       "active"
                     ],
                     "properties": {
@@ -3289,16 +3271,10 @@
                     ],
                     "properties": {
                       "orig": {
-                        "title": "DID",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                        "type": "string"
                       },
                       "dest": {
-                        "title": "DID",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                        "type": "string"
                       },
                       "encAlg": {
                         "type": "string"
@@ -3312,13 +3288,13 @@
                       "ledgerContractAddress": {
                         "title": "Ethereum Address",
                         "type": "string",
-                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                       },
                       "ledgerSignerAddress": {
                         "title": "Ethereum Address",
                         "type": "string",
-                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                       },
                       "pooToPorDelay": {
@@ -3365,7 +3341,7 @@
             "properties": {
               "type": {
                 "type": "string",
-                "example": "Contract",
+                "example": "NonRepudiationProof",
                 "enum": [
                   "NonRepudiationProof"
                 ]
@@ -3384,8 +3360,8 @@
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
-                "type": "object",
-                "additionalProperties": true
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
               }
             },
             "required": [
@@ -3587,7 +3563,7 @@
                 "type": "object",
                 "required": [
                   "dataOfferingId",
-                  "dataOfferingVersion",
+                  "version",
                   "active"
                 ],
                 "properties": {
@@ -3821,16 +3797,10 @@
                 ],
                 "properties": {
                   "orig": {
-                    "title": "DID",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                    "type": "string"
                   },
                   "dest": {
-                    "title": "DID",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                    "type": "string"
                   },
                   "encAlg": {
                     "type": "string"
@@ -3844,13 +3814,13 @@
                   "ledgerContractAddress": {
                     "title": "Ethereum Address",
                     "type": "string",
-                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                    "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                   },
                   "ledgerSignerAddress": {
                     "title": "Ethereum Address",
                     "type": "string",
-                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                    "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                   },
                   "pooToPorDelay": {
@@ -3897,7 +3867,7 @@
         "properties": {
           "type": {
             "type": "string",
-            "example": "Contract",
+            "example": "NonRepudiationProof",
             "enum": [
               "NonRepudiationProof"
             ]
@@ -3916,8 +3886,8 @@
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
-            "type": "object",
-            "additionalProperties": true
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
           }
         },
         "required": [
@@ -4059,7 +4029,7 @@
       "EthereumAddress": {
         "title": "Ethereum Address",
         "type": "string",
-        "pattern": "^0x([0-9A-Fa-f]){40}$",
+        "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
       },
       "did": {
@@ -4089,7 +4059,7 @@
             "items": {
               "title": "Ethereum Address",
               "type": "string",
-              "pattern": "^0x([0-9A-Fa-f]){40}$",
+              "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
               "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
             },
             "example": [
@@ -4139,16 +4109,10 @@
         ],
         "properties": {
           "orig": {
-            "title": "DID",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+            "type": "string"
           },
           "dest": {
-            "title": "DID",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+            "type": "string"
           },
           "encAlg": {
             "type": "string"
@@ -4162,13 +4126,13 @@
           "ledgerContractAddress": {
             "title": "Ethereum Address",
             "type": "string",
-            "pattern": "^0x([0-9A-Fa-f]){40}$",
+            "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
             "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
           },
           "ledgerSignerAddress": {
             "title": "Ethereum Address",
             "type": "string",
-            "pattern": "^0x([0-9A-Fa-f]){40}$",
+            "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
             "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
           },
           "pooToPorDelay": {
@@ -4202,7 +4166,7 @@
             "type": "object",
             "required": [
               "dataOfferingId",
-              "dataOfferingVersion",
+              "version",
               "active"
             ],
             "properties": {
@@ -4436,16 +4400,10 @@
             ],
             "properties": {
               "orig": {
-                "title": "DID",
-                "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                "type": "string"
               },
               "dest": {
-                "title": "DID",
-                "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
-                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                "type": "string"
               },
               "encAlg": {
                 "type": "string"
@@ -4459,13 +4417,13 @@
               "ledgerContractAddress": {
                 "title": "Ethereum Address",
                 "type": "string",
-                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
               },
               "ledgerSignerAddress": {
                 "title": "Ethereum Address",
                 "type": "string",
-                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                "pattern": "^(0x)?([0-9A-Fa-f]){40}$",
                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
               },
               "pooToPorDelay": {

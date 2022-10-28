@@ -2,7 +2,8 @@
 
 My module description. Please update with your module data.
 
-**`remarks`**
+**`Remarks`**
+
 This module runs perfectly in node.js and browsers
 
 ## Table of contents

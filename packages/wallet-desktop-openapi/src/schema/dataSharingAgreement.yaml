@@ -32,9 +32,9 @@ components:
       - pooToSecretDelay
       properties:
         orig:
-          $ref: "./identity.yaml#/components/schemas/did"
+          type: string
         dest:
-          $ref: "./identity.yaml#/components/schemas/did"
+          type: string
         encAlg:
           type: string
         signingAlg:
@@ -71,7 +71,7 @@ components:
           type: object
           required:
           - dataOfferingId
-          - dataOfferingVersion
+          - version
           - active
           properties:
             dataOfferingId:

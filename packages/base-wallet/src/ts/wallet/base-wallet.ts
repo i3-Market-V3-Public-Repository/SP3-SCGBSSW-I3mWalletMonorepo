@@ -5,10 +5,10 @@ import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
 
-import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast } from '../app'
+import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast, Resource } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
-import { Resource, ResourceValidator } from '../resource'
+import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
@@ -651,7 +651,7 @@ export class BaseWallet<
    * @returns and identifier of the created resource
    */
   async resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201> {
-    const resource = requestBody
+    const resource: Resource = { ...requestBody, id: uuid() }
 
     // Validate resource
     const validation = await this.resourceValidator.validate(resource, this.veramo)
@@ -660,7 +660,7 @@ export class BaseWallet<
     }
 
     if (validation.errors.length > 0) {
-      throw new WalletError('Wrong resource format', { status: 400 })
+      throw new WalletError('Resource has not been validated:\n' + validation.errors.toString(), { status: 400 })
     }
 
     switch (resource.type) {
@@ -708,13 +708,8 @@ export class BaseWallet<
         throw new Error('Resource type not supported')
     }
 
-    // Store resource
-    const defaultResource = {
-      id: uuid()
-    }
-    const returnResource = Object.assign(defaultResource, resource)
-    await this.store.set(`resources.${defaultResource.id}`, returnResource)
-    return defaultResource
+    await this.store.set(`resources.${resource.id}`, resource)
+    return resource
   }
 
   /**

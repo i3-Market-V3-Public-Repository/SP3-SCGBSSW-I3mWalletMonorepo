@@ -1,12 +1,12 @@
-import { hashable } from 'object-sha'
 import { verifyJWT } from 'did-jwt'
 import Veramo, {} from '../veramo'
 import { decodeJWS } from './jws'
 import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
+import _ from 'lodash'
 
-type Dict<T> = T & {
-  [key: string]: any | undefined
-}
+// type Dict<T> = T & {
+//   [key: string]: any | undefined
+// }
 
 /**
    * Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
@@ -31,19 +31,15 @@ export async function didJwtVerify (jwt: string, veramo: Veramo, expectedPayload
   const payload = decodedJwt.payload
 
   if (expectedPayloadClaims !== undefined) {
-    const expectedClaimsDict: Dict<typeof expectedPayloadClaims> = expectedPayloadClaims
+    const expectedPayloadMerged = _.cloneDeep(expectedPayloadClaims)
+    _.defaultsDeep(expectedPayloadMerged, payload)
 
-    let error: string | undefined
-    for (const key in expectedClaimsDict) {
-      if (payload[key] === undefined) error = `Expected key '${key}' not found in payload`
-      if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key] as object) !== hashable(payload[key] as object)) {
-        error = `Payload's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`
-      }
-    }
-    if (error !== undefined) {
+    const isExpectedPayload = _.isEqual(expectedPayloadMerged, payload)
+
+    if (!isExpectedPayload) {
       return {
         verification: 'failed',
-        error,
+        error: 'some or all the expected payload claims are not in the payload',
         decodedJwt
       }
     }

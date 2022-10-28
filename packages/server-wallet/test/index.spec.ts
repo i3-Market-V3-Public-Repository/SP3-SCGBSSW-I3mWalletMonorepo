@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { Veramo, VerifiableCredential } from '@i3m/base-wallet'
+import { VerifiableCredential } from '@i3m/base-wallet'
+import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import Debug from 'debug'
 import { homedir } from 'os'
 import { join } from 'path'
@@ -14,7 +15,6 @@ describe('@i3m/server-wallet', function () {
 
   const identities: { [k: string]: string } = {}
   let wallet: ServerWallet
-  let veramo: Veramo
   let jwt: string
 
   before(async function () {
@@ -23,7 +23,6 @@ describe('@i3m/server-wallet', function () {
       reset: true,
       filepath: join(homedir(), '.server-wallet', 'testStore')
     })
-    veramo = wallet.veramo
   })
 
   after(async function () {
@@ -43,7 +42,7 @@ describe('@i3m/server-wallet', function () {
       const resp = await wallet.identityCreate({
         alias: 'alice'
       })
-      chai.expect(resp.did).to.not.be.empty // eslint-disable-line
+      chai.expect(resp.did).to.not.be.empty
 
       identities.alice = resp.did
       debug('DID for \'alice\' created: ', resp.did)
@@ -53,7 +52,7 @@ describe('@i3m/server-wallet', function () {
       })
       chai.expect(resp2.did).to.not.be.empty
 
-      identities.bob = resp.did
+      identities.bob = resp2.did
       debug('DID for \'bob\' created: ', resp2.did)
     })
 
@@ -93,8 +92,7 @@ describe('@i3m/server-wallet', function () {
       const verification = await wallet.didJwtVerify({
         jwt,
         expectedPayloadClaims: {
-          payloadField1: 'yellow',
-          payloadField2: ''
+          payloadField1: 'yellow'
         }
       })
       debug('verification: ' + JSON.stringify(verification, undefined, 2))
@@ -125,7 +123,7 @@ describe('@i3m/server-wallet', function () {
     let credential: VerifiableCredential
 
     before(async function () {
-      credential = await veramo.agent.createVerifiableCredential({
+      credential = await wallet.veramo.agent.createVerifiableCredential({
         credential: {
           issuer: { id: identities.bob },
           credentialSubject: {
@@ -157,13 +155,69 @@ describe('@i3m/server-wallet', function () {
     })
   })
 
+  describe('data sharing agreeements', function () {
+    let dataSharingAgreement: WalletComponents.Schemas.Contract['resource']
+
+    before(async function () {
+      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default
+
+      dataSharingAgreement.parties.providerDid = identities.alice
+      dataSharingAgreement.parties.consumerDid = identities.bob
+
+      const addresses = (await wallet.identityInfo({ did: identities.alice })).addresses
+      dataSharingAgreement.dataExchangeAgreement.ledgerSignerAddress = ((addresses != null) && addresses.length > 0) ? addresses[0] : ''
+
+      const { signatures, ...payload } = dataSharingAgreement
+
+      dataSharingAgreement.signatures.providerSignature = (await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { payload } })).signature
+
+      dataSharingAgreement.signatures.consumerSignature = (await wallet.identitySign({ did: identities.bob }, { type: 'JWT', data: { payload } })).signature
+    })
+
+    it('should store a data sharing agreement', async function () {
+      const resource = await wallet.resourceCreate({
+        type: 'Contract',
+        identity: identities.alice,
+        resource: dataSharingAgreement
+      })
+      debug('Resource with id: ', resource.id)
+      chai.expect(resource.id).to.not.be.undefined
+    })
+
+    it('should not allow to store an invalid data sharing agreement', async function () {
+      const dataSharingAgreementResource: WalletComponents.Schemas.Contract = {
+        type: 'Contract',
+        identity: identities.alice,
+        resource: { ...dataSharingAgreement, parties: { providerDid: 'sdaf', consumerDid: '' } }
+      }
+      let error: Error = new Error('')
+      try {
+        await wallet.resourceCreate(dataSharingAgreementResource)
+      } catch (err) {
+        error = err as Error
+        debug('Resource not created: ', JSON.stringify(error, undefined, 2))
+      }
+
+      chai.expect(error.message).to.not.equal('')
+    })
+
+    it('should list stored data sharing agreements', async function () {
+      const resources = await wallet.resourceList({
+        type: 'Contract',
+        identity: identities.alice
+      })
+      debug('Resources: ', JSON.stringify(resources, undefined, 2))
+      chai.expect(resources.length).to.equal(1)
+    })
+  })
+
   describe('selectiveDisclosure', function () {
     let sdrRespJwt: string
     let sdr: string
 
     before(async function () {
       // Generate a sdr generated on the fly
-      sdr = await veramo.agent.createSelectiveDisclosureRequest({
+      sdr = await wallet.veramo.agent.createSelectiveDisclosureRequest({
         data: {
           issuer: identities.bob,
           claims: [{
@@ -190,7 +244,7 @@ describe('@i3m/server-wallet', function () {
     })
 
     it('should respond with a proper signature', async function () {
-      await veramo.agent.handleMessage({
+      await wallet.veramo.agent.handleMessage({
         raw: sdrRespJwt
       })
     })
