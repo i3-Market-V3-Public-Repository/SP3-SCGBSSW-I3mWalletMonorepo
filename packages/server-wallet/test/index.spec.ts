@@ -10,21 +10,6 @@ import { ServerWallet, serverWalletBuilder } from '#pkg'
 
 const debug = Debug('@i3m/server-wallet:test')
 
-function parseHex (a: string, prefix0x: boolean = false, byteLength?: number): string {
-  const hexMatch = a.match(/^(0x)?([\da-fA-F]+)$/)
-  if (hexMatch == null) {
-    throw new RangeError('input must be a hexadecimal string, e.g. \'0x124fe3a\' or \'0214f1b2\'')
-  }
-  let hex = hexMatch[2].toLocaleLowerCase()
-  if (byteLength !== undefined) {
-    if (byteLength < hex.length / 2) {
-      throw new RangeError(`expected byte length ${byteLength} < input hex byte length ${Math.ceil(hex.length / 2)}`)
-    }
-    hex = hex.padStart(byteLength * 2, '0')
-  }
-  return (prefix0x) ? '0x' + hex : hex
-}
-
 describe('@i3m/server-wallet', function () {
   this.timeout(10000)
 
@@ -174,19 +159,21 @@ describe('@i3m/server-wallet', function () {
     let dataSharingAgreement: WalletComponents.Schemas.Contract['resource']
 
     before(async function () {
-      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default
+      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.Contract['resource']
 
       dataSharingAgreement.parties.providerDid = identities.alice
       dataSharingAgreement.parties.consumerDid = identities.bob
 
       const addresses = (await wallet.identityInfo({ did: identities.alice })).addresses
-      dataSharingAgreement.dataExchangeAgreement.ledgerSignerAddress = ((addresses != null) && addresses.length > 0) ? parseHex(addresses[0], true) : ''
+      dataSharingAgreement.dataExchangeAgreement.ledgerSignerAddress = ((addresses != null) && addresses.length > 0) ? addresses[0] : ''
 
       const { signatures, ...payload } = dataSharingAgreement
 
       dataSharingAgreement.signatures.providerSignature = (await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { payload } })).signature
 
       dataSharingAgreement.signatures.consumerSignature = (await wallet.identitySign({ did: identities.bob }, { type: 'JWT', data: { payload } })).signature
+
+      debug(dataSharingAgreement)
     })
 
     it('should store a data sharing agreement', async function () {

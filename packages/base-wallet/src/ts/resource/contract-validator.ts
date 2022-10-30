@@ -1,5 +1,5 @@
 import { ContractResource } from '../app'
-import { validateDataSharingAgreeementSchema, verifyDataSharingAgreementSignature } from '../utils'
+import { validateDataExchangeAgreement, validateDataSharingAgreeementSchema, verifyDataSharingAgreementSignature } from '../utils'
 import { Validator } from './resource-validator'
 import { digest } from 'object-sha'
 
@@ -10,6 +10,14 @@ export const contractValidator: Validator<ContractResource> = async (resource, v
     // Verify schema
     const schemaValidationErrors = await validateDataSharingAgreeementSchema(resource.resource)
     if (schemaValidationErrors.length > 0) return schemaValidationErrors
+
+    // Validate dataExchangeAgreemeent
+    const deaErrors = await validateDataExchangeAgreement(resource.resource.dataExchangeAgreement)
+    if (deaErrors.length > 0) {
+      deaErrors.forEach((error) => {
+        errors.push(error)
+      })
+    }
 
     // Check role of the identity in the agreeement (whether it is 'provider' or 'consumer')
     let role: 'provider' | 'consumer' | '' = ''

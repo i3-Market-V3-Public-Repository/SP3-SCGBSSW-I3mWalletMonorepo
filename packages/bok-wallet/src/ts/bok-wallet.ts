@@ -1,8 +1,7 @@
-import { BaseWallet, WalletOptions } from '@i3m/base-wallet'
+import { BaseWallet, WalletOptions, parseHex } from '@i3m/base-wallet'
 import { ethers } from 'ethers'
 import { BokWalletModel } from './types'
 import { BokKeyWallet } from './bok-key-wallet'
-import { BokWalletError } from './errors'
 
 interface ImportInfo {
   alias: string
@@ -25,13 +24,13 @@ export class BokWallet extends BaseWallet<WalletOptions<BokWalletModel>> {
       return
     }
 
-    if (!importInfo.privateKey.startsWith('0x')) {
-      throw new BokWalletError('Private key must start with 0x')
-    }
+    // if (!importInfo.privateKey.startsWith('0x')) {
+    //   throw new BokWalletError('Private key must start with 0x')
+    // }
 
     const keyWallet = this.getKeyWallet<BokKeyWallet>()
-    const key = await keyWallet.import(importInfo.privateKey.substring(2))
-    const compressedPublicKey = ethers.utils.computePublicKey(`0x${key.publicKeyHex}`, true)
+    const key = await keyWallet.import(parseHex(importInfo.privateKey))
+    const compressedPublicKey = ethers.utils.computePublicKey(parseHex(key.publicKeyHex), true)
 
     await this.veramo.agent.didManagerImport({
       did: `${this.provider}:${compressedPublicKey}`,

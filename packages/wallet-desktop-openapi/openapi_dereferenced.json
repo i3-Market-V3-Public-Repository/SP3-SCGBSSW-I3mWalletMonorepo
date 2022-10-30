@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "version": "1.6.0",
+    "version": "1.6.1",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -68,7 +68,7 @@
                       "did": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       }
                     },
@@ -145,7 +145,7 @@
                     "did": {
                       "title": "DID",
                       "type": "string",
-                      "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                      "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                       "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                     }
                   },
@@ -214,7 +214,7 @@
                     "did": {
                       "title": "DID",
                       "type": "string",
-                      "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                      "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                       "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                     }
                   },
@@ -243,7 +243,7 @@
             "schema": {
               "title": "DID",
               "type": "string",
-              "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             },
             "required": true
@@ -392,7 +392,7 @@
             "schema": {
               "title": "DID",
               "type": "string",
-              "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             },
             "required": true
@@ -422,7 +422,7 @@
                     "addresses": {
                       "type": "array",
                       "items": {
-                        "title": "Ethereum Address",
+                        "title": "Ethereum Address in EIP-55 format (with checksum)",
                         "type": "string",
                         "pattern": "^0x([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -481,7 +481,7 @@
             "schema": {
               "title": "DID",
               "type": "string",
-              "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             },
             "required": true
@@ -566,7 +566,7 @@
             "schema": {
               "title": "DID",
               "type": "string",
-              "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             },
             "description": "Filter the resource associated to an identity DID. Send empty value to get all the resources that are not associated to any identity."
@@ -604,7 +604,7 @@
                           "identity": {
                             "title": "DID",
                             "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
@@ -638,7 +638,7 @@
                                   "id": {
                                     "title": "DID",
                                     "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                                   }
                                 },
@@ -658,7 +658,7 @@
                                   "id": {
                                     "title": "DID",
                                     "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                                   }
                                 },
@@ -719,7 +719,7 @@
                           "identity": {
                             "title": "DID",
                             "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
@@ -753,7 +753,7 @@
                           "identity": {
                             "title": "DID",
                             "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
@@ -807,13 +807,13 @@
                                   "providerDid": {
                                     "title": "DID",
                                     "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                                   },
                                   "consumerDid": {
                                     "title": "DID",
                                     "type": "string",
-                                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                                   }
                                 }
@@ -1010,40 +1010,70 @@
                                 ],
                                 "properties": {
                                   "orig": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "A stingfied JWK with alphabetically sorted claims",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                                   },
                                   "dest": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "description": "A stingfied JWK with alphabetically sorted claims",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                                   },
                                   "encAlg": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "A128GCM",
+                                      "A256GCM"
+                                    ],
+                                    "example": "A256GCM"
                                   },
                                   "signingAlg": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "ES256",
+                                      "ES384",
+                                      "ES512"
+                                    ],
+                                    "example": "ES256"
                                   },
                                   "hashAlg": {
-                                    "type": "string"
+                                    "type": "string",
+                                    "enum": [
+                                      "SHA-256",
+                                      "SHA-384",
+                                      "SHA-512"
+                                    ],
+                                    "example": "SHA-256"
                                   },
                                   "ledgerContractAddress": {
-                                    "title": "Ethereum Address",
-                                    "type": "string",
-                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
-                                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                    "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
                                   },
                                   "ledgerSignerAddress": {
-                                    "title": "Ethereum Address",
+                                    "title": "Ethereum Address in EIP-55 format (with checksum)",
                                     "type": "string",
                                     "pattern": "^0x([0-9A-Fa-f]){40}$",
                                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                                   },
                                   "pooToPorDelay": {
-                                    "type": "integer"
+                                    "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 10000
                                   },
                                   "pooToPopDelay": {
-                                    "type": "integer"
+                                    "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 20000
                                   },
                                   "pooToSecretDelay": {
-                                    "type": "integer"
+                                    "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 180000
                                   }
                                 }
                               },
@@ -1095,7 +1125,7 @@
                           "identity": {
                             "title": "DID",
                             "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
@@ -1174,7 +1204,7 @@
                       "identity": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
@@ -1208,7 +1238,7 @@
                               "id": {
                                 "title": "DID",
                                 "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                               }
                             },
@@ -1228,7 +1258,7 @@
                               "id": {
                                 "title": "DID",
                                 "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                               }
                             },
@@ -1289,7 +1319,7 @@
                       "identity": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
@@ -1323,7 +1353,7 @@
                       "identity": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
@@ -1377,13 +1407,13 @@
                               "providerDid": {
                                 "title": "DID",
                                 "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                               },
                               "consumerDid": {
                                 "title": "DID",
                                 "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                               }
                             }
@@ -1580,40 +1610,70 @@
                             ],
                             "properties": {
                               "orig": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "A stingfied JWK with alphabetically sorted claims",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                               },
                               "dest": {
-                                "type": "string"
+                                "type": "string",
+                                "description": "A stingfied JWK with alphabetically sorted claims",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                               },
                               "encAlg": {
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "A128GCM",
+                                  "A256GCM"
+                                ],
+                                "example": "A256GCM"
                               },
                               "signingAlg": {
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "ES256",
+                                  "ES384",
+                                  "ES512"
+                                ],
+                                "example": "ES256"
                               },
                               "hashAlg": {
-                                "type": "string"
+                                "type": "string",
+                                "enum": [
+                                  "SHA-256",
+                                  "SHA-384",
+                                  "SHA-512"
+                                ],
+                                "example": "SHA-256"
                               },
                               "ledgerContractAddress": {
-                                "title": "Ethereum Address",
-                                "type": "string",
-                                "pattern": "^0x([0-9A-Fa-f]){40}$",
-                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
                               },
                               "ledgerSignerAddress": {
-                                "title": "Ethereum Address",
+                                "title": "Ethereum Address in EIP-55 format (with checksum)",
                                 "type": "string",
                                 "pattern": "^0x([0-9A-Fa-f]){40}$",
                                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                               },
                               "pooToPorDelay": {
-                                "type": "integer"
+                                "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 10000
                               },
                               "pooToPopDelay": {
-                                "type": "integer"
+                                "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 20000
                               },
                               "pooToSecretDelay": {
-                                "type": "integer"
+                                "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 180000
                               }
                             }
                           },
@@ -1665,7 +1725,7 @@
                       "identity": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
@@ -2015,7 +2075,7 @@
           "did": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           }
         },
@@ -2271,7 +2331,7 @@
             "did": {
               "title": "DID",
               "type": "string",
-              "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             }
           },
@@ -2299,7 +2359,7 @@
           "did": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           }
         },
@@ -2335,7 +2395,7 @@
                 "identity": {
                   "title": "DID",
                   "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                 },
                 "resource": {
@@ -2369,7 +2429,7 @@
                         "id": {
                           "title": "DID",
                           "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                         }
                       },
@@ -2389,7 +2449,7 @@
                         "id": {
                           "title": "DID",
                           "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                         }
                       },
@@ -2450,7 +2510,7 @@
                 "identity": {
                   "title": "DID",
                   "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                 },
                 "resource": {
@@ -2484,7 +2544,7 @@
                 "identity": {
                   "title": "DID",
                   "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                 },
                 "resource": {
@@ -2538,13 +2598,13 @@
                         "providerDid": {
                           "title": "DID",
                           "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                         },
                         "consumerDid": {
                           "title": "DID",
                           "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                         }
                       }
@@ -2741,40 +2801,70 @@
                       ],
                       "properties": {
                         "orig": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "A stingfied JWK with alphabetically sorted claims",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                         },
                         "dest": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "A stingfied JWK with alphabetically sorted claims",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                         },
                         "encAlg": {
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "A128GCM",
+                            "A256GCM"
+                          ],
+                          "example": "A256GCM"
                         },
                         "signingAlg": {
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "ES256",
+                            "ES384",
+                            "ES512"
+                          ],
+                          "example": "ES256"
                         },
                         "hashAlg": {
-                          "type": "string"
+                          "type": "string",
+                          "enum": [
+                            "SHA-256",
+                            "SHA-384",
+                            "SHA-512"
+                          ],
+                          "example": "SHA-256"
                         },
                         "ledgerContractAddress": {
-                          "title": "Ethereum Address",
-                          "type": "string",
-                          "pattern": "^0x([0-9A-Fa-f]){40}$",
-                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                          "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
                         },
                         "ledgerSignerAddress": {
-                          "title": "Ethereum Address",
+                          "title": "Ethereum Address in EIP-55 format (with checksum)",
                           "type": "string",
                           "pattern": "^0x([0-9A-Fa-f]){40}$",
                           "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                         },
                         "pooToPorDelay": {
-                          "type": "integer"
+                          "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 10000
                         },
                         "pooToPopDelay": {
-                          "type": "integer"
+                          "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 20000
                         },
                         "pooToSecretDelay": {
-                          "type": "integer"
+                          "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 180000
                         }
                       }
                     },
@@ -2826,7 +2916,7 @@
                 "identity": {
                   "title": "DID",
                   "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                 },
                 "resource": {
@@ -2865,7 +2955,7 @@
               "identity": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
@@ -2899,7 +2989,7 @@
                       "id": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       }
                     },
@@ -2919,7 +3009,7 @@
                       "id": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       }
                     },
@@ -2980,7 +3070,7 @@
               "identity": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
@@ -3014,7 +3104,7 @@
               "identity": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
@@ -3068,13 +3158,13 @@
                       "providerDid": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "consumerDid": {
                         "title": "DID",
                         "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       }
                     }
@@ -3271,40 +3361,70 @@
                     ],
                     "properties": {
                       "orig": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A stingfied JWK with alphabetically sorted claims",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                       },
                       "dest": {
-                        "type": "string"
+                        "type": "string",
+                        "description": "A stingfied JWK with alphabetically sorted claims",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                       },
                       "encAlg": {
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                          "A128GCM",
+                          "A256GCM"
+                        ],
+                        "example": "A256GCM"
                       },
                       "signingAlg": {
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                          "ES256",
+                          "ES384",
+                          "ES512"
+                        ],
+                        "example": "ES256"
                       },
                       "hashAlg": {
-                        "type": "string"
+                        "type": "string",
+                        "enum": [
+                          "SHA-256",
+                          "SHA-384",
+                          "SHA-512"
+                        ],
+                        "example": "SHA-256"
                       },
                       "ledgerContractAddress": {
-                        "title": "Ethereum Address",
-                        "type": "string",
-                        "pattern": "^0x([0-9A-Fa-f]){40}$",
-                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                        "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
                       },
                       "ledgerSignerAddress": {
-                        "title": "Ethereum Address",
+                        "title": "Ethereum Address in EIP-55 format (with checksum)",
                         "type": "string",
                         "pattern": "^0x([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                       },
                       "pooToPorDelay": {
-                        "type": "integer"
+                        "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 10000
                       },
                       "pooToPopDelay": {
-                        "type": "integer"
+                        "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 20000
                       },
                       "pooToSecretDelay": {
-                        "type": "integer"
+                        "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 180000
                       }
                     }
                   },
@@ -3356,7 +3476,7 @@
               "identity": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
@@ -3391,7 +3511,7 @@
           "identity": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
@@ -3425,7 +3545,7 @@
                   "id": {
                     "title": "DID",
                     "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                   }
                 },
@@ -3445,7 +3565,7 @@
                   "id": {
                     "title": "DID",
                     "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                   }
                 },
@@ -3506,7 +3626,7 @@
           "identity": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
@@ -3540,7 +3660,7 @@
           "identity": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
@@ -3594,13 +3714,13 @@
                   "providerDid": {
                     "title": "DID",
                     "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                   },
                   "consumerDid": {
                     "title": "DID",
                     "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                   }
                 }
@@ -3797,40 +3917,70 @@
                 ],
                 "properties": {
                   "orig": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "A stingfied JWK with alphabetically sorted claims",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                   },
                   "dest": {
-                    "type": "string"
+                    "type": "string",
+                    "description": "A stingfied JWK with alphabetically sorted claims",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                   },
                   "encAlg": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "A128GCM",
+                      "A256GCM"
+                    ],
+                    "example": "A256GCM"
                   },
                   "signingAlg": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "ES256",
+                      "ES384",
+                      "ES512"
+                    ],
+                    "example": "ES256"
                   },
                   "hashAlg": {
-                    "type": "string"
+                    "type": "string",
+                    "enum": [
+                      "SHA-256",
+                      "SHA-384",
+                      "SHA-512"
+                    ],
+                    "example": "SHA-256"
                   },
                   "ledgerContractAddress": {
-                    "title": "Ethereum Address",
-                    "type": "string",
-                    "pattern": "^0x([0-9A-Fa-f]){40}$",
-                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                    "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
                   },
                   "ledgerSignerAddress": {
-                    "title": "Ethereum Address",
+                    "title": "Ethereum Address in EIP-55 format (with checksum)",
                     "type": "string",
                     "pattern": "^0x([0-9A-Fa-f]){40}$",
                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                   },
                   "pooToPorDelay": {
-                    "type": "integer"
+                    "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 10000
                   },
                   "pooToPopDelay": {
-                    "type": "integer"
+                    "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 20000
                   },
                   "pooToSecretDelay": {
-                    "type": "integer"
+                    "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 180000
                   }
                 }
               },
@@ -3882,7 +4032,7 @@
           "identity": {
             "title": "DID",
             "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
@@ -3958,7 +4108,7 @@
               "iss": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               }
             },
@@ -4027,7 +4177,7 @@
         "additionalProperties": true
       },
       "EthereumAddress": {
-        "title": "Ethereum Address",
+        "title": "Ethereum Address in EIP-55 format (with checksum)",
         "type": "string",
         "pattern": "^0x([0-9A-Fa-f]){40}$",
         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -4035,7 +4185,7 @@
       "did": {
         "title": "DID",
         "type": "string",
-        "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
       },
       "IdentityData": {
@@ -4057,7 +4207,7 @@
           "addresses": {
             "type": "array",
             "items": {
-              "title": "Ethereum Address",
+              "title": "Ethereum Address in EIP-55 format (with checksum)",
               "type": "string",
               "pattern": "^0x([0-9A-Fa-f]){40}$",
               "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -4109,40 +4259,70 @@
         ],
         "properties": {
           "orig": {
-            "type": "string"
+            "type": "string",
+            "description": "A stingfied JWK with alphabetically sorted claims",
+            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
           },
           "dest": {
-            "type": "string"
+            "type": "string",
+            "description": "A stingfied JWK with alphabetically sorted claims",
+            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
           },
           "encAlg": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "A128GCM",
+              "A256GCM"
+            ],
+            "example": "A256GCM"
           },
           "signingAlg": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "ES256",
+              "ES384",
+              "ES512"
+            ],
+            "example": "ES256"
           },
           "hashAlg": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "SHA-256",
+              "SHA-384",
+              "SHA-512"
+            ],
+            "example": "SHA-256"
           },
           "ledgerContractAddress": {
-            "title": "Ethereum Address",
-            "type": "string",
-            "pattern": "^0x([0-9A-Fa-f]){40}$",
-            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+            "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
           },
           "ledgerSignerAddress": {
-            "title": "Ethereum Address",
+            "title": "Ethereum Address in EIP-55 format (with checksum)",
             "type": "string",
             "pattern": "^0x([0-9A-Fa-f]){40}$",
             "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
           },
           "pooToPorDelay": {
-            "type": "integer"
+            "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "example": 10000
           },
           "pooToPopDelay": {
-            "type": "integer"
+            "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "example": 20000
           },
           "pooToSecretDelay": {
-            "type": "integer"
+            "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "example": 180000
           }
         }
       },
@@ -4197,13 +4377,13 @@
               "providerDid": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "consumerDid": {
                 "title": "DID",
                 "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x([0-9a-fA-F]{40}([0-9a-fA-F]{26})?)$",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               }
             }
@@ -4400,40 +4580,70 @@
             ],
             "properties": {
               "orig": {
-                "type": "string"
+                "type": "string",
+                "description": "A stingfied JWK with alphabetically sorted claims",
+                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
               },
               "dest": {
-                "type": "string"
+                "type": "string",
+                "description": "A stingfied JWK with alphabetically sorted claims",
+                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
               },
               "encAlg": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "A128GCM",
+                  "A256GCM"
+                ],
+                "example": "A256GCM"
               },
               "signingAlg": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "ES256",
+                  "ES384",
+                  "ES512"
+                ],
+                "example": "ES256"
               },
               "hashAlg": {
-                "type": "string"
+                "type": "string",
+                "enum": [
+                  "SHA-256",
+                  "SHA-384",
+                  "SHA-512"
+                ],
+                "example": "SHA-256"
               },
               "ledgerContractAddress": {
-                "title": "Ethereum Address",
-                "type": "string",
-                "pattern": "^0x([0-9A-Fa-f]){40}$",
-                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
               },
               "ledgerSignerAddress": {
-                "title": "Ethereum Address",
+                "title": "Ethereum Address in EIP-55 format (with checksum)",
                 "type": "string",
                 "pattern": "^0x([0-9A-Fa-f]){40}$",
                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
               },
               "pooToPorDelay": {
-                "type": "integer"
+                "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 10000
               },
               "pooToPopDelay": {
-                "type": "integer"
+                "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 20000
               },
               "pooToSecretDelay": {
-                "type": "integer"
+                "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 180000
               }
             }
           },

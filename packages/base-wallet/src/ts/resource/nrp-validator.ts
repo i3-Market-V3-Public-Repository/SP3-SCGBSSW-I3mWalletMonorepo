@@ -1,7 +1,11 @@
-import { NonRepudiationProofResource } from '../app'
-import { Validator } from './resource-validator'
 import { DataExchange, exchangeId, jwsDecode, NrProofPayload } from '@i3m/non-repudiation-library'
+import Debug from 'debug'
 import { digest } from 'object-sha'
+import { NonRepudiationProofResource } from '../app'
+import { validateDataExchangeAgreement } from '../utils'
+import { Validator } from './resource-validator'
+
+const debug = Debug('base-wallet:NrpValidator')
 
 export const nrpValidator: Validator<NonRepudiationProofResource> = async (resource, veramo) => {
   const errors: Error[] = []
@@ -15,11 +19,20 @@ export const nrpValidator: Validator<NonRepudiationProofResource> = async (resou
     })
     const { id, cipherblockDgst, blockCommitment, secretCommitment, ...dataExchangeAgreement } = decodedProof.payload.exchange
 
-    // The proof is associated to a given data sharing agreement
-    resource.parentResource = await digest(dataExchangeAgreement)
+    const deaErrors = await validateDataExchangeAgreement(dataExchangeAgreement)
+    if (deaErrors.length > 0) {
+      deaErrors.forEach((error) => {
+        errors.push(error)
+      })
+    } else {
+      // The proof is associated to a given data sharing agreement
+      resource.parentResource = await digest(dataExchangeAgreement)
 
-    // The proof name is the type along with the dataExchangeId (there could be multiple dataExchanges for the same data sharing agreeement)
-    resource.name = `[${decodedProof.payload.proofType}] ${await exchangeId(decodedProof.payload.exchange)}`
+      debug('Received data exchange agreeement:\n' + JSON.stringify(dataExchangeAgreement, undefined, 2))
+      debug(`Parent resource id: ${resource.parentResource}`)
+      // The proof name is the type along with the dataExchangeId (there could be multiple dataExchanges for the same data sharing agreeement)
+      resource.name = `[${decodedProof.payload.proofType}] ${await exchangeId(decodedProof.payload.exchange)}`
+    }
   } catch (error) {
     errors.push(new Error((typeof error === 'string') ? error : JSON.stringify(error, undefined, 2)))
   }

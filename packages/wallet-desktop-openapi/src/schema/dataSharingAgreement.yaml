@@ -33,24 +33,47 @@ components:
       properties:
         orig:
           type: string
+          description: "A stingfied JWK with alphabetically sorted claims"
+          example: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}'
         dest:
           type: string
+          description: "A stingfied JWK with alphabetically sorted claims"
+          example: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}'
         encAlg:
           type: string
+          enum: ['A128GCM', 'A256GCM']
+          example: 'A256GCM'
         signingAlg:
           type: string
+          enum: ['ES256', 'ES384', 'ES512']
+          example: 'ES256'
         hashAlg:
           type: string
+          enum: ['SHA-256', 'SHA-384', 'SHA-512']
+          example: 'SHA-256'
         ledgerContractAddress:
           $ref: "./identity.yaml#/components/schemas/EthereumAddress"
+          example: "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
         ledgerSignerAddress:
           $ref: "./identity.yaml#/components/schemas/EthereumAddress"
         pooToPorDelay:
+          description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR"
           type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 10000
         pooToPopDelay:
+          description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP"
           type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 20000
         pooToSecretDelay:
+          description: "Maximum acceptable time between issued PoO and secret published on the ledger"
           type: integer
+          minimum: 0
+          exclusiveMinimum: true
+          example: 180000
 
     dataSharingAgreement:
       type: object

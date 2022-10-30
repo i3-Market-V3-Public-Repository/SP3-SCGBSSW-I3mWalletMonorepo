@@ -60,13 +60,13 @@
     }
   },
   "dataExchangeAgreement": {
-    "orig": "{\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"Qcg51QcqVM7x2m7U_8cM7-Cndo5SVcRFXhrkSC2n_bM\",\"y\":\"KLONuQwA0Tv8DeQlteWQ1Yy64iwBMCvtXOJwns1NL_8\",\"alg\":\"ES256\"}",
-    "dest": "{\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"VXsBuOZwVjhofJV4kAhba6wn1EYDwUIkgXb2fVnL8xc\",\"y\":\"h4fL5Qv4EYt7XdKqdIy1ZJs4_QWYDkY1zUzSoI61N7Y\",\"alg\":\"ES256\"}",
+    "orig": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"Qcg51QcqVM7x2m7U_8cM7-Cndo5SVcRFXhrkSC2n_bM\",\"y\":\"KLONuQwA0Tv8DeQlteWQ1Yy64iwBMCvtXOJwns1NL_8\"}",
+    "dest": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"VXsBuOZwVjhofJV4kAhba6wn1EYDwUIkgXb2fVnL8xc\",\"y\":\"h4fL5Qv4EYt7XdKqdIy1ZJs4_QWYDkY1zUzSoI61N7Y\"}",
     "encAlg": "A256GCM",
     "signingAlg": "ES256",
     "hashAlg": "SHA-256",
-    "ledgerContractAddress": "0x8d407a1722633bdd1dcf221474be7a44c05d7c2f",
-    "ledgerSignerAddress": "string",
+    "ledgerContractAddress": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F",
+    "ledgerSignerAddress": "0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903",
     "pooToPorDelay": 10000,
     "pooToPopDelay": 20000,
     "pooToSecretDelay": 180000

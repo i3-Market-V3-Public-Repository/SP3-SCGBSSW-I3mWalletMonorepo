@@ -40,7 +40,7 @@ const main = async () => {
   }
 
   const sessionToClipboard = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(sessionManager.session.toJSON(), null, 2))
+    await navigator.clipboard.writeText(JSON.stringify(sessionManager.session.toJSON()))
   }
 
   const sendQuery = async () => {

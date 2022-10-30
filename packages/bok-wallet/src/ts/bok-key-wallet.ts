@@ -4,7 +4,7 @@ import { ethers } from 'ethers'
 import { v4 as uuid } from 'uuid'
 import * as u8a from 'uint8arrays'
 
-import { KeyLike, Dialog, Store, KeyWallet } from '@i3m/base-wallet'
+import { KeyLike, Dialog, Store, KeyWallet, parseHex } from '@i3m/base-wallet'
 
 import { BokWalletModel, Key } from './types'
 import { BokWalletError } from './errors'
@@ -14,13 +14,13 @@ export class BokKeyWallet implements KeyWallet {
 
   async import (privateKeyHex: string): Promise<Key> {
     const kid = uuid()
-    const publicKeyHex = ethers.utils.computePublicKey(`0x${privateKeyHex}`).substring(2)
+    const publicKeyHex = ethers.utils.computePublicKey(parseHex(privateKeyHex))
 
     const key: Key = {
       kid,
       type: 'Secp256k1',
-      publicKeyHex,
-      privateKeyHex
+      publicKeyHex: parseHex(publicKeyHex, false),
+      privateKeyHex: parseHex(privateKeyHex, false)
     }
     const keys = await this.store.get('keys')
 
@@ -44,7 +44,7 @@ export class BokKeyWallet implements KeyWallet {
       throw new BokWalletError('No keys initialized yet')
     }
 
-    return ethers.utils.arrayify(`0x${keys[kid].publicKeyHex}`)
+    return ethers.utils.arrayify(parseHex(keys[kid].publicKeyHex))
   }
 
   async signDigest (kid: string, messageDigest: Uint8Array): Promise<Uint8Array> {
@@ -54,7 +54,7 @@ export class BokKeyWallet implements KeyWallet {
     }
 
     // Get signing key
-    const key = `0x${keys[kid].privateKeyHex}`
+    const key = parseHex(keys[kid].privateKeyHex)
     const signingKey = new ethers.utils.SigningKey(key)
 
     // Ask for user confirmation
