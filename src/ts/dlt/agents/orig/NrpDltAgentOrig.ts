@@ -15,4 +15,9 @@ export interface NrpDltAgentOrig extends NrpDltAgent {
    * Returns and identifier of the signer's account on the ledger. In Ethereum-like DLTs is the Ethereum address
    */
   getAddress: () => Promise<string>
+
+  /**
+   * Returns the next nonce to use after deploying
+   */
+  nextNonce: () => Promise<number>
 }

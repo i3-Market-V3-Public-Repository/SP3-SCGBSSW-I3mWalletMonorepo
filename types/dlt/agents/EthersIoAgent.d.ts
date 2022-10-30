@@ -5,7 +5,8 @@ export declare class EthersIoAgent extends NrpDltAgent {
     dltConfig: DltConfig;
     contract: ethers.Contract;
     provider: ethers.providers.Provider;
-    constructor(dltConfig: Partial<DltConfig> & Pick<DltConfig, 'rpcProviderUrl'>);
+    initialized: Promise<boolean>;
+    constructor(dltConfig: (Partial<DltConfig> & Pick<DltConfig, 'rpcProviderUrl'>) | Promise<(Partial<DltConfig> & Pick<DltConfig, 'rpcProviderUrl'>)>);
     getContractAddress(): Promise<string>;
 }
 //# sourceMappingURL=EthersIoAgent.d.ts.map

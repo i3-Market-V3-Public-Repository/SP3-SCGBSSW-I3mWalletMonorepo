@@ -1,8 +1,10 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
-import { NrError } from '../errors'
-import { parseHex } from '../utils'
+import { NrError } from '../../errors'
+import { parseHex } from '../../utils'
+import { NrpDltAgentOrig } from '.'
+import { EthersIoAgent } from './EthersIoAgent'
 
 export async function getSecretFromLedger (contract: ethers.Contract, signerAddress: string, exchangeId: string, timeout: number): Promise<{ hex: string, iat: number }> {
   let secretBn = ethers.BigNumber.from(0)
@@ -27,4 +29,19 @@ export async function getSecretFromLedger (contract: ethers.Contract, signerAddr
   const iat = timestampBn.toNumber()
 
   return { hex, iat }
+}
+
+export async function secretUnisgnedTransaction (secretHex: string, exchangeId: string, agent: EthersIoAgent & NrpDltAgentOrig): Promise<ethers.UnsignedTransaction> {
+  const secret = ethers.BigNumber.from(parseHex(secretHex, true))
+  const exchangeIdHex = parseHex(bufToHex(b64.decode(exchangeId) as Uint8Array), true)
+
+  const unsignedTx = await agent.contract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: agent.dltConfig.gasLimit }) as any
+  unsignedTx.nonce = await agent.nextNonce()
+  unsignedTx.gasLimit = unsignedTx.gasLimit?._hex
+  unsignedTx.gasPrice = (await agent.provider.getGasPrice())._hex
+  unsignedTx.chainId = (await agent.provider.getNetwork()).chainId
+  const address = await agent.getAddress()
+  unsignedTx.from = parseHex(address, true)
+
+  return unsignedTx
 }

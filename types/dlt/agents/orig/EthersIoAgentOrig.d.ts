@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import { EthersIoAgent } from '../EthersIoAgent';
 import { DltConfig } from '../../../types';
+import { EthersIoAgent } from '../EthersIoAgent';
 import { NrpDltAgentOrig } from './NrpDltAgentOrig';
 export declare class EthersIoAgentOrig extends EthersIoAgent implements NrpDltAgentOrig {
     signer: ethers.Wallet;

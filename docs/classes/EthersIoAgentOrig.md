@@ -23,6 +23,7 @@ A DLT agent for the NRP orig using ethers.io.
 - [contract](EthersIoAgentOrig.md#contract)
 - [count](EthersIoAgentOrig.md#count)
 - [dltConfig](EthersIoAgentOrig.md#dltconfig)
+- [initialized](EthersIoAgentOrig.md#initialized)
 - [provider](EthersIoAgentOrig.md#provider)
 - [signer](EthersIoAgentOrig.md#signer)
 
@@ -52,7 +53,7 @@ EthersIoAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L22)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L21)
 
 ## Properties
 
@@ -66,7 +67,7 @@ EthersIoAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/EthersIoAgent.ts#L11)
 
 ___
 
@@ -78,7 +79,7 @@ The nonce of the next transaction to send to the blockchain. It keep track also 
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L20)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L19)
 
 ___
 
@@ -92,7 +93,21 @@ EthersIoAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+
+___
+
+### initialized
+
+• **initialized**: `Promise`<`boolean`\>
+
+#### Inherited from
+
+EthersIoAgent.initialized
+
+#### Defined in
+
+[src/ts/dlt/agents/EthersIoAgent.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/EthersIoAgent.ts#L13)
 
 ___
 
@@ -106,7 +121,7 @@ EthersIoAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/EthersIoAgent.ts#L12)
 
 ___
 
@@ -116,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L15)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L14)
 
 ## Methods
 
@@ -145,7 +160,7 @@ NrpDltAgentOrig.deploySecret
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L44)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L43)
 
 ___
 
@@ -165,7 +180,7 @@ NrpDltAgentOrig.getAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L64)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L57)
 
 ___
 
@@ -189,7 +204,7 @@ EthersIoAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/EthersIoAgent.ts#L26)
+[src/ts/dlt/agents/EthersIoAgent.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/EthersIoAgent.ts#L43)
 
 ___
 
@@ -197,10 +212,16 @@ ___
 
 ▸ **nextNonce**(): `Promise`<`number`\>
 
+Returns the next nonce to use after deploying
+
 #### Returns
 
 `Promise`<`number`\>
 
+#### Implementation of
+
+NrpDltAgentOrig.nextNonce
+
 #### Defined in
 
-[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L68)
+[src/ts/dlt/agents/orig/EthersIoAgentOrig.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/EthersIoAgentOrig.ts#L61)

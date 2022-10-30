@@ -7,10 +7,9 @@ npm-debug.log*
 node_modules
 
 # Output of 'npm pack'
-#*.tgz
+*.tgz
 
-# MYC output
-.nyc_output
+# Coverage
 coverage
 
 # Environment files

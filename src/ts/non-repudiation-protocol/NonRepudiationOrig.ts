@@ -2,7 +2,7 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { exchangeId, parseAgreement } from '../exchange'
+import { exchangeId, validateAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
 import { parseHex, sha } from '../utils'
@@ -50,7 +50,8 @@ export class NonRepudiationOrig {
   }
 
   private async init (agreement: DataExchangeAgreement, dltAgent: NrpDltAgentOrig): Promise<void> {
-    this.agreement = await parseAgreement(agreement)
+    await validateAgreement(agreement)
+    this.agreement = agreement
 
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)
 
@@ -84,13 +85,13 @@ export class NonRepudiationOrig {
   private async _dltSetup (dltAgent: NrpDltAgentOrig): Promise<void> {
     this.dltAgent = dltAgent
 
-    const signerAddress: string = parseHex(await this.dltAgent.getAddress(), true)
+    const signerAddress: string = await this.dltAgent.getAddress()
 
     if (signerAddress !== this.exchange.ledgerSignerAddress) {
       throw new Error(`ledgerSignerAddress: ${this.exchange.ledgerSignerAddress} does not meet the address ${signerAddress} derived from the provided private key`)
     }
 
-    const contractAddress = parseHex(await this.dltAgent.getContractAddress(), true)
+    const contractAddress = await this.dltAgent.getContractAddress()
 
     if (contractAddress !== parseHex(this.agreement.ledgerContractAddress, true)) {
       throw new Error(`Contract address in use ${contractAddress} does not meet the agreed one ${this.agreement.ledgerContractAddress}`)

@@ -1,4 +1,4 @@
-import { getSecretFromLedger as getSecret } from '../../getSecretFromLedger'
+import { getSecretFromLedger as getSecret } from '../secret'
 import { EthersIoAgent } from '../EthersIoAgent'
 import { NrpDltAgentDest } from './NrpDltAgentDest'
 

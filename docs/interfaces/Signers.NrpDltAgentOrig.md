@@ -23,6 +23,7 @@
 
 - [deploySecret](Signers.NrpDltAgentOrig.md#deploysecret)
 - [getAddress](Signers.NrpDltAgentOrig.md#getaddress)
+- [nextNonce](Signers.NrpDltAgentOrig.md#nextnonce)
 
 ### Methods
 
@@ -55,7 +56,7 @@ a receipt of the deployment. In Ethereum-like DLTs it contains the transaction h
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/NrpDltAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/NrpDltAgentOrig.ts#L12)
+[src/ts/dlt/agents/orig/NrpDltAgentOrig.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/NrpDltAgentOrig.ts#L12)
 
 ___
 
@@ -75,7 +76,27 @@ Returns and identifier of the signer's account on the ledger. In Ethereum-like D
 
 #### Defined in
 
-[src/ts/dlt/agents/orig/NrpDltAgentOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/orig/NrpDltAgentOrig.ts#L17)
+[src/ts/dlt/agents/orig/NrpDltAgentOrig.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/NrpDltAgentOrig.ts#L17)
+
+___
+
+### nextNonce
+
+• **nextNonce**: () => `Promise`<`number`\>
+
+#### Type declaration
+
+▸ (): `Promise`<`number`\>
+
+Returns the next nonce to use after deploying
+
+##### Returns
+
+`Promise`<`number`\>
+
+#### Defined in
+
+[src/ts/dlt/agents/orig/NrpDltAgentOrig.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/orig/NrpDltAgentOrig.ts#L22)
 
 ## Methods
 
@@ -95,4 +116,4 @@ NrpDltAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/dlt/agents/NrpDltAgent.ts#L9)
+[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/dlt/agents/NrpDltAgent.ts#L9)

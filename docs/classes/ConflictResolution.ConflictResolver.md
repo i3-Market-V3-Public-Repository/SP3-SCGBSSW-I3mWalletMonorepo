@@ -38,7 +38,7 @@ The Conflict Resolver is an external entity that can:
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/conflict-resolution/ConflictResolver.ts#L26)
+[src/ts/conflict-resolution/ConflictResolver.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/conflict-resolution/ConflictResolver.ts#L26)
 
 ## Properties
 
@@ -48,7 +48,7 @@ The Conflict Resolver is an external entity that can:
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/conflict-resolution/ConflictResolver.ts#L18)
+[src/ts/conflict-resolution/ConflictResolver.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/conflict-resolution/ConflictResolver.ts#L18)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/conflict-resolution/ConflictResolver.ts#L17)
+[src/ts/conflict-resolution/ConflictResolver.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/conflict-resolution/ConflictResolver.ts#L17)
 
 ## Methods
 
@@ -82,7 +82,7 @@ a signed resolution
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/conflict-resolution/ConflictResolver.ts#L52)
+[src/ts/conflict-resolution/ConflictResolver.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/conflict-resolution/ConflictResolver.ts#L52)
 
 ___
 
@@ -111,4 +111,4 @@ a signed resolution
 
 #### Defined in
 
-[src/ts/conflict-resolution/ConflictResolver.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/ba1d70c/src/ts/conflict-resolution/ConflictResolver.ts#L98)
+[src/ts/conflict-resolution/ConflictResolver.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/24ef617/src/ts/conflict-resolution/ConflictResolver.ts#L98)

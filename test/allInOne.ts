@@ -2,16 +2,32 @@ import { encode } from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
 import { VerificationResolutionPayload } from '../src/ts'
+import { ethers } from 'ethers'
 import * as _pkg from '#pkg'
 
 describe('Non-repudiation protocol', function () {
+  this.bail() // stop after a test fails
   this.timeout(2000000)
+
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
+  const rpcProviderUrl = process.env.RPC_PROVIDER_URL as string
+  if (rpcProviderUrl === undefined) {
+    throw new Error('You need to pass a RPC_PROVIDER_URL as env variable.\nIf you are not using a wallet, you have to provide a valid RPC for connecting to the DLT.')
+  }
+
+  const parsedPrivateKey = process.env.PRIVATE_KEY
+  if (parsedPrivateKey === undefined) {
+    throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
+  }
+  const privateKey = _pkg.parseHex(parsedPrivateKey, true)
+  const publicKey = ethers.utils.computePublicKey(privateKey)
+  const address = ethers.utils.computeAddress(publicKey)
+
   const ethersWalletSetup = {
-    address: process.env.ETHERS_WALLET_ADDRESS as string,
-    privateKey: process.env.ETHERS_WALLET_PRIVATE_KEY as string,
-    rpcProviderUrl: process.env.RPC_PROVIDER_URL as string
+    address,
+    privateKey,
+    rpcProviderUrl
   }
 
   let providerDltAgent: _pkg.EthersIoAgentOrig
@@ -37,12 +53,12 @@ describe('Non-repudiation protocol', function () {
     providerDltAgent = new _pkg.EthersIoAgentOrig({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl }, ethersWalletSetup.privateKey)
 
     dataExchangeAgreement = {
-      orig: JSON.stringify(providerJwks.publicJwk),
-      dest: JSON.stringify(consumerJwks.publicJwk),
+      orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
+      dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
       encAlg: 'A256GCM',
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
-      ledgerContractAddress: '0x8d407a1722633bdd1dcf221474be7a44c05d7c2f',
+      ledgerContractAddress: '0x8d407A1722633bDD1dcf221474be7a44C05d7c2F',
       ledgerSignerAddress: ethersWalletSetup.address,
       pooToPorDelay: 10000,
       pooToPopDelay: 30000,

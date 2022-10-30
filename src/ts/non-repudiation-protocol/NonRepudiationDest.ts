@@ -5,9 +5,9 @@ import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { NrpDltAgentDest } from '../dlt/'
 import { NrError } from '../errors'
-import { exchangeId, parseAgreement } from '../exchange'
+import { exchangeId, validateAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
-import { checkTimestamp, parseHex, sha } from '../utils/'
+import { checkTimestamp, sha } from '../utils/'
 import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
@@ -40,7 +40,8 @@ export class NonRepudiationDest {
   }
 
   private async asyncConstructor (agreement: DataExchangeAgreement, privateJwk: JWK, dltAgent: NrpDltAgentDest): Promise<void> {
-    this.agreement = await parseAgreement(agreement)
+    await validateAgreement(agreement)
+    this.agreement = agreement
 
     this.jwkPairDest = {
       privateJwk: privateJwk,
@@ -52,7 +53,7 @@ export class NonRepudiationDest {
 
     this.dltAgent = dltAgent
 
-    const contractAddress = parseHex(await this.dltAgent.getContractAddress(), true)
+    const contractAddress = await this.dltAgent.getContractAddress()
     if (this.agreement.ledgerContractAddress !== contractAddress) {
       throw new Error(`Contract address ${contractAddress} does not meet agreed one ${this.agreement.ledgerContractAddress}`)
     }

@@ -71,7 +71,8 @@ async function buildTests (testFiles) {
       typescriptPlugin(tsBundleOptions),
       resolve({
         browser: true,
-        exportConditions: ['browser', 'default']
+        exportConditions: ['browser', 'default'],
+        mainFields: ['browser', 'module', 'main']
       }),
       commonjs(),
       json()
@@ -129,6 +130,16 @@ class TestServer {
           res.writeHead(200, { 'Content-Type': 'text/javascript' })
           res.end(data)
         })
+      } else if (req.url === '/mocha.js.map') {
+        fs.readFile(path.join(rootDir, 'node_modules/mocha/mocha.js.map'), function (err, data) {
+          if (err) {
+            res.writeHead(404)
+            res.end(JSON.stringify(err))
+            return
+          }
+          res.writeHead(200, { 'Content-Type': 'text/javascript' })
+          res.end(data)
+        })
       } else if (req.url === '/chai.js' || req.url === '/chai') {
         fs.readFile(path.join(rootDir, 'node_modules/chai/chai.js'), function (err, data) {
           if (err) {
@@ -137,6 +148,16 @@ class TestServer {
             return
           }
           res.writeHead(200, { 'Content-Type': 'text/javascript' })
+          res.end(data)
+        })
+      } else if (req.url === '/favicon.ico') {
+        fs.readFile(path.join(__dirname, 'favicon.ico'), function (err, data) {
+          if (err) {
+            res.writeHead(404)
+            res.end(JSON.stringify(err))
+            return
+          }
+          res.writeHead(200, { 'Content-Type': 'application/ico' })
           res.end(data)
         })
       } else {
@@ -183,7 +204,7 @@ function _getEnvVarsReplacements (testsCode) {
     }
   }
   if (missingEnvVars.length > 0) {
-    console.warn('The folloinwg environment variables are missing in your .env file: ' + missingEnvVars)
+    console.warn('The folloinwg environment variables may be missing in your .env file: ' + [...(new Set(missingEnvVars)).values()].join(', '))
   }
   return replacements
 }

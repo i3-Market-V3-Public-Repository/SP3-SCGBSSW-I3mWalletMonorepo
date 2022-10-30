@@ -1,11 +1,10 @@
-import * as b64 from '@juanelas/base64'
-import { bufToHex, hexToBuf } from 'bigint-conversion'
+import { hexToBuf } from 'bigint-conversion'
 import { randBytesSync } from 'bigint-crypto-utils'
 import { ethers, Wallet } from 'ethers'
 import { SigningKey } from 'ethers/lib/utils'
-import { EthersIoAgent } from '../EthersIoAgent'
 import { DltConfig } from '../../../types'
-import { parseHex } from '../../../utils'
+import { secretUnisgnedTransaction } from '../secret'
+import { EthersIoAgent } from '../EthersIoAgent'
 import { NrpDltAgentOrig } from './NrpDltAgentOrig'
 
 /**
@@ -42,13 +41,7 @@ export class EthersIoAgentOrig extends EthersIoAgent implements NrpDltAgentOrig 
    * @returns a receipt of the deployment. In Ethereum-like DLTs it contains the transaction hash, which can be used to track the transaction on the ledger, and the nonce of the transaction
    */
   async deploySecret (secretHex: string, exchangeId: string): Promise<string> {
-    const secret = ethers.BigNumber.from(parseHex(secretHex, true))
-    const exchangeIdHex = parseHex(bufToHex(b64.decode(exchangeId) as Uint8Array), true)
-
-    const unsignedTx = await this.contract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: this.dltConfig.gasLimit })
-    unsignedTx.nonce = await this.nextNonce()
-    unsignedTx.gasPrice = await this.signer.provider.getGasPrice()
-    unsignedTx.chainId = (await this.signer.provider.getNetwork()).chainId
+    const unsignedTx = await secretUnisgnedTransaction(secretHex, exchangeId, this) as any
 
     const signedTx = await this.signer.signTransaction(unsignedTx)
 

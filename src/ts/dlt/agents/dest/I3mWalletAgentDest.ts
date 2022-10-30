@@ -1,4 +1,4 @@
-import { getSecretFromLedger as getSecret } from '../../getSecretFromLedger'
+import { getSecretFromLedger as getSecret } from '../secret'
 import { I3mWalletAgent } from '../I3mWalletAgent'
 import { NrpDltAgentDest } from './NrpDltAgentDest'
 
@@ -7,6 +7,7 @@ import { NrpDltAgentDest } from './NrpDltAgentDest'
  */
 export class I3mWalletAgentDest extends I3mWalletAgent implements NrpDltAgentDest {
   async getSecretFromLedger (signerAddress: string, exchangeId: string, timeout: number): Promise<{ hex: string, iat: number }> {
+    await this.initialized
     return await getSecret(this.contract, signerAddress, exchangeId, timeout)
   }
 }

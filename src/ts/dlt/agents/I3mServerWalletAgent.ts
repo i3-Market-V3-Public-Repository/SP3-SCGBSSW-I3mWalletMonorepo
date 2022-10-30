@@ -9,10 +9,21 @@ export class I3mServerWalletAgent extends EthersIoAgent {
   wallet: ServerWallet
   did: string
 
-  constructor (serverWallet: ServerWallet, did: string, dltConfig?: Partial<DltConfig>) {
-    const rpcProviderUrl = (serverWallet as any).providersData[(serverWallet as any).provider].rpcUrl
-
-    super({ ...dltConfig, rpcProviderUrl })
+  constructor (serverWallet: ServerWallet, did: string, dltConfig?: Partial<Omit<DltConfig, 'rpcProviderUrk'>>) {
+    const dltConfigPromise: Promise<Partial<Omit<DltConfig, 'rpcProviderUrk'>> & Pick<DltConfig, 'rpcProviderUrl'>> = new Promise((resolve, reject) => {
+      serverWallet.providerinfoGet().then((providerInfo) => {
+        const rpcProviderUrl = providerInfo.rpcUrl
+        if (rpcProviderUrl === undefined) {
+          reject(new Error('wallet is not connected to RRP endpoint'))
+        } else {
+          resolve({
+            ...dltConfig,
+            rpcProviderUrl: rpcProviderUrl
+          })
+        }
+      }).catch((reason) => { reject(reason) })
+    })
+    super(dltConfigPromise)
     this.wallet = serverWallet
     this.did = did
   }

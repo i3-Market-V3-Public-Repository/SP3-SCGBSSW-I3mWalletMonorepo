@@ -4,11 +4,6 @@ on:
   push:
     branches: [ public ]
 
-env:
-  RPC_PROVIDER_URL: ${{ secrets.RPC_PROVIDER_URL }}
-  ETHERS_WALLET_ADDRESS: ${{ secrets.ETHERS_WALLET_ADDRESS }}
-  ETHERS_WALLET_PRIVATE_KEY: ${{ secrets.ETHERS_WALLET_PRIVATE_KEY }}
-
 jobs:
   build:
     name: build and node tests
@@ -16,14 +11,12 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, windows-latest, macos-latest ]
-        node-version: [14.x, 16.x, 18.x]
-      fail-fast: true
-      max-parallel: 1
+        node-version: [16.x, 18.x]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
 
@@ -40,57 +33,63 @@ jobs:
         run: npm run docs
       
       - name: node tests
-        run: npm run mocha-ts -- test/allInOne.ts
+        run: npm run test:node
 
       - if: matrix.node-version == '16.x'
         name: browser tests
-        run: npm run test:browser-headless -- test/allInOne.ts
+        run: npm run test:browser-headless
 
-  publication:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  # publication:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
       
-      - uses: EndBug/version-check@v1
-        id: check
+  #     - uses: EndBug/version-check@v1
+  #       id: check
 
-      - name: check version changes
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+  #     - name: check version changes
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: 'echo "Version change found! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
 
-      - uses: actions/setup-node@v1
-        if: steps.check.outputs.changed == 'true'
-        with:
-          node-version: 16
-          registry-url: https://registry.npmjs.org/
+  #     - uses: actions/setup-node@v3
+  #       if: steps.check.outputs.changed == 'true'
+  #       with:
+  #         node-version: 18
+  #         registry-url: https://registry.npmjs.org/
       
-      - name: install
-        if: steps.check.outputs.changed == 'true'
-        run: npm ci
+  #     - name: install
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm ci
       
-      - name: lint
-        if: steps.check.outputs.changed == 'true'
-        run: npm run lint
+  #     - name: lint
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm run lint
       
-      - name: build
-        if: steps.check.outputs.changed == 'true'
-        run: npm run build:js
+  #     - name: build
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm run build:js
       
-      - name: docs
-        if: steps.check.outputs.changed == 'true'
-        run: npm run docs
+  #     - name: docs
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm run docs
       
-      - name: node tests
-        if: steps.check.outputs.changed == 'true'
-        run: npm run mocha-ts -- test/allInOne.ts
-        
-      - name: browser tests
-        if: steps.check.outputs.changed == 'true'
-        run: npm run test:browser-headless -- test/allInOne.ts
+  #     # - name: browser tests
+  #     #   if: steps.check.outputs.changed == 'true'
+  #     #   run: npm run test:browser-headless
       
-      - name: publish to NPM
-        if: steps.check.outputs.changed == 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  #     - name: node tests and coverage
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm run coverage
+      
+  #     # - name: send report to coveralls.io
+  #     #   if: steps.check.outputs.changed == 'true'
+  #     #   uses: coverallsapp/github-action@master
+  #     #   with:
+  #     #     github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  #     - name: publish to NPM
+  #       if: steps.check.outputs.changed == 'true'
+  #       run: npm publish --access public
+  #       env:
+  #         NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

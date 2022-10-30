@@ -11,6 +11,7 @@ import { DataExchangeAgreement } from '#pkg'
 if (!IS_BROWSER) {
   describe('testing signing transactions with i3M-ServerWallet', function () {
     this.timeout(2000000)
+    this.bail() // stop after a test fails
 
     const dids: { [k: string]: string } = {}
 
@@ -45,9 +46,9 @@ if (!IS_BROWSER) {
     describe('create identities for the NRP', function () {
       it('should import the provider identity (which should have funds)', async function () {
         // Import provider identity (it has funds to operate with the DLT)
-        const privateKey = process.env.ETHERS_WALLET_PRIVATE_KEY
+        const privateKey = process.env.PRIVATE_KEY
         if (privateKey === undefined) {
-          throw new Error('You need to pass a ETHERS_WALLET_PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
+          throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
         }
         await providerWallet.importDid({
           alias: 'provider',
@@ -110,8 +111,8 @@ if (!IS_BROWSER) {
 
         const dataExchangeAgreement: DataExchangeAgreement = {
           ...dataSharingAgreement.dataExchangeAgreement,
-          orig: JSON.stringify(providerJwks.publicJwk),
-          dest: JSON.stringify(consumerJwks.publicJwk),
+          orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
+          dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
           encAlg: 'A256GCM',
           signingAlg: 'ES256',
           hashAlg: 'SHA-256',

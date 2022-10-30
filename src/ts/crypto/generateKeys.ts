@@ -11,7 +11,7 @@ const { ec: Ec } = elliptic
  *
  * @param alg - the signing algorithm to use
  * @param privateKey - an optional private key as a Uint8Array, or a string (hex or base64)
- * @param base - only used when privateKey is a string. Set to true if the privateKey is base64 encoded (standard base64, url-safe bas64 with and without padding are supported)
+ * @param base64 - only used when privateKey is a string. Set to true if the privateKey is base64 encoded (standard base64, url-safe bas64 with and without padding are supported)
  * @returns
  */
 export async function generateKeys (alg: SigningAlg, privateKey?: Uint8Array | string, base64?: boolean): Promise<JwkPair> {

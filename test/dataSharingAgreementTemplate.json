@@ -65,7 +65,7 @@
     "encAlg": "A256GCM",
     "signingAlg": "ES256",
     "hashAlg": "SHA-256",
-    "ledgerContractAddress": "0x8d407a1722633bdd1dcf221474be7a44c05d7c2f",
+    "ledgerContractAddress": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F",
     "ledgerSignerAddress": "string",
     "pooToPorDelay": 10000,
     "pooToPopDelay": 20000,

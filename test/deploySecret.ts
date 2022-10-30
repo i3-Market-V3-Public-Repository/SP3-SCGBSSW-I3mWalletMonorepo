@@ -1,14 +1,27 @@
-import { randBytes } from 'bigint-crypto-utils'
 import * as _pkg from '#pkg'
+import { randBytes } from 'bigint-crypto-utils'
+import { ethers } from 'ethers'
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
+  const rpcProviderUrl = process.env.RPC_PROVIDER_URL as string
+  if (rpcProviderUrl === undefined) {
+    throw new Error('You need to pass a RPC_PROVIDER_URL as env variable.\nIf you are not using a wallet, you have to provide a valid RPC for connecting to the DLT.')
+  }
+
+  const parsedPrivateKey = process.env.PRIVATE_KEY
+  if (parsedPrivateKey === undefined) {
+    throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
+  }
+  const privateKey = _pkg.parseHex(parsedPrivateKey, true)
+  const address = ethers.utils.computeAddress(privateKey)
+
   const ethersWalletSetup = {
-    address: process.env.ETHERS_WALLET_ADDRESS as string,
-    privateKey: process.env.ETHERS_WALLET_PRIVATE_KEY as string,
-    rpcProviderUrl: process.env.RPC_PROVIDER_URL as string
+    address,
+    privateKey,
+    rpcProviderUrl
   }
 
   let providerDltAgent: _pkg.EthersIoAgentOrig
@@ -29,20 +42,22 @@ describe('Non-repudiation protocol', function () {
     providerJwks = await _pkg.generateKeys('ES256')
 
     dataExchangeAgreement = {
-      orig: JSON.stringify(providerJwks.publicJwk),
-      dest: JSON.stringify(consumerJwks.publicJwk),
+      orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
+      dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
       encAlg: 'A256GCM',
       signingAlg: SIGNING_ALG,
       hashAlg: 'SHA-256',
-      ledgerContractAddress: '0x8d407a1722633bdd1dcf221474be7a44c05d7c2f',
+      ledgerContractAddress: ethers.utils.getAddress('0x8d407a1722633bdd1dcf221474be7a44c05d7c2f'),
       ledgerSignerAddress: ethersWalletSetup.address,
       pooToPorDelay: 10000,
       pooToPopDelay: 30000,
       pooToSecretDelay: 180000 // 3 minutes
     }
+    console.log(dataExchangeAgreement)
   })
 
   describe('deploySecret', function () {
+    this.bail()
     it('the provider publishes the secret to the DLT and the consumer properly gets it', async function () {
       const block = new Uint8Array(await randBytes(256))
       nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerDltAgent)

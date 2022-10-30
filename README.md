@@ -40,7 +40,7 @@ The appropriate version for browser or node is automatically exported.
 
 You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-CR-NonRepudiationLibrary/main/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/non-repudiation-library` in your project, just get the bundles from `node_modules/@i3m/non-repudiation-library/dist/bundles/`.
 
-### Example for an i3-MARKET Provider using the Non-Repudiation Protocol
+### Example for an i3-MARKET Provider running the Non-Repudiation Protocol
 
 Before starting the agreement you need:
 
@@ -52,46 +52,89 @@ Before starting the agreement you need:
   >const providerJwks = await nonRepudiationLibrary.generateKeys('ES256')
   >```
 
-- An Ethereum address with enough funds on the ledger and a `NrpDltAgentOrig` instance that can handle signing of the transactions needed to publish the secret to the ledger.
+- **Import a DLT account to the provider wallet with funds to execute the NRP** In this example we assume that the provider runs a `@i3m/server-wallet`.
+  
+  >You can easily create a provider server wallet and import a private key with funds.
+  >
+  >Assuming you have the server-wallet encrypted storage in path `STORAGE_PATH` encrypted with password `STORAGE_PASSWORD`, and a DLT private key of an account with enough funds in `DLT_PRIVATE_KEY`:
+  >
+  >```typescript
+  >serverWalletBuilder = (await import('@i3m/server-wallet')).serverWalletBuilder
+  >
+  >// Setup provider wallet
+  >providerWallet = await serverWalletBuilder({ password: STORAGE_PASSWORD, reset: true, filepath: STORAGE_PATH })
+  >
+  >// Import DLT account
+  >await providerWallet.importDid({
+  >  alias: 'provider',
+  >  privateKey: DLT_PRIVATE_KEY
+  >})
+  >const availableIdentities = await providerWallet.identityList({ alias: 'provider' })
+  >
+  >// The provider DID
+  >const providerDid = availableIdentities[0]
+  >
+  >// The provider address on the DLT
+  >const providerDltAddress = nonRepudiationLibrary.getDltAddress(DLT_PRIVATE_KEY)
 
-And now you are ready to start a `dataExchange` for a given block of a given `DataExchangeAgreement`.
+- The provider has already agreed with the consumer a [`DataSharingAgreement`](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/blob/public/packages/wallet-desktop-openapi/types/openapi.d.ts) that is stored in object variable `dataSharingAgreement` and that contains a given `DataExchangeAgreement` in `dataSharingAgreement.dataExchangeAgreement` such as:
+  
+  ```typescript
+  {
+    // Public key of the origin (data provider) for verifying the proofs she/he issues. The format is a JSON-stringified alphabetically-sorted JWK.
+    // You can easily create it as:
+    // await nonRepudiationLibrary.parseJwk(providerJwks.publicJwk, true)
+    orig: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"GjUjtzZWRjA9QSpXPDiN8-OO2Ui93mxbxhbLiP0lw4k","y":"YUtjUCIHbqq71Y467ub4Silqqms39RqR_bMPhiso4ws"}',
+    
+    // Public key of the destination (data consumer). The format is a JSON-stringified alphabetically-sorted JWK.
+    dest: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"VXsBuOZwVjhofJV4kAhba6wn1EYDwUIkgXb2fVnL8xc","y":"h4fL5Qv4EYt7XdKqdIy1ZJs4_QWYDkY1zUzSoI61N7Y"}',
+
+    // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
+    encAlg: 'A256GCM',
+
+    // Signing algorithm used to sign the proofs. It'e ECDSA secp256r1 with key lengths: either 'ES256', 'ES384', or 'ES512' 
+    signingAlg: 'ES256',
+    
+    // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
+    hashAlg: 'SHA-256',
+    
+    // The ledger smart contract EIP-55 address on the DLT
+    ledgerContractAddress: '0x8d407A1722633bDD1dcf221474be7a44C05d7c2F',
+    
+    // The orig (data provider) EIP-55 address in the DLT (hexadecimal).
+    // It should match providerDltAddress
+    ledgerSignerAddress: '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
+    
+    // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
+    pooToPorDelay: 10000,
+    
+    // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
+    pooToPopDelay: 30000,
+    
+    // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
+    pooToSecretDelay: 180000
+  }
+  ```
+
+  The provider has stored the `dataSharingAgreement` in the wallet with:
+
+  ```typescript
+  const resource = await providerWallet.resourceCreate({
+    type: 'Contract',
+    identity: providerDid,
+    resource: dataSharingAgreement
+  })
+  ```
+
+And now you are ready to start a `dataExchange` for a given block of data `block` of a given `DataExchangeAgreement`.
 
 ```typescript
 async nrp() => {
-  /**
-   * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
-   */
-  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = {
-    // Public key of the origin (data provider) for verifying the proofs she/he issues. It should be providerJwks.publicJwk
-    orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
-    // Public key of the destination (data consumer)
-    dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
-    // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
-    encAlg: 'A256GCM',
-    // Signing algorithm used to sign the proofs. It'e ECDSA secp256r1 with key lengths: either 'ES256', 'ES384', or 'ES512' 
-    signingAlg: 'ES256',
-    // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
-    hashAlg: 'SHA-256',
-    // The ledger smart contract address (hexadecimal) on the DLT
-    ledgerContractAddress: '0x7B7C7c0c8952d1BDB7E4D90B1B7b7C48c13355D1',
-    // The orig (data provider) address in the DLT (hexadecimal).
-    ledgerSignerAddress: '0x17bd12C2134AfC1f6E9302a532eFE30C19B9E903',
-    // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
-    pooToPorDelay: 10000,
-    // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
-    pooToPopDelay: 20000,
-    // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
-    pooToSecretDelay: 150000
-  }
 
-  // We are going to asume that the provider is using an instance of @i3m/server-wallet as wallet which is stored in the providerWallet variable
-
-  // Select the identity of the wallet that will be in charge of performing the NRP. Let us suppose that it is the first one:
-  const identities = await providerWallet.identityList({})
-  const identity = identities[0]
+  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = dataSharingAgreement.dataExchangeAgreement
 
   // Now let us create a NRP DLT Agent for the provider. 
-  providerDltAgent = new nonRepudiationLibrary.I3mServerWalletAgentOrig(providerWallet, identity.did)
+  providerDltAgent = new nonRepudiationLibrary.I3mServerWalletAgentOrig(providerWallet, providerDid)
   
   // dataExchangeAgreement.ledgerSignerAddress should match (await providerWallet.getAddress())
   if (dataExchangeAgreement.ledgerSignerAddress !== await providerWallet.getAddress()) {
@@ -111,6 +154,12 @@ async nrp() => {
   // Create the proof of origin (PoO)
   const poo = await nrpProvider.generatePoO()
   
+  // Store PoO in the wallet
+  const resource = await providerWallet.resourceCreate({
+    type: 'NonRepudiationProof',
+    resource: poo.jws
+  })
+
   // Send the cipherblock in nrpProvider.block.jwe along with the poo to the consumer
   ...
 
@@ -120,8 +169,20 @@ async nrp() => {
   // Verify PoR. If verification passes the por is added to npProvider.block.por; otherwise it throws an error.
   await nrpProvider.verifyPoR(por)
 
+  // Store PoR in the wallet
+  const resource = await providerWallet.resourceCreate({
+    type: 'NonRepudiationProof',
+    resource: por.jws
+  })
+
   // Create proof of publication. It connects to the ledger and publishes the secret that can be used to decrypt the cipherblock
   const pop = await nrpProvider.generatePoP()
+
+  // Store PoP in the wallet
+  const resource = await providerWallet.resourceCreate({
+    type: 'NonRepudiationProof',
+    resource: pop.jws
+  })
 
   // Send pop to the consumer. The PoP includes the secret to decrypt the cipherblock; although the consumer could also get the secret from the smart contract
   ...
@@ -141,51 +202,65 @@ async nrp() => {
 nrp()
 ```
 
-### Example for an i3-MARKET Consumer using the Non-Repudiation Protocol
+### Example for an i3-MARKET Consumer running the Non-Repudiation Protocol
 
-Before starting the agreement, you need a pair of public private keys. You can easily create the key pair with the `generateKeys` utility function:
+Before starting the protocol you need connect with your wallet, and setup the pair of public private keys that are required for the NRP.
+
+> We will assume that the consumer is using the i3-MARKET Wallet Desktop App
+
+You can easily create the key pair with the `generateKeys` utility function:
 
 ```typescript
-  const consumerJwks = await nonRepudiationLibrary.generateKeys('ES256')
+const consumerJwks = await nonRepudiationLibrary.generateKeys('ES256')
 ```
 
-And now you are ready to start a `DataExchange` for a given block of a given `DataExchangeAgreement`.
+For connecting to the i3M-Wallet application, you need to pair with the wallet in order to obtain a session token:
+
+- Set your wallet in pairing mode. A PIN appears in the screen
+- Connect a browser to http://localhost:29170/pairing
+  - If session is ON (PIN is not requested), click "Remove session" and then "Start protocol"
+  - Fill in the PIN
+  - After succesful pairing, click "Session to clipboard"
+- Paste the copied session to create a `sessionObj`
+  
+```typescript
+import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
+import { WalletApi } from '@i3m/wallet-protocol-api'
+
+const sessionObj = JSON.parse('<PASTE HERE>')
+
+// Setup consumer wallet
+const transport = new HttpInitiatorTransport()
+const session = await Session.fromJSON(transport, sessionObj)
+consumerWallet = new WalletApi(session)
+
+// Select an identity to use. In this example we get the one with alias set to 'consumer'
+const availableIdentities = await providerWallet.identityList({ alias: 'consumer' })
+
+// The consumer DID
+const consumerDid = availableIdentities[0]
+```
+
+It is also assumed that consumer and provider have already agreed a [`DataSharingAgreement`](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/blob/public/packages/wallet-desktop-openapi/types/openapi.d.ts) that is stored in object variable `dataSharingAgreement` and that contains a given `DataExchangeAgreement` in `dataSharingAgreement.dataExchangeAgreement`. Go to the provider example for an in-depth explanation of the `dataExchangeAgreement`.
+
+The agreement is stored in the consumer wallet:
+
+```typescript
+await consumerWallet.resources.create({
+  type: 'Contract',
+  identity: consumerDid,
+  resource: dataSharingAgreement
+})
+```
+
+And now you are ready to start a `DataExchange` for a given block of data `block` of a given `DataExchangeAgreement`.
 
 ```typescript
 async nrp() => {
-  /**
-   * Using the Smart Contract Manager / Secure Data Access, a consumer and a provider would have agreed a Data Exchange Agreement
-   */
-  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = {
-    // Public key of the origin (data provider)
-    orig: '{"kty":"EC","crv":"P-256","x":"4sxPPpsZomxPmPwDAsqSp94QpZ3iXP8xX4VxWCSCfms","y":"8YI_bvVrKPW63bGAsHgRvwXE6uj3TlnHwoQi9XaEBBE","alg":"ES256"}',
-    // Public key of the destination (data consumer). It should be consumerJwks.publicJwk
-    dest: '{"kty":"EC","crv":"P-256","x":"6MGDu3EsCdEJZVV2KFhnF2lxCRI5yNpf4vWQrCIMk5M","y":"0OZbKAdooCqrQcPB3Bfqy0g-Y5SmnTyovFoFY35F00M","alg":"ES256"}',
-    // Encryption algorithm used to encrypt blocks. Either AES-128-GCM ('A128GCM') or AES-256-GCM ('A256GCM)
-    encAlg: 'A256GCM',
-    // Signing algorithm used to sign the proofs. It'e ECDSA secp256r1 with key lengths: either 'ES256', 'ES384', or 'ES512' 
-    signingAlg: 'ES256',
-    // Hash algorith used to compute digest/commitments. It's SHA2 with different output lengths: either 'SHA-256', 'SHA-384' or 'SHA-512'
-    hashAlg: 'SHA-256',
-    // The ledger smart contract address on the DLT (hexadecimal)
-    ledgerContractAddress: '0x7b7c7c0c8952d1bdb7e4d90b1b7b7c48c13355d1',
-    // The orig (data provider) address in the DLT (hexadecimal). It can use a different keypair for signing proofs and signing transactions to the DLT) 
-    ledgerSignerAddress: '0x17bd12c2134afc1f6e9302a532efe30c19b9e903',
-    // Maximum acceptable delay between the issuance of the proof of origing (PoO) by the orig and the reception of the proof of reception (PoR) by the orig
-    pooToPorDelay: 10000,
-    // Maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the reception of the proof of publication (PoR) by the dest
-    pooToPopDelay: 20000,
-    // If the dest (data consumer) does not receive the PoP, it could still get the decryption secret from the DLT. This defines the maximum acceptable delay between the issuance of the proof of origing (PoP) by the orig and the publication (block time) of the secret on the blockchain.
-    pooToSecretDelay: 180000
-  }
+  const dataExchangeAgreement: nonRepudiationLibrary.DataExchangeAgreement = dataSharingAgreement.dataExchangeAgreement
   
-  // Let us define the RPC endopint to the ledger
-  const dltConfig: Partial<nonRepudiationLibrary.DltConfig> = {
-    rpcProviderUrl: 'http://89.111.35.214:8545'
-  }
-
   // Init the Consumer's agent to get published secrets from the DLT. Notice that since the consumer does not need to write to the DLT, they do not need to use a Wallet and the EthersIoAgentDest is enough
-  consumerDltAgent = new nonRepudiationLibrary.EthersIoAgentDest(dltConfig)
+  const consumerDltAgent = new nonRepudiationLibrary.I3mWalletAgentDest(consumerWallet, dids.consumer)
 
   /**
    * Intialize the non-repudiation protocol as the destination of the data block.
@@ -201,9 +276,21 @@ async nrp() => {
 
   // Verify PoO. If verification passes the poo is added to nrpConsumer.block.poo and cipherblock to nrpConsumer.block.cipherblock; otherwise it throws an error.
   await nrpConsumer.verifyPoO(poo.jws, cipherblock)
-  
+
+  // Store PoO in wallet
+  await consumerWallet.resources.create({
+    type: 'NonRepudiationProof',
+    resource: poo.jws
+  })
+
   // Create the proof of reception (PoR). It is also added to nrpConsumer.block.por
   const por = await nrpConsumer.generatePoR()
+
+  // Store PoR in wallet
+  await consumerWallet.resources.create({
+    type: 'NonRepudiationProof',
+    resource: por.jws
+  })
 
   // Send PoR to Provider
   ...
@@ -213,6 +300,12 @@ async nrp() => {
 
   // Verify PoP. If verification passes the pop is added to nrpConsumer.block.pop, and the secret to nrpConsumer.block.secret; otherwise it throws an error.
   await nrpConsumer.verifyPoP(pop)
+
+  // Store PoP in wallet (if it is received)
+  await consumerWallet.resources.create({
+    type: 'NonRepudiationProof',
+    resource: pop.jws
+  })
 
   // Just in case the PoP is not received, the secret can be downloaded from the ledger. The next function downloads the secret and stores it to nrpConsumer.block.secret
   await nrpConsumer.getSecretFromLedger()

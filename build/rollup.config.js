@@ -59,11 +59,6 @@ export default [
         file: join(rootDir, browser),
         ...sourcemapOutputOptions,
         format: 'es'
-      },
-      {
-        file: join(rootDir, exports['./esm-browser-bundle']),
-        format: 'es',
-        plugins: [terser()]
       }
     ],
     plugins: [
@@ -72,10 +67,6 @@ export default [
         preventAssignment: true
       }),
       typescriptPlugin(tsBundleOptions),
-      resolve({
-        browser: true,
-        exportConditions: ['browser', 'default']
-      }),
       commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }), // the ".ts" extension is required
       json()
     ]
@@ -83,6 +74,11 @@ export default [
   { // Browser bundles
     input: input,
     output: [
+      {
+        file: join(rootDir, exports['./esm-browser-bundle']),
+        format: 'es',
+        plugins: [terser()]
+      },
       {
         file: join(rootDir, exports['./iife-browser-bundle']),
         format: 'iife',
@@ -101,7 +97,10 @@ export default [
         IS_BROWSER: true,
         preventAssignment: true
       }),
-      typescriptPlugin(tsBundleOptions),
+      typescriptPlugin({
+        ...tsBundleOptions,
+        sourceMap: false
+      }),
       resolve({
         browser: true,
         exportConditions: ['browser', 'default'],

@@ -1,9 +1,9 @@
-import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol/types';
 import { EthersIoAgent } from './EthersIoAgent';
 import { DltConfig } from '../../types';
+import { WalletApi } from '@i3m/wallet-protocol-api/types';
 export declare class I3mWalletAgent extends EthersIoAgent {
-    session: Session<HttpInitiatorTransport>;
+    wallet: WalletApi;
     did: string;
-    constructor(session: Session<HttpInitiatorTransport>, did: string, dltConfig: Partial<DltConfig> & Pick<DltConfig, 'rpcProviderUrl'>);
+    constructor(wallet: WalletApi, did: string, dltConfig?: Partial<Omit<DltConfig, 'rpcProviderUrk'>>);
 }
 //# sourceMappingURL=I3mWalletAgent.d.ts.map

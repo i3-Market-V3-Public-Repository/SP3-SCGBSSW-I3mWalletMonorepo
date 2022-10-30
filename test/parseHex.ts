@@ -3,16 +3,16 @@ import * as _pkg from '#pkg'
 describe('parseHex', function () {
   const vectors = [
     {
-      input: '0x234FE67',
-      output: '234fe67'
+      input: '0x234FE678',
+      output: '234FE678'
     },
     {
-      input: '234FE67',
-      output: '234fe67'
+      input: '234FE687',
+      output: '234FE687'
     },
     {
-      input: '0x123546146f23A',
-      output: '123546146f23a'
+      input: '0x123546146f23A2',
+      output: '123546146f23A2'
     }
   ]
   for (const vector of vectors) {
