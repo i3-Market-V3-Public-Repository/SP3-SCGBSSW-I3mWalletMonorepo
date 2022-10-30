@@ -1,6 +1,6 @@
 {
   "name": "@i3m/base-wallet",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "The abstract class defining an i3-market wallet",
   "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "keywords": [
@@ -116,7 +116,7 @@
   },
   "dependencies": {
     "@i3m/non-repudiation-library": "^2.2.1",
-    "@i3m/wallet-desktop-openapi": "^1.6.1",
+    "@i3m/wallet-desktop-openapi": "^1.6.2",
     "@veramo/core": "^1.2.0",
     "@veramo/credential-w3c": "^1.2.0",
     "@veramo/did-jwt": "^1.2.0",

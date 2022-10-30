@@ -1,6 +1,6 @@
 {
   "name": "@i3m/server-wallet",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Get a ready-to-go Wallet requiring no user interaction and using a simple file to store wallet data. It should be used only when no human interaction is possible.",
   "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "keywords": [
@@ -82,7 +82,7 @@
     ]
   },
   "devDependencies": {
-    "@i3m/wallet-desktop-openapi": "^1.6.1",
+    "@i3m/wallet-desktop-openapi": "^1.6.2",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-multi-entry": "^4.0.0",
@@ -115,7 +115,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "@i3m/base-wallet": "^1.6.1",
-    "@i3m/bok-wallet": "^1.6.1"
+    "@i3m/base-wallet": "^1.6.2",
+    "@i3m/bok-wallet": "^1.6.2"
   }
 }
