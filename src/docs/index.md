@@ -42,17 +42,19 @@ You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDL
 
 ### Example for an i3-MARKET Provider running the Non-Repudiation Protocol
 
+> The NRP provider is likely a service (machine) and therefore will likely run a server wallet, which has all the functionalities of the i3M Wallet but requires no user interaction. Data sharing agreements, however, should be signed by a person, hereby the provider operator, which is also responsible for creating the public-private key pair for the provider service.
+
 Before starting the agreement you need:
 
-- **A private key for signing the non-repudiation proofs**. You should generate a public-private key pair in one of the EC supported curves (P-256, P-384, P-521). Key format must be JSON Web Key (JWK).
+- **A private key for signing the non-repudiation proofs** in one of the EC supported curves (P-256, P-384, P-521). Key format must be JSON Web Key (JWK).
   
-  >You can easily create the key pair with the `generateKeys` utility function. For example:
+  >The provider operator can easily create the key pair with the `generateKeys` utility function. For example:
   >
   >```typescript
   >const providerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256')
   >```
 
-- **Import a DLT account to the provider wallet with funds to execute the NRP** In this example we assume that the provider runs a `@i3m/server-wallet`.
+- **Import a DLT account to the (service) provider wallet with funds to execute the NRP** In this example we assume that the provider runs a `@i3m/server-wallet`.
   
   >You can easily create a provider server wallet and import a private key with funds.
   >
@@ -77,7 +79,7 @@ Before starting the agreement you need:
   >// The provider address on the DLT
   >const providerDltAddress = {{PKG_CAMELCASE}}.getDltAddress(DLT_PRIVATE_KEY)
 
-- The provider has already agreed with the consumer a [`DataSharingAgreement`](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/blob/public/packages/wallet-desktop-openapi/types/openapi.d.ts) that is stored in object variable `dataSharingAgreement` and that contains a given `DataExchangeAgreement` in `dataSharingAgreement.dataExchangeAgreement` such as:
+- The provider operator has already agreed and signed with the consumer a [`DataSharingAgreement`](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/blob/public/packages/wallet-desktop-openapi/types/openapi.d.ts) that is stored in object variable `dataSharingAgreement` and that contains a given `DataExchangeAgreement` in `dataSharingAgreement.dataExchangeAgreement` such as:
   
   ```typescript
   {
@@ -116,15 +118,22 @@ Before starting the agreement you need:
   }
   ```
 
-  The provider has stored the `dataSharingAgreement` in the wallet with:
+  The provider operator has stored the `dataSharingAgreement` in the provider wallet with:
 
   ```typescript
-  const resource = await providerWallet.resourceCreate({
+  await providerWallet.resourceCreate({
     type: 'Contract',
-    identity: providerDid,
-    resource: dataSharingAgreement
+    resource: {
+      dataSharingAgreement,
+      keyPair: {
+        publicJwk: await {{PKG_CAMELCASE}}.parseJwk(providerJwks.publicJwk, true),
+        privateJwk: await {{PKG_CAMELCASE}}.parseJwk(providerJwks.privateJwk, true)
+      }
+    }
   })
   ```
+
+  The wallet will verify the agreement schema, the signatures (made by the consumer and the provider operator), the provided `keyPair`, and that the `keyPair.publcJwk` matches `dataSharingAgreement.dataExchangeAgreement.orig`.
 
 And now you are ready to start a `dataExchange` for a given block of data `block` of a given `DataExchangeAgreement`.
 
@@ -204,9 +213,7 @@ nrp()
 
 ### Example for an i3-MARKET Consumer running the Non-Repudiation Protocol
 
-Before starting the protocol you need connect with your wallet, and setup the pair of public private keys that are required for the NRP.
-
-> We will assume that the consumer is using the i3-MARKET Wallet Desktop App
+Before starting the protocol you need connect with your wallet, and set up the pair of public private keys that are required for the NRP.
 
 You can easily create the key pair with the `generateKeys` utility function:
 
@@ -214,13 +221,15 @@ You can easily create the key pair with the `generateKeys` utility function:
 const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256')
 ```
 
+> We will assume that the consumer is using the i3-MARKET Wallet Desktop App
+
 For connecting to the i3M-Wallet application, you need to pair with the wallet in order to obtain a session token:
 
 - Set your wallet in pairing mode. A PIN appears in the screen
 - Connect a browser to http://localhost:29170/pairing
   - If session is ON (PIN is not requested), click "Remove session" and then "Start protocol"
   - Fill in the PIN
-  - After succesful pairing, click "Session to clipboard"
+  - After successful pairing, click "Session to clipboard"
 - Paste the copied session to create a `sessionObj`
   
 ```typescript
@@ -249,9 +258,17 @@ The agreement is stored in the consumer wallet:
 await consumerWallet.resources.create({
   type: 'Contract',
   identity: consumerDid,
-  resource: dataSharingAgreement
+  resource: {
+    dataSharingAgreement,
+    keyPair: {
+      publicJwk: await _pkg.parseJwk(consumerJwks.publicJwk, true),
+      privateJwk: await _pkg.parseJwk(consumerJwks.privateJwk, true)
+    }
+  }
 })
 ```
+
+> Notice that, contrarily to what we did with the provider, we are bounding the data sharing agreement to the consumerDid (identity), and thus wallet will also verify that this identity is the one signing as 'consumer' the agreement. It did not make sense in the provider wallet since the signer is the provider operator (who uses another wallet) and not the actual (service) provider.
 
 And now you are ready to start a `DataExchange` for a given block of data `block` of a given `DataExchangeAgreement`.
 
