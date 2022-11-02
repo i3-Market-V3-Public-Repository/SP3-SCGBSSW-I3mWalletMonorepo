@@ -45,7 +45,7 @@ export async function validateDataExchangeAgreement (dea: WalletComponents.Schem
   }
   try {
     if (dea.ledgerSignerAddress !== parseAddress(dea.ledgerSignerAddress)) {
-      errors.push(new Error('ledgerSignerAddress is not a valid EIP-55 ethereum address' + dea.ledgerSignerAddress))
+      errors.push(new Error('ledgerSignerAddress is not a valid EIP-55 ethereum address: ' + dea.ledgerSignerAddress))
     }
   } catch (error) {
     errors.push(new Error('ledgerSignerAddress is not a valid EIP-55 ethereum address'))
@@ -69,7 +69,7 @@ export async function verifyDataSharingAgreementSignature (agreement: ContractRe
 
   if (verifiedSignature.verification === 'success') {
     if (verifiedSignature.decodedJwt?.iss !== expectedSigner) {
-      errors.push(new Error(`Signing DID does not match expected signer ${expectedSigner}`))
+      errors.push(new Error(`Signing DID does not match expected signer: ${verifiedSignature.decodedJwt?.iss as string ?? 'undefined'} != ${expectedSigner}`))
     }
   } else {
     errors.push(new Error(verifiedSignature.error))

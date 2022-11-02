@@ -660,7 +660,11 @@ export class BaseWallet<
     }
 
     if (validation.errors.length > 0) {
-      throw new WalletError('Resource has not been validated:\n' + JSON.stringify(validation.errors, undefined, 2), { status: 400 })
+      const errorMsg: string[] = []
+      validation.errors.forEach((error) => {
+        errorMsg.push(error.message)
+      })
+      throw new WalletError('Resource has not been validated:\n' + errorMsg.join('\n'), { status: 400 })
     }
 
     switch (resource.type) {
