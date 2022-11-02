@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import * as _pkg from '#pkg'
-import { DataExchangeAgreement, parseHex } from '#pkg'
 import { ServerWallet } from '@i3m/server-wallet/types'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
@@ -36,8 +35,9 @@ Steps for creating a token:
 
     let providerWallet: WalletApi
     let consumerWallet: ServerWallet
+    let providerOperatorWallet: ServerWallet
 
-    let dataSharingAgreement: WalletComponents.Schemas.Contract['resource']
+    let dataSharingAgreement: WalletComponents.Schemas.DataSharingAgreement
 
     let join, homedir, serverWalletBuilder, rmSync
 
@@ -51,6 +51,13 @@ Steps for creating a token:
       const transport = new HttpInitiatorTransport()
       const session = await Session.fromJSON(transport, sessionObj)
       providerWallet = new WalletApi(session)
+
+      // Setup provider operator wallet
+      const providerOperatorStoreFilePath = join(homedir(), '.server-wallet', '_test_providerOperator')
+      try {
+        rmSync(providerOperatorStoreFilePath)
+      } catch (error) {}
+      providerOperatorWallet = await serverWalletBuilder({ password: 'qwertqwe1234542134642ewdqcAADFEe&/1', reset: true, filepath: providerOperatorStoreFilePath })
 
       // Setup consumer wallet
       const consumerStoreFilePath = join(homedir(), '.server-wallet', '_test_consumer')
@@ -67,7 +74,7 @@ Steps for creating a token:
         if (privateKey === undefined) {
           throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
         }
-        const privateKeyHex = parseHex(privateKey, true)
+        const privateKeyHex = _pkg.parseHex(privateKey, true)
         const publicKeyHex = ethers.utils.computePublicKey(privateKeyHex)
         const compressedPublicKey = ethers.utils.computePublicKey(publicKeyHex, true)
         const did = `did:ethr:i3m:${compressedPublicKey}`
@@ -78,6 +85,15 @@ Steps for creating a token:
         }
         dids.provider = did
         console.log(`Provider identity found: ${did}`)
+      })
+      it('should create a new identity for the provider operator (who signs the data sharing agreement)', async function () {
+        // Create an identity for the consumer
+        const resp = await providerOperatorWallet.identityCreate({
+          alias: 'provider'
+        })
+        chai.expect(resp.did).to.not.be.empty
+        dids.providerOperator = resp.did
+        console.log(`New provider operator identity created for the tests: ${resp.did}`)
       })
       it('should create a new identity for the consumer', async function () {
         // Create an identity for the consumer
@@ -91,6 +107,8 @@ Steps for creating a token:
     })
 
     describe('NRP', function () {
+      this.bail() // stop after a test fails
+
       let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
       let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest
 
@@ -122,11 +140,9 @@ Steps for creating a token:
         const providerJwks = await _pkg.generateKeys('ES256')
 
         // Prepare the data sharing agreeement
-        dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.Contract['resource']
-        dataSharingAgreement.parties.providerDid = dids.provider
-        dataSharingAgreement.parties.consumerDid = dids.consumer
+        dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
 
-        const dataExchangeAgreement: DataExchangeAgreement = {
+        const dataExchangeAgreement: _pkg.DataExchangeAgreement = {
           ...dataSharingAgreement.dataExchangeAgreement,
           orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
           dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
@@ -140,8 +156,10 @@ Steps for creating a token:
 
         const { signatures, ...payload } = dataSharingAgreement
 
-        dataSharingAgreement.signatures.providerSignature = (await providerWallet.identities.sign({ did: dids.provider }, { type: 'JWT', data: { payload } })).signature
+        dataSharingAgreement.parties.providerDid = dids.providerOperator
+        dataSharingAgreement.parties.consumerDid = dids.consumer
 
+        dataSharingAgreement.signatures.providerSignature = (await providerOperatorWallet.identitySign({ did: dids.providerOperator }, { type: 'JWT', data: { payload } })).signature
         dataSharingAgreement.signatures.consumerSignature = (await consumerWallet.identitySign({ did: dids.consumer }, { type: 'JWT', data: { payload } })).signature
 
         console.log(dataSharingAgreement)
@@ -149,8 +167,13 @@ Steps for creating a token:
         // provider stores agreement
         const resource = await providerWallet.resources.create({
           type: 'Contract',
-          identity: dids.provider,
-          resource: dataSharingAgreement
+          resource: {
+            dataSharingAgreement,
+            keyPair: {
+              publicJwk: await _pkg.parseJwk(providerJwks.publicJwk, true),
+              privateJwk: await _pkg.parseJwk(providerJwks.privateJwk, true)
+            }
+          }
         })
         console.log('Provider stores data sharing agreement with id: ', resource.id)
         chai.expect(resource.id).to.not.be.undefined
@@ -159,7 +182,13 @@ Steps for creating a token:
         const resource2 = await consumerWallet.resourceCreate({
           type: 'Contract',
           identity: dids.consumer,
-          resource: dataSharingAgreement
+          resource: {
+            dataSharingAgreement,
+            keyPair: {
+              publicJwk: await _pkg.parseJwk(consumerJwks.publicJwk, true),
+              privateJwk: await _pkg.parseJwk(consumerJwks.privateJwk, true)
+            }
+          }
         })
         console.log('Consumer stores data sharing agreement with id: ', resource2.id)
         chai.expect(resource2.id).to.not.be.undefined

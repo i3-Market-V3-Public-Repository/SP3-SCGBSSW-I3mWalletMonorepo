@@ -6,19 +6,19 @@ import { ServerWallet } from '@i3m/server-wallet/types'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import * as _pkg from '#pkg'
 import { expect } from 'chai'
-import { DataExchangeAgreement } from '#pkg'
 
 if (!IS_BROWSER) {
-  describe('testing signing transactions with i3M-ServerWallet', function () {
+  describe('testing NRP with @i3m/server-wallet wallets', function () {
     this.timeout(2000000)
     this.bail() // stop after a test fails
 
     const dids: { [k: string]: string } = {}
 
     let providerWallet: ServerWallet
+    let providerOperatorWallet: ServerWallet
     let consumerWallet: ServerWallet
 
-    let dataSharingAgreement: WalletComponents.Schemas.Contract['resource']
+    let dataSharingAgreement: WalletComponents.Schemas.DataSharingAgreement
 
     let join, homedir, serverWalletBuilder, rmSync
 
@@ -35,6 +35,13 @@ if (!IS_BROWSER) {
       } catch (error) {}
       providerWallet = await serverWalletBuilder({ password: 'aestqwerwwec42134642ewdqcAADFEe&/1', reset: true, filepath: providerStoreFilePath })
 
+      // Setup provider operator wallet
+      const providerOperatorStoreFilePath = join(homedir(), '.server-wallet', '_test_providerOperator')
+      try {
+        rmSync(providerOperatorStoreFilePath)
+      } catch (error) {}
+      providerOperatorWallet = await serverWalletBuilder({ password: 'qwertqwe1234542134642ewdqcAADFEe&/1', reset: true, filepath: providerOperatorStoreFilePath })
+
       // Setup consumer wallet
       const consumerStoreFilePath = join(homedir(), '.server-wallet', '_test_consumer')
       try {
@@ -44,6 +51,8 @@ if (!IS_BROWSER) {
     })
 
     describe('create identities for the NRP', function () {
+      this.bail() // stop after a test fails
+
       it('should import the provider identity (which should have funds)', async function () {
         // Import provider identity (it has funds to operate with the DLT)
         const privateKey = process.env.PRIVATE_KEY
@@ -62,6 +71,15 @@ if (!IS_BROWSER) {
         dids.provider = identity.did
         console.log(`New provider identity created for the tests: ${identity.did}`)
       })
+      it('should create a new identity for the provider operator (who signs the data sharing agreement)', async function () {
+        // Create an identity for the consumer
+        const resp = await providerOperatorWallet.identityCreate({
+          alias: 'provider'
+        })
+        chai.expect(resp.did).to.not.be.empty
+        dids.providerOperator = resp.did
+        console.log(`New provider operator identity created for the tests: ${resp.did}`)
+      })
       it('should create a new identity for the consumer', async function () {
         // Create an identity for the consumer
         const resp = await consumerWallet.identityCreate({
@@ -74,6 +92,8 @@ if (!IS_BROWSER) {
     })
 
     describe('NRP', function () {
+      this.bail() // stop after a test fails
+
       let nrpProvider: _pkg.NonRepudiationProtocol.NonRepudiationOrig
       let nrpConsumer: _pkg.NonRepudiationProtocol.NonRepudiationDest
 
@@ -105,11 +125,9 @@ if (!IS_BROWSER) {
         const providerJwks = await _pkg.generateKeys('ES256')
 
         // Prepare the data sharing agreeement
-        dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.Contract['resource']
-        dataSharingAgreement.parties.providerDid = dids.provider
-        dataSharingAgreement.parties.consumerDid = dids.consumer
+        dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
 
-        const dataExchangeAgreement: DataExchangeAgreement = {
+        const dataExchangeAgreement: _pkg.DataExchangeAgreement = {
           ...dataSharingAgreement.dataExchangeAgreement,
           orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
           dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
@@ -123,8 +141,10 @@ if (!IS_BROWSER) {
 
         const { signatures, ...payload } = dataSharingAgreement
 
-        dataSharingAgreement.signatures.providerSignature = (await providerWallet.identitySign({ did: dids.provider }, { type: 'JWT', data: { payload } })).signature
+        dataSharingAgreement.parties.providerDid = dids.providerOperator
+        dataSharingAgreement.parties.consumerDid = dids.consumer
 
+        dataSharingAgreement.signatures.providerSignature = (await providerOperatorWallet.identitySign({ did: dids.providerOperator }, { type: 'JWT', data: { payload } })).signature
         dataSharingAgreement.signatures.consumerSignature = (await consumerWallet.identitySign({ did: dids.consumer }, { type: 'JWT', data: { payload } })).signature
 
         console.log(dataSharingAgreement)
@@ -132,8 +152,13 @@ if (!IS_BROWSER) {
         // provider stores agreement
         const resource = await providerWallet.resourceCreate({
           type: 'Contract',
-          identity: dids.provider,
-          resource: dataSharingAgreement
+          resource: {
+            dataSharingAgreement,
+            keyPair: {
+              publicJwk: await _pkg.parseJwk(providerJwks.publicJwk, true),
+              privateJwk: await _pkg.parseJwk(providerJwks.privateJwk, true)
+            }
+          }
         })
         console.log('Provider stores data sharing agreement with id: ', resource.id)
         chai.expect(resource.id).to.not.be.undefined
@@ -142,7 +167,13 @@ if (!IS_BROWSER) {
         const resource2 = await consumerWallet.resourceCreate({
           type: 'Contract',
           identity: dids.consumer,
-          resource: dataSharingAgreement
+          resource: {
+            dataSharingAgreement,
+            keyPair: {
+              publicJwk: await _pkg.parseJwk(consumerJwks.publicJwk, true),
+              privateJwk: await _pkg.parseJwk(consumerJwks.privateJwk, true)
+            }
+          }
         })
         console.log('Consumer stores data sharing agreement with id: ', resource2.id)
         chai.expect(resource2.id).to.not.be.undefined
