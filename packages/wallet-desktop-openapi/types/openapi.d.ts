@@ -28,7 +28,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -43,13 +43,13 @@ export namespace WalletComponents {
         }
         parties: {
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
           providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -133,10 +133,11 @@ export namespace WalletComponents {
                      */
           hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
           /**
+                     * Ethereum Address in EIP-55 format (with checksum)
                      * example:
-                     * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: any
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address in EIP-55 format (with checksum)
                      * example:
@@ -203,10 +204,11 @@ export namespace WalletComponents {
              */
       hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
       /**
+             * Ethereum Address in EIP-55 format (with checksum)
              * example:
-             * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
              */
-      ledgerContractAddress: any
+      ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
       /**
              * Ethereum Address in EIP-55 format (with checksum)
              * example:
@@ -242,13 +244,13 @@ export namespace WalletComponents {
       }
       parties: {
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
         providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -332,10 +334,11 @@ export namespace WalletComponents {
                  */
         hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
         /**
+                 * Ethereum Address in EIP-55 format (with checksum)
                  * example:
-                 * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                  */
-        ledgerContractAddress: any
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
         /**
                  * Ethereum Address in EIP-55 format (with checksum)
                  * example:
@@ -384,7 +387,7 @@ export namespace WalletComponents {
       payload?: {
         [name: string]: any
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -397,7 +400,7 @@ export namespace WalletComponents {
       data: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     /**
-         * DID
+         * a DID using the ethr resolver
          * example:
          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
          */
@@ -425,7 +428,7 @@ export namespace WalletComponents {
     export interface IdentityCreateOutput {
       [name: string]: any
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -464,7 +467,7 @@ export namespace WalletComponents {
          */
     export type IdentityListInput = Array<{
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -475,7 +478,7 @@ export namespace WalletComponents {
          */
     export interface IdentitySelectOutput {
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -497,7 +500,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -520,7 +523,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -573,7 +576,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -602,7 +605,7 @@ export namespace WalletComponents {
         issuer: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -616,7 +619,7 @@ export namespace WalletComponents {
         credentialSubject: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -640,7 +643,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -661,7 +664,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -676,13 +679,13 @@ export namespace WalletComponents {
         }
         parties: {
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
           providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -766,10 +769,11 @@ export namespace WalletComponents {
                      */
           hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
           /**
+                     * Ethereum Address in EIP-55 format (with checksum)
                      * example:
-                     * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: any
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address in EIP-55 format (with checksum)
                      * example:
@@ -819,7 +823,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -846,7 +850,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -875,7 +879,7 @@ export namespace WalletComponents {
         issuer: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -889,7 +893,7 @@ export namespace WalletComponents {
         credentialSubject: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -913,7 +917,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -934,7 +938,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -949,13 +953,13 @@ export namespace WalletComponents {
         }
         parties: {
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
           providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1039,10 +1043,11 @@ export namespace WalletComponents {
                      */
           hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
           /**
+                     * Ethereum Address in EIP-55 format (with checksum)
                      * example:
-                     * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: any
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address in EIP-55 format (with checksum)
                      * example:
@@ -1092,7 +1097,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1228,7 +1233,7 @@ export namespace WalletComponents {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1257,7 +1262,7 @@ export namespace WalletComponents {
         issuer: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1271,7 +1276,7 @@ export namespace WalletComponents {
         credentialSubject: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1379,7 +1384,7 @@ export namespace WalletPaths {
       export interface $201 {
         [name: string]: any
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -1397,7 +1402,7 @@ export namespace WalletPaths {
   export namespace IdentityDeployTransaction {
     export namespace Parameters {
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1405,7 +1410,7 @@ export namespace WalletPaths {
     }
     export interface PathParameters {
       did: /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1432,7 +1437,7 @@ export namespace WalletPaths {
   export namespace IdentityInfo {
     export namespace Parameters {
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1440,7 +1445,7 @@ export namespace WalletPaths {
     }
     export interface PathParameters {
       did: /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1500,7 +1505,7 @@ export namespace WalletPaths {
              */
       export type $200 = Array<{
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -1531,7 +1536,7 @@ export namespace WalletPaths {
              */
       export interface $200 {
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -1542,7 +1547,7 @@ export namespace WalletPaths {
   export namespace IdentitySign {
     export namespace Parameters {
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1550,7 +1555,7 @@ export namespace WalletPaths {
     }
     export interface PathParameters {
       did: /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1654,7 +1659,7 @@ export namespace WalletPaths {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1683,7 +1688,7 @@ export namespace WalletPaths {
         issuer: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1697,7 +1702,7 @@ export namespace WalletPaths {
         credentialSubject: {
           [name: string]: any
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1721,7 +1726,7 @@ export namespace WalletPaths {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1742,7 +1747,7 @@ export namespace WalletPaths {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1757,13 +1762,13 @@ export namespace WalletPaths {
         }
         parties: {
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
           providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
           /**
-                     * DID
+                     * a DID using the ethr resolver
                      * example:
                      * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                      */
@@ -1847,10 +1852,11 @@ export namespace WalletPaths {
                      */
           hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
           /**
+                     * Ethereum Address in EIP-55 format (with checksum)
                      * example:
-                     * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                      */
-          ledgerContractAddress: any
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
           /**
                      * Ethereum Address in EIP-55 format (with checksum)
                      * example:
@@ -1900,7 +1906,7 @@ export namespace WalletPaths {
       name?: string
       parentResource?: string
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1923,7 +1929,7 @@ export namespace WalletPaths {
   export namespace ResourceList {
     export namespace Parameters {
       /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1933,7 +1939,7 @@ export namespace WalletPaths {
     export interface QueryParameters {
       type?: Parameters.Type
       identity?: /**
-             * DID
+             * a DID using the ethr resolver
              * example:
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
@@ -1957,7 +1963,7 @@ export namespace WalletPaths {
         name?: string
         parentResource?: string
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -1986,7 +1992,7 @@ export namespace WalletPaths {
           issuer: {
             [name: string]: any
             /**
-                         * DID
+                         * a DID using the ethr resolver
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
@@ -2000,7 +2006,7 @@ export namespace WalletPaths {
           credentialSubject: {
             [name: string]: any
             /**
-                         * DID
+                         * a DID using the ethr resolver
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
@@ -2024,7 +2030,7 @@ export namespace WalletPaths {
         name?: string
         parentResource?: string
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -2045,7 +2051,7 @@ export namespace WalletPaths {
         name?: string
         parentResource?: string
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */
@@ -2060,13 +2066,13 @@ export namespace WalletPaths {
           }
           parties: {
             /**
-                         * DID
+                         * a DID using the ethr resolver
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
             providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
             /**
-                         * DID
+                         * a DID using the ethr resolver
                          * example:
                          * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                          */
@@ -2150,10 +2156,11 @@ export namespace WalletPaths {
                          */
             hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
             /**
+                         * Ethereum Address in EIP-55 format (with checksum)
                          * example:
-                         * 0x8d407A1722633bDD1dcf221474be7a44C05d7c2F
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
                          */
-            ledgerContractAddress: any
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
             /**
                          * Ethereum Address in EIP-55 format (with checksum)
                          * example:
@@ -2203,7 +2210,7 @@ export namespace WalletPaths {
         name?: string
         parentResource?: string
         /**
-                 * DID
+                 * a DID using the ethr resolver
                  * example:
                  * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
                  */

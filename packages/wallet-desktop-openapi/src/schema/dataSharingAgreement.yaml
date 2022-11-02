@@ -53,7 +53,6 @@ components:
           example: 'SHA-256'
         ledgerContractAddress:
           $ref: "./identity.yaml#/components/schemas/EthereumAddress"
-          example: "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
         ledgerSignerAddress:
           $ref: "./identity.yaml#/components/schemas/EthereumAddress"
         pooToPorDelay:

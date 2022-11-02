@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "version": "1.6.1",
+    "version": "1.6.2",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -66,7 +66,7 @@
                     "type": "object",
                     "properties": {
                       "did": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -143,7 +143,7 @@
                   "type": "object",
                   "properties": {
                     "did": {
-                      "title": "DID",
+                      "description": "a DID using the ethr resolver",
                       "type": "string",
                       "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                       "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -212,7 +212,7 @@
                   "type": "object",
                   "properties": {
                     "did": {
-                      "title": "DID",
+                      "description": "a DID using the ethr resolver",
                       "type": "string",
                       "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                       "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -241,7 +241,7 @@
             "in": "path",
             "name": "did",
             "schema": {
-              "title": "DID",
+              "description": "a DID using the ethr resolver",
               "type": "string",
               "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -390,7 +390,7 @@
             "in": "path",
             "name": "did",
             "schema": {
-              "title": "DID",
+              "description": "a DID using the ethr resolver",
               "type": "string",
               "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -422,7 +422,7 @@
                     "addresses": {
                       "type": "array",
                       "items": {
-                        "title": "Ethereum Address in EIP-55 format (with checksum)",
+                        "description": "Ethereum Address in EIP-55 format (with checksum)",
                         "type": "string",
                         "pattern": "^0x([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -479,7 +479,7 @@
             "in": "path",
             "name": "did",
             "schema": {
-              "title": "DID",
+              "description": "a DID using the ethr resolver",
               "type": "string",
               "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -564,7 +564,7 @@
             "example": "",
             "allowEmptyValue": true,
             "schema": {
-              "title": "DID",
+              "description": "a DID using the ethr resolver",
               "type": "string",
               "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -602,7 +602,7 @@
                             "type": "string"
                           },
                           "identity": {
-                            "title": "DID",
+                            "description": "a DID using the ethr resolver",
                             "type": "string",
                             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -636,7 +636,7 @@
                                 "type": "object",
                                 "properties": {
                                   "id": {
-                                    "title": "DID",
+                                    "description": "a DID using the ethr resolver",
                                     "type": "string",
                                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -656,7 +656,7 @@
                                 "type": "object",
                                 "properties": {
                                   "id": {
-                                    "title": "DID",
+                                    "description": "a DID using the ethr resolver",
                                     "type": "string",
                                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -717,7 +717,7 @@
                             "type": "string"
                           },
                           "identity": {
-                            "title": "DID",
+                            "description": "a DID using the ethr resolver",
                             "type": "string",
                             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -751,7 +751,7 @@
                             "type": "string"
                           },
                           "identity": {
-                            "title": "DID",
+                            "description": "a DID using the ethr resolver",
                             "type": "string",
                             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -805,13 +805,13 @@
                                 ],
                                 "properties": {
                                   "providerDid": {
-                                    "title": "DID",
+                                    "description": "a DID using the ethr resolver",
                                     "type": "string",
                                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                                   },
                                   "consumerDid": {
-                                    "title": "DID",
+                                    "description": "a DID using the ethr resolver",
                                     "type": "string",
                                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1046,10 +1046,13 @@
                                     "example": "SHA-256"
                                   },
                                   "ledgerContractAddress": {
-                                    "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                    "type": "string",
+                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                                   },
                                   "ledgerSignerAddress": {
-                                    "title": "Ethereum Address in EIP-55 format (with checksum)",
+                                    "description": "Ethereum Address in EIP-55 format (with checksum)",
                                     "type": "string",
                                     "pattern": "^0x([0-9A-Fa-f]){40}$",
                                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -1123,7 +1126,7 @@
                             "type": "string"
                           },
                           "identity": {
-                            "title": "DID",
+                            "description": "a DID using the ethr resolver",
                             "type": "string",
                             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1202,7 +1205,7 @@
                         "type": "string"
                       },
                       "identity": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1236,7 +1239,7 @@
                             "type": "object",
                             "properties": {
                               "id": {
-                                "title": "DID",
+                                "description": "a DID using the ethr resolver",
                                 "type": "string",
                                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1256,7 +1259,7 @@
                             "type": "object",
                             "properties": {
                               "id": {
-                                "title": "DID",
+                                "description": "a DID using the ethr resolver",
                                 "type": "string",
                                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1317,7 +1320,7 @@
                         "type": "string"
                       },
                       "identity": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1351,7 +1354,7 @@
                         "type": "string"
                       },
                       "identity": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1405,13 +1408,13 @@
                             ],
                             "properties": {
                               "providerDid": {
-                                "title": "DID",
+                                "description": "a DID using the ethr resolver",
                                 "type": "string",
                                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                               },
                               "consumerDid": {
-                                "title": "DID",
+                                "description": "a DID using the ethr resolver",
                                 "type": "string",
                                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -1646,10 +1649,13 @@
                                 "example": "SHA-256"
                               },
                               "ledgerContractAddress": {
-                                "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                "type": "string",
+                                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                               },
                               "ledgerSignerAddress": {
-                                "title": "Ethereum Address in EIP-55 format (with checksum)",
+                                "description": "Ethereum Address in EIP-55 format (with checksum)",
                                 "type": "string",
                                 "pattern": "^0x([0-9A-Fa-f]){40}$",
                                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -1723,7 +1729,7 @@
                         "type": "string"
                       },
                       "identity": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2073,7 +2079,7 @@
         "type": "object",
         "properties": {
           "did": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2329,7 +2335,7 @@
           "type": "object",
           "properties": {
             "did": {
-              "title": "DID",
+              "description": "a DID using the ethr resolver",
               "type": "string",
               "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2357,7 +2363,7 @@
         "type": "object",
         "properties": {
           "did": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2393,7 +2399,7 @@
                   "type": "string"
                 },
                 "identity": {
-                  "title": "DID",
+                  "description": "a DID using the ethr resolver",
                   "type": "string",
                   "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2427,7 +2433,7 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "title": "DID",
+                          "description": "a DID using the ethr resolver",
                           "type": "string",
                           "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2447,7 +2453,7 @@
                       "type": "object",
                       "properties": {
                         "id": {
-                          "title": "DID",
+                          "description": "a DID using the ethr resolver",
                           "type": "string",
                           "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2508,7 +2514,7 @@
                   "type": "string"
                 },
                 "identity": {
-                  "title": "DID",
+                  "description": "a DID using the ethr resolver",
                   "type": "string",
                   "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2542,7 +2548,7 @@
                   "type": "string"
                 },
                 "identity": {
-                  "title": "DID",
+                  "description": "a DID using the ethr resolver",
                   "type": "string",
                   "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2596,13 +2602,13 @@
                       ],
                       "properties": {
                         "providerDid": {
-                          "title": "DID",
+                          "description": "a DID using the ethr resolver",
                           "type": "string",
                           "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                         },
                         "consumerDid": {
-                          "title": "DID",
+                          "description": "a DID using the ethr resolver",
                           "type": "string",
                           "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                           "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2837,10 +2843,13 @@
                           "example": "SHA-256"
                         },
                         "ledgerContractAddress": {
-                          "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                          "description": "Ethereum Address in EIP-55 format (with checksum)",
+                          "type": "string",
+                          "pattern": "^0x([0-9A-Fa-f]){40}$",
+                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                         },
                         "ledgerSignerAddress": {
-                          "title": "Ethereum Address in EIP-55 format (with checksum)",
+                          "description": "Ethereum Address in EIP-55 format (with checksum)",
                           "type": "string",
                           "pattern": "^0x([0-9A-Fa-f]){40}$",
                           "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -2914,7 +2923,7 @@
                   "type": "string"
                 },
                 "identity": {
-                  "title": "DID",
+                  "description": "a DID using the ethr resolver",
                   "type": "string",
                   "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                   "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2953,7 +2962,7 @@
                 "type": "string"
               },
               "identity": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -2987,7 +2996,7 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3007,7 +3016,7 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3068,7 +3077,7 @@
                 "type": "string"
               },
               "identity": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3102,7 +3111,7 @@
                 "type": "string"
               },
               "identity": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3156,13 +3165,13 @@
                     ],
                     "properties": {
                       "providerDid": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "consumerDid": {
-                        "title": "DID",
+                        "description": "a DID using the ethr resolver",
                         "type": "string",
                         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3397,10 +3406,13 @@
                         "example": "SHA-256"
                       },
                       "ledgerContractAddress": {
-                        "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                        "description": "Ethereum Address in EIP-55 format (with checksum)",
+                        "type": "string",
+                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                       },
                       "ledgerSignerAddress": {
-                        "title": "Ethereum Address in EIP-55 format (with checksum)",
+                        "description": "Ethereum Address in EIP-55 format (with checksum)",
                         "type": "string",
                         "pattern": "^0x([0-9A-Fa-f]){40}$",
                         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -3474,7 +3486,7 @@
                 "type": "string"
               },
               "identity": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3509,7 +3521,7 @@
             "type": "string"
           },
           "identity": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3543,7 +3555,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "title": "DID",
+                    "description": "a DID using the ethr resolver",
                     "type": "string",
                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3563,7 +3575,7 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "title": "DID",
+                    "description": "a DID using the ethr resolver",
                     "type": "string",
                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3624,7 +3636,7 @@
             "type": "string"
           },
           "identity": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3658,7 +3670,7 @@
             "type": "string"
           },
           "identity": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3712,13 +3724,13 @@
                 ],
                 "properties": {
                   "providerDid": {
-                    "title": "DID",
+                    "description": "a DID using the ethr resolver",
                     "type": "string",
                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                   },
                   "consumerDid": {
-                    "title": "DID",
+                    "description": "a DID using the ethr resolver",
                     "type": "string",
                     "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                     "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -3953,10 +3965,13 @@
                     "example": "SHA-256"
                   },
                   "ledgerContractAddress": {
-                    "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                    "type": "string",
+                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
                   },
                   "ledgerSignerAddress": {
-                    "title": "Ethereum Address in EIP-55 format (with checksum)",
+                    "description": "Ethereum Address in EIP-55 format (with checksum)",
                     "type": "string",
                     "pattern": "^0x([0-9A-Fa-f]){40}$",
                     "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -4030,7 +4045,7 @@
             "type": "string"
           },
           "identity": {
-            "title": "DID",
+            "description": "a DID using the ethr resolver",
             "type": "string",
             "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -4106,7 +4121,7 @@
             "type": "object",
             "properties": {
               "iss": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -4177,13 +4192,13 @@
         "additionalProperties": true
       },
       "EthereumAddress": {
-        "title": "Ethereum Address in EIP-55 format (with checksum)",
+        "description": "Ethereum Address in EIP-55 format (with checksum)",
         "type": "string",
         "pattern": "^0x([0-9A-Fa-f]){40}$",
         "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
       },
       "did": {
-        "title": "DID",
+        "description": "a DID using the ethr resolver",
         "type": "string",
         "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
         "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -4207,7 +4222,7 @@
           "addresses": {
             "type": "array",
             "items": {
-              "title": "Ethereum Address in EIP-55 format (with checksum)",
+              "description": "Ethereum Address in EIP-55 format (with checksum)",
               "type": "string",
               "pattern": "^0x([0-9A-Fa-f]){40}$",
               "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -4295,10 +4310,13 @@
             "example": "SHA-256"
           },
           "ledgerContractAddress": {
-            "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+            "description": "Ethereum Address in EIP-55 format (with checksum)",
+            "type": "string",
+            "pattern": "^0x([0-9A-Fa-f]){40}$",
+            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
           },
           "ledgerSignerAddress": {
-            "title": "Ethereum Address in EIP-55 format (with checksum)",
+            "description": "Ethereum Address in EIP-55 format (with checksum)",
             "type": "string",
             "pattern": "^0x([0-9A-Fa-f]){40}$",
             "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
@@ -4375,13 +4393,13 @@
             ],
             "properties": {
               "providerDid": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "consumerDid": {
-                "title": "DID",
+                "description": "a DID using the ethr resolver",
                 "type": "string",
                 "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
@@ -4616,10 +4634,13 @@
                 "example": "SHA-256"
               },
               "ledgerContractAddress": {
-                "example": "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F"
+                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                "type": "string",
+                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
               },
               "ledgerSignerAddress": {
-                "title": "Ethereum Address in EIP-55 format (with checksum)",
+                "description": "Ethereum Address in EIP-55 format (with checksum)",
                 "type": "string",
                 "pattern": "^0x([0-9A-Fa-f]){40}$",
                 "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"

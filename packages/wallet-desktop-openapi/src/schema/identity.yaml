@@ -13,13 +13,13 @@ paths:
 components:
   schemas:
     EthereumAddress:
-      title: Ethereum Address in EIP-55 format (with checksum)
+      description: Ethereum Address in EIP-55 format (with checksum)
       type: string
       pattern: '^0x([0-9A-Fa-f]){40}$'
       example: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F'
 
     did: 
-      title: DID
+      description: a DID using the ethr resolver
       type: string
       pattern: '^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$'
       example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863

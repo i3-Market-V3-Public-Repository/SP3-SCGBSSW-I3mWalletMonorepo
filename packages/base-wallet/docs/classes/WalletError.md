@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef85372/packages/base-wallet/src/ts/errors.ts#L11)
+[base-wallet/src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d2768b3/packages/base-wallet/src/ts/errors.ts#L11)
 
 ## Properties
 
@@ -55,7 +55,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef85372/packages/base-wallet/src/ts/errors.ts#L8)
+[base-wallet/src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d2768b3/packages/base-wallet/src/ts/errors.ts#L8)
 
 ___
 
@@ -69,7 +69,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1041
+base-wallet/node_modules/typescript/lib/lib.es5.d.ts:1041
 
 ___
 
@@ -83,7 +83,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1040
+base-wallet/node_modules/typescript/lib/lib.es5.d.ts:1040
 
 ___
 
@@ -97,7 +97,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1042
+base-wallet/node_modules/typescript/lib/lib.es5.d.ts:1042
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef85372/packages/base-wallet/src/ts/errors.ts#L9)
+[base-wallet/src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d2768b3/packages/base-wallet/src/ts/errors.ts#L9)
 
 ___
 
@@ -142,7 +142,7 @@ Error.prepareStackTrace
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:11
+base-wallet/node_modules/@types/node/ts4.8/globals.d.ts:11
 
 ___
 
@@ -156,7 +156,7 @@ Error.stackTraceLimit
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:13
+base-wallet/node_modules/@types/node/ts4.8/globals.d.ts:13
 
 ## Methods
 
@@ -183,4 +183,4 @@ Error.captureStackTrace
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:4
+base-wallet/node_modules/@types/node/ts4.8/globals.d.ts:4
