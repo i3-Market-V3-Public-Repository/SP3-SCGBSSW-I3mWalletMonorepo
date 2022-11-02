@@ -1,6 +1,6 @@
 {
   "name": "wallet-desktop",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "A cross-platform wallet app",
   "main": "dist/main/index.js",
   "scripts": {
@@ -77,10 +77,10 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
-    "@i3m/base-wallet": "^1.6.2",
-    "@i3m/bok-wallet": "^1.6.2",
-    "@i3m/sw-wallet": "^1.6.2",
-    "@i3m/wallet-desktop-openapi": "^1.6.2",
+    "@i3m/base-wallet": "^1.7.0",
+    "@i3m/bok-wallet": "^1.7.0",
+    "@i3m/sw-wallet": "^1.7.0",
+    "@i3m/wallet-desktop-openapi": "^1.7.0",
     "@i3m/wallet-protocol": "^1.5.1",
     "@i3m/wallet-protocol-utils": "^1.5.1",
     "cors": "^2.8.5",
