@@ -1,13 +1,13 @@
 import { parseJwk } from '@i3m/non-repudiation-library'
 import spec from '@i3m/wallet-desktop-openapi/openapi_dereferenced.json'
-import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
+import { WalletPaths, WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import { validate, Schema } from 'jsonschema'
 import { BaseWalletModel, ContractResource } from '../app'
 import { didJwtVerify } from '../utils/did-jwt-verify'
 import Veramo from '../veramo'
 import { parseAddress } from './parseAddress'
 
-export async function validateDataSharingAgreeementSchema (agreement: ContractResource['resource']): Promise<Error[]> {
+export async function validateDataSharingAgreeementSchema (agreement: WalletComponents.Schemas.DataSharingAgreement): Promise<Error[]> {
   const errors: Error[] = []
 
   const dataSharingAgreementSchema = spec.components.schemas.dataSharingAgreement
@@ -20,7 +20,7 @@ export async function validateDataSharingAgreeementSchema (agreement: ContractRe
   return errors
 }
 
-export async function validateDataExchangeAgreement (dea: ContractResource['resource']['dataExchangeAgreement']): Promise<Error[]> {
+export async function validateDataExchangeAgreement (dea: WalletComponents.Schemas.DataExchangeAgreement): Promise<Error[]> {
   const errors: Error[] = []
   try {
     if (dea.orig !== await parseJwk(JSON.parse(dea.orig), true)) {
@@ -53,7 +53,7 @@ export async function validateDataExchangeAgreement (dea: ContractResource['reso
   return errors
 }
 
-export async function verifyDataSharingAgreementSignature (agreement: ContractResource['resource'], veramo: Veramo<BaseWalletModel>, signer: 'provider' | 'consumer'): Promise<Error[]> {
+export async function verifyDataSharingAgreementSignature (agreement: ContractResource['resource']['dataSharingAgreement'], veramo: Veramo<BaseWalletModel>, signer: 'provider' | 'consumer'): Promise<Error[]> {
   const errors: Error[] = []
 
   const { signatures, ...expectedPayloadClaims } = agreement

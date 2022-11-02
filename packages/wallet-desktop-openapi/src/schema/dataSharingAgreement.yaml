@@ -33,11 +33,11 @@ components:
       properties:
         orig:
           type: string
-          description: "A stingfied JWK with alphabetically sorted claims"
+          description: "A stringified JWK with alphabetically sorted claims"
           example: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}'
         dest:
           type: string
-          description: "A stingfied JWK with alphabetically sorted claims"
+          description: "A stringified JWK with alphabetically sorted claims"
           example: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}'
         encAlg:
           type: string

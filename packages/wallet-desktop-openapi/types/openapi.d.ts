@@ -26,7 +26,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
       /**
              * a DID using the ethr resolver
              * example:
@@ -34,156 +33,174 @@ export namespace WalletComponents {
              */
       identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
-        dataOfferingDescription: {
-          dataOfferingId: string
-          version: number
-          category?: string
-          active: boolean
-          title?: string
-        }
-        parties: {
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-        }
-        purpose: string
-        duration: {
-          creationDate: number
-          startDate: number
-          endDate: number
-        }
-        intendedUse: {
-          processData: boolean
-          shareDataWithThirdParty: boolean
-          editData: boolean
-        }
-        licenseGrant: {
-          transferable: boolean
-          exclusiveness: boolean
-          paidUp: boolean
-          revocable: boolean
-          processing: boolean
-          modifying: boolean
-          analyzing: boolean
-          storingData: boolean
-          storingCopy: boolean
-          reproducing: boolean
-          distributing: boolean
-          loaning: boolean
-          selling: boolean
-          renting: boolean
-          furtherLicensing: boolean
-          leasing: boolean
-        }
-        dataStream: boolean
-        personalData: boolean
-        pricingModel: {
-          paymentType?: string
-          pricingModelName?: string
-          basicPrice: number // float
-          currency: string
-          fee?: number // float
-          hasPaymentOnSubscription?: {
-            paymentOnSubscriptionName?: string
+        dataSharingAgreement: {
+          dataOfferingDescription: {
+            dataOfferingId: string
+            version: number
+            category?: string
+            active: boolean
+            title?: string
+          }
+          parties: {
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+          }
+          purpose: string
+          duration: {
+            creationDate: number
+            startDate: number
+            endDate: number
+          }
+          intendedUse: {
+            processData: boolean
+            shareDataWithThirdParty: boolean
+            editData: boolean
+          }
+          licenseGrant: {
+            transferable: boolean
+            exclusiveness: boolean
+            paidUp: boolean
+            revocable: boolean
+            processing: boolean
+            modifying: boolean
+            analyzing: boolean
+            storingData: boolean
+            storingCopy: boolean
+            reproducing: boolean
+            distributing: boolean
+            loaning: boolean
+            selling: boolean
+            renting: boolean
+            furtherLicensing: boolean
+            leasing: boolean
+          }
+          dataStream: boolean
+          personalData: boolean
+          pricingModel: {
             paymentType?: string
-            timeDuration?: string
-            description?: string
-            repeat?: string
-            hasSubscriptionPrice?: number
+            pricingModelName?: string
+            basicPrice: number // float
+            currency: string
+            fee?: number // float
+            hasPaymentOnSubscription?: {
+              paymentOnSubscriptionName?: string
+              paymentType?: string
+              timeDuration?: string
+              description?: string
+              repeat?: string
+              hasSubscriptionPrice?: number
+            }
+            hasFreePrice: {
+              hasPriceFree?: boolean
+            }
           }
-          hasFreePrice: {
-            hasPriceFree?: boolean
+          dataExchangeAgreement: {
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                         */
+            orig: string
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                         */
+            dest: string
+            /**
+                         * example:
+                         * A256GCM
+                         */
+            encAlg: 'A128GCM' | 'A256GCM'
+            /**
+                         * example:
+                         * ES256
+                         */
+            signingAlg: 'ES256' | 'ES384' | 'ES512'
+            /**
+                         * example:
+                         * SHA-256
+                         */
+            hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                         * example:
+                         * 10000
+                         */
+            pooToPorDelay: number
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                         * example:
+                         * 20000
+                         */
+            pooToPopDelay: number
+            /**
+                         * Maximum acceptable time between issued PoO and secret published on the ledger
+                         * example:
+                         * 180000
+                         */
+            pooToSecretDelay: number
+          }
+          signatures: {
+            /**
+                         * CompactJWS
+                         */
+            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            /**
+                         * CompactJWS
+                         */
+            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        dataExchangeAgreement: {
+        keyPair: {
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          orig: string
+          privateJwk: string
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          dest: string
-          /**
-                     * example:
-                     * A256GCM
-                     */
-          encAlg: 'A128GCM' | 'A256GCM'
-          /**
-                     * example:
-                     * ES256
-                     */
-          signingAlg: 'ES256' | 'ES384' | 'ES512'
-          /**
-                     * example:
-                     * SHA-256
-                     */
-          hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and verified PoR
-                     * example:
-                     * 10000
-                     */
-          pooToPorDelay: number
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and issued PoP
-                     * example:
-                     * 20000
-                     */
-          pooToPopDelay: number
-          /**
-                     * Maximum acceptable time between issued PoO and secret published on the ledger
-                     * example:
-                     * 180000
-                     */
-          pooToSecretDelay: number
-        }
-        signatures: {
-          /**
-                     * CompactJWS
-                     */
-          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-          /**
-                     * CompactJWS
-                     */
-          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          publicJwk: string
         }
       }
     }
     export interface DataExchangeAgreement {
       /**
-             * A stingfied JWK with alphabetically sorted claims
+             * A stringified JWK with alphabetically sorted claims
              * example:
              * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
              */
       orig: string
       /**
-             * A stingfied JWK with alphabetically sorted claims
+             * A stringified JWK with alphabetically sorted claims
              * example:
              * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
              */
@@ -307,13 +324,13 @@ export namespace WalletComponents {
       }
       dataExchangeAgreement: {
         /**
-                 * A stingfied JWK with alphabetically sorted claims
+                 * A stringified JWK with alphabetically sorted claims
                  * example:
                  * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
                  */
         orig: string
         /**
-                 * A stingfied JWK with alphabetically sorted claims
+                 * A stringified JWK with alphabetically sorted claims
                  * example:
                  * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
                  */
@@ -662,7 +679,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
       /**
              * a DID using the ethr resolver
              * example:
@@ -670,144 +686,162 @@ export namespace WalletComponents {
              */
       identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
-        dataOfferingDescription: {
-          dataOfferingId: string
-          version: number
-          category?: string
-          active: boolean
-          title?: string
-        }
-        parties: {
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-        }
-        purpose: string
-        duration: {
-          creationDate: number
-          startDate: number
-          endDate: number
-        }
-        intendedUse: {
-          processData: boolean
-          shareDataWithThirdParty: boolean
-          editData: boolean
-        }
-        licenseGrant: {
-          transferable: boolean
-          exclusiveness: boolean
-          paidUp: boolean
-          revocable: boolean
-          processing: boolean
-          modifying: boolean
-          analyzing: boolean
-          storingData: boolean
-          storingCopy: boolean
-          reproducing: boolean
-          distributing: boolean
-          loaning: boolean
-          selling: boolean
-          renting: boolean
-          furtherLicensing: boolean
-          leasing: boolean
-        }
-        dataStream: boolean
-        personalData: boolean
-        pricingModel: {
-          paymentType?: string
-          pricingModelName?: string
-          basicPrice: number // float
-          currency: string
-          fee?: number // float
-          hasPaymentOnSubscription?: {
-            paymentOnSubscriptionName?: string
+        dataSharingAgreement: {
+          dataOfferingDescription: {
+            dataOfferingId: string
+            version: number
+            category?: string
+            active: boolean
+            title?: string
+          }
+          parties: {
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+          }
+          purpose: string
+          duration: {
+            creationDate: number
+            startDate: number
+            endDate: number
+          }
+          intendedUse: {
+            processData: boolean
+            shareDataWithThirdParty: boolean
+            editData: boolean
+          }
+          licenseGrant: {
+            transferable: boolean
+            exclusiveness: boolean
+            paidUp: boolean
+            revocable: boolean
+            processing: boolean
+            modifying: boolean
+            analyzing: boolean
+            storingData: boolean
+            storingCopy: boolean
+            reproducing: boolean
+            distributing: boolean
+            loaning: boolean
+            selling: boolean
+            renting: boolean
+            furtherLicensing: boolean
+            leasing: boolean
+          }
+          dataStream: boolean
+          personalData: boolean
+          pricingModel: {
             paymentType?: string
-            timeDuration?: string
-            description?: string
-            repeat?: string
-            hasSubscriptionPrice?: number
+            pricingModelName?: string
+            basicPrice: number // float
+            currency: string
+            fee?: number // float
+            hasPaymentOnSubscription?: {
+              paymentOnSubscriptionName?: string
+              paymentType?: string
+              timeDuration?: string
+              description?: string
+              repeat?: string
+              hasSubscriptionPrice?: number
+            }
+            hasFreePrice: {
+              hasPriceFree?: boolean
+            }
           }
-          hasFreePrice: {
-            hasPriceFree?: boolean
+          dataExchangeAgreement: {
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                         */
+            orig: string
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                         */
+            dest: string
+            /**
+                         * example:
+                         * A256GCM
+                         */
+            encAlg: 'A128GCM' | 'A256GCM'
+            /**
+                         * example:
+                         * ES256
+                         */
+            signingAlg: 'ES256' | 'ES384' | 'ES512'
+            /**
+                         * example:
+                         * SHA-256
+                         */
+            hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                         * example:
+                         * 10000
+                         */
+            pooToPorDelay: number
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                         * example:
+                         * 20000
+                         */
+            pooToPopDelay: number
+            /**
+                         * Maximum acceptable time between issued PoO and secret published on the ledger
+                         * example:
+                         * 180000
+                         */
+            pooToSecretDelay: number
+          }
+          signatures: {
+            /**
+                         * CompactJWS
+                         */
+            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            /**
+                         * CompactJWS
+                         */
+            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        dataExchangeAgreement: {
+        keyPair: {
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          orig: string
+          privateJwk: string
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          dest: string
-          /**
-                     * example:
-                     * A256GCM
-                     */
-          encAlg: 'A128GCM' | 'A256GCM'
-          /**
-                     * example:
-                     * ES256
-                     */
-          signingAlg: 'ES256' | 'ES384' | 'ES512'
-          /**
-                     * example:
-                     * SHA-256
-                     */
-          hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and verified PoR
-                     * example:
-                     * 10000
-                     */
-          pooToPorDelay: number
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and issued PoP
-                     * example:
-                     * 20000
-                     */
-          pooToPopDelay: number
-          /**
-                     * Maximum acceptable time between issued PoO and secret published on the ledger
-                     * example:
-                     * 180000
-                     */
-          pooToSecretDelay: number
-        }
-        signatures: {
-          /**
-                     * CompactJWS
-                     */
-          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-          /**
-                     * CompactJWS
-                     */
-          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          publicJwk: string
         }
       }
     } | {
@@ -936,7 +970,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
       /**
              * a DID using the ethr resolver
              * example:
@@ -944,144 +977,162 @@ export namespace WalletComponents {
              */
       identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
-        dataOfferingDescription: {
-          dataOfferingId: string
-          version: number
-          category?: string
-          active: boolean
-          title?: string
-        }
-        parties: {
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-        }
-        purpose: string
-        duration: {
-          creationDate: number
-          startDate: number
-          endDate: number
-        }
-        intendedUse: {
-          processData: boolean
-          shareDataWithThirdParty: boolean
-          editData: boolean
-        }
-        licenseGrant: {
-          transferable: boolean
-          exclusiveness: boolean
-          paidUp: boolean
-          revocable: boolean
-          processing: boolean
-          modifying: boolean
-          analyzing: boolean
-          storingData: boolean
-          storingCopy: boolean
-          reproducing: boolean
-          distributing: boolean
-          loaning: boolean
-          selling: boolean
-          renting: boolean
-          furtherLicensing: boolean
-          leasing: boolean
-        }
-        dataStream: boolean
-        personalData: boolean
-        pricingModel: {
-          paymentType?: string
-          pricingModelName?: string
-          basicPrice: number // float
-          currency: string
-          fee?: number // float
-          hasPaymentOnSubscription?: {
-            paymentOnSubscriptionName?: string
+        dataSharingAgreement: {
+          dataOfferingDescription: {
+            dataOfferingId: string
+            version: number
+            category?: string
+            active: boolean
+            title?: string
+          }
+          parties: {
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+          }
+          purpose: string
+          duration: {
+            creationDate: number
+            startDate: number
+            endDate: number
+          }
+          intendedUse: {
+            processData: boolean
+            shareDataWithThirdParty: boolean
+            editData: boolean
+          }
+          licenseGrant: {
+            transferable: boolean
+            exclusiveness: boolean
+            paidUp: boolean
+            revocable: boolean
+            processing: boolean
+            modifying: boolean
+            analyzing: boolean
+            storingData: boolean
+            storingCopy: boolean
+            reproducing: boolean
+            distributing: boolean
+            loaning: boolean
+            selling: boolean
+            renting: boolean
+            furtherLicensing: boolean
+            leasing: boolean
+          }
+          dataStream: boolean
+          personalData: boolean
+          pricingModel: {
             paymentType?: string
-            timeDuration?: string
-            description?: string
-            repeat?: string
-            hasSubscriptionPrice?: number
+            pricingModelName?: string
+            basicPrice: number // float
+            currency: string
+            fee?: number // float
+            hasPaymentOnSubscription?: {
+              paymentOnSubscriptionName?: string
+              paymentType?: string
+              timeDuration?: string
+              description?: string
+              repeat?: string
+              hasSubscriptionPrice?: number
+            }
+            hasFreePrice: {
+              hasPriceFree?: boolean
+            }
           }
-          hasFreePrice: {
-            hasPriceFree?: boolean
+          dataExchangeAgreement: {
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                         */
+            orig: string
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                         */
+            dest: string
+            /**
+                         * example:
+                         * A256GCM
+                         */
+            encAlg: 'A128GCM' | 'A256GCM'
+            /**
+                         * example:
+                         * ES256
+                         */
+            signingAlg: 'ES256' | 'ES384' | 'ES512'
+            /**
+                         * example:
+                         * SHA-256
+                         */
+            hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                         * example:
+                         * 10000
+                         */
+            pooToPorDelay: number
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                         * example:
+                         * 20000
+                         */
+            pooToPopDelay: number
+            /**
+                         * Maximum acceptable time between issued PoO and secret published on the ledger
+                         * example:
+                         * 180000
+                         */
+            pooToSecretDelay: number
+          }
+          signatures: {
+            /**
+                         * CompactJWS
+                         */
+            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            /**
+                         * CompactJWS
+                         */
+            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        dataExchangeAgreement: {
+        keyPair: {
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          orig: string
+          privateJwk: string
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          dest: string
-          /**
-                     * example:
-                     * A256GCM
-                     */
-          encAlg: 'A128GCM' | 'A256GCM'
-          /**
-                     * example:
-                     * ES256
-                     */
-          signingAlg: 'ES256' | 'ES384' | 'ES512'
-          /**
-                     * example:
-                     * SHA-256
-                     */
-          hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and verified PoR
-                     * example:
-                     * 10000
-                     */
-          pooToPorDelay: number
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and issued PoP
-                     * example:
-                     * 20000
-                     */
-          pooToPopDelay: number
-          /**
-                     * Maximum acceptable time between issued PoO and secret published on the ledger
-                     * example:
-                     * 180000
-                     */
-          pooToSecretDelay: number
-        }
-        signatures: {
-          /**
-                     * CompactJWS
-                     */
-          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-          /**
-                     * CompactJWS
-                     */
-          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          publicJwk: string
         }
       }
     } | {
@@ -1745,7 +1796,6 @@ export namespace WalletPaths {
              * Resource name
              */
       name?: string
-      parentResource?: string
       /**
              * a DID using the ethr resolver
              * example:
@@ -1753,144 +1803,162 @@ export namespace WalletPaths {
              */
       identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
-        dataOfferingDescription: {
-          dataOfferingId: string
-          version: number
-          category?: string
-          active: boolean
-          title?: string
-        }
-        parties: {
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-          /**
-                     * a DID using the ethr resolver
-                     * example:
-                     * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                     */
-          consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-        }
-        purpose: string
-        duration: {
-          creationDate: number
-          startDate: number
-          endDate: number
-        }
-        intendedUse: {
-          processData: boolean
-          shareDataWithThirdParty: boolean
-          editData: boolean
-        }
-        licenseGrant: {
-          transferable: boolean
-          exclusiveness: boolean
-          paidUp: boolean
-          revocable: boolean
-          processing: boolean
-          modifying: boolean
-          analyzing: boolean
-          storingData: boolean
-          storingCopy: boolean
-          reproducing: boolean
-          distributing: boolean
-          loaning: boolean
-          selling: boolean
-          renting: boolean
-          furtherLicensing: boolean
-          leasing: boolean
-        }
-        dataStream: boolean
-        personalData: boolean
-        pricingModel: {
-          paymentType?: string
-          pricingModelName?: string
-          basicPrice: number // float
-          currency: string
-          fee?: number // float
-          hasPaymentOnSubscription?: {
-            paymentOnSubscriptionName?: string
+        dataSharingAgreement: {
+          dataOfferingDescription: {
+            dataOfferingId: string
+            version: number
+            category?: string
+            active: boolean
+            title?: string
+          }
+          parties: {
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+            /**
+                         * a DID using the ethr resolver
+                         * example:
+                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                         */
+            consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+          }
+          purpose: string
+          duration: {
+            creationDate: number
+            startDate: number
+            endDate: number
+          }
+          intendedUse: {
+            processData: boolean
+            shareDataWithThirdParty: boolean
+            editData: boolean
+          }
+          licenseGrant: {
+            transferable: boolean
+            exclusiveness: boolean
+            paidUp: boolean
+            revocable: boolean
+            processing: boolean
+            modifying: boolean
+            analyzing: boolean
+            storingData: boolean
+            storingCopy: boolean
+            reproducing: boolean
+            distributing: boolean
+            loaning: boolean
+            selling: boolean
+            renting: boolean
+            furtherLicensing: boolean
+            leasing: boolean
+          }
+          dataStream: boolean
+          personalData: boolean
+          pricingModel: {
             paymentType?: string
-            timeDuration?: string
-            description?: string
-            repeat?: string
-            hasSubscriptionPrice?: number
+            pricingModelName?: string
+            basicPrice: number // float
+            currency: string
+            fee?: number // float
+            hasPaymentOnSubscription?: {
+              paymentOnSubscriptionName?: string
+              paymentType?: string
+              timeDuration?: string
+              description?: string
+              repeat?: string
+              hasSubscriptionPrice?: number
+            }
+            hasFreePrice: {
+              hasPriceFree?: boolean
+            }
           }
-          hasFreePrice: {
-            hasPriceFree?: boolean
+          dataExchangeAgreement: {
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                         */
+            orig: string
+            /**
+                         * A stringified JWK with alphabetically sorted claims
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                         */
+            dest: string
+            /**
+                         * example:
+                         * A256GCM
+                         */
+            encAlg: 'A128GCM' | 'A256GCM'
+            /**
+                         * example:
+                         * ES256
+                         */
+            signingAlg: 'ES256' | 'ES384' | 'ES512'
+            /**
+                         * example:
+                         * SHA-256
+                         */
+            hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Ethereum Address in EIP-55 format (with checksum)
+                         * example:
+                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                         */
+            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                         * example:
+                         * 10000
+                         */
+            pooToPorDelay: number
+            /**
+                         * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                         * example:
+                         * 20000
+                         */
+            pooToPopDelay: number
+            /**
+                         * Maximum acceptable time between issued PoO and secret published on the ledger
+                         * example:
+                         * 180000
+                         */
+            pooToSecretDelay: number
+          }
+          signatures: {
+            /**
+                         * CompactJWS
+                         */
+            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            /**
+                         * CompactJWS
+                         */
+            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        dataExchangeAgreement: {
+        keyPair: {
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          orig: string
+          privateJwk: string
           /**
-                     * A stingfied JWK with alphabetically sorted claims
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     *
                      * example:
-                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                      */
-          dest: string
-          /**
-                     * example:
-                     * A256GCM
-                     */
-          encAlg: 'A128GCM' | 'A256GCM'
-          /**
-                     * example:
-                     * ES256
-                     */
-          signingAlg: 'ES256' | 'ES384' | 'ES512'
-          /**
-                     * example:
-                     * SHA-256
-                     */
-          hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Ethereum Address in EIP-55 format (with checksum)
-                     * example:
-                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                     */
-          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and verified PoR
-                     * example:
-                     * 10000
-                     */
-          pooToPorDelay: number
-          /**
-                     * Maximum acceptable time in milliseconds between issued PoO and issued PoP
-                     * example:
-                     * 20000
-                     */
-          pooToPopDelay: number
-          /**
-                     * Maximum acceptable time between issued PoO and secret published on the ledger
-                     * example:
-                     * 180000
-                     */
-          pooToSecretDelay: number
-        }
-        signatures: {
-          /**
-                     * CompactJWS
-                     */
-          providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-          /**
-                     * CompactJWS
-                     */
-          consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+          publicJwk: string
         }
       }
     } | {
@@ -2049,7 +2117,6 @@ export namespace WalletPaths {
                  * Resource name
                  */
         name?: string
-        parentResource?: string
         /**
                  * a DID using the ethr resolver
                  * example:
@@ -2057,144 +2124,162 @@ export namespace WalletPaths {
                  */
         identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
         resource: {
-          dataOfferingDescription: {
-            dataOfferingId: string
-            version: number
-            category?: string
-            active: boolean
-            title?: string
-          }
-          parties: {
-            /**
-                         * a DID using the ethr resolver
-                         * example:
-                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                         */
-            providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-            /**
-                         * a DID using the ethr resolver
-                         * example:
-                         * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                         */
-            consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-          }
-          purpose: string
-          duration: {
-            creationDate: number
-            startDate: number
-            endDate: number
-          }
-          intendedUse: {
-            processData: boolean
-            shareDataWithThirdParty: boolean
-            editData: boolean
-          }
-          licenseGrant: {
-            transferable: boolean
-            exclusiveness: boolean
-            paidUp: boolean
-            revocable: boolean
-            processing: boolean
-            modifying: boolean
-            analyzing: boolean
-            storingData: boolean
-            storingCopy: boolean
-            reproducing: boolean
-            distributing: boolean
-            loaning: boolean
-            selling: boolean
-            renting: boolean
-            furtherLicensing: boolean
-            leasing: boolean
-          }
-          dataStream: boolean
-          personalData: boolean
-          pricingModel: {
-            paymentType?: string
-            pricingModelName?: string
-            basicPrice: number // float
-            currency: string
-            fee?: number // float
-            hasPaymentOnSubscription?: {
-              paymentOnSubscriptionName?: string
+          dataSharingAgreement: {
+            dataOfferingDescription: {
+              dataOfferingId: string
+              version: number
+              category?: string
+              active: boolean
+              title?: string
+            }
+            parties: {
+              /**
+                             * a DID using the ethr resolver
+                             * example:
+                             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                             */
+              providerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+              /**
+                             * a DID using the ethr resolver
+                             * example:
+                             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                             */
+              consumerDid: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+            }
+            purpose: string
+            duration: {
+              creationDate: number
+              startDate: number
+              endDate: number
+            }
+            intendedUse: {
+              processData: boolean
+              shareDataWithThirdParty: boolean
+              editData: boolean
+            }
+            licenseGrant: {
+              transferable: boolean
+              exclusiveness: boolean
+              paidUp: boolean
+              revocable: boolean
+              processing: boolean
+              modifying: boolean
+              analyzing: boolean
+              storingData: boolean
+              storingCopy: boolean
+              reproducing: boolean
+              distributing: boolean
+              loaning: boolean
+              selling: boolean
+              renting: boolean
+              furtherLicensing: boolean
+              leasing: boolean
+            }
+            dataStream: boolean
+            personalData: boolean
+            pricingModel: {
               paymentType?: string
-              timeDuration?: string
-              description?: string
-              repeat?: string
-              hasSubscriptionPrice?: number
+              pricingModelName?: string
+              basicPrice: number // float
+              currency: string
+              fee?: number // float
+              hasPaymentOnSubscription?: {
+                paymentOnSubscriptionName?: string
+                paymentType?: string
+                timeDuration?: string
+                description?: string
+                repeat?: string
+                hasSubscriptionPrice?: number
+              }
+              hasFreePrice: {
+                hasPriceFree?: boolean
+              }
             }
-            hasFreePrice: {
-              hasPriceFree?: boolean
+            dataExchangeAgreement: {
+              /**
+                             * A stringified JWK with alphabetically sorted claims
+                             * example:
+                             * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                             */
+              orig: string
+              /**
+                             * A stringified JWK with alphabetically sorted claims
+                             * example:
+                             * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                             */
+              dest: string
+              /**
+                             * example:
+                             * A256GCM
+                             */
+              encAlg: 'A128GCM' | 'A256GCM'
+              /**
+                             * example:
+                             * ES256
+                             */
+              signingAlg: 'ES256' | 'ES384' | 'ES512'
+              /**
+                             * example:
+                             * SHA-256
+                             */
+              hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+              /**
+                             * Ethereum Address in EIP-55 format (with checksum)
+                             * example:
+                             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                             */
+              ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+              /**
+                             * Ethereum Address in EIP-55 format (with checksum)
+                             * example:
+                             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                             */
+              ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+              /**
+                             * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                             * example:
+                             * 10000
+                             */
+              pooToPorDelay: number
+              /**
+                             * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                             * example:
+                             * 20000
+                             */
+              pooToPopDelay: number
+              /**
+                             * Maximum acceptable time between issued PoO and secret published on the ledger
+                             * example:
+                             * 180000
+                             */
+              pooToSecretDelay: number
+            }
+            signatures: {
+              /**
+                             * CompactJWS
+                             */
+              providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+              /**
+                             * CompactJWS
+                             */
+              consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
             }
           }
-          dataExchangeAgreement: {
+          keyPair: {
             /**
-                         * A stingfied JWK with alphabetically sorted claims
+                         * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                         *
                          * example:
-                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                         * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                          */
-            orig: string
+            privateJwk: string
             /**
-                         * A stingfied JWK with alphabetically sorted claims
+                         * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                         *
                          * example:
-                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                          */
-            dest: string
-            /**
-                         * example:
-                         * A256GCM
-                         */
-            encAlg: 'A128GCM' | 'A256GCM'
-            /**
-                         * example:
-                         * ES256
-                         */
-            signingAlg: 'ES256' | 'ES384' | 'ES512'
-            /**
-                         * example:
-                         * SHA-256
-                         */
-            hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
-            /**
-                         * Ethereum Address in EIP-55 format (with checksum)
-                         * example:
-                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                         */
-            ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
-            /**
-                         * Ethereum Address in EIP-55 format (with checksum)
-                         * example:
-                         * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-                         */
-            ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
-            /**
-                         * Maximum acceptable time in milliseconds between issued PoO and verified PoR
-                         * example:
-                         * 10000
-                         */
-            pooToPorDelay: number
-            /**
-                         * Maximum acceptable time in milliseconds between issued PoO and issued PoP
-                         * example:
-                         * 20000
-                         */
-            pooToPopDelay: number
-            /**
-                         * Maximum acceptable time between issued PoO and secret published on the ledger
-                         * example:
-                         * 180000
-                         */
-            pooToSecretDelay: number
-          }
-          signatures: {
-            /**
-                         * CompactJWS
-                         */
-            providerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-            /**
-                         * CompactJWS
-                         */
-            consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+            publicJwk: string
           }
         }
       } | {

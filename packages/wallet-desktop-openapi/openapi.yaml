@@ -470,265 +470,294 @@ paths:
                       type: object
                       properties:
                         type:
-                          type: string
                           example: Contract
                           enum:
                             - Contract
                         name:
                           type: string
                           example: Resource name
-                        parentResource:
-                          type: string
                         identity: *ref_0
-                        resource: &ref_28
+                        resource:
                           type: object
-                          required:
-                            - dataOfferingDescription
-                            - parties
-                            - purpose
-                            - duration
-                            - intendedUse
-                            - licenseGrant
-                            - dataStream
-                            - personalData
-                            - pricingModel
-                            - dataExchangeAgreement
-                            - signatures
                           properties:
-                            dataOfferingDescription:
+                            dataSharingAgreement: &ref_28
                               type: object
                               required:
-                                - dataOfferingId
-                                - version
-                                - active
+                                - dataOfferingDescription
+                                - parties
+                                - purpose
+                                - duration
+                                - intendedUse
+                                - licenseGrant
+                                - dataStream
+                                - personalData
+                                - pricingModel
+                                - dataExchangeAgreement
+                                - signatures
                               properties:
-                                dataOfferingId:
-                                  type: string
-                                version:
-                                  type: integer
-                                category:
-                                  type: string
-                                active:
-                                  type: boolean
-                                title:
-                                  type: string
-                            parties:
-                              type: object
-                              required:
-                                - providerDid
-                                - consumerDid
-                              properties:
-                                providerDid: *ref_0
-                                consumerDid: *ref_0
-                            purpose:
-                              type: string
-                            duration:
-                              type: object
-                              required:
-                                - creationDate
-                                - startDate
-                                - endDate
-                              properties:
-                                creationDate:
-                                  type: integer
-                                startDate:
-                                  type: integer
-                                endDate:
-                                  type: integer
-                            intendedUse:
-                              type: object
-                              required:
-                                - processData
-                                - shareDataWithThirdParty
-                                - editData
-                              properties:
-                                processData:
-                                  type: boolean
-                                shareDataWithThirdParty:
-                                  type: boolean
-                                editData:
-                                  type: boolean
-                            licenseGrant:
-                              type: object
-                              required:
-                                - transferable
-                                - exclusiveness
-                                - paidUp
-                                - revocable
-                                - processing
-                                - modifying
-                                - analyzing
-                                - storingData
-                                - storingCopy
-                                - reproducing
-                                - distributing
-                                - loaning
-                                - selling
-                                - renting
-                                - furtherLicensing
-                                - leasing
-                              properties:
-                                transferable:
-                                  type: boolean
-                                exclusiveness:
-                                  type: boolean
-                                paidUp:
-                                  type: boolean
-                                revocable:
-                                  type: boolean
-                                processing:
-                                  type: boolean
-                                modifying:
-                                  type: boolean
-                                analyzing:
-                                  type: boolean
-                                storingData:
-                                  type: boolean
-                                storingCopy:
-                                  type: boolean
-                                reproducing:
-                                  type: boolean
-                                distributing:
-                                  type: boolean
-                                loaning:
-                                  type: boolean
-                                selling:
-                                  type: boolean
-                                renting:
-                                  type: boolean
-                                furtherLicensing:
-                                  type: boolean
-                                leasing:
-                                  type: boolean
-                            dataStream:
-                              type: boolean
-                            personalData:
-                              type: boolean
-                            pricingModel:
-                              type: object
-                              required:
-                                - basicPrice
-                                - currency
-                                - hasFreePrice
-                              properties:
-                                paymentType:
-                                  type: string
-                                pricingModelName:
-                                  type: string
-                                basicPrice:
-                                  type: number
-                                  format: float
-                                currency:
-                                  type: string
-                                fee:
-                                  type: number
-                                  format: float
-                                hasPaymentOnSubscription:
+                                dataOfferingDescription:
                                   type: object
+                                  required:
+                                    - dataOfferingId
+                                    - version
+                                    - active
                                   properties:
-                                    paymentOnSubscriptionName:
+                                    dataOfferingId:
                                       type: string
+                                    version:
+                                      type: integer
+                                    category:
+                                      type: string
+                                    active:
+                                      type: boolean
+                                    title:
+                                      type: string
+                                parties:
+                                  type: object
+                                  required:
+                                    - providerDid
+                                    - consumerDid
+                                  properties:
+                                    providerDid: *ref_0
+                                    consumerDid: *ref_0
+                                purpose:
+                                  type: string
+                                duration:
+                                  type: object
+                                  required:
+                                    - creationDate
+                                    - startDate
+                                    - endDate
+                                  properties:
+                                    creationDate:
+                                      type: integer
+                                    startDate:
+                                      type: integer
+                                    endDate:
+                                      type: integer
+                                intendedUse:
+                                  type: object
+                                  required:
+                                    - processData
+                                    - shareDataWithThirdParty
+                                    - editData
+                                  properties:
+                                    processData:
+                                      type: boolean
+                                    shareDataWithThirdParty:
+                                      type: boolean
+                                    editData:
+                                      type: boolean
+                                licenseGrant:
+                                  type: object
+                                  required:
+                                    - transferable
+                                    - exclusiveness
+                                    - paidUp
+                                    - revocable
+                                    - processing
+                                    - modifying
+                                    - analyzing
+                                    - storingData
+                                    - storingCopy
+                                    - reproducing
+                                    - distributing
+                                    - loaning
+                                    - selling
+                                    - renting
+                                    - furtherLicensing
+                                    - leasing
+                                  properties:
+                                    transferable:
+                                      type: boolean
+                                    exclusiveness:
+                                      type: boolean
+                                    paidUp:
+                                      type: boolean
+                                    revocable:
+                                      type: boolean
+                                    processing:
+                                      type: boolean
+                                    modifying:
+                                      type: boolean
+                                    analyzing:
+                                      type: boolean
+                                    storingData:
+                                      type: boolean
+                                    storingCopy:
+                                      type: boolean
+                                    reproducing:
+                                      type: boolean
+                                    distributing:
+                                      type: boolean
+                                    loaning:
+                                      type: boolean
+                                    selling:
+                                      type: boolean
+                                    renting:
+                                      type: boolean
+                                    furtherLicensing:
+                                      type: boolean
+                                    leasing:
+                                      type: boolean
+                                dataStream:
+                                  type: boolean
+                                personalData:
+                                  type: boolean
+                                pricingModel:
+                                  type: object
+                                  required:
+                                    - basicPrice
+                                    - currency
+                                    - hasFreePrice
+                                  properties:
                                     paymentType:
                                       type: string
-                                    timeDuration:
+                                    pricingModelName:
                                       type: string
-                                    description:
+                                    basicPrice:
+                                      type: number
+                                      format: float
+                                    currency:
                                       type: string
-                                    repeat:
-                                      type: string
-                                    hasSubscriptionPrice:
-                                      type: integer
-                                hasFreePrice:
+                                    fee:
+                                      type: number
+                                      format: float
+                                    hasPaymentOnSubscription:
+                                      type: object
+                                      properties:
+                                        paymentOnSubscriptionName:
+                                          type: string
+                                        paymentType:
+                                          type: string
+                                        timeDuration:
+                                          type: string
+                                        description:
+                                          type: string
+                                        repeat:
+                                          type: string
+                                        hasSubscriptionPrice:
+                                          type: integer
+                                    hasFreePrice:
+                                      type: object
+                                      properties:
+                                        hasPriceFree:
+                                          type: boolean
+                                dataExchangeAgreement: &ref_27
                                   type: object
+                                  required:
+                                    - orig
+                                    - dest
+                                    - encAlg
+                                    - signingAlg
+                                    - hashAlg
+                                    - ledgerContractAddress
+                                    - ledgerSignerAddress
+                                    - pooToPorDelay
+                                    - pooToPopDelay
+                                    - pooToSecretDelay
                                   properties:
-                                    hasPriceFree:
-                                      type: boolean
-                            dataExchangeAgreement: &ref_27
+                                    orig:
+                                      type: string
+                                      description: >-
+                                        A stringified JWK with alphabetically
+                                        sorted claims
+                                      example: >-
+                                        {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                                    dest:
+                                      type: string
+                                      description: >-
+                                        A stringified JWK with alphabetically
+                                        sorted claims
+                                      example: >-
+                                        {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                                    encAlg:
+                                      type: string
+                                      enum:
+                                        - A128GCM
+                                        - A256GCM
+                                      example: A256GCM
+                                    signingAlg:
+                                      type: string
+                                      enum:
+                                        - ES256
+                                        - ES384
+                                        - ES512
+                                      example: ES256
+                                    hashAlg:
+                                      type: string
+                                      enum:
+                                        - SHA-256
+                                        - SHA-384
+                                        - SHA-512
+                                      example: SHA-256
+                                    ledgerContractAddress: *ref_3
+                                    ledgerSignerAddress: *ref_3
+                                    pooToPorDelay:
+                                      description: >-
+                                        Maximum acceptable time in milliseconds
+                                        between issued PoO and verified PoR
+                                      type: integer
+                                      minimum: 0
+                                      exclusiveMinimum: true
+                                      example: 10000
+                                    pooToPopDelay:
+                                      description: >-
+                                        Maximum acceptable time in milliseconds
+                                        between issued PoO and issued PoP
+                                      type: integer
+                                      minimum: 0
+                                      exclusiveMinimum: true
+                                      example: 20000
+                                    pooToSecretDelay:
+                                      description: >-
+                                        Maximum acceptable time between issued
+                                        PoO and secret published on the ledger
+                                      type: integer
+                                      minimum: 0
+                                      exclusiveMinimum: true
+                                      example: 180000
+                                signatures:
+                                  type: object
+                                  required:
+                                    - providerSignature
+                                    - consumerSignature
+                                  properties:
+                                    providerSignature: &ref_4
+                                      title: CompactJWS
+                                      type: string
+                                      pattern: >-
+                                        ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
+                                    consumerSignature: *ref_4
+                            keyPair:
                               type: object
-                              required:
-                                - orig
-                                - dest
-                                - encAlg
-                                - signingAlg
-                                - hashAlg
-                                - ledgerContractAddress
-                                - ledgerSignerAddress
-                                - pooToPorDelay
-                                - pooToPopDelay
-                                - pooToSecretDelay
                               properties:
-                                orig:
+                                privateJwk:
                                   type: string
-                                  description: >-
-                                    A stingfied JWK with alphabetically sorted
-                                    claims
+                                  description: >
+                                    A stringified JWK with alphabetically sorted
+                                    claims that represents a private key
+                                    (complementary to `publicJwk`)
                                   example: >-
-                                    {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
-                                dest:
+                                    {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                                publicJwk:
                                   type: string
-                                  description: >-
-                                    A stingfied JWK with alphabetically sorted
-                                    claims
+                                  description: >
+                                    A stringified JWK with alphabetically sorted
+                                    claims that represents the public key
+                                    (complementary to `privateJwk`). It MUST
+                                    match either
+                                    `dataSharingAgreement.dataExchangeAgreement.orig`
+                                    or
+                                    `dataSharingAgreement.dataExchangeAgreement.dest`
                                   example: >-
-                                    {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
-                                encAlg:
-                                  type: string
-                                  enum:
-                                    - A128GCM
-                                    - A256GCM
-                                  example: A256GCM
-                                signingAlg:
-                                  type: string
-                                  enum:
-                                    - ES256
-                                    - ES384
-                                    - ES512
-                                  example: ES256
-                                hashAlg:
-                                  type: string
-                                  enum:
-                                    - SHA-256
-                                    - SHA-384
-                                    - SHA-512
-                                  example: SHA-256
-                                ledgerContractAddress: *ref_3
-                                ledgerSignerAddress: *ref_3
-                                pooToPorDelay:
-                                  description: >-
-                                    Maximum acceptable time in milliseconds
-                                    between issued PoO and verified PoR
-                                  type: integer
-                                  minimum: 0
-                                  exclusiveMinimum: true
-                                  example: 10000
-                                pooToPopDelay:
-                                  description: >-
-                                    Maximum acceptable time in milliseconds
-                                    between issued PoO and issued PoP
-                                  type: integer
-                                  minimum: 0
-                                  exclusiveMinimum: true
-                                  example: 20000
-                                pooToSecretDelay:
-                                  description: >-
-                                    Maximum acceptable time between issued PoO
-                                    and secret published on the ledger
-                                  type: integer
-                                  minimum: 0
-                                  exclusiveMinimum: true
-                                  example: 180000
-                            signatures:
-                              type: object
+                                    {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
                               required:
-                                - providerSignature
-                                - consumerSignature
-                              properties:
-                                providerSignature: &ref_4
-                                  title: CompactJWS
-                                  type: string
-                                  pattern: >-
-                                    ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
-                                consumerSignature: *ref_4
+                                - privateJwk
+                                - publicJwk
+                          required:
+                            - dataSharingAgreement
+                            - keyPair
                       required:
                         - type
                         - resource

@@ -645,7 +645,7 @@ export class BaseWallet<
   }
 
   /**
-   * Securely stores in the wallet a new resource. Currently only supporting verifiable credentials, which are properly verified before storing them.
+   * Securely stores in the wallet a new resource.
    *
    * @param requestBody
    * @returns and identifier of the created resource

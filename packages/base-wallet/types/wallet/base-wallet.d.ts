@@ -88,7 +88,7 @@ export declare class BaseWallet<Options extends WalletOptions<Model>, Model exte
      */
     deleteIdentity(did: string): Promise<void>;
     /**
-     * Securely stores in the wallet a new resource. Currently only supporting verifiable credentials, which are properly verified before storing them.
+     * Securely stores in the wallet a new resource.
      *
      * @param requestBody
      * @returns and identifier of the created resource

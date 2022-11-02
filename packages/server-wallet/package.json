@@ -82,6 +82,7 @@
     ]
   },
   "devDependencies": {
+    "@i3m/non-repudiation-library": "^2.3.0",
     "@i3m/wallet-desktop-openapi": "^1.6.2",
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",

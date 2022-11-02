@@ -737,10 +737,409 @@
                         "type": "object",
                         "properties": {
                           "type": {
-                            "type": "string",
                             "example": "Contract",
                             "enum": [
                               "Contract"
+                            ]
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
+                          },
+                          "identity": {
+                            "description": "a DID using the ethr resolver",
+                            "type": "string",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          },
+                          "resource": {
+                            "type": "object",
+                            "properties": {
+                              "dataSharingAgreement": {
+                                "type": "object",
+                                "required": [
+                                  "dataOfferingDescription",
+                                  "parties",
+                                  "purpose",
+                                  "duration",
+                                  "intendedUse",
+                                  "licenseGrant",
+                                  "dataStream",
+                                  "personalData",
+                                  "pricingModel",
+                                  "dataExchangeAgreement",
+                                  "signatures"
+                                ],
+                                "properties": {
+                                  "dataOfferingDescription": {
+                                    "type": "object",
+                                    "required": [
+                                      "dataOfferingId",
+                                      "version",
+                                      "active"
+                                    ],
+                                    "properties": {
+                                      "dataOfferingId": {
+                                        "type": "string"
+                                      },
+                                      "version": {
+                                        "type": "integer"
+                                      },
+                                      "category": {
+                                        "type": "string"
+                                      },
+                                      "active": {
+                                        "type": "boolean"
+                                      },
+                                      "title": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "parties": {
+                                    "type": "object",
+                                    "required": [
+                                      "providerDid",
+                                      "consumerDid"
+                                    ],
+                                    "properties": {
+                                      "providerDid": {
+                                        "description": "a DID using the ethr resolver",
+                                        "type": "string",
+                                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                      },
+                                      "consumerDid": {
+                                        "description": "a DID using the ethr resolver",
+                                        "type": "string",
+                                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                                      }
+                                    }
+                                  },
+                                  "purpose": {
+                                    "type": "string"
+                                  },
+                                  "duration": {
+                                    "type": "object",
+                                    "required": [
+                                      "creationDate",
+                                      "startDate",
+                                      "endDate"
+                                    ],
+                                    "properties": {
+                                      "creationDate": {
+                                        "type": "integer"
+                                      },
+                                      "startDate": {
+                                        "type": "integer"
+                                      },
+                                      "endDate": {
+                                        "type": "integer"
+                                      }
+                                    }
+                                  },
+                                  "intendedUse": {
+                                    "type": "object",
+                                    "required": [
+                                      "processData",
+                                      "shareDataWithThirdParty",
+                                      "editData"
+                                    ],
+                                    "properties": {
+                                      "processData": {
+                                        "type": "boolean"
+                                      },
+                                      "shareDataWithThirdParty": {
+                                        "type": "boolean"
+                                      },
+                                      "editData": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  },
+                                  "licenseGrant": {
+                                    "type": "object",
+                                    "required": [
+                                      "transferable",
+                                      "exclusiveness",
+                                      "paidUp",
+                                      "revocable",
+                                      "processing",
+                                      "modifying",
+                                      "analyzing",
+                                      "storingData",
+                                      "storingCopy",
+                                      "reproducing",
+                                      "distributing",
+                                      "loaning",
+                                      "selling",
+                                      "renting",
+                                      "furtherLicensing",
+                                      "leasing"
+                                    ],
+                                    "properties": {
+                                      "transferable": {
+                                        "type": "boolean"
+                                      },
+                                      "exclusiveness": {
+                                        "type": "boolean"
+                                      },
+                                      "paidUp": {
+                                        "type": "boolean"
+                                      },
+                                      "revocable": {
+                                        "type": "boolean"
+                                      },
+                                      "processing": {
+                                        "type": "boolean"
+                                      },
+                                      "modifying": {
+                                        "type": "boolean"
+                                      },
+                                      "analyzing": {
+                                        "type": "boolean"
+                                      },
+                                      "storingData": {
+                                        "type": "boolean"
+                                      },
+                                      "storingCopy": {
+                                        "type": "boolean"
+                                      },
+                                      "reproducing": {
+                                        "type": "boolean"
+                                      },
+                                      "distributing": {
+                                        "type": "boolean"
+                                      },
+                                      "loaning": {
+                                        "type": "boolean"
+                                      },
+                                      "selling": {
+                                        "type": "boolean"
+                                      },
+                                      "renting": {
+                                        "type": "boolean"
+                                      },
+                                      "furtherLicensing": {
+                                        "type": "boolean"
+                                      },
+                                      "leasing": {
+                                        "type": "boolean"
+                                      }
+                                    }
+                                  },
+                                  "dataStream": {
+                                    "type": "boolean"
+                                  },
+                                  "personalData": {
+                                    "type": "boolean"
+                                  },
+                                  "pricingModel": {
+                                    "type": "object",
+                                    "required": [
+                                      "basicPrice",
+                                      "currency",
+                                      "hasFreePrice"
+                                    ],
+                                    "properties": {
+                                      "paymentType": {
+                                        "type": "string"
+                                      },
+                                      "pricingModelName": {
+                                        "type": "string"
+                                      },
+                                      "basicPrice": {
+                                        "type": "number",
+                                        "format": "float"
+                                      },
+                                      "currency": {
+                                        "type": "string"
+                                      },
+                                      "fee": {
+                                        "type": "number",
+                                        "format": "float"
+                                      },
+                                      "hasPaymentOnSubscription": {
+                                        "type": "object",
+                                        "properties": {
+                                          "paymentOnSubscriptionName": {
+                                            "type": "string"
+                                          },
+                                          "paymentType": {
+                                            "type": "string"
+                                          },
+                                          "timeDuration": {
+                                            "type": "string"
+                                          },
+                                          "description": {
+                                            "type": "string"
+                                          },
+                                          "repeat": {
+                                            "type": "string"
+                                          },
+                                          "hasSubscriptionPrice": {
+                                            "type": "integer"
+                                          }
+                                        }
+                                      },
+                                      "hasFreePrice": {
+                                        "type": "object",
+                                        "properties": {
+                                          "hasPriceFree": {
+                                            "type": "boolean"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "dataExchangeAgreement": {
+                                    "type": "object",
+                                    "required": [
+                                      "orig",
+                                      "dest",
+                                      "encAlg",
+                                      "signingAlg",
+                                      "hashAlg",
+                                      "ledgerContractAddress",
+                                      "ledgerSignerAddress",
+                                      "pooToPorDelay",
+                                      "pooToPopDelay",
+                                      "pooToSecretDelay"
+                                    ],
+                                    "properties": {
+                                      "orig": {
+                                        "type": "string",
+                                        "description": "A stringified JWK with alphabetically sorted claims",
+                                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                                      },
+                                      "dest": {
+                                        "type": "string",
+                                        "description": "A stringified JWK with alphabetically sorted claims",
+                                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                                      },
+                                      "encAlg": {
+                                        "type": "string",
+                                        "enum": [
+                                          "A128GCM",
+                                          "A256GCM"
+                                        ],
+                                        "example": "A256GCM"
+                                      },
+                                      "signingAlg": {
+                                        "type": "string",
+                                        "enum": [
+                                          "ES256",
+                                          "ES384",
+                                          "ES512"
+                                        ],
+                                        "example": "ES256"
+                                      },
+                                      "hashAlg": {
+                                        "type": "string",
+                                        "enum": [
+                                          "SHA-256",
+                                          "SHA-384",
+                                          "SHA-512"
+                                        ],
+                                        "example": "SHA-256"
+                                      },
+                                      "ledgerContractAddress": {
+                                        "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                        "type": "string",
+                                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                      },
+                                      "ledgerSignerAddress": {
+                                        "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                        "type": "string",
+                                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                      },
+                                      "pooToPorDelay": {
+                                        "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "exclusiveMinimum": true,
+                                        "example": 10000
+                                      },
+                                      "pooToPopDelay": {
+                                        "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "exclusiveMinimum": true,
+                                        "example": 20000
+                                      },
+                                      "pooToSecretDelay": {
+                                        "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "exclusiveMinimum": true,
+                                        "example": 180000
+                                      }
+                                    }
+                                  },
+                                  "signatures": {
+                                    "type": "object",
+                                    "required": [
+                                      "providerSignature",
+                                      "consumerSignature"
+                                    ],
+                                    "properties": {
+                                      "providerSignature": {
+                                        "title": "CompactJWS",
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+                                      },
+                                      "consumerSignature": {
+                                        "title": "CompactJWS",
+                                        "type": "string",
+                                        "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "keyPair": {
+                                "type": "object",
+                                "properties": {
+                                  "privateJwk": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                                  },
+                                  "publicJwk": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                                  }
+                                },
+                                "required": [
+                                  "privateJwk",
+                                  "publicJwk"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "dataSharingAgreement",
+                              "keyPair"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "resource"
+                        ]
+                      },
+                      {
+                        "title": "NonRepudiationProof",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "example": "NonRepudiationProof",
+                            "enum": [
+                              "NonRepudiationProof"
                             ]
                           },
                           "name": {
@@ -757,6 +1156,233 @@
                             "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                           },
                           "resource": {
+                            "type": "string",
+                            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "resource"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "title": "Error",
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a resource",
+        "operationId": "resourceCreate",
+        "x-eov-operation-handler": "resources",
+        "tags": [
+          "resources"
+        ],
+        "requestBody": {
+          "description": "Create a resource. Nowadays it only supports storage of verifiable credentials.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": "Resource",
+                "anyOf": [
+                  {
+                    "title": "VerifiableCredential",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "example": "VerifiableCredential",
+                        "enum": [
+                          "VerifiableCredential"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
+                      },
+                      "parentResource": {
+                        "type": "string"
+                      },
+                      "identity": {
+                        "description": "a DID using the ethr resolver",
+                        "type": "string",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                      },
+                      "resource": {
+                        "type": "object",
+                        "properties": {
+                          "@context": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "https://www.w3.org/2018/credentials/v1"
+                            ]
+                          },
+                          "id": {
+                            "type": "string",
+                            "example": "http://example.edu/credentials/1872"
+                          },
+                          "type": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            },
+                            "example": [
+                              "VerifiableCredential"
+                            ]
+                          },
+                          "issuer": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "a DID using the ethr resolver",
+                                "type": "string",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                              }
+                            },
+                            "additionalProperties": true,
+                            "required": [
+                              "id"
+                            ]
+                          },
+                          "issuanceDate": {
+                            "type": "string",
+                            "format": "date-time",
+                            "example": "2021-06-10T19:07:28.000Z"
+                          },
+                          "credentialSubject": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "description": "a DID using the ethr resolver",
+                                "type": "string",
+                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                              }
+                            },
+                            "required": [
+                              "id"
+                            ],
+                            "additionalProperties": true
+                          },
+                          "proof": {
+                            "type": "object",
+                            "properties": {
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "JwtProof2020"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "type"
+                            ],
+                            "additionalProperties": true
+                          }
+                        },
+                        "additionalProperties": true,
+                        "required": [
+                          "@context",
+                          "type",
+                          "issuer",
+                          "issuanceDate",
+                          "credentialSubject",
+                          "proof"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "resource"
+                    ]
+                  },
+                  {
+                    "title": "ObjectResource",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "example": "Object",
+                        "enum": [
+                          "Object"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
+                      },
+                      "parentResource": {
+                        "type": "string"
+                      },
+                      "identity": {
+                        "description": "a DID using the ethr resolver",
+                        "type": "string",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                      },
+                      "resource": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "resource"
+                    ]
+                  },
+                  {
+                    "title": "Contract",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "example": "Contract",
+                        "enum": [
+                          "Contract"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
+                      },
+                      "identity": {
+                        "description": "a DID using the ethr resolver",
+                        "type": "string",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                      },
+                      "resource": {
+                        "type": "object",
+                        "properties": {
+                          "dataSharingAgreement": {
                             "type": "object",
                             "required": [
                               "dataOfferingDescription",
@@ -1011,12 +1637,12 @@
                                 "properties": {
                                   "orig": {
                                     "type": "string",
-                                    "description": "A stingfied JWK with alphabetically sorted claims",
+                                    "description": "A stringified JWK with alphabetically sorted claims",
                                     "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                                   },
                                   "dest": {
                                     "type": "string",
-                                    "description": "A stingfied JWK with alphabetically sorted claims",
+                                    "description": "A stringified JWK with alphabetically sorted claims",
                                     "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                                   },
                                   "encAlg": {
@@ -1100,609 +1726,31 @@
                                 }
                               }
                             }
+                          },
+                          "keyPair": {
+                            "type": "object",
+                            "properties": {
+                              "privateJwk": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                              },
+                              "publicJwk": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                              }
+                            },
+                            "required": [
+                              "privateJwk",
+                              "publicJwk"
+                            ]
                           }
                         },
                         "required": [
-                          "type",
-                          "resource"
+                          "dataSharingAgreement",
+                          "keyPair"
                         ]
-                      },
-                      {
-                        "title": "NonRepudiationProof",
-                        "type": "object",
-                        "properties": {
-                          "type": {
-                            "type": "string",
-                            "example": "NonRepudiationProof",
-                            "enum": [
-                              "NonRepudiationProof"
-                            ]
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Resource name"
-                          },
-                          "parentResource": {
-                            "type": "string"
-                          },
-                          "identity": {
-                            "description": "a DID using the ethr resolver",
-                            "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                          },
-                          "resource": {
-                            "type": "string",
-                            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
-                          }
-                        },
-                        "required": [
-                          "type",
-                          "resource"
-                        ]
-                      }
-                    ]
-                  }
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "title": "Error",
-                  "required": [
-                    "code",
-                    "message"
-                  ],
-                  "properties": {
-                    "code": {
-                      "type": "integer",
-                      "format": "int32"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a resource",
-        "operationId": "resourceCreate",
-        "x-eov-operation-handler": "resources",
-        "tags": [
-          "resources"
-        ],
-        "requestBody": {
-          "description": "Create a resource. Nowadays it only supports storage of verifiable credentials.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "title": "Resource",
-                "anyOf": [
-                  {
-                    "title": "VerifiableCredential",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "example": "VerifiableCredential",
-                        "enum": [
-                          "VerifiableCredential"
-                        ]
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "Resource name"
-                      },
-                      "parentResource": {
-                        "type": "string"
-                      },
-                      "identity": {
-                        "description": "a DID using the ethr resolver",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                      },
-                      "resource": {
-                        "type": "object",
-                        "properties": {
-                          "@context": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            },
-                            "example": [
-                              "https://www.w3.org/2018/credentials/v1"
-                            ]
-                          },
-                          "id": {
-                            "type": "string",
-                            "example": "http://example.edu/credentials/1872"
-                          },
-                          "type": {
-                            "type": "array",
-                            "items": {
-                              "type": "string"
-                            },
-                            "example": [
-                              "VerifiableCredential"
-                            ]
-                          },
-                          "issuer": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "description": "a DID using the ethr resolver",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                              }
-                            },
-                            "additionalProperties": true,
-                            "required": [
-                              "id"
-                            ]
-                          },
-                          "issuanceDate": {
-                            "type": "string",
-                            "format": "date-time",
-                            "example": "2021-06-10T19:07:28.000Z"
-                          },
-                          "credentialSubject": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "description": "a DID using the ethr resolver",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                              }
-                            },
-                            "required": [
-                              "id"
-                            ],
-                            "additionalProperties": true
-                          },
-                          "proof": {
-                            "type": "object",
-                            "properties": {
-                              "type": {
-                                "type": "string",
-                                "enum": [
-                                  "JwtProof2020"
-                                ]
-                              }
-                            },
-                            "required": [
-                              "type"
-                            ],
-                            "additionalProperties": true
-                          }
-                        },
-                        "additionalProperties": true,
-                        "required": [
-                          "@context",
-                          "type",
-                          "issuer",
-                          "issuanceDate",
-                          "credentialSubject",
-                          "proof"
-                        ]
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "resource"
-                    ]
-                  },
-                  {
-                    "title": "ObjectResource",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "example": "Object",
-                        "enum": [
-                          "Object"
-                        ]
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "Resource name"
-                      },
-                      "parentResource": {
-                        "type": "string"
-                      },
-                      "identity": {
-                        "description": "a DID using the ethr resolver",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                      },
-                      "resource": {
-                        "type": "object",
-                        "additionalProperties": true
-                      }
-                    },
-                    "required": [
-                      "type",
-                      "resource"
-                    ]
-                  },
-                  {
-                    "title": "Contract",
-                    "type": "object",
-                    "properties": {
-                      "type": {
-                        "type": "string",
-                        "example": "Contract",
-                        "enum": [
-                          "Contract"
-                        ]
-                      },
-                      "name": {
-                        "type": "string",
-                        "example": "Resource name"
-                      },
-                      "parentResource": {
-                        "type": "string"
-                      },
-                      "identity": {
-                        "description": "a DID using the ethr resolver",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                      },
-                      "resource": {
-                        "type": "object",
-                        "required": [
-                          "dataOfferingDescription",
-                          "parties",
-                          "purpose",
-                          "duration",
-                          "intendedUse",
-                          "licenseGrant",
-                          "dataStream",
-                          "personalData",
-                          "pricingModel",
-                          "dataExchangeAgreement",
-                          "signatures"
-                        ],
-                        "properties": {
-                          "dataOfferingDescription": {
-                            "type": "object",
-                            "required": [
-                              "dataOfferingId",
-                              "version",
-                              "active"
-                            ],
-                            "properties": {
-                              "dataOfferingId": {
-                                "type": "string"
-                              },
-                              "version": {
-                                "type": "integer"
-                              },
-                              "category": {
-                                "type": "string"
-                              },
-                              "active": {
-                                "type": "boolean"
-                              },
-                              "title": {
-                                "type": "string"
-                              }
-                            }
-                          },
-                          "parties": {
-                            "type": "object",
-                            "required": [
-                              "providerDid",
-                              "consumerDid"
-                            ],
-                            "properties": {
-                              "providerDid": {
-                                "description": "a DID using the ethr resolver",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                              },
-                              "consumerDid": {
-                                "description": "a DID using the ethr resolver",
-                                "type": "string",
-                                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                              }
-                            }
-                          },
-                          "purpose": {
-                            "type": "string"
-                          },
-                          "duration": {
-                            "type": "object",
-                            "required": [
-                              "creationDate",
-                              "startDate",
-                              "endDate"
-                            ],
-                            "properties": {
-                              "creationDate": {
-                                "type": "integer"
-                              },
-                              "startDate": {
-                                "type": "integer"
-                              },
-                              "endDate": {
-                                "type": "integer"
-                              }
-                            }
-                          },
-                          "intendedUse": {
-                            "type": "object",
-                            "required": [
-                              "processData",
-                              "shareDataWithThirdParty",
-                              "editData"
-                            ],
-                            "properties": {
-                              "processData": {
-                                "type": "boolean"
-                              },
-                              "shareDataWithThirdParty": {
-                                "type": "boolean"
-                              },
-                              "editData": {
-                                "type": "boolean"
-                              }
-                            }
-                          },
-                          "licenseGrant": {
-                            "type": "object",
-                            "required": [
-                              "transferable",
-                              "exclusiveness",
-                              "paidUp",
-                              "revocable",
-                              "processing",
-                              "modifying",
-                              "analyzing",
-                              "storingData",
-                              "storingCopy",
-                              "reproducing",
-                              "distributing",
-                              "loaning",
-                              "selling",
-                              "renting",
-                              "furtherLicensing",
-                              "leasing"
-                            ],
-                            "properties": {
-                              "transferable": {
-                                "type": "boolean"
-                              },
-                              "exclusiveness": {
-                                "type": "boolean"
-                              },
-                              "paidUp": {
-                                "type": "boolean"
-                              },
-                              "revocable": {
-                                "type": "boolean"
-                              },
-                              "processing": {
-                                "type": "boolean"
-                              },
-                              "modifying": {
-                                "type": "boolean"
-                              },
-                              "analyzing": {
-                                "type": "boolean"
-                              },
-                              "storingData": {
-                                "type": "boolean"
-                              },
-                              "storingCopy": {
-                                "type": "boolean"
-                              },
-                              "reproducing": {
-                                "type": "boolean"
-                              },
-                              "distributing": {
-                                "type": "boolean"
-                              },
-                              "loaning": {
-                                "type": "boolean"
-                              },
-                              "selling": {
-                                "type": "boolean"
-                              },
-                              "renting": {
-                                "type": "boolean"
-                              },
-                              "furtherLicensing": {
-                                "type": "boolean"
-                              },
-                              "leasing": {
-                                "type": "boolean"
-                              }
-                            }
-                          },
-                          "dataStream": {
-                            "type": "boolean"
-                          },
-                          "personalData": {
-                            "type": "boolean"
-                          },
-                          "pricingModel": {
-                            "type": "object",
-                            "required": [
-                              "basicPrice",
-                              "currency",
-                              "hasFreePrice"
-                            ],
-                            "properties": {
-                              "paymentType": {
-                                "type": "string"
-                              },
-                              "pricingModelName": {
-                                "type": "string"
-                              },
-                              "basicPrice": {
-                                "type": "number",
-                                "format": "float"
-                              },
-                              "currency": {
-                                "type": "string"
-                              },
-                              "fee": {
-                                "type": "number",
-                                "format": "float"
-                              },
-                              "hasPaymentOnSubscription": {
-                                "type": "object",
-                                "properties": {
-                                  "paymentOnSubscriptionName": {
-                                    "type": "string"
-                                  },
-                                  "paymentType": {
-                                    "type": "string"
-                                  },
-                                  "timeDuration": {
-                                    "type": "string"
-                                  },
-                                  "description": {
-                                    "type": "string"
-                                  },
-                                  "repeat": {
-                                    "type": "string"
-                                  },
-                                  "hasSubscriptionPrice": {
-                                    "type": "integer"
-                                  }
-                                }
-                              },
-                              "hasFreePrice": {
-                                "type": "object",
-                                "properties": {
-                                  "hasPriceFree": {
-                                    "type": "boolean"
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          "dataExchangeAgreement": {
-                            "type": "object",
-                            "required": [
-                              "orig",
-                              "dest",
-                              "encAlg",
-                              "signingAlg",
-                              "hashAlg",
-                              "ledgerContractAddress",
-                              "ledgerSignerAddress",
-                              "pooToPorDelay",
-                              "pooToPopDelay",
-                              "pooToSecretDelay"
-                            ],
-                            "properties": {
-                              "orig": {
-                                "type": "string",
-                                "description": "A stingfied JWK with alphabetically sorted claims",
-                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
-                              },
-                              "dest": {
-                                "type": "string",
-                                "description": "A stingfied JWK with alphabetically sorted claims",
-                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
-                              },
-                              "encAlg": {
-                                "type": "string",
-                                "enum": [
-                                  "A128GCM",
-                                  "A256GCM"
-                                ],
-                                "example": "A256GCM"
-                              },
-                              "signingAlg": {
-                                "type": "string",
-                                "enum": [
-                                  "ES256",
-                                  "ES384",
-                                  "ES512"
-                                ],
-                                "example": "ES256"
-                              },
-                              "hashAlg": {
-                                "type": "string",
-                                "enum": [
-                                  "SHA-256",
-                                  "SHA-384",
-                                  "SHA-512"
-                                ],
-                                "example": "SHA-256"
-                              },
-                              "ledgerContractAddress": {
-                                "description": "Ethereum Address in EIP-55 format (with checksum)",
-                                "type": "string",
-                                "pattern": "^0x([0-9A-Fa-f]){40}$",
-                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                              },
-                              "ledgerSignerAddress": {
-                                "description": "Ethereum Address in EIP-55 format (with checksum)",
-                                "type": "string",
-                                "pattern": "^0x([0-9A-Fa-f]){40}$",
-                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                              },
-                              "pooToPorDelay": {
-                                "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
-                                "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
-                                "example": 10000
-                              },
-                              "pooToPopDelay": {
-                                "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
-                                "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
-                                "example": 20000
-                              },
-                              "pooToSecretDelay": {
-                                "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
-                                "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
-                                "example": 180000
-                              }
-                            }
-                          },
-                          "signatures": {
-                            "type": "object",
-                            "required": [
-                              "providerSignature",
-                              "consumerSignature"
-                            ],
-                            "properties": {
-                              "providerSignature": {
-                                "title": "CompactJWS",
-                                "type": "string",
-                                "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                              },
-                              "consumerSignature": {
-                                "title": "CompactJWS",
-                                "type": "string",
-                                "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                              }
-                            }
-                          }
-                        }
                       }
                     },
                     "required": [
@@ -2534,7 +2582,6 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "type": "string",
                   "example": "Contract",
                   "enum": [
                     "Contract"
@@ -2544,9 +2591,6 @@
                   "type": "string",
                   "example": "Resource name"
                 },
-                "parentResource": {
-                  "type": "string"
-                },
                 "identity": {
                   "description": "a DID using the ethr resolver",
                   "type": "string",
@@ -2555,348 +2599,376 @@
                 },
                 "resource": {
                   "type": "object",
-                  "required": [
-                    "dataOfferingDescription",
-                    "parties",
-                    "purpose",
-                    "duration",
-                    "intendedUse",
-                    "licenseGrant",
-                    "dataStream",
-                    "personalData",
-                    "pricingModel",
-                    "dataExchangeAgreement",
-                    "signatures"
-                  ],
                   "properties": {
-                    "dataOfferingDescription": {
+                    "dataSharingAgreement": {
                       "type": "object",
                       "required": [
-                        "dataOfferingId",
-                        "version",
-                        "active"
+                        "dataOfferingDescription",
+                        "parties",
+                        "purpose",
+                        "duration",
+                        "intendedUse",
+                        "licenseGrant",
+                        "dataStream",
+                        "personalData",
+                        "pricingModel",
+                        "dataExchangeAgreement",
+                        "signatures"
                       ],
                       "properties": {
-                        "dataOfferingId": {
-                          "type": "string"
-                        },
-                        "version": {
-                          "type": "integer"
-                        },
-                        "category": {
-                          "type": "string"
-                        },
-                        "active": {
-                          "type": "boolean"
-                        },
-                        "title": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "parties": {
-                      "type": "object",
-                      "required": [
-                        "providerDid",
-                        "consumerDid"
-                      ],
-                      "properties": {
-                        "providerDid": {
-                          "description": "a DID using the ethr resolver",
-                          "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                          "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                        },
-                        "consumerDid": {
-                          "description": "a DID using the ethr resolver",
-                          "type": "string",
-                          "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                          "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                        }
-                      }
-                    },
-                    "purpose": {
-                      "type": "string"
-                    },
-                    "duration": {
-                      "type": "object",
-                      "required": [
-                        "creationDate",
-                        "startDate",
-                        "endDate"
-                      ],
-                      "properties": {
-                        "creationDate": {
-                          "type": "integer"
-                        },
-                        "startDate": {
-                          "type": "integer"
-                        },
-                        "endDate": {
-                          "type": "integer"
-                        }
-                      }
-                    },
-                    "intendedUse": {
-                      "type": "object",
-                      "required": [
-                        "processData",
-                        "shareDataWithThirdParty",
-                        "editData"
-                      ],
-                      "properties": {
-                        "processData": {
-                          "type": "boolean"
-                        },
-                        "shareDataWithThirdParty": {
-                          "type": "boolean"
-                        },
-                        "editData": {
-                          "type": "boolean"
-                        }
-                      }
-                    },
-                    "licenseGrant": {
-                      "type": "object",
-                      "required": [
-                        "transferable",
-                        "exclusiveness",
-                        "paidUp",
-                        "revocable",
-                        "processing",
-                        "modifying",
-                        "analyzing",
-                        "storingData",
-                        "storingCopy",
-                        "reproducing",
-                        "distributing",
-                        "loaning",
-                        "selling",
-                        "renting",
-                        "furtherLicensing",
-                        "leasing"
-                      ],
-                      "properties": {
-                        "transferable": {
-                          "type": "boolean"
-                        },
-                        "exclusiveness": {
-                          "type": "boolean"
-                        },
-                        "paidUp": {
-                          "type": "boolean"
-                        },
-                        "revocable": {
-                          "type": "boolean"
-                        },
-                        "processing": {
-                          "type": "boolean"
-                        },
-                        "modifying": {
-                          "type": "boolean"
-                        },
-                        "analyzing": {
-                          "type": "boolean"
-                        },
-                        "storingData": {
-                          "type": "boolean"
-                        },
-                        "storingCopy": {
-                          "type": "boolean"
-                        },
-                        "reproducing": {
-                          "type": "boolean"
-                        },
-                        "distributing": {
-                          "type": "boolean"
-                        },
-                        "loaning": {
-                          "type": "boolean"
-                        },
-                        "selling": {
-                          "type": "boolean"
-                        },
-                        "renting": {
-                          "type": "boolean"
-                        },
-                        "furtherLicensing": {
-                          "type": "boolean"
-                        },
-                        "leasing": {
-                          "type": "boolean"
-                        }
-                      }
-                    },
-                    "dataStream": {
-                      "type": "boolean"
-                    },
-                    "personalData": {
-                      "type": "boolean"
-                    },
-                    "pricingModel": {
-                      "type": "object",
-                      "required": [
-                        "basicPrice",
-                        "currency",
-                        "hasFreePrice"
-                      ],
-                      "properties": {
-                        "paymentType": {
-                          "type": "string"
-                        },
-                        "pricingModelName": {
-                          "type": "string"
-                        },
-                        "basicPrice": {
-                          "type": "number",
-                          "format": "float"
-                        },
-                        "currency": {
-                          "type": "string"
-                        },
-                        "fee": {
-                          "type": "number",
-                          "format": "float"
-                        },
-                        "hasPaymentOnSubscription": {
+                        "dataOfferingDescription": {
                           "type": "object",
+                          "required": [
+                            "dataOfferingId",
+                            "version",
+                            "active"
+                          ],
                           "properties": {
-                            "paymentOnSubscriptionName": {
+                            "dataOfferingId": {
                               "type": "string"
                             },
-                            "paymentType": {
+                            "version": {
+                              "type": "integer"
+                            },
+                            "category": {
                               "type": "string"
                             },
-                            "timeDuration": {
-                              "type": "string"
+                            "active": {
+                              "type": "boolean"
                             },
-                            "description": {
+                            "title": {
                               "type": "string"
+                            }
+                          }
+                        },
+                        "parties": {
+                          "type": "object",
+                          "required": [
+                            "providerDid",
+                            "consumerDid"
+                          ],
+                          "properties": {
+                            "providerDid": {
+                              "description": "a DID using the ethr resolver",
+                              "type": "string",
+                              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                              "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                             },
-                            "repeat": {
-                              "type": "string"
+                            "consumerDid": {
+                              "description": "a DID using the ethr resolver",
+                              "type": "string",
+                              "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                              "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                            }
+                          }
+                        },
+                        "purpose": {
+                          "type": "string"
+                        },
+                        "duration": {
+                          "type": "object",
+                          "required": [
+                            "creationDate",
+                            "startDate",
+                            "endDate"
+                          ],
+                          "properties": {
+                            "creationDate": {
+                              "type": "integer"
                             },
-                            "hasSubscriptionPrice": {
+                            "startDate": {
+                              "type": "integer"
+                            },
+                            "endDate": {
                               "type": "integer"
                             }
                           }
                         },
-                        "hasFreePrice": {
+                        "intendedUse": {
                           "type": "object",
+                          "required": [
+                            "processData",
+                            "shareDataWithThirdParty",
+                            "editData"
+                          ],
                           "properties": {
-                            "hasPriceFree": {
+                            "processData": {
                               "type": "boolean"
+                            },
+                            "shareDataWithThirdParty": {
+                              "type": "boolean"
+                            },
+                            "editData": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "licenseGrant": {
+                          "type": "object",
+                          "required": [
+                            "transferable",
+                            "exclusiveness",
+                            "paidUp",
+                            "revocable",
+                            "processing",
+                            "modifying",
+                            "analyzing",
+                            "storingData",
+                            "storingCopy",
+                            "reproducing",
+                            "distributing",
+                            "loaning",
+                            "selling",
+                            "renting",
+                            "furtherLicensing",
+                            "leasing"
+                          ],
+                          "properties": {
+                            "transferable": {
+                              "type": "boolean"
+                            },
+                            "exclusiveness": {
+                              "type": "boolean"
+                            },
+                            "paidUp": {
+                              "type": "boolean"
+                            },
+                            "revocable": {
+                              "type": "boolean"
+                            },
+                            "processing": {
+                              "type": "boolean"
+                            },
+                            "modifying": {
+                              "type": "boolean"
+                            },
+                            "analyzing": {
+                              "type": "boolean"
+                            },
+                            "storingData": {
+                              "type": "boolean"
+                            },
+                            "storingCopy": {
+                              "type": "boolean"
+                            },
+                            "reproducing": {
+                              "type": "boolean"
+                            },
+                            "distributing": {
+                              "type": "boolean"
+                            },
+                            "loaning": {
+                              "type": "boolean"
+                            },
+                            "selling": {
+                              "type": "boolean"
+                            },
+                            "renting": {
+                              "type": "boolean"
+                            },
+                            "furtherLicensing": {
+                              "type": "boolean"
+                            },
+                            "leasing": {
+                              "type": "boolean"
+                            }
+                          }
+                        },
+                        "dataStream": {
+                          "type": "boolean"
+                        },
+                        "personalData": {
+                          "type": "boolean"
+                        },
+                        "pricingModel": {
+                          "type": "object",
+                          "required": [
+                            "basicPrice",
+                            "currency",
+                            "hasFreePrice"
+                          ],
+                          "properties": {
+                            "paymentType": {
+                              "type": "string"
+                            },
+                            "pricingModelName": {
+                              "type": "string"
+                            },
+                            "basicPrice": {
+                              "type": "number",
+                              "format": "float"
+                            },
+                            "currency": {
+                              "type": "string"
+                            },
+                            "fee": {
+                              "type": "number",
+                              "format": "float"
+                            },
+                            "hasPaymentOnSubscription": {
+                              "type": "object",
+                              "properties": {
+                                "paymentOnSubscriptionName": {
+                                  "type": "string"
+                                },
+                                "paymentType": {
+                                  "type": "string"
+                                },
+                                "timeDuration": {
+                                  "type": "string"
+                                },
+                                "description": {
+                                  "type": "string"
+                                },
+                                "repeat": {
+                                  "type": "string"
+                                },
+                                "hasSubscriptionPrice": {
+                                  "type": "integer"
+                                }
+                              }
+                            },
+                            "hasFreePrice": {
+                              "type": "object",
+                              "properties": {
+                                "hasPriceFree": {
+                                  "type": "boolean"
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "dataExchangeAgreement": {
+                          "type": "object",
+                          "required": [
+                            "orig",
+                            "dest",
+                            "encAlg",
+                            "signingAlg",
+                            "hashAlg",
+                            "ledgerContractAddress",
+                            "ledgerSignerAddress",
+                            "pooToPorDelay",
+                            "pooToPopDelay",
+                            "pooToSecretDelay"
+                          ],
+                          "properties": {
+                            "orig": {
+                              "type": "string",
+                              "description": "A stringified JWK with alphabetically sorted claims",
+                              "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                            },
+                            "dest": {
+                              "type": "string",
+                              "description": "A stringified JWK with alphabetically sorted claims",
+                              "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                            },
+                            "encAlg": {
+                              "type": "string",
+                              "enum": [
+                                "A128GCM",
+                                "A256GCM"
+                              ],
+                              "example": "A256GCM"
+                            },
+                            "signingAlg": {
+                              "type": "string",
+                              "enum": [
+                                "ES256",
+                                "ES384",
+                                "ES512"
+                              ],
+                              "example": "ES256"
+                            },
+                            "hashAlg": {
+                              "type": "string",
+                              "enum": [
+                                "SHA-256",
+                                "SHA-384",
+                                "SHA-512"
+                              ],
+                              "example": "SHA-256"
+                            },
+                            "ledgerContractAddress": {
+                              "description": "Ethereum Address in EIP-55 format (with checksum)",
+                              "type": "string",
+                              "pattern": "^0x([0-9A-Fa-f]){40}$",
+                              "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                            },
+                            "ledgerSignerAddress": {
+                              "description": "Ethereum Address in EIP-55 format (with checksum)",
+                              "type": "string",
+                              "pattern": "^0x([0-9A-Fa-f]){40}$",
+                              "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                            },
+                            "pooToPorDelay": {
+                              "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                              "type": "integer",
+                              "minimum": 0,
+                              "exclusiveMinimum": true,
+                              "example": 10000
+                            },
+                            "pooToPopDelay": {
+                              "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                              "type": "integer",
+                              "minimum": 0,
+                              "exclusiveMinimum": true,
+                              "example": 20000
+                            },
+                            "pooToSecretDelay": {
+                              "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                              "type": "integer",
+                              "minimum": 0,
+                              "exclusiveMinimum": true,
+                              "example": 180000
+                            }
+                          }
+                        },
+                        "signatures": {
+                          "type": "object",
+                          "required": [
+                            "providerSignature",
+                            "consumerSignature"
+                          ],
+                          "properties": {
+                            "providerSignature": {
+                              "title": "CompactJWS",
+                              "type": "string",
+                              "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+                            },
+                            "consumerSignature": {
+                              "title": "CompactJWS",
+                              "type": "string",
+                              "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
                             }
                           }
                         }
                       }
                     },
-                    "dataExchangeAgreement": {
+                    "keyPair": {
                       "type": "object",
-                      "required": [
-                        "orig",
-                        "dest",
-                        "encAlg",
-                        "signingAlg",
-                        "hashAlg",
-                        "ledgerContractAddress",
-                        "ledgerSignerAddress",
-                        "pooToPorDelay",
-                        "pooToPopDelay",
-                        "pooToSecretDelay"
-                      ],
                       "properties": {
-                        "orig": {
+                        "privateJwk": {
                           "type": "string",
-                          "description": "A stingfied JWK with alphabetically sorted claims",
-                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                          "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                         },
-                        "dest": {
+                        "publicJwk": {
                           "type": "string",
-                          "description": "A stingfied JWK with alphabetically sorted claims",
-                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
-                        },
-                        "encAlg": {
-                          "type": "string",
-                          "enum": [
-                            "A128GCM",
-                            "A256GCM"
-                          ],
-                          "example": "A256GCM"
-                        },
-                        "signingAlg": {
-                          "type": "string",
-                          "enum": [
-                            "ES256",
-                            "ES384",
-                            "ES512"
-                          ],
-                          "example": "ES256"
-                        },
-                        "hashAlg": {
-                          "type": "string",
-                          "enum": [
-                            "SHA-256",
-                            "SHA-384",
-                            "SHA-512"
-                          ],
-                          "example": "SHA-256"
-                        },
-                        "ledgerContractAddress": {
-                          "description": "Ethereum Address in EIP-55 format (with checksum)",
-                          "type": "string",
-                          "pattern": "^0x([0-9A-Fa-f]){40}$",
-                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                        },
-                        "ledgerSignerAddress": {
-                          "description": "Ethereum Address in EIP-55 format (with checksum)",
-                          "type": "string",
-                          "pattern": "^0x([0-9A-Fa-f]){40}$",
-                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                        },
-                        "pooToPorDelay": {
-                          "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
-                          "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
-                          "example": 10000
-                        },
-                        "pooToPopDelay": {
-                          "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
-                          "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
-                          "example": 20000
-                        },
-                        "pooToSecretDelay": {
-                          "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
-                          "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
-                          "example": 180000
+                          "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                         }
-                      }
-                    },
-                    "signatures": {
-                      "type": "object",
+                      },
                       "required": [
-                        "providerSignature",
-                        "consumerSignature"
-                      ],
-                      "properties": {
-                        "providerSignature": {
-                          "title": "CompactJWS",
-                          "type": "string",
-                          "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                        },
-                        "consumerSignature": {
-                          "title": "CompactJWS",
-                          "type": "string",
-                          "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                        }
-                      }
+                        "privateJwk",
+                        "publicJwk"
+                      ]
                     }
-                  }
+                  },
+                  "required": [
+                    "dataSharingAgreement",
+                    "keyPair"
+                  ]
                 }
               },
               "required": [
@@ -3097,10 +3169,409 @@
             "type": "object",
             "properties": {
               "type": {
-                "type": "string",
                 "example": "Contract",
                 "enum": [
                   "Contract"
+                ]
+              },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
+              },
+              "identity": {
+                "description": "a DID using the ethr resolver",
+                "type": "string",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+              },
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "dataSharingAgreement": {
+                    "type": "object",
+                    "required": [
+                      "dataOfferingDescription",
+                      "parties",
+                      "purpose",
+                      "duration",
+                      "intendedUse",
+                      "licenseGrant",
+                      "dataStream",
+                      "personalData",
+                      "pricingModel",
+                      "dataExchangeAgreement",
+                      "signatures"
+                    ],
+                    "properties": {
+                      "dataOfferingDescription": {
+                        "type": "object",
+                        "required": [
+                          "dataOfferingId",
+                          "version",
+                          "active"
+                        ],
+                        "properties": {
+                          "dataOfferingId": {
+                            "type": "string"
+                          },
+                          "version": {
+                            "type": "integer"
+                          },
+                          "category": {
+                            "type": "string"
+                          },
+                          "active": {
+                            "type": "boolean"
+                          },
+                          "title": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "parties": {
+                        "type": "object",
+                        "required": [
+                          "providerDid",
+                          "consumerDid"
+                        ],
+                        "properties": {
+                          "providerDid": {
+                            "description": "a DID using the ethr resolver",
+                            "type": "string",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          },
+                          "consumerDid": {
+                            "description": "a DID using the ethr resolver",
+                            "type": "string",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          }
+                        }
+                      },
+                      "purpose": {
+                        "type": "string"
+                      },
+                      "duration": {
+                        "type": "object",
+                        "required": [
+                          "creationDate",
+                          "startDate",
+                          "endDate"
+                        ],
+                        "properties": {
+                          "creationDate": {
+                            "type": "integer"
+                          },
+                          "startDate": {
+                            "type": "integer"
+                          },
+                          "endDate": {
+                            "type": "integer"
+                          }
+                        }
+                      },
+                      "intendedUse": {
+                        "type": "object",
+                        "required": [
+                          "processData",
+                          "shareDataWithThirdParty",
+                          "editData"
+                        ],
+                        "properties": {
+                          "processData": {
+                            "type": "boolean"
+                          },
+                          "shareDataWithThirdParty": {
+                            "type": "boolean"
+                          },
+                          "editData": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "licenseGrant": {
+                        "type": "object",
+                        "required": [
+                          "transferable",
+                          "exclusiveness",
+                          "paidUp",
+                          "revocable",
+                          "processing",
+                          "modifying",
+                          "analyzing",
+                          "storingData",
+                          "storingCopy",
+                          "reproducing",
+                          "distributing",
+                          "loaning",
+                          "selling",
+                          "renting",
+                          "furtherLicensing",
+                          "leasing"
+                        ],
+                        "properties": {
+                          "transferable": {
+                            "type": "boolean"
+                          },
+                          "exclusiveness": {
+                            "type": "boolean"
+                          },
+                          "paidUp": {
+                            "type": "boolean"
+                          },
+                          "revocable": {
+                            "type": "boolean"
+                          },
+                          "processing": {
+                            "type": "boolean"
+                          },
+                          "modifying": {
+                            "type": "boolean"
+                          },
+                          "analyzing": {
+                            "type": "boolean"
+                          },
+                          "storingData": {
+                            "type": "boolean"
+                          },
+                          "storingCopy": {
+                            "type": "boolean"
+                          },
+                          "reproducing": {
+                            "type": "boolean"
+                          },
+                          "distributing": {
+                            "type": "boolean"
+                          },
+                          "loaning": {
+                            "type": "boolean"
+                          },
+                          "selling": {
+                            "type": "boolean"
+                          },
+                          "renting": {
+                            "type": "boolean"
+                          },
+                          "furtherLicensing": {
+                            "type": "boolean"
+                          },
+                          "leasing": {
+                            "type": "boolean"
+                          }
+                        }
+                      },
+                      "dataStream": {
+                        "type": "boolean"
+                      },
+                      "personalData": {
+                        "type": "boolean"
+                      },
+                      "pricingModel": {
+                        "type": "object",
+                        "required": [
+                          "basicPrice",
+                          "currency",
+                          "hasFreePrice"
+                        ],
+                        "properties": {
+                          "paymentType": {
+                            "type": "string"
+                          },
+                          "pricingModelName": {
+                            "type": "string"
+                          },
+                          "basicPrice": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "currency": {
+                            "type": "string"
+                          },
+                          "fee": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "hasPaymentOnSubscription": {
+                            "type": "object",
+                            "properties": {
+                              "paymentOnSubscriptionName": {
+                                "type": "string"
+                              },
+                              "paymentType": {
+                                "type": "string"
+                              },
+                              "timeDuration": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "repeat": {
+                                "type": "string"
+                              },
+                              "hasSubscriptionPrice": {
+                                "type": "integer"
+                              }
+                            }
+                          },
+                          "hasFreePrice": {
+                            "type": "object",
+                            "properties": {
+                              "hasPriceFree": {
+                                "type": "boolean"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "dataExchangeAgreement": {
+                        "type": "object",
+                        "required": [
+                          "orig",
+                          "dest",
+                          "encAlg",
+                          "signingAlg",
+                          "hashAlg",
+                          "ledgerContractAddress",
+                          "ledgerSignerAddress",
+                          "pooToPorDelay",
+                          "pooToPopDelay",
+                          "pooToSecretDelay"
+                        ],
+                        "properties": {
+                          "orig": {
+                            "type": "string",
+                            "description": "A stringified JWK with alphabetically sorted claims",
+                            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                          },
+                          "dest": {
+                            "type": "string",
+                            "description": "A stringified JWK with alphabetically sorted claims",
+                            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                          },
+                          "encAlg": {
+                            "type": "string",
+                            "enum": [
+                              "A128GCM",
+                              "A256GCM"
+                            ],
+                            "example": "A256GCM"
+                          },
+                          "signingAlg": {
+                            "type": "string",
+                            "enum": [
+                              "ES256",
+                              "ES384",
+                              "ES512"
+                            ],
+                            "example": "ES256"
+                          },
+                          "hashAlg": {
+                            "type": "string",
+                            "enum": [
+                              "SHA-256",
+                              "SHA-384",
+                              "SHA-512"
+                            ],
+                            "example": "SHA-256"
+                          },
+                          "ledgerContractAddress": {
+                            "description": "Ethereum Address in EIP-55 format (with checksum)",
+                            "type": "string",
+                            "pattern": "^0x([0-9A-Fa-f]){40}$",
+                            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                          },
+                          "ledgerSignerAddress": {
+                            "description": "Ethereum Address in EIP-55 format (with checksum)",
+                            "type": "string",
+                            "pattern": "^0x([0-9A-Fa-f]){40}$",
+                            "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                          },
+                          "pooToPorDelay": {
+                            "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                            "type": "integer",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "example": 10000
+                          },
+                          "pooToPopDelay": {
+                            "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                            "type": "integer",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "example": 20000
+                          },
+                          "pooToSecretDelay": {
+                            "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                            "type": "integer",
+                            "minimum": 0,
+                            "exclusiveMinimum": true,
+                            "example": 180000
+                          }
+                        }
+                      },
+                      "signatures": {
+                        "type": "object",
+                        "required": [
+                          "providerSignature",
+                          "consumerSignature"
+                        ],
+                        "properties": {
+                          "providerSignature": {
+                            "title": "CompactJWS",
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+                          },
+                          "consumerSignature": {
+                            "title": "CompactJWS",
+                            "type": "string",
+                            "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "keyPair": {
+                    "type": "object",
+                    "properties": {
+                      "privateJwk": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                      },
+                      "publicJwk": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                      }
+                    },
+                    "required": [
+                      "privateJwk",
+                      "publicJwk"
+                    ]
+                  }
+                },
+                "required": [
+                  "dataSharingAgreement",
+                  "keyPair"
+                ]
+              }
+            },
+            "required": [
+              "type",
+              "resource"
+            ]
+          },
+          {
+            "title": "NonRepudiationProof",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "example": "NonRepudiationProof",
+                "enum": [
+                  "NonRepudiationProof"
                 ]
               },
               "name": {
@@ -3117,6 +3588,189 @@
                 "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+              }
+            },
+            "required": [
+              "type",
+              "resource"
+            ]
+          }
+        ]
+      },
+      "VerifiableCredential": {
+        "title": "VerifiableCredential",
+        "type": "object",
+        "properties": {
+          "type": {
+            "example": "VerifiableCredential",
+            "enum": [
+              "VerifiableCredential"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
+          "parentResource": {
+            "type": "string"
+          },
+          "identity": {
+            "description": "a DID using the ethr resolver",
+            "type": "string",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "@context": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "https://www.w3.org/2018/credentials/v1"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "example": "http://example.edu/credentials/1872"
+              },
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "example": [
+                  "VerifiableCredential"
+                ]
+              },
+              "issuer": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "a DID using the ethr resolver",
+                    "type": "string",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                  }
+                },
+                "additionalProperties": true,
+                "required": [
+                  "id"
+                ]
+              },
+              "issuanceDate": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2021-06-10T19:07:28.000Z"
+              },
+              "credentialSubject": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "description": "a DID using the ethr resolver",
+                    "type": "string",
+                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                  }
+                },
+                "required": [
+                  "id"
+                ],
+                "additionalProperties": true
+              },
+              "proof": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "JwtProof2020"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ],
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true,
+            "required": [
+              "@context",
+              "type",
+              "issuer",
+              "issuanceDate",
+              "credentialSubject",
+              "proof"
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
+      "ObjectResource": {
+        "title": "ObjectResource",
+        "type": "object",
+        "properties": {
+          "type": {
+            "example": "Object",
+            "enum": [
+              "Object"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
+          "parentResource": {
+            "type": "string"
+          },
+          "identity": {
+            "description": "a DID using the ethr resolver",
+            "type": "string",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+          },
+          "resource": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
+      "Contract": {
+        "title": "Contract",
+        "type": "object",
+        "properties": {
+          "type": {
+            "example": "Contract",
+            "enum": [
+              "Contract"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
+          "identity": {
+            "description": "a DID using the ethr resolver",
+            "type": "string",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "dataSharingAgreement": {
                 "type": "object",
                 "required": [
                   "dataOfferingDescription",
@@ -3371,12 +4025,12 @@
                     "properties": {
                       "orig": {
                         "type": "string",
-                        "description": "A stingfied JWK with alphabetically sorted claims",
+                        "description": "A stringified JWK with alphabetically sorted claims",
                         "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
                       },
                       "dest": {
                         "type": "string",
-                        "description": "A stingfied JWK with alphabetically sorted claims",
+                        "description": "A stringified JWK with alphabetically sorted claims",
                         "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
                       },
                       "encAlg": {
@@ -3460,565 +4114,31 @@
                     }
                   }
                 }
+              },
+              "keyPair": {
+                "type": "object",
+                "properties": {
+                  "privateJwk": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                  },
+                  "publicJwk": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                  }
+                },
+                "required": [
+                  "privateJwk",
+                  "publicJwk"
+                ]
               }
             },
             "required": [
-              "type",
-              "resource"
+              "dataSharingAgreement",
+              "keyPair"
             ]
-          },
-          {
-            "title": "NonRepudiationProof",
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "example": "NonRepudiationProof",
-                "enum": [
-                  "NonRepudiationProof"
-                ]
-              },
-              "name": {
-                "type": "string",
-                "example": "Resource name"
-              },
-              "parentResource": {
-                "type": "string"
-              },
-              "identity": {
-                "description": "a DID using the ethr resolver",
-                "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-              },
-              "resource": {
-                "type": "string",
-                "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
-              }
-            },
-            "required": [
-              "type",
-              "resource"
-            ]
-          }
-        ]
-      },
-      "VerifiableCredential": {
-        "title": "VerifiableCredential",
-        "type": "object",
-        "properties": {
-          "type": {
-            "example": "VerifiableCredential",
-            "enum": [
-              "VerifiableCredential"
-            ]
-          },
-          "name": {
-            "type": "string",
-            "example": "Resource name"
-          },
-          "parentResource": {
-            "type": "string"
-          },
-          "identity": {
-            "description": "a DID using the ethr resolver",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-          },
-          "resource": {
-            "type": "object",
-            "properties": {
-              "@context": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": [
-                  "https://www.w3.org/2018/credentials/v1"
-                ]
-              },
-              "id": {
-                "type": "string",
-                "example": "http://example.edu/credentials/1872"
-              },
-              "type": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": [
-                  "VerifiableCredential"
-                ]
-              },
-              "issuer": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "description": "a DID using the ethr resolver",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                  }
-                },
-                "additionalProperties": true,
-                "required": [
-                  "id"
-                ]
-              },
-              "issuanceDate": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2021-06-10T19:07:28.000Z"
-              },
-              "credentialSubject": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "description": "a DID using the ethr resolver",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                  }
-                },
-                "required": [
-                  "id"
-                ],
-                "additionalProperties": true
-              },
-              "proof": {
-                "type": "object",
-                "properties": {
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "JwtProof2020"
-                    ]
-                  }
-                },
-                "required": [
-                  "type"
-                ],
-                "additionalProperties": true
-              }
-            },
-            "additionalProperties": true,
-            "required": [
-              "@context",
-              "type",
-              "issuer",
-              "issuanceDate",
-              "credentialSubject",
-              "proof"
-            ]
-          }
-        },
-        "required": [
-          "type",
-          "resource"
-        ]
-      },
-      "ObjectResource": {
-        "title": "ObjectResource",
-        "type": "object",
-        "properties": {
-          "type": {
-            "example": "Object",
-            "enum": [
-              "Object"
-            ]
-          },
-          "name": {
-            "type": "string",
-            "example": "Resource name"
-          },
-          "parentResource": {
-            "type": "string"
-          },
-          "identity": {
-            "description": "a DID using the ethr resolver",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-          },
-          "resource": {
-            "type": "object",
-            "additionalProperties": true
-          }
-        },
-        "required": [
-          "type",
-          "resource"
-        ]
-      },
-      "Contract": {
-        "title": "Contract",
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "string",
-            "example": "Contract",
-            "enum": [
-              "Contract"
-            ]
-          },
-          "name": {
-            "type": "string",
-            "example": "Resource name"
-          },
-          "parentResource": {
-            "type": "string"
-          },
-          "identity": {
-            "description": "a DID using the ethr resolver",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-          },
-          "resource": {
-            "type": "object",
-            "required": [
-              "dataOfferingDescription",
-              "parties",
-              "purpose",
-              "duration",
-              "intendedUse",
-              "licenseGrant",
-              "dataStream",
-              "personalData",
-              "pricingModel",
-              "dataExchangeAgreement",
-              "signatures"
-            ],
-            "properties": {
-              "dataOfferingDescription": {
-                "type": "object",
-                "required": [
-                  "dataOfferingId",
-                  "version",
-                  "active"
-                ],
-                "properties": {
-                  "dataOfferingId": {
-                    "type": "string"
-                  },
-                  "version": {
-                    "type": "integer"
-                  },
-                  "category": {
-                    "type": "string"
-                  },
-                  "active": {
-                    "type": "boolean"
-                  },
-                  "title": {
-                    "type": "string"
-                  }
-                }
-              },
-              "parties": {
-                "type": "object",
-                "required": [
-                  "providerDid",
-                  "consumerDid"
-                ],
-                "properties": {
-                  "providerDid": {
-                    "description": "a DID using the ethr resolver",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                  },
-                  "consumerDid": {
-                    "description": "a DID using the ethr resolver",
-                    "type": "string",
-                    "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                    "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                  }
-                }
-              },
-              "purpose": {
-                "type": "string"
-              },
-              "duration": {
-                "type": "object",
-                "required": [
-                  "creationDate",
-                  "startDate",
-                  "endDate"
-                ],
-                "properties": {
-                  "creationDate": {
-                    "type": "integer"
-                  },
-                  "startDate": {
-                    "type": "integer"
-                  },
-                  "endDate": {
-                    "type": "integer"
-                  }
-                }
-              },
-              "intendedUse": {
-                "type": "object",
-                "required": [
-                  "processData",
-                  "shareDataWithThirdParty",
-                  "editData"
-                ],
-                "properties": {
-                  "processData": {
-                    "type": "boolean"
-                  },
-                  "shareDataWithThirdParty": {
-                    "type": "boolean"
-                  },
-                  "editData": {
-                    "type": "boolean"
-                  }
-                }
-              },
-              "licenseGrant": {
-                "type": "object",
-                "required": [
-                  "transferable",
-                  "exclusiveness",
-                  "paidUp",
-                  "revocable",
-                  "processing",
-                  "modifying",
-                  "analyzing",
-                  "storingData",
-                  "storingCopy",
-                  "reproducing",
-                  "distributing",
-                  "loaning",
-                  "selling",
-                  "renting",
-                  "furtherLicensing",
-                  "leasing"
-                ],
-                "properties": {
-                  "transferable": {
-                    "type": "boolean"
-                  },
-                  "exclusiveness": {
-                    "type": "boolean"
-                  },
-                  "paidUp": {
-                    "type": "boolean"
-                  },
-                  "revocable": {
-                    "type": "boolean"
-                  },
-                  "processing": {
-                    "type": "boolean"
-                  },
-                  "modifying": {
-                    "type": "boolean"
-                  },
-                  "analyzing": {
-                    "type": "boolean"
-                  },
-                  "storingData": {
-                    "type": "boolean"
-                  },
-                  "storingCopy": {
-                    "type": "boolean"
-                  },
-                  "reproducing": {
-                    "type": "boolean"
-                  },
-                  "distributing": {
-                    "type": "boolean"
-                  },
-                  "loaning": {
-                    "type": "boolean"
-                  },
-                  "selling": {
-                    "type": "boolean"
-                  },
-                  "renting": {
-                    "type": "boolean"
-                  },
-                  "furtherLicensing": {
-                    "type": "boolean"
-                  },
-                  "leasing": {
-                    "type": "boolean"
-                  }
-                }
-              },
-              "dataStream": {
-                "type": "boolean"
-              },
-              "personalData": {
-                "type": "boolean"
-              },
-              "pricingModel": {
-                "type": "object",
-                "required": [
-                  "basicPrice",
-                  "currency",
-                  "hasFreePrice"
-                ],
-                "properties": {
-                  "paymentType": {
-                    "type": "string"
-                  },
-                  "pricingModelName": {
-                    "type": "string"
-                  },
-                  "basicPrice": {
-                    "type": "number",
-                    "format": "float"
-                  },
-                  "currency": {
-                    "type": "string"
-                  },
-                  "fee": {
-                    "type": "number",
-                    "format": "float"
-                  },
-                  "hasPaymentOnSubscription": {
-                    "type": "object",
-                    "properties": {
-                      "paymentOnSubscriptionName": {
-                        "type": "string"
-                      },
-                      "paymentType": {
-                        "type": "string"
-                      },
-                      "timeDuration": {
-                        "type": "string"
-                      },
-                      "description": {
-                        "type": "string"
-                      },
-                      "repeat": {
-                        "type": "string"
-                      },
-                      "hasSubscriptionPrice": {
-                        "type": "integer"
-                      }
-                    }
-                  },
-                  "hasFreePrice": {
-                    "type": "object",
-                    "properties": {
-                      "hasPriceFree": {
-                        "type": "boolean"
-                      }
-                    }
-                  }
-                }
-              },
-              "dataExchangeAgreement": {
-                "type": "object",
-                "required": [
-                  "orig",
-                  "dest",
-                  "encAlg",
-                  "signingAlg",
-                  "hashAlg",
-                  "ledgerContractAddress",
-                  "ledgerSignerAddress",
-                  "pooToPorDelay",
-                  "pooToPopDelay",
-                  "pooToSecretDelay"
-                ],
-                "properties": {
-                  "orig": {
-                    "type": "string",
-                    "description": "A stingfied JWK with alphabetically sorted claims",
-                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
-                  },
-                  "dest": {
-                    "type": "string",
-                    "description": "A stingfied JWK with alphabetically sorted claims",
-                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
-                  },
-                  "encAlg": {
-                    "type": "string",
-                    "enum": [
-                      "A128GCM",
-                      "A256GCM"
-                    ],
-                    "example": "A256GCM"
-                  },
-                  "signingAlg": {
-                    "type": "string",
-                    "enum": [
-                      "ES256",
-                      "ES384",
-                      "ES512"
-                    ],
-                    "example": "ES256"
-                  },
-                  "hashAlg": {
-                    "type": "string",
-                    "enum": [
-                      "SHA-256",
-                      "SHA-384",
-                      "SHA-512"
-                    ],
-                    "example": "SHA-256"
-                  },
-                  "ledgerContractAddress": {
-                    "description": "Ethereum Address in EIP-55 format (with checksum)",
-                    "type": "string",
-                    "pattern": "^0x([0-9A-Fa-f]){40}$",
-                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                  },
-                  "ledgerSignerAddress": {
-                    "description": "Ethereum Address in EIP-55 format (with checksum)",
-                    "type": "string",
-                    "pattern": "^0x([0-9A-Fa-f]){40}$",
-                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
-                  },
-                  "pooToPorDelay": {
-                    "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
-                    "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
-                    "example": 10000
-                  },
-                  "pooToPopDelay": {
-                    "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
-                    "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
-                    "example": 20000
-                  },
-                  "pooToSecretDelay": {
-                    "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
-                    "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
-                    "example": 180000
-                  }
-                }
-              },
-              "signatures": {
-                "type": "object",
-                "required": [
-                  "providerSignature",
-                  "consumerSignature"
-                ],
-                "properties": {
-                  "providerSignature": {
-                    "title": "CompactJWS",
-                    "type": "string",
-                    "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                  },
-                  "consumerSignature": {
-                    "title": "CompactJWS",
-                    "type": "string",
-                    "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
-                  }
-                }
-              }
-            }
           }
         },
         "required": [
@@ -4275,12 +4395,12 @@
         "properties": {
           "orig": {
             "type": "string",
-            "description": "A stingfied JWK with alphabetically sorted claims",
+            "description": "A stringified JWK with alphabetically sorted claims",
             "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
           },
           "dest": {
             "type": "string",
-            "description": "A stingfied JWK with alphabetically sorted claims",
+            "description": "A stringified JWK with alphabetically sorted claims",
             "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
           },
           "encAlg": {
@@ -4599,12 +4719,12 @@
             "properties": {
               "orig": {
                 "type": "string",
-                "description": "A stingfied JWK with alphabetically sorted claims",
+                "description": "A stringified JWK with alphabetically sorted claims",
                 "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
               },
               "dest": {
                 "type": "string",
-                "description": "A stingfied JWK with alphabetically sorted claims",
+                "description": "A stringified JWK with alphabetically sorted claims",
                 "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
               },
               "encAlg": {

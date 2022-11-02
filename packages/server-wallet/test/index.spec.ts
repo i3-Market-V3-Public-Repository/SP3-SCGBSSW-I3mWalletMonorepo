@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import { VerifiableCredential } from '@i3m/base-wallet'
+import { generateKeys, parseJwk } from '@i3m/non-repudiation-library'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import Debug from 'debug'
 import { homedir } from 'os'
@@ -156,10 +157,14 @@ describe('@i3m/server-wallet', function () {
   })
 
   describe('data sharing agreeements', function () {
-    let dataSharingAgreement: WalletComponents.Schemas.Contract['resource']
+    let dataSharingAgreement: WalletComponents.Schemas.DataSharingAgreement
+    let keyPair: {
+      publicJwk: string
+      privateJwk: string
+    }
 
     before(async function () {
-      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.Contract['resource']
+      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
 
       dataSharingAgreement.parties.providerDid = identities.alice
       dataSharingAgreement.parties.consumerDid = identities.bob
@@ -167,11 +172,20 @@ describe('@i3m/server-wallet', function () {
       const addresses = (await wallet.identityInfo({ did: identities.alice })).addresses
       dataSharingAgreement.dataExchangeAgreement.ledgerSignerAddress = ((addresses != null) && addresses.length > 0) ? addresses[0] : ''
 
+      const jwkPair = await generateKeys(dataSharingAgreement.dataExchangeAgreement.signingAlg)
+      keyPair = {
+        privateJwk: await parseJwk(jwkPair.privateJwk, true),
+        publicJwk: await parseJwk(jwkPair.publicJwk, true)
+      }
+      dataSharingAgreement.dataExchangeAgreement.orig = keyPair.publicJwk
+
       const { signatures, ...payload } = dataSharingAgreement
 
       dataSharingAgreement.signatures.providerSignature = (await wallet.identitySign({ did: identities.alice }, { type: 'JWT', data: { payload } })).signature
 
       dataSharingAgreement.signatures.consumerSignature = (await wallet.identitySign({ did: identities.bob }, { type: 'JWT', data: { payload } })).signature
+
+      debug(keyPair)
 
       debug(dataSharingAgreement)
     })
@@ -180,17 +194,43 @@ describe('@i3m/server-wallet', function () {
       const resource = await wallet.resourceCreate({
         type: 'Contract',
         identity: identities.alice,
-        resource: dataSharingAgreement
+        resource: {
+          dataSharingAgreement,
+          keyPair
+        }
       })
       debug('Resource with id: ', resource.id)
       chai.expect(resource.id).to.not.be.undefined
+    })
+
+    it('should not allow to store an data sharing agreement if the provided keyPair is not part of the exchange agreeement', async function () {
+      const dataSharingAgreementResource: WalletComponents.Schemas.Contract = {
+        type: 'Contract',
+        identity: identities.alice,
+        resource: {
+          dataSharingAgreement: { ...dataSharingAgreement, parties: { providerDid: 'sdaf', consumerDid: '' } },
+          keyPair
+        }
+      }
+      let error: Error = new Error('')
+      try {
+        await wallet.resourceCreate(dataSharingAgreementResource)
+      } catch (err) {
+        error = err as Error
+        debug('Resource not created: ', JSON.stringify(error, undefined, 2))
+      }
+
+      chai.expect(error.message).to.not.equal('')
     })
 
     it('should not allow to store an invalid data sharing agreement', async function () {
       const dataSharingAgreementResource: WalletComponents.Schemas.Contract = {
         type: 'Contract',
         identity: identities.alice,
-        resource: { ...dataSharingAgreement, parties: { providerDid: 'sdaf', consumerDid: '' } }
+        resource: {
+          dataSharingAgreement: { ...dataSharingAgreement, parties: { providerDid: 'sdaf', consumerDid: '' } },
+          keyPair
+        }
       }
       let error: Error = new Error('')
       try {
