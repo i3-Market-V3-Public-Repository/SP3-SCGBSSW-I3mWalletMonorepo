@@ -34,6 +34,9 @@ jobs:
       
       - name: node tests
         run: npm run test:node
+        env:
+          RPC_PROVIDER_URL: ${{ secrets.RPC_PROVIDER_URL }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
       - if: matrix.node-version == '16.x'
         name: browser tests
