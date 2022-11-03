@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -598,15 +598,6 @@
                             "type": "string",
                             "example": "Resource name"
                           },
-                          "parentResource": {
-                            "type": "string"
-                          },
-                          "identity": {
-                            "description": "a DID using the ethr resolver",
-                            "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                          },
                           "resource": {
                             "type": "object",
                             "properties": {
@@ -1146,15 +1137,6 @@
                             "type": "string",
                             "example": "Resource name"
                           },
-                          "parentResource": {
-                            "type": "string"
-                          },
-                          "identity": {
-                            "description": "a DID using the ethr resolver",
-                            "type": "string",
-                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                          },
                           "resource": {
                             "type": "string",
                             "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
@@ -1224,15 +1206,6 @@
                       "name": {
                         "type": "string",
                         "example": "Resource name"
-                      },
-                      "parentResource": {
-                        "type": "string"
-                      },
-                      "identity": {
-                        "description": "a DID using the ethr resolver",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
                         "type": "object",
@@ -1772,15 +1745,6 @@
                       "name": {
                         "type": "string",
                         "example": "Resource name"
-                      },
-                      "parentResource": {
-                        "type": "string"
-                      },
-                      "identity": {
-                        "description": "a DID using the ethr resolver",
-                        "type": "string",
-                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
                       },
                       "resource": {
                         "type": "string",
@@ -2443,15 +2407,6 @@
                   "type": "string",
                   "example": "Resource name"
                 },
-                "parentResource": {
-                  "type": "string"
-                },
-                "identity": {
-                  "description": "a DID using the ethr resolver",
-                  "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                  "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                },
                 "resource": {
                   "type": "object",
                   "properties": {
@@ -2991,15 +2946,6 @@
                   "type": "string",
                   "example": "Resource name"
                 },
-                "parentResource": {
-                  "type": "string"
-                },
-                "identity": {
-                  "description": "a DID using the ethr resolver",
-                  "type": "string",
-                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                  "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-                },
                 "resource": {
                   "type": "string",
                   "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
@@ -3029,15 +2975,6 @@
               "name": {
                 "type": "string",
                 "example": "Resource name"
-              },
-              "parentResource": {
-                "type": "string"
-              },
-              "identity": {
-                "description": "a DID using the ethr resolver",
-                "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
               },
               "resource": {
                 "type": "object",
@@ -3578,15 +3515,6 @@
                 "type": "string",
                 "example": "Resource name"
               },
-              "parentResource": {
-                "type": "string"
-              },
-              "identity": {
-                "description": "a DID using the ethr resolver",
-                "type": "string",
-                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
-              },
               "resource": {
                 "type": "string",
                 "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
@@ -3612,15 +3540,6 @@
           "name": {
             "type": "string",
             "example": "Resource name"
-          },
-          "parentResource": {
-            "type": "string"
-          },
-          "identity": {
-            "description": "a DID using the ethr resolver",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
             "type": "object",
@@ -4160,15 +4079,6 @@
           "name": {
             "type": "string",
             "example": "Resource name"
-          },
-          "parentResource": {
-            "type": "string"
-          },
-          "identity": {
-            "description": "a DID using the ethr resolver",
-            "type": "string",
-            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
-            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
           },
           "resource": {
             "type": "string",

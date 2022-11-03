@@ -1,7 +1,11 @@
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
 import { IIdentifier } from '@veramo/core';
 import { CanBePromise } from '../utils';
-export declare type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId;
+export declare type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & {
+    identity?: WalletComponents.Schemas.ObjectResource['identity'];
+} & {
+    parentResource?: WalletComponents.Schemas.ObjectResource['parentResource'];
+};
 export declare type VerifiableCredentialResource = Resource & {
     type: 'VerifiableCredential';
 };

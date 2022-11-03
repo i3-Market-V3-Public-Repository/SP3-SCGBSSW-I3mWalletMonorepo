@@ -1,6 +1,6 @@
 openapi: 3.0.2
 info:
-  version: 2.0.0
+  version: 2.0.1
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -385,9 +385,6 @@ paths:
                         name:
                           type: string
                           example: Resource name
-                        parentResource:
-                          type: string
-                        identity: *ref_0
                         resource:
                           type: object
                           properties:
@@ -773,9 +770,6 @@ paths:
                         name:
                           type: string
                           example: Resource name
-                        parentResource:
-                          type: string
-                        identity: *ref_0
                         resource:
                           type: string
                           pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$

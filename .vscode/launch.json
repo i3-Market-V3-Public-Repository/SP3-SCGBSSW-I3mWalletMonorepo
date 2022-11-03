@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Main Process",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/packages/wallet-desktop",
+      "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/electron",
+      "args" : ["./dist/main"],
+      "outputCapture": "std"
+    }
+  ]
+}

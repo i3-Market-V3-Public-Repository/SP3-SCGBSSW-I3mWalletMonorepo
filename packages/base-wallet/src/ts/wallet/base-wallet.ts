@@ -1,4 +1,5 @@
 import { WalletComponents, WalletPaths } from '@i3m/wallet-desktop-openapi/types'
+import { decodeJWS, jwsSignInput } from '../utils/jws'
 import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
 import { ethers } from 'ethers'
 import _ from 'lodash'
@@ -12,12 +13,12 @@ import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
-import { jwsSignInput } from '../utils/jws'
 import Veramo, { DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
 
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
+import { NrProofPayload, exchangeId } from '@i3m/non-repudiation-library'
 
 interface SdrClaim {
   claimType: string
@@ -691,7 +692,7 @@ export class BaseWallet<
       }
       case 'Contract': {
         const confirmation = await this.dialog.confirmation({
-          message: 'Do you want to add a contract into your wallet?'
+          message: `Do you want to add a contract signed by ${resource.resource.dataSharingAgreement.parties.providerDid} and ${resource.resource.dataSharingAgreement.parties.consumerDid} into your wallet?`
         })
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })
@@ -699,8 +700,9 @@ export class BaseWallet<
         break
       }
       case 'NonRepudiationProof': {
+        const decodedProof: NrProofPayload = decodeJWS(resource.resource).payload
         const confirmation = await this.dialog.confirmation({
-          message: 'Do you want to add a non repudiation proof into your wallet?'
+          message: `Do you want to add a non repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`
         })
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })

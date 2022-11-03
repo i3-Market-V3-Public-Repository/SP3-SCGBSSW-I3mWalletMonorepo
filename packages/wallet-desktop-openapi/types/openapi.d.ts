@@ -515,13 +515,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     /**
@@ -591,13 +584,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
         [name: string]: any
         /**
@@ -855,13 +841,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     export interface ResourceId {
@@ -882,13 +861,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
         [name: string]: any
         /**
@@ -1146,13 +1118,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }>
     export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
@@ -1282,13 +1247,6 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
         [name: string]: any
         /**
@@ -1708,13 +1666,6 @@ export namespace WalletPaths {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
         [name: string]: any
         /**
@@ -1972,13 +1923,6 @@ export namespace WalletPaths {
              * Resource name
              */
       name?: string
-      parentResource?: string
-      /**
-             * a DID using the ethr resolver
-             * example:
-             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-             */
-      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
     }
     export namespace Responses {
@@ -2029,13 +1973,6 @@ export namespace WalletPaths {
                  * Resource name
                  */
         name?: string
-        parentResource?: string
-        /**
-                 * a DID using the ethr resolver
-                 * example:
-                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                 */
-        identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
         resource: {
           [name: string]: any
           /**
@@ -2293,13 +2230,6 @@ export namespace WalletPaths {
                  * Resource name
                  */
         name?: string
-        parentResource?: string
-        /**
-                 * a DID using the ethr resolver
-                 * example:
-                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
-                 */
-        identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
         resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
       }>
       /**

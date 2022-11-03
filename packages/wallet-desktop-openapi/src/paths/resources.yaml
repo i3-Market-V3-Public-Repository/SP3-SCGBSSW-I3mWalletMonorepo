@@ -101,10 +101,6 @@ components:
         name:
           type: string
           example: 'Resource name'
-        parentResource:
-          type: string
-        identity:
-          $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
           type: object
           properties:
@@ -224,7 +220,6 @@ components:
           required:
             - dataSharingAgreement
             - keyPair
-
       required:
         - type
         - resource
@@ -242,10 +237,6 @@ components:
         name:
           type: string
           example: 'Resource name'
-        parentResource:
-          type: string
-        identity:
-          $ref: "../schema/identity.yaml#/components/schemas/did"
         resource:
           type: string
           pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
