@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import * as _pkg from '#pkg'
 import * as b64 from '@juanelas/base64'
 import { randBytes } from 'bigint-crypto-utils'
@@ -18,7 +20,9 @@ describe('verifyKeyPair for different signing algorithms', function () {
       // console.log({ priv1: privJwk });
 
       ({ privateJwk: privJwk2 } = await _pkg.generateKeys(signingAlg))
-      // console.log({ priv2: privJwk2 })
+
+      // console.log(JSON.stringify(pubJwk, undefined, 2))
+      // console.log(JSON.stringify(privJwk, undefined, 2))
 
       block = new Uint8Array(await randBytes(256))
     })
@@ -43,8 +47,12 @@ describe('verifyKeyPair for different signing algorithms', function () {
     })
 
     describe(`${signingAlg}: encrypt with public, decrypt with private`, function () {
+      let jwe: string
+      it('should encrypt with public key', async function () {
+        jwe = await _pkg.jweEncrypt(block, pubJwk, 'A256GCM')
+        chai.expect(jwe).to.not.be.undefined
+      })
       it('decrypted cipherblock should be equal to original plaintext block', async function () {
-        const jwe = await _pkg.jweEncrypt(block, pubJwk, 'A256GCM')
         const decryptedBlock = await _pkg.jweDecrypt(jwe, privJwk)
         chai.expect(b64.encode(block)).to.eq(b64.encode(decryptedBlock.plaintext))
       })
