@@ -73,6 +73,9 @@ components:
           minimum: 0
           exclusiveMinimum: true
           example: 180000
+        schema:
+          description: "A stringified JSON-LD schema describing the data format" 
+          type: string
 
     DataSharingAgreement:
       type: object

@@ -162,6 +162,10 @@ export namespace WalletComponents {
                          * 180000
                          */
             pooToSecretDelay: number
+            /**
+                         * A stringified JSON-LD schema describing the data format
+                         */
+            schema?: string
           }
           signatures: {
             /**
@@ -251,6 +255,10 @@ export namespace WalletComponents {
              */
       pooToSecretDelay: number
       /**
+             * A stringified JSON-LD schema describing the data format
+             */
+      schema?: string
+      /**
              * hash of the cipherblock in base64url with no padding
              */
       cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
@@ -321,6 +329,10 @@ export namespace WalletComponents {
              * 180000
              */
       pooToSecretDelay: number
+      /**
+             * A stringified JSON-LD schema describing the data format
+             */
+      schema?: string
     }
     /**
          * DataExchangeResource
@@ -394,6 +406,10 @@ export namespace WalletComponents {
                  * 180000
                  */
         pooToSecretDelay: number
+        /**
+                 * A stringified JSON-LD schema describing the data format
+                 */
+        schema?: string
         /**
                  * hash of the cipherblock in base64url with no padding
                  */
@@ -537,6 +553,10 @@ export namespace WalletComponents {
                  * 180000
                  */
         pooToSecretDelay: number
+        /**
+                 * A stringified JSON-LD schema describing the data format
+                 */
+        schema?: string
       }
       signatures: {
         /**
@@ -961,6 +981,10 @@ export namespace WalletComponents {
                          * 180000
                          */
             pooToSecretDelay: number
+            /**
+                         * A stringified JSON-LD schema describing the data format
+                         */
+            schema?: string
           }
           signatures: {
             /**
@@ -1074,6 +1098,10 @@ export namespace WalletComponents {
                  * 180000
                  */
         pooToSecretDelay: number
+        /**
+                 * A stringified JSON-LD schema describing the data format
+                 */
+        schema?: string
         /**
                  * hash of the cipherblock in base64url with no padding
                  */
@@ -1323,6 +1351,10 @@ export namespace WalletComponents {
                          * 180000
                          */
             pooToSecretDelay: number
+            /**
+                         * A stringified JSON-LD schema describing the data format
+                         */
+            schema?: string
           }
           signatures: {
             /**
@@ -1436,6 +1468,10 @@ export namespace WalletComponents {
                  * 180000
                  */
         pooToSecretDelay: number
+        /**
+                 * A stringified JSON-LD schema describing the data format
+                 */
+        schema?: string
         /**
                  * hash of the cipherblock in base64url with no padding
                  */
@@ -2213,6 +2249,10 @@ export namespace WalletPaths {
                          * 180000
                          */
             pooToSecretDelay: number
+            /**
+                         * A stringified JSON-LD schema describing the data format
+                         */
+            schema?: string
           }
           signatures: {
             /**
@@ -2326,6 +2366,10 @@ export namespace WalletPaths {
                  * 180000
                  */
         pooToSecretDelay: number
+        /**
+                 * A stringified JSON-LD schema describing the data format
+                 */
+        schema?: string
         /**
                  * hash of the cipherblock in base64url with no padding
                  */
@@ -2605,6 +2649,10 @@ export namespace WalletPaths {
                              * 180000
                              */
               pooToSecretDelay: number
+              /**
+                             * A stringified JSON-LD schema describing the data format
+                             */
+              schema?: string
             }
             signatures: {
               /**
@@ -2718,6 +2766,10 @@ export namespace WalletPaths {
                      * 180000
                      */
           pooToSecretDelay: number
+          /**
+                     * A stringified JSON-LD schema describing the data format
+                     */
+          schema?: string
           /**
                      * hash of the cipherblock in base64url with no padding
                      */
