@@ -197,7 +197,6 @@ if (!IS_BROWSER) {
         it('provider stores PoO in wallet', async function () {
           const resource = await providerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.provider,
             resource: poo.jws
           })
           chai.expect(resource.id).to.not.be.undefined
@@ -206,7 +205,6 @@ if (!IS_BROWSER) {
           // consumer stores agreement
           const resource = await consumerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.consumer,
             resource: poo.jws
           })
           chai.expect(resource.id).to.not.be.undefined
@@ -225,7 +223,6 @@ if (!IS_BROWSER) {
         it('provider stores PoR in wallet', async function () {
           const resource = await providerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.provider,
             resource: por.jws
           })
           chai.expect(resource.id).to.not.be.undefined
@@ -234,7 +231,6 @@ if (!IS_BROWSER) {
           // consumer stores agreement
           const resource = await consumerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.consumer,
             resource: por.jws
           })
           chai.expect(resource.id).to.not.be.undefined
@@ -255,7 +251,6 @@ if (!IS_BROWSER) {
         it('provider stores PoP in wallet', async function () {
           const resource = await providerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.provider,
             resource: pop.jws
           })
           chai.expect(resource.id).to.not.be.undefined
@@ -264,7 +259,6 @@ if (!IS_BROWSER) {
           // consumer stores agreement
           const resource = await consumerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.consumer,
             resource: pop.jws
           })
           chai.expect(resource.id).to.not.be.undefined

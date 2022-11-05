@@ -219,7 +219,6 @@ Steps for creating a token:
         it('consumer stores PoO in wallet', async function () {
           const resource = await consumerWallet.resourceCreate({
             type: 'NonRepudiationProof',
-            identity: dids.consumer,
             resource: poo.jws
           })
           chai.expect(resource.id).to.not.be.undefined
