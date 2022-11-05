@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-desktop-openapi",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "The API of the i3m-wallet desktop application",
   "main": "openapi.json",
   "exports": {
