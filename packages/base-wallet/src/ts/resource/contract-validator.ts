@@ -53,9 +53,6 @@ export const contractValidator: Validator<ContractResource> = async (resource, v
     const consSigVerificationErrors = await verifyDataSharingAgreementSignature(dataSharingAgreement, veramo, 'consumer')
     consSigVerificationErrors.forEach(err => { errors.push(err) })
 
-    // Let us change the resource name to something more human readable (instead of a uuid)
-    resource.name = `[${role}] ${dataSharingAgreement.dataOfferingDescription.title ?? dataSharingAgreement.dataOfferingDescription.dataOfferingId}`
-
     // Let us use a unique id that can be easily found. This way it can be easily linked to NR proofs
     resource.id = await digest(dataSharingAgreement.dataExchangeAgreement)
   } catch (error) {

@@ -16,11 +16,11 @@ import { displayDid } from '../utils/display-did'
 import Veramo, { DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
 
 import { exchangeId, NrProofPayload } from '@i3m/non-repudiation-library'
+import Debug from 'debug'
 import { digest } from 'object-sha'
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
-import Debug from 'debug'
 
 const debug = Debug('base-wallet:base-wallet.ts')
 
@@ -647,8 +647,8 @@ export class BaseWallet<
     let confirmation: boolean | undefined = true
     if (requestConfirmation) {
       confirmation = await this.dialog.confirmation({
-        message: 'Once deleted you will not be able to recover it. Proceed?',
-        acceptMsg: 'Ok',
+        message: 'Are you sure you want to delete this resource and all its children resources (if any)? This action cannot be undone',
+        acceptMsg: 'Delete',
         rejectMsg: 'Cancel'
       })
     }
@@ -671,8 +671,8 @@ export class BaseWallet<
    */
   async deleteIdentity (did: string): Promise<void> {
     const confirmation = await this.dialog.confirmation({
-      message: 'Once deleted you will not be able to recover it. Proceed?',
-      acceptMsg: 'Ok',
+      message: 'Are you sure you want to delete this identity and all its associated resources (if any)? This action cannot be undone',
+      acceptMsg: 'Delete',
       rejectMsg: 'Cancel'
     })
     if (confirmation === true) {
@@ -683,7 +683,7 @@ export class BaseWallet<
         .map(key => resourcesMap[key])
         .filter((resource) => resource.identity === did)
       for (const resource of resources) {
-        await this.deleteResource(resource.id)
+        await this.deleteResource(resource.id, false)
       }
     }
   }
@@ -761,8 +761,7 @@ export class BaseWallet<
             id,
             parentResource: await digest(dataExchangeAgreement),
             type: 'DataExchange',
-            resource: dataExchange,
-            name: 'DataExchange ' + id
+            resource: dataExchange
           }
           try {
             await this.setResource(dataExchangeResource)

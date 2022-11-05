@@ -23,7 +23,7 @@ function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<a
     item: resource,
     id: resourceId,
     type: 'resource',
-    text: resource.name ?? resource.id,
+    text: `[${resource.type}] ${resource.name ?? resource.id}`,
     icon: faQuestionCircle,
     parent,
     children: resourceChildren,
