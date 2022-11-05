@@ -1,4 +1,4 @@
-openapi: '3.0.2'
+openapi: '3.0.3'
 info:
   title: API Title
   version: '1.0'
@@ -58,20 +58,17 @@ components:
         pooToPorDelay:
           description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR"
           type: integer
-          minimum: 0
-          exclusiveMinimum: true
+          minimum: 1
           example: 10000
         pooToPopDelay:
           description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP"
           type: integer
-          minimum: 0
-          exclusiveMinimum: true
+          minimum: 1
           example: 20000
         pooToSecretDelay:
           description: "Maximum acceptable time between issued PoO and secret published on the ledger"
           type: integer
-          minimum: 0
-          exclusiveMinimum: true
+          minimum: 1
           example: 180000
         schema:
           description: "A stringified JSON-LD schema describing the data format" 

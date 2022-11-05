@@ -1,6 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
+import Ajv from 'ajv'
 import _ from 'lodash'
 import SwaggerParser from '@apidevtools/swagger-parser'
 import { OpenAPIV3 } from 'openapi-types'
@@ -75,6 +76,19 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 
   const dereferencedBundledSpec = await parser.dereference(bundledSpec) as OpenAPIV3.Document
 
+  const ajv = new Ajv()
+
+  if (dereferencedBundledSpec.components?.schemas !== undefined) {
+    for (const key in dereferencedBundledSpec.components.schemas) {
+      const schema = dereferencedBundledSpec.components.schemas[key]
+      const valid = ajv.validateSchema(schema)
+      if (valid === false) {
+        console.log(ajv.errors)
+        throw new Error('invalid schema')
+      }
+    }
+  }
+
   return {
     api: bundledSpec,
     dereferencedApi: dereferencedBundledSpec
@@ -82,19 +96,24 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 }
 
 const bundle = async (): Promise<void> => {
+  const jsonBundlePath = path.join(rootDir, pkgJson.main)
+  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
+  const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
+
+  fs.rmSync(jsonBundlePath, { force: true })
+  fs.rmSync(jsonDereferencedBundlePath, { force: true })
+  fs.rmSync(yamlBundlePath, { force: true })
+
   const { api, dereferencedApi } = await bundleSpec()
 
-  const jsonBundlePath = path.join(rootDir, pkgJson.main)
   api.info.version = pkgJson.version
   fs.writeFileSync(jsonBundlePath, JSON.stringify(api, null, 2))
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundlePath}`)
 
-  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
   dereferencedApi.info.version = pkgJson.version
   fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(api, null, 2))
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
 
-  const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
   fs.writeFileSync(yamlBundlePath, jsYaml.dump(api))
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec YAML bundle written to -> ${yamlBundlePath}`)
 }

@@ -1,6 +1,6 @@
-openapi: 3.0.2
+openapi: 3.0.3
 info:
-  version: 2.1.1
+  version: 2.1.2
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -696,24 +696,21 @@ paths:
                                         Maximum acceptable time in milliseconds
                                         between issued PoO and verified PoR
                                       type: integer
-                                      minimum: 0
-                                      exclusiveMinimum: true
+                                      minimum: 1
                                       example: 10000
                                     pooToPopDelay:
                                       description: >-
                                         Maximum acceptable time in milliseconds
                                         between issued PoO and issued PoP
                                       type: integer
-                                      minimum: 0
-                                      exclusiveMinimum: true
+                                      minimum: 1
                                       example: 20000
                                     pooToSecretDelay:
                                       description: >-
                                         Maximum acceptable time between issued
                                         PoO and secret published on the ledger
                                       type: integer
-                                      minimum: 0
-                                      exclusiveMinimum: true
+                                      minimum: 1
                                       example: 180000
                                     schema:
                                       description: >-
@@ -1135,10 +1132,10 @@ components:
         - data
     VerificationOutput: *ref_26
     ProviderData: *ref_27
-    ApiError: *ref_1
     EthereumAddress: *ref_3
     did: *ref_0
     IdentityData: *ref_28
+    ApiError: *ref_1
     CompactJWS: *ref_4
     DataExchangeAgreement: *ref_5
     DataSharingAgreement: *ref_29

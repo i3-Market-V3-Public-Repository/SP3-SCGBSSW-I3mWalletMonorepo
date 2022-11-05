@@ -1,7 +1,7 @@
 {
-  "openapi": "3.0.2",
+  "openapi": "3.0.3",
   "info": {
-    "version": "2.1.1",
+    "version": "2.1.2",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -1051,22 +1051,19 @@
                                       "pooToPorDelay": {
                                         "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "exclusiveMinimum": true,
+                                        "minimum": 1,
                                         "example": 10000
                                       },
                                       "pooToPopDelay": {
                                         "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "exclusiveMinimum": true,
+                                        "minimum": 1,
                                         "example": 20000
                                       },
                                       "pooToSecretDelay": {
                                         "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                                         "type": "integer",
-                                        "minimum": 0,
-                                        "exclusiveMinimum": true,
+                                        "minimum": 1,
                                         "example": 180000
                                       },
                                       "schema": {
@@ -1232,22 +1229,19 @@
                                   "pooToPorDelay": {
                                     "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 10000
                                   },
                                   "pooToPopDelay": {
                                     "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 20000
                                   },
                                   "pooToSecretDelay": {
                                     "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 180000
                                   },
                                   "schema": {
@@ -1801,22 +1795,19 @@
                                   "pooToPorDelay": {
                                     "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 10000
                                   },
                                   "pooToPopDelay": {
                                     "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 20000
                                   },
                                   "pooToSecretDelay": {
                                     "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                                     "type": "integer",
-                                    "minimum": 0,
-                                    "exclusiveMinimum": true,
+                                    "minimum": 1,
                                     "example": 180000
                                   },
                                   "schema": {
@@ -1982,22 +1973,19 @@
                               "pooToPorDelay": {
                                 "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                                 "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
+                                "minimum": 1,
                                 "example": 10000
                               },
                               "pooToPopDelay": {
                                 "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                                 "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
+                                "minimum": 1,
                                 "example": 20000
                               },
                               "pooToSecretDelay": {
                                 "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                                 "type": "integer",
-                                "minimum": 0,
-                                "exclusiveMinimum": true,
+                                "minimum": 1,
                                 "example": 180000
                               },
                               "schema": {
@@ -3142,22 +3130,19 @@
                             "pooToPorDelay": {
                               "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                               "type": "integer",
-                              "minimum": 0,
-                              "exclusiveMinimum": true,
+                              "minimum": 1,
                               "example": 10000
                             },
                             "pooToPopDelay": {
                               "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                               "type": "integer",
-                              "minimum": 0,
-                              "exclusiveMinimum": true,
+                              "minimum": 1,
                               "example": 20000
                             },
                             "pooToSecretDelay": {
                               "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                               "type": "integer",
-                              "minimum": 0,
-                              "exclusiveMinimum": true,
+                              "minimum": 1,
                               "example": 180000
                             },
                             "schema": {
@@ -3323,22 +3308,19 @@
                         "pooToPorDelay": {
                           "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                           "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
+                          "minimum": 1,
                           "example": 10000
                         },
                         "pooToPopDelay": {
                           "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                           "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
+                          "minimum": 1,
                           "example": 20000
                         },
                         "pooToSecretDelay": {
                           "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                           "type": "integer",
-                          "minimum": 0,
-                          "exclusiveMinimum": true,
+                          "minimum": 1,
                           "example": 180000
                         },
                         "schema": {
@@ -3852,22 +3834,19 @@
                           "pooToPorDelay": {
                             "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                             "type": "integer",
-                            "minimum": 0,
-                            "exclusiveMinimum": true,
+                            "minimum": 1,
                             "example": 10000
                           },
                           "pooToPopDelay": {
                             "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                             "type": "integer",
-                            "minimum": 0,
-                            "exclusiveMinimum": true,
+                            "minimum": 1,
                             "example": 20000
                           },
                           "pooToSecretDelay": {
                             "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                             "type": "integer",
-                            "minimum": 0,
-                            "exclusiveMinimum": true,
+                            "minimum": 1,
                             "example": 180000
                           },
                           "schema": {
@@ -4033,22 +4012,19 @@
                       "pooToPorDelay": {
                         "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 10000
                       },
                       "pooToPopDelay": {
                         "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 20000
                       },
                       "pooToSecretDelay": {
                         "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 180000
                       },
                       "schema": {
@@ -4558,22 +4534,19 @@
                       "pooToPorDelay": {
                         "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 10000
                       },
                       "pooToPopDelay": {
                         "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 20000
                       },
                       "pooToSecretDelay": {
                         "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                         "type": "integer",
-                        "minimum": 0,
-                        "exclusiveMinimum": true,
+                        "minimum": 1,
                         "example": 180000
                       },
                       "schema": {
@@ -4716,22 +4689,19 @@
                   "pooToPorDelay": {
                     "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                     "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
+                    "minimum": 1,
                     "example": 10000
                   },
                   "pooToPopDelay": {
                     "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                     "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
+                    "minimum": 1,
                     "example": 20000
                   },
                   "pooToSecretDelay": {
                     "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                     "type": "integer",
-                    "minimum": 0,
-                    "exclusiveMinimum": true,
+                    "minimum": 1,
                     "example": 180000
                   },
                   "schema": {
@@ -4928,23 +4898,6 @@
         },
         "additionalProperties": true
       },
-      "ApiError": {
-        "type": "object",
-        "title": "Error",
-        "required": [
-          "code",
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      },
       "EthereumAddress": {
         "description": "Ethereum Address in EIP-55 format (with checksum)",
         "type": "string",
@@ -4989,6 +4942,23 @@
         "required": [
           "did"
         ]
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
       },
       "CompactJWS": {
         "title": "CompactJWS",
@@ -5061,22 +5031,19 @@
           "pooToPorDelay": {
             "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
             "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
+            "minimum": 1,
             "example": 10000
           },
           "pooToPopDelay": {
             "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
             "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
+            "minimum": 1,
             "example": 20000
           },
           "pooToSecretDelay": {
             "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
             "type": "integer",
-            "minimum": 0,
-            "exclusiveMinimum": true,
+            "minimum": 1,
             "example": 180000
           },
           "schema": {
@@ -5389,22 +5356,19 @@
               "pooToPorDelay": {
                 "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 10000
               },
               "pooToPopDelay": {
                 "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 20000
               },
               "pooToSecretDelay": {
                 "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 180000
               },
               "schema": {
@@ -5502,22 +5466,19 @@
               "pooToPorDelay": {
                 "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 10000
               },
               "pooToPopDelay": {
                 "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 20000
               },
               "pooToSecretDelay": {
                 "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
                 "type": "integer",
-                "minimum": 0,
-                "exclusiveMinimum": true,
+                "minimum": 1,
                 "example": 180000
               },
               "schema": {
