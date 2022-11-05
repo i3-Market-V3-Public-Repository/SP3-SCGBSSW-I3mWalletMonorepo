@@ -18,6 +18,9 @@ export declare type ContractResource = Resource & {
 export declare type NonRepudiationProofResource = Resource & {
     type: 'NonRepudiationProof';
 };
+export declare type DataExchangeResource = Resource & {
+    type: 'DataExchange';
+};
 export declare type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource'];
 export declare type Contract = WalletComponents.Schemas.Contract['resource'];
 export declare type Object = WalletComponents.Schemas.ObjectResource['resource'];

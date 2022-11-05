@@ -88,6 +88,7 @@ components:
         - $ref: "#/components/schemas/ObjectResource"
         - $ref: "#/components/schemas/Contract"
         - $ref: "#/components/schemas/NonRepudiationProof"
+        - $ref: "#/components/schemas/DataExchangeResource"
 
     VerifiableCredential:
       title: VerifiableCredential
@@ -200,7 +201,7 @@ components:
           type: object
           properties:
             dataSharingAgreement:
-              $ref: "../schema/dataSharingAgreement.yaml#/components/schemas/dataSharingAgreement"
+              $ref: "../schema/dataSharingAgreement.yaml#/components/schemas/DataSharingAgreement"
             keyPair:
               type: object
               properties:
@@ -224,12 +225,29 @@ components:
         - type
         - resource
 
+    DataExchangeResource:
+      title: DataExchangeResource
+      type: object
+      properties:
+        type:
+          $ref:  "#/components/schemas/ResourceType"
+          example: DataExchange
+          enum:
+            - DataExchange
+        name:
+          type: string
+          example: 'Resource name'
+        resource:
+          $ref: '../schema/dataExchange.yaml#/components/schemas/DataExchange'
+      required:
+        - type
+        - resource
+      
     NonRepudiationProof:
       title: NonRepudiationProof
       type: object
       properties:
         type:
-          type: string
           $ref:  "#/components/schemas/ResourceType"
           example: NonRepudiationProof
           enum:
@@ -238,8 +256,8 @@ components:
           type: string
           example: 'Resource name'
         resource:
-          type: string
-          pattern: ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+          $ref: "../schema/jws.yaml#/components/schemas/CompactJWS"
+          description: a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
       required:
         - type
         - resource
@@ -258,4 +276,5 @@ components:
         - VerifiableCredential
         - Object
         - Contract
+        - DataExchange
         - NonRepudiationProof

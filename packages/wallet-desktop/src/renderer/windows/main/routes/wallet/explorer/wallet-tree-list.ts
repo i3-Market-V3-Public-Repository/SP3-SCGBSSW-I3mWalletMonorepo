@@ -1,9 +1,10 @@
-import { faWallet, faUser, faAddressCard, faCode, faFileSignature, faQuestionCircle, faReceipt } from '@fortawesome/free-solid-svg-icons'
+import { faAddressCard, faCode, faFileSignature, faQuestionCircle, faReceipt, faRightLeft, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3m/base-wallet'
 
-import { SharedMemory, selectWalletAction, createIdentityAction, exportResourceAction, importResourceAction, deleteResourceAction, deleteIdentityAction } from '@wallet/lib'
+import { createIdentityAction, deleteIdentityAction, deleteResourceAction, exportResourceAction, importResourceAction, selectWalletAction, SharedMemory } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
-import { InterfaceObject, TreeListItem } from '@wallet/renderer/components'
+import { InterfaceObject, Menu, TreeListItem } from '@wallet/renderer/components'
+import { ContextMenuItem } from '@wallet/renderer/components/context-menu/context-menu-item'
 
 interface TreeListProps {
   wallets: string[]
@@ -41,6 +42,47 @@ function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<a
 }
 
 function getResourceProperties (resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
+  const menuCopyItems: ContextMenuItem[] = [
+    {
+      type: 'button',
+      text: 'Copy ID',
+      async onClick () {
+        await navigator.clipboard.writeText(resource.id)
+      }
+    },
+    {
+      type: 'button',
+      text: 'Copy resource',
+      async onClick () {
+        await navigator.clipboard.writeText(JSON.stringify(resource, undefined, 2))
+      }
+    }
+  ]
+  const menuExportItems: ContextMenuItem[] = [{
+    type: 'button',
+    text: 'Export...',
+    onClick () {
+      dispatch(exportResourceAction.create(resource.id))
+    }
+  }]
+  const menuDeleteItems: ContextMenuItem[] = [{
+    type: 'button',
+    text: 'Delete',
+    async onClick () {
+      dispatch(deleteResourceAction.create(resource.id))
+    }
+  }]
+
+  const menu: Menu = {
+    items: [
+      ...menuCopyItems,
+      { type: 'separator' },
+      ...menuExportItems,
+      { type: 'separator' },
+      ...menuDeleteItems
+    ]
+  }
+
   switch (resource.type) {
     case 'VerifiableCredential':
       return {
@@ -49,112 +91,30 @@ function getResourceProperties (resource: Resource, dispatch: ActionDispatcher):
           .keys(resource.resource.credentialSubject)
           .filter((key) => key !== 'id')
           .join(', '),
-
-        menu: {
-          items: [{
-            type: 'button',
-            text: 'Copy ID',
-            async onClick () {
-              await navigator.clipboard.writeText(resource.id)
-            }
-          }, {
-            type: 'button',
-            text: 'Copy credential',
-            async onClick () {
-              await navigator.clipboard.writeText(JSON.stringify(resource, undefined, 2))
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Export...',
-            onClick () {
-              dispatch(exportResourceAction.create(resource.id))
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Delete',
-            async onClick () {
-              dispatch(deleteResourceAction.create(resource.id))
-            }
-          }]
-        }
+        menu
       }
 
     case 'Object':
       return {
         icon: faCode,
-        menu: {
-          items: [{
-            type: 'button',
-            text: 'Copy ID',
-            async onClick () {
-              await navigator.clipboard.writeText(resource.id)
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Export...',
-            onClick () {
-              dispatch(exportResourceAction.create(resource.id))
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Delete',
-            async onClick () {
-              dispatch(deleteResourceAction.create(resource.id))
-            }
-          }]
-        }
+        menu
       }
 
     case 'Contract':
       return {
         icon: faFileSignature,
-        menu: {
-          items: [{
-            type: 'button',
-            text: 'Copy ID',
-            async onClick () {
-              await navigator.clipboard.writeText(resource.id)
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Export...',
-            onClick () {
-              dispatch(exportResourceAction.create(resource.id))
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Delete',
-            async onClick () {
-              dispatch(deleteResourceAction.create(resource.id))
-            }
-          }]
-        }
+        menu
       }
-
+    case 'DataExchange':
+      return {
+        icon: faRightLeft,
+        menu
+      }
+      
     case 'NonRepudiationProof':
       return {
         icon: faReceipt,
-        menu: {
-          items: [{
-            type: 'button',
-            text: 'Copy ID',
-            async onClick () {
-              await navigator.clipboard.writeText(resource.id)
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Export...',
-            onClick () {
-              dispatch(exportResourceAction.create(resource.id))
-            }
-          }, { type: 'separator' }, {
-            type: 'button',
-            text: 'Delete',
-            async onClick () {
-              dispatch(deleteResourceAction.create(resource.id))
-            }
-          }]
-        }
+        menu
       }
   }
 

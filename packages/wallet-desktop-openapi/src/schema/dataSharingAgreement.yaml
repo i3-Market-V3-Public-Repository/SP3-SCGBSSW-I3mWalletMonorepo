@@ -17,7 +17,7 @@ components:
       type: string
       pattern: '^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$'
     
-    dataExchangeAgreement:
+    DataExchangeAgreement:
       type: object
       required:
       - orig
@@ -74,7 +74,7 @@ components:
           exclusiveMinimum: true
           example: 180000
 
-    dataSharingAgreement:
+    DataSharingAgreement:
       type: object
       required:
       - dataOfferingDescription
@@ -240,7 +240,7 @@ components:
                 hasPriceFree:
                   type: boolean
         dataExchangeAgreement:
-          $ref: "#/components/schemas/dataExchangeAgreement"
+          $ref: "#/components/schemas/DataExchangeAgreement"
         signatures:
           type: object
           required:

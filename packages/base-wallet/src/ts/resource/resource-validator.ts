@@ -1,6 +1,7 @@
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import Veramo from '../veramo'
 import { contractValidator } from './contract-validator'
+import { dataExchangeValidator } from './dataExchange-validator'
 import { nrpValidator } from './nrp-validator'
 import { objectValidator } from './object-validator'
 import { verifiableClaimValidator } from './vc-validator'
@@ -26,6 +27,7 @@ export class ResourceValidator {
     this.setValidator('VerifiableCredential', verifiableClaimValidator)
     this.setValidator('Object', objectValidator)
     this.setValidator('Contract', contractValidator)
+    this.setValidator('DataExchange', dataExchangeValidator)
     this.setValidator('NonRepudiationProof', nrpValidator)
   }
 

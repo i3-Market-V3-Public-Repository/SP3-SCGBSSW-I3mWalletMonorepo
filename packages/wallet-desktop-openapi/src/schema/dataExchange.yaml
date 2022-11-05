@@ -1,0 +1,36 @@
+openapi: '3.0.2'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    DataExchange:
+      allOf:
+        - $ref: './dataSharingAgreement.yaml#/components/schemas/DataExchangeAgreement'
+        - type: object
+          properties:
+            cipherblockDgst:
+              type: string
+              description: hash of the cipherblock in base64url with no padding
+              pattern: '^[a-zA-Z0-9_-]+$'
+            blockCommitment:
+              type: string
+              description: hash of the plaintext block in base64url with no padding
+              pattern: '^[a-zA-Z0-9_-]+$'
+            secretCommitment:
+              type: string
+              description: ash of the secret that can be used to decrypt the block in base64url with no padding
+              pattern: '^[a-zA-Z0-9_-]+$'
+          required:
+            - cipherblockDgst
+            - blockCommitment
+            - secretCommitment
+            

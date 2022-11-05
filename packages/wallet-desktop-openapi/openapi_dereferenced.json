@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.2",
   "info": {
-    "version": "2.0.1",
+    "version": "2.0.2",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -553,6 +553,7 @@
                 "VerifiableCredential",
                 "Object",
                 "Contract",
+                "DataExchange",
                 "NonRepudiationProof"
               ]
             },
@@ -1127,7 +1128,6 @@
                         "type": "object",
                         "properties": {
                           "type": {
-                            "type": "string",
                             "example": "NonRepudiationProof",
                             "enum": [
                               "NonRepudiationProof"
@@ -1138,8 +1138,142 @@
                             "example": "Resource name"
                           },
                           "resource": {
+                            "description": "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "resource"
+                        ]
+                      },
+                      {
+                        "title": "DataExchangeResource",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "example": "DataExchange",
+                            "enum": [
+                              "DataExchange"
+                            ]
+                          },
+                          "name": {
                             "type": "string",
-                            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+                            "example": "Resource name"
+                          },
+                          "resource": {
+                            "allOf": [
+                              {
+                                "type": "object",
+                                "required": [
+                                  "orig",
+                                  "dest",
+                                  "encAlg",
+                                  "signingAlg",
+                                  "hashAlg",
+                                  "ledgerContractAddress",
+                                  "ledgerSignerAddress",
+                                  "pooToPorDelay",
+                                  "pooToPopDelay",
+                                  "pooToSecretDelay"
+                                ],
+                                "properties": {
+                                  "orig": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                                  },
+                                  "dest": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                                  },
+                                  "encAlg": {
+                                    "type": "string",
+                                    "enum": [
+                                      "A128GCM",
+                                      "A256GCM"
+                                    ],
+                                    "example": "A256GCM"
+                                  },
+                                  "signingAlg": {
+                                    "type": "string",
+                                    "enum": [
+                                      "ES256",
+                                      "ES384",
+                                      "ES512"
+                                    ],
+                                    "example": "ES256"
+                                  },
+                                  "hashAlg": {
+                                    "type": "string",
+                                    "enum": [
+                                      "SHA-256",
+                                      "SHA-384",
+                                      "SHA-512"
+                                    ],
+                                    "example": "SHA-256"
+                                  },
+                                  "ledgerContractAddress": {
+                                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                    "type": "string",
+                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                  },
+                                  "ledgerSignerAddress": {
+                                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                    "type": "string",
+                                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                                  },
+                                  "pooToPorDelay": {
+                                    "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 10000
+                                  },
+                                  "pooToPopDelay": {
+                                    "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 20000
+                                  },
+                                  "pooToSecretDelay": {
+                                    "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                                    "type": "integer",
+                                    "minimum": 0,
+                                    "exclusiveMinimum": true,
+                                    "example": 180000
+                                  }
+                                }
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "cipherblockDgst": {
+                                    "type": "string",
+                                    "description": "hash of the cipherblock in base64url with no padding",
+                                    "pattern": "^[a-zA-Z0-9_-]+$"
+                                  },
+                                  "blockCommitment": {
+                                    "type": "string",
+                                    "description": "hash of the plaintext block in base64url with no padding",
+                                    "pattern": "^[a-zA-Z0-9_-]+$"
+                                  },
+                                  "secretCommitment": {
+                                    "type": "string",
+                                    "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                                    "pattern": "^[a-zA-Z0-9_-]+$"
+                                  }
+                                },
+                                "required": [
+                                  "cipherblockDgst",
+                                  "blockCommitment",
+                                  "secretCommitment"
+                                ]
+                              }
+                            ]
                           }
                         },
                         "required": [
@@ -1736,7 +1870,6 @@
                     "type": "object",
                     "properties": {
                       "type": {
-                        "type": "string",
                         "example": "NonRepudiationProof",
                         "enum": [
                           "NonRepudiationProof"
@@ -1747,8 +1880,142 @@
                         "example": "Resource name"
                       },
                       "resource": {
+                        "description": "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "resource"
+                    ]
+                  },
+                  {
+                    "title": "DataExchangeResource",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "example": "DataExchange",
+                        "enum": [
+                          "DataExchange"
+                        ]
+                      },
+                      "name": {
                         "type": "string",
-                        "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+                        "example": "Resource name"
+                      },
+                      "resource": {
+                        "allOf": [
+                          {
+                            "type": "object",
+                            "required": [
+                              "orig",
+                              "dest",
+                              "encAlg",
+                              "signingAlg",
+                              "hashAlg",
+                              "ledgerContractAddress",
+                              "ledgerSignerAddress",
+                              "pooToPorDelay",
+                              "pooToPopDelay",
+                              "pooToSecretDelay"
+                            ],
+                            "properties": {
+                              "orig": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                              },
+                              "dest": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                              },
+                              "encAlg": {
+                                "type": "string",
+                                "enum": [
+                                  "A128GCM",
+                                  "A256GCM"
+                                ],
+                                "example": "A256GCM"
+                              },
+                              "signingAlg": {
+                                "type": "string",
+                                "enum": [
+                                  "ES256",
+                                  "ES384",
+                                  "ES512"
+                                ],
+                                "example": "ES256"
+                              },
+                              "hashAlg": {
+                                "type": "string",
+                                "enum": [
+                                  "SHA-256",
+                                  "SHA-384",
+                                  "SHA-512"
+                                ],
+                                "example": "SHA-256"
+                              },
+                              "ledgerContractAddress": {
+                                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                "type": "string",
+                                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                              },
+                              "ledgerSignerAddress": {
+                                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                                "type": "string",
+                                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                              },
+                              "pooToPorDelay": {
+                                "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 10000
+                              },
+                              "pooToPopDelay": {
+                                "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 20000
+                              },
+                              "pooToSecretDelay": {
+                                "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                                "type": "integer",
+                                "minimum": 0,
+                                "exclusiveMinimum": true,
+                                "example": 180000
+                              }
+                            }
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "cipherblockDgst": {
+                                "type": "string",
+                                "description": "hash of the cipherblock in base64url with no padding",
+                                "pattern": "^[a-zA-Z0-9_-]+$"
+                              },
+                              "blockCommitment": {
+                                "type": "string",
+                                "description": "hash of the plaintext block in base64url with no padding",
+                                "pattern": "^[a-zA-Z0-9_-]+$"
+                              },
+                              "secretCommitment": {
+                                "type": "string",
+                                "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                                "pattern": "^[a-zA-Z0-9_-]+$"
+                              }
+                            },
+                            "required": [
+                              "cipherblockDgst",
+                              "blockCommitment",
+                              "secretCommitment"
+                            ]
+                          }
+                        ]
                       }
                     },
                     "required": [
@@ -2936,7 +3203,6 @@
               "type": "object",
               "properties": {
                 "type": {
-                  "type": "string",
                   "example": "NonRepudiationProof",
                   "enum": [
                     "NonRepudiationProof"
@@ -2947,8 +3213,142 @@
                   "example": "Resource name"
                 },
                 "resource": {
+                  "description": "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+                }
+              },
+              "required": [
+                "type",
+                "resource"
+              ]
+            },
+            {
+              "title": "DataExchangeResource",
+              "type": "object",
+              "properties": {
+                "type": {
+                  "example": "DataExchange",
+                  "enum": [
+                    "DataExchange"
+                  ]
+                },
+                "name": {
                   "type": "string",
-                  "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+                  "example": "Resource name"
+                },
+                "resource": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "orig",
+                        "dest",
+                        "encAlg",
+                        "signingAlg",
+                        "hashAlg",
+                        "ledgerContractAddress",
+                        "ledgerSignerAddress",
+                        "pooToPorDelay",
+                        "pooToPopDelay",
+                        "pooToSecretDelay"
+                      ],
+                      "properties": {
+                        "orig": {
+                          "type": "string",
+                          "description": "A stringified JWK with alphabetically sorted claims",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                        },
+                        "dest": {
+                          "type": "string",
+                          "description": "A stringified JWK with alphabetically sorted claims",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                        },
+                        "encAlg": {
+                          "type": "string",
+                          "enum": [
+                            "A128GCM",
+                            "A256GCM"
+                          ],
+                          "example": "A256GCM"
+                        },
+                        "signingAlg": {
+                          "type": "string",
+                          "enum": [
+                            "ES256",
+                            "ES384",
+                            "ES512"
+                          ],
+                          "example": "ES256"
+                        },
+                        "hashAlg": {
+                          "type": "string",
+                          "enum": [
+                            "SHA-256",
+                            "SHA-384",
+                            "SHA-512"
+                          ],
+                          "example": "SHA-256"
+                        },
+                        "ledgerContractAddress": {
+                          "description": "Ethereum Address in EIP-55 format (with checksum)",
+                          "type": "string",
+                          "pattern": "^0x([0-9A-Fa-f]){40}$",
+                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                        },
+                        "ledgerSignerAddress": {
+                          "description": "Ethereum Address in EIP-55 format (with checksum)",
+                          "type": "string",
+                          "pattern": "^0x([0-9A-Fa-f]){40}$",
+                          "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                        },
+                        "pooToPorDelay": {
+                          "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 10000
+                        },
+                        "pooToPopDelay": {
+                          "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 20000
+                        },
+                        "pooToSecretDelay": {
+                          "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                          "type": "integer",
+                          "minimum": 0,
+                          "exclusiveMinimum": true,
+                          "example": 180000
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "cipherblockDgst": {
+                          "type": "string",
+                          "description": "hash of the cipherblock in base64url with no padding",
+                          "pattern": "^[a-zA-Z0-9_-]+$"
+                        },
+                        "blockCommitment": {
+                          "type": "string",
+                          "description": "hash of the plaintext block in base64url with no padding",
+                          "pattern": "^[a-zA-Z0-9_-]+$"
+                        },
+                        "secretCommitment": {
+                          "type": "string",
+                          "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                          "pattern": "^[a-zA-Z0-9_-]+$"
+                        }
+                      },
+                      "required": [
+                        "cipherblockDgst",
+                        "blockCommitment",
+                        "secretCommitment"
+                      ]
+                    }
+                  ]
                 }
               },
               "required": [
@@ -3505,7 +3905,6 @@
             "type": "object",
             "properties": {
               "type": {
-                "type": "string",
                 "example": "NonRepudiationProof",
                 "enum": [
                   "NonRepudiationProof"
@@ -3516,8 +3915,142 @@
                 "example": "Resource name"
               },
               "resource": {
+                "description": "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+              }
+            },
+            "required": [
+              "type",
+              "resource"
+            ]
+          },
+          {
+            "title": "DataExchangeResource",
+            "type": "object",
+            "properties": {
+              "type": {
+                "example": "DataExchange",
+                "enum": [
+                  "DataExchange"
+                ]
+              },
+              "name": {
                 "type": "string",
-                "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+                "example": "Resource name"
+              },
+              "resource": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "orig",
+                      "dest",
+                      "encAlg",
+                      "signingAlg",
+                      "hashAlg",
+                      "ledgerContractAddress",
+                      "ledgerSignerAddress",
+                      "pooToPorDelay",
+                      "pooToPopDelay",
+                      "pooToSecretDelay"
+                    ],
+                    "properties": {
+                      "orig": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                      },
+                      "dest": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                      },
+                      "encAlg": {
+                        "type": "string",
+                        "enum": [
+                          "A128GCM",
+                          "A256GCM"
+                        ],
+                        "example": "A256GCM"
+                      },
+                      "signingAlg": {
+                        "type": "string",
+                        "enum": [
+                          "ES256",
+                          "ES384",
+                          "ES512"
+                        ],
+                        "example": "ES256"
+                      },
+                      "hashAlg": {
+                        "type": "string",
+                        "enum": [
+                          "SHA-256",
+                          "SHA-384",
+                          "SHA-512"
+                        ],
+                        "example": "SHA-256"
+                      },
+                      "ledgerContractAddress": {
+                        "description": "Ethereum Address in EIP-55 format (with checksum)",
+                        "type": "string",
+                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                      },
+                      "ledgerSignerAddress": {
+                        "description": "Ethereum Address in EIP-55 format (with checksum)",
+                        "type": "string",
+                        "pattern": "^0x([0-9A-Fa-f]){40}$",
+                        "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                      },
+                      "pooToPorDelay": {
+                        "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 10000
+                      },
+                      "pooToPopDelay": {
+                        "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 20000
+                      },
+                      "pooToSecretDelay": {
+                        "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "example": 180000
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "cipherblockDgst": {
+                        "type": "string",
+                        "description": "hash of the cipherblock in base64url with no padding",
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      },
+                      "blockCommitment": {
+                        "type": "string",
+                        "description": "hash of the plaintext block in base64url with no padding",
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      },
+                      "secretCommitment": {
+                        "type": "string",
+                        "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                        "pattern": "^[a-zA-Z0-9_-]+$"
+                      }
+                    },
+                    "required": [
+                      "cipherblockDgst",
+                      "blockCommitment",
+                      "secretCommitment"
+                    ]
+                  }
+                ]
               }
             },
             "required": [
@@ -4065,12 +4598,146 @@
           "resource"
         ]
       },
+      "DataExchangeResource": {
+        "title": "DataExchangeResource",
+        "type": "object",
+        "properties": {
+          "type": {
+            "example": "DataExchange",
+            "enum": [
+              "DataExchange"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
+          "resource": {
+            "allOf": [
+              {
+                "type": "object",
+                "required": [
+                  "orig",
+                  "dest",
+                  "encAlg",
+                  "signingAlg",
+                  "hashAlg",
+                  "ledgerContractAddress",
+                  "ledgerSignerAddress",
+                  "pooToPorDelay",
+                  "pooToPopDelay",
+                  "pooToSecretDelay"
+                ],
+                "properties": {
+                  "orig": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+                  },
+                  "dest": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+                  },
+                  "encAlg": {
+                    "type": "string",
+                    "enum": [
+                      "A128GCM",
+                      "A256GCM"
+                    ],
+                    "example": "A256GCM"
+                  },
+                  "signingAlg": {
+                    "type": "string",
+                    "enum": [
+                      "ES256",
+                      "ES384",
+                      "ES512"
+                    ],
+                    "example": "ES256"
+                  },
+                  "hashAlg": {
+                    "type": "string",
+                    "enum": [
+                      "SHA-256",
+                      "SHA-384",
+                      "SHA-512"
+                    ],
+                    "example": "SHA-256"
+                  },
+                  "ledgerContractAddress": {
+                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                    "type": "string",
+                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                  },
+                  "ledgerSignerAddress": {
+                    "description": "Ethereum Address in EIP-55 format (with checksum)",
+                    "type": "string",
+                    "pattern": "^0x([0-9A-Fa-f]){40}$",
+                    "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+                  },
+                  "pooToPorDelay": {
+                    "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 10000
+                  },
+                  "pooToPopDelay": {
+                    "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 20000
+                  },
+                  "pooToSecretDelay": {
+                    "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                    "type": "integer",
+                    "minimum": 0,
+                    "exclusiveMinimum": true,
+                    "example": 180000
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "cipherblockDgst": {
+                    "type": "string",
+                    "description": "hash of the cipherblock in base64url with no padding",
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "blockCommitment": {
+                    "type": "string",
+                    "description": "hash of the plaintext block in base64url with no padding",
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  },
+                  "secretCommitment": {
+                    "type": "string",
+                    "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                    "pattern": "^[a-zA-Z0-9_-]+$"
+                  }
+                },
+                "required": [
+                  "cipherblockDgst",
+                  "blockCommitment",
+                  "secretCommitment"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
       "NonRepudiationProof": {
         "title": "NonRepudiationProof",
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
             "example": "NonRepudiationProof",
             "enum": [
               "NonRepudiationProof"
@@ -4081,8 +4748,7 @@
             "example": "Resource name"
           },
           "resource": {
-            "type": "string",
-            "pattern": "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+            "description": "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
           }
         },
         "required": [
@@ -4107,6 +4773,7 @@
           "VerifiableCredential",
           "Object",
           "Contract",
+          "DataExchange",
           "NonRepudiationProof"
         ]
       },
@@ -4288,7 +4955,7 @@
         "type": "string",
         "pattern": "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
       },
-      "dataExchangeAgreement": {
+      "DataExchangeAgreement": {
         "type": "object",
         "required": [
           "orig",
@@ -4374,7 +5041,7 @@
           }
         }
       },
-      "dataSharingAgreement": {
+      "DataSharingAgreement": {
         "type": "object",
         "required": [
           "dataOfferingDescription",
@@ -4718,6 +5385,121 @@
             }
           }
         }
+      },
+      "DataExchange": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "orig",
+              "dest",
+              "encAlg",
+              "signingAlg",
+              "hashAlg",
+              "ledgerContractAddress",
+              "ledgerSignerAddress",
+              "pooToPorDelay",
+              "pooToPopDelay",
+              "pooToSecretDelay"
+            ],
+            "properties": {
+              "orig": {
+                "type": "string",
+                "description": "A stringified JWK with alphabetically sorted claims",
+                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+              },
+              "dest": {
+                "type": "string",
+                "description": "A stringified JWK with alphabetically sorted claims",
+                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+              },
+              "encAlg": {
+                "type": "string",
+                "enum": [
+                  "A128GCM",
+                  "A256GCM"
+                ],
+                "example": "A256GCM"
+              },
+              "signingAlg": {
+                "type": "string",
+                "enum": [
+                  "ES256",
+                  "ES384",
+                  "ES512"
+                ],
+                "example": "ES256"
+              },
+              "hashAlg": {
+                "type": "string",
+                "enum": [
+                  "SHA-256",
+                  "SHA-384",
+                  "SHA-512"
+                ],
+                "example": "SHA-256"
+              },
+              "ledgerContractAddress": {
+                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                "type": "string",
+                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+              },
+              "ledgerSignerAddress": {
+                "description": "Ethereum Address in EIP-55 format (with checksum)",
+                "type": "string",
+                "pattern": "^0x([0-9A-Fa-f]){40}$",
+                "example": "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+              },
+              "pooToPorDelay": {
+                "description": "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 10000
+              },
+              "pooToPopDelay": {
+                "description": "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 20000
+              },
+              "pooToSecretDelay": {
+                "description": "Maximum acceptable time between issued PoO and secret published on the ledger",
+                "type": "integer",
+                "minimum": 0,
+                "exclusiveMinimum": true,
+                "example": 180000
+              }
+            }
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cipherblockDgst": {
+                "type": "string",
+                "description": "hash of the cipherblock in base64url with no padding",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "blockCommitment": {
+                "type": "string",
+                "description": "hash of the plaintext block in base64url with no padding",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              },
+              "secretCommitment": {
+                "type": "string",
+                "description": "ash of the secret that can be used to decrypt the block in base64url with no padding",
+                "pattern": "^[a-zA-Z0-9_-]+$"
+              }
+            },
+            "required": [
+              "cipherblockDgst",
+              "blockCommitment",
+              "secretCommitment"
+            ]
+          }
+        ]
       }
     }
   }

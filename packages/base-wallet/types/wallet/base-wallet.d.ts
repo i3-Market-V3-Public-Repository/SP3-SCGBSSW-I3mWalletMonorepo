@@ -68,22 +68,23 @@ export declare class BaseWallet<Options extends WalletOptions<Model>, Model exte
     identityInfo(pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200>;
     identityDeployTransaction(pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletComponents.Schemas.Transaction): Promise<WalletComponents.Schemas.Receipt>;
     /**
-     * Gets a resource securey stored in the wallet's vaulr. It is the place where to find stored verfiable credentials.
+     * Gets a resource stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
      * @returns
      */
     getResources(): Promise<ResourceMap>;
+    private setResource;
     /**
-     * Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
+     * Gets a list of resources stored in the wallet's vault.
      * @returns
      */
     resourceList(query: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200>;
     /**
-     * Deletes a given resource
+     * Deletes a given resource and all its children
      * @param id
      */
-    deleteResource(id: string): Promise<void>;
+    deleteResource(id: string, requestConfirmation?: boolean): Promise<void>;
     /**
-     * Deletes a given identity (DID)
+     * Deletes a given identity (DID) and all its associated resources
      * @param did
      */
     deleteIdentity(did: string): Promise<void>;

@@ -17,6 +17,13 @@ export function ContractDetails (props: Props): JSX.Element {
 
   return (
     <div className='details-body'>
+      {resource.name !== undefined
+        ? (
+          <div className='details-param inline'>
+            <span>Name:</span>
+            <input type='text' disabled value={resource.name} />
+          </div>
+        ) : null}
       <div className='details-param inline'>
         <span>Id:</span>
         <input type='text' disabled value={resource.id} />

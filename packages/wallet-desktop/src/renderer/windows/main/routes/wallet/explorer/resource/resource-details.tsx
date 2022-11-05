@@ -3,7 +3,7 @@ import { Extendible, Section } from '@wallet/renderer/components'
 import { ObjectDetails } from './object-details'
 import { ContractDetails } from './contract-details'
 import { VerifiableCredentialDetails } from './verifiable-credential-details'
-import { NonRepudiationProofDetails } from './non-repudiation-proof-details'
+import { ProofDetails } from './proof-details'
 
 interface Props {
   resource: Resource
@@ -16,17 +16,14 @@ function ResourceSelector (props: Props): JSX.Element | null {
     case 'VerifiableCredential':
       return <VerifiableCredentialDetails vc={resource as VerifiableCredentialResource} />
 
-    case 'Object':
-      return <ObjectDetails resource={resource as ObjectResource} />
-
     case 'Contract':
       return <ContractDetails resource={resource as ContractResource} />
 
     case 'NonRepudiationProof':
-      return <NonRepudiationProofDetails resource={resource as NonRepudiationProofResource} />
+      return <ProofDetails resource={resource as NonRepudiationProofResource} />
 
     default:
-      return <div>Unknown resource type</div>
+      return <ObjectDetails resource={resource as ObjectResource} />
   }
 }
 

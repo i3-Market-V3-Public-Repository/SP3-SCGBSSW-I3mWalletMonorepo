@@ -17,13 +17,20 @@ export function ObjectDetails (props: Props): JSX.Element {
 
   return (
     <div className='details-body'>
+      {resource.name !== undefined
+        ? (
+          <div className='details-param inline'>
+            <span>Name:</span>
+            <input type='text' disabled value={resource.name} />
+          </div>
+        ) : null}
       <div className='details-param inline'>
         <span>Id:</span>
         <input type='text' disabled value={resource.id} />
       </div>
       <div className='details-param inline'>
         <span>Type:</span>
-        <input type='text' disabled value='Object' />
+        <input type='text' disabled value={resource.type} />
       </div>
       {identity !== undefined
         ? (
@@ -34,7 +41,7 @@ export function ObjectDetails (props: Props): JSX.Element {
         ) : null}
       <div className='details-param expand'>
         <span>Data:</span>
-        <textarea disabled value={JSON.stringify(resource.resource, null, 2)} />
+        <textarea disabled value={JSON.stringify(resource.resource, undefined, 2)} />
       </div>
     </div>
   )

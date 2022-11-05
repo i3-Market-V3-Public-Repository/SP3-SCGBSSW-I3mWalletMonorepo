@@ -192,6 +192,77 @@ export namespace WalletComponents {
         }
       }
     }
+    export interface DataExchange {
+      /**
+             * A stringified JWK with alphabetically sorted claims
+             * example:
+             * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+             */
+      orig: string
+      /**
+             * A stringified JWK with alphabetically sorted claims
+             * example:
+             * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+             */
+      dest: string
+      /**
+             * example:
+             * A256GCM
+             */
+      encAlg: 'A128GCM' | 'A256GCM'
+      /**
+             * example:
+             * ES256
+             */
+      signingAlg: 'ES256' | 'ES384' | 'ES512'
+      /**
+             * example:
+             * SHA-256
+             */
+      hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+      /**
+             * Ethereum Address in EIP-55 format (with checksum)
+             * example:
+             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+             */
+      ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+      /**
+             * Ethereum Address in EIP-55 format (with checksum)
+             * example:
+             * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+             */
+      ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+      /**
+             * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+             * example:
+             * 10000
+             */
+      pooToPorDelay: number
+      /**
+             * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+             * example:
+             * 20000
+             */
+      pooToPopDelay: number
+      /**
+             * Maximum acceptable time between issued PoO and secret published on the ledger
+             * example:
+             * 180000
+             */
+      pooToSecretDelay: number
+      /**
+             * hash of the cipherblock in base64url with no padding
+             */
+      cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+      /**
+             * hash of the plaintext block in base64url with no padding
+             */
+      blockCommitment: string // ^[a-zA-Z0-9_-]+$
+      /**
+             * ash of the secret that can be used to decrypt the block in base64url with no padding
+             */
+      secretCommitment: string // ^[a-zA-Z0-9_-]+$
+    }
     export interface DataExchangeAgreement {
       /**
              * A stringified JWK with alphabetically sorted claims
@@ -250,6 +321,92 @@ export namespace WalletComponents {
              * 180000
              */
       pooToSecretDelay: number
+    }
+    /**
+         * DataExchangeResource
+         */
+    export interface DataExchangeResource {
+      /**
+             * example:
+             * DataExchange
+             */
+      type: 'DataExchange'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      resource: {
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                 */
+        orig: string
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                 */
+        dest: string
+        /**
+                 * example:
+                 * A256GCM
+                 */
+        encAlg: 'A128GCM' | 'A256GCM'
+        /**
+                 * example:
+                 * ES256
+                 */
+        signingAlg: 'ES256' | 'ES384' | 'ES512'
+        /**
+                 * example:
+                 * SHA-256
+                 */
+        hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                 * example:
+                 * 10000
+                 */
+        pooToPorDelay: number
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                 * example:
+                 * 20000
+                 */
+        pooToPopDelay: number
+        /**
+                 * Maximum acceptable time between issued PoO and secret published on the ledger
+                 * example:
+                 * 180000
+                 */
+        pooToSecretDelay: number
+        /**
+                 * hash of the cipherblock in base64url with no padding
+                 */
+        cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * hash of the plaintext block in base64url with no padding
+                 */
+        blockCommitment: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * ash of the secret that can be used to decrypt the block in base64url with no padding
+                 */
+        secretCommitment: string // ^[a-zA-Z0-9_-]+$
+      }
     }
     export interface DataSharingAgreement {
       dataOfferingDescription: {
@@ -515,7 +672,10 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      /**
+             * a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
+             */
+      resource: any
     }
     /**
          * ObjectResource
@@ -841,7 +1001,92 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      /**
+             * a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
+             */
+      resource: any
+    } | {
+      /**
+             * example:
+             * DataExchange
+             */
+      type: 'DataExchange'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      resource: {
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                 */
+        orig: string
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                 */
+        dest: string
+        /**
+                 * example:
+                 * A256GCM
+                 */
+        encAlg: 'A128GCM' | 'A256GCM'
+        /**
+                 * example:
+                 * ES256
+                 */
+        signingAlg: 'ES256' | 'ES384' | 'ES512'
+        /**
+                 * example:
+                 * SHA-256
+                 */
+        hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                 * example:
+                 * 10000
+                 */
+        pooToPorDelay: number
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                 * example:
+                 * 20000
+                 */
+        pooToPopDelay: number
+        /**
+                 * Maximum acceptable time between issued PoO and secret published on the ledger
+                 * example:
+                 * 180000
+                 */
+        pooToSecretDelay: number
+        /**
+                 * hash of the cipherblock in base64url with no padding
+                 */
+        cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * hash of the plaintext block in base64url with no padding
+                 */
+        blockCommitment: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * ash of the secret that can be used to decrypt the block in base64url with no padding
+                 */
+        secretCommitment: string // ^[a-zA-Z0-9_-]+$
+      }
     }
     export interface ResourceId {
       id: string
@@ -1118,9 +1363,94 @@ export namespace WalletComponents {
              * Resource name
              */
       name?: string
-      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      /**
+             * a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
+             */
+      resource: any
+    } | {
+      /**
+             * example:
+             * DataExchange
+             */
+      type: 'DataExchange'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      resource: {
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                 */
+        orig: string
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                 */
+        dest: string
+        /**
+                 * example:
+                 * A256GCM
+                 */
+        encAlg: 'A128GCM' | 'A256GCM'
+        /**
+                 * example:
+                 * ES256
+                 */
+        signingAlg: 'ES256' | 'ES384' | 'ES512'
+        /**
+                 * example:
+                 * SHA-256
+                 */
+        hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                 * example:
+                 * 10000
+                 */
+        pooToPorDelay: number
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                 * example:
+                 * 20000
+                 */
+        pooToPopDelay: number
+        /**
+                 * Maximum acceptable time between issued PoO and secret published on the ledger
+                 * example:
+                 * 180000
+                 */
+        pooToSecretDelay: number
+        /**
+                 * hash of the cipherblock in base64url with no padding
+                 */
+        cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * hash of the plaintext block in base64url with no padding
+                 */
+        blockCommitment: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * ash of the secret that can be used to decrypt the block in base64url with no padding
+                 */
+        secretCommitment: string // ^[a-zA-Z0-9_-]+$
+      }
     }>
-    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
+    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
     /**
          * SignInput
          */
@@ -1923,7 +2253,92 @@ export namespace WalletPaths {
              * Resource name
              */
       name?: string
-      resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+      /**
+             * a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
+             */
+      resource: any
+    } | {
+      /**
+             * example:
+             * DataExchange
+             */
+      type: 'DataExchange'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      resource: {
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                 */
+        orig: string
+        /**
+                 * A stringified JWK with alphabetically sorted claims
+                 * example:
+                 * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                 */
+        dest: string
+        /**
+                 * example:
+                 * A256GCM
+                 */
+        encAlg: 'A128GCM' | 'A256GCM'
+        /**
+                 * example:
+                 * ES256
+                 */
+        signingAlg: 'ES256' | 'ES384' | 'ES512'
+        /**
+                 * example:
+                 * SHA-256
+                 */
+        hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Ethereum Address in EIP-55 format (with checksum)
+                 * example:
+                 * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                 */
+        ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                 * example:
+                 * 10000
+                 */
+        pooToPorDelay: number
+        /**
+                 * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                 * example:
+                 * 20000
+                 */
+        pooToPopDelay: number
+        /**
+                 * Maximum acceptable time between issued PoO and secret published on the ledger
+                 * example:
+                 * 180000
+                 */
+        pooToSecretDelay: number
+        /**
+                 * hash of the cipherblock in base64url with no padding
+                 */
+        cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * hash of the plaintext block in base64url with no padding
+                 */
+        blockCommitment: string // ^[a-zA-Z0-9_-]+$
+        /**
+                 * ash of the secret that can be used to decrypt the block in base64url with no padding
+                 */
+        secretCommitment: string // ^[a-zA-Z0-9_-]+$
+      }
     }
     export namespace Responses {
       export interface $201 {
@@ -1946,7 +2361,7 @@ export namespace WalletPaths {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       export type Identity = string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
-      export type Type = 'VerifiableCredential' | 'Object' | 'Contract' | 'NonRepudiationProof'
+      export type Type = 'VerifiableCredential' | 'Object' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
     }
     export interface QueryParameters {
       type?: Parameters.Type
@@ -2230,7 +2645,92 @@ export namespace WalletPaths {
                  * Resource name
                  */
         name?: string
-        resource: string // ^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$
+        /**
+                 * a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS
+                 */
+        resource: any
+      } | {
+        /**
+                 * example:
+                 * DataExchange
+                 */
+        type: 'DataExchange'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
+        resource: {
+          /**
+                     * A stringified JWK with alphabetically sorted claims
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+                     */
+          orig: string
+          /**
+                     * A stringified JWK with alphabetically sorted claims
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+                     */
+          dest: string
+          /**
+                     * example:
+                     * A256GCM
+                     */
+          encAlg: 'A128GCM' | 'A256GCM'
+          /**
+                     * example:
+                     * ES256
+                     */
+          signingAlg: 'ES256' | 'ES384' | 'ES512'
+          /**
+                     * example:
+                     * SHA-256
+                     */
+          hashAlg: 'SHA-256' | 'SHA-384' | 'SHA-512'
+          /**
+                     * Ethereum Address in EIP-55 format (with checksum)
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerContractAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Ethereum Address in EIP-55 format (with checksum)
+                     * example:
+                     * 0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+                     */
+          ledgerSignerAddress: string // ^0x([0-9A-Fa-f]){40}$
+          /**
+                     * Maximum acceptable time in milliseconds between issued PoO and verified PoR
+                     * example:
+                     * 10000
+                     */
+          pooToPorDelay: number
+          /**
+                     * Maximum acceptable time in milliseconds between issued PoO and issued PoP
+                     * example:
+                     * 20000
+                     */
+          pooToPopDelay: number
+          /**
+                     * Maximum acceptable time between issued PoO and secret published on the ledger
+                     * example:
+                     * 180000
+                     */
+          pooToSecretDelay: number
+          /**
+                     * hash of the cipherblock in base64url with no padding
+                     */
+          cipherblockDgst: string // ^[a-zA-Z0-9_-]+$
+          /**
+                     * hash of the plaintext block in base64url with no padding
+                     */
+          blockCommitment: string // ^[a-zA-Z0-9_-]+$
+          /**
+                     * ash of the secret that can be used to decrypt the block in base64url with no padding
+                     */
+          secretCommitment: string // ^[a-zA-Z0-9_-]+$
+        }
       }>
       /**
              * Error

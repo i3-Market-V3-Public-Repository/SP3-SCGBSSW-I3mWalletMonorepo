@@ -1,12 +1,12 @@
 import { WalletComponents, WalletPaths } from '@i3m/wallet-desktop-openapi/types'
-import { decodeJWS, jwsSignInput } from '../utils/jws'
 import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
 import { ethers } from 'ethers'
 import _ from 'lodash'
 import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
+import { decodeJWS, jwsSignInput } from '../utils/jws'
 
-import { BaseWalletModel, DescriptorsMap, Dialog, Identity, Store, Toast, Resource } from '../app'
+import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, Identity, Resource, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
@@ -15,10 +15,14 @@ import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
 import Veramo, { DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
 
+import { exchangeId, NrProofPayload } from '@i3m/non-repudiation-library'
+import { digest } from 'object-sha'
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
-import { NrProofPayload, exchangeId } from '@i3m/non-repudiation-library'
+import Debug from 'debug'
+
+const debug = Debug('base-wallet:base-wallet.ts')
 
 interface SdrClaim {
   claimType: string
@@ -566,15 +570,35 @@ export class BaseWallet<
   }
 
   /**
-   * Gets a resource securey stored in the wallet's vaulr. It is the place where to find stored verfiable credentials.
+   * Gets a resource stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
    * @returns
    */
   async getResources (): Promise<ResourceMap> {
     return await this.store.get('resources', {})
   }
 
+  private async setResource (resource: Resource): Promise<void> {
+    // If a parentResource is provided, do not allow to store the resource if it does not exist
+    if (resource.parentResource !== undefined) {
+      if (!await this.store.has(`resources.${resource.parentResource}`)) {
+        debug('Failed to add resource since parent resource does not exist:\n' + JSON.stringify(resource, undefined, 2))
+        throw new Error('Parent resource for provided resource does not exist')
+      }
+    }
+
+    // If an identity is provided, do not allow to store the resource if it does not exist
+    if (resource.identity !== undefined) {
+      if (!await this.store.has(`identities.${resource.identity}`)) {
+        debug('Failed to add resource since the identity is associated to does not exist:\n' + JSON.stringify(resource, undefined, 2))
+        throw new Error('Identity for this resource does not exist')
+      }
+    }
+
+    await this.store.set(`resources.${resource.id}`, resource)
+  }
+
   /**
-   * Gets a list of resources (currently just verifiable credentials) stored in the wallet's vault.
+   * Gets a list of resources stored in the wallet's vault.
    * @returns
    */
   async resourceList (query: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200> {
@@ -616,22 +640,33 @@ export class BaseWallet<
   }
 
   /**
-   * Deletes a given resource
+   * Deletes a given resource and all its children
    * @param id
    */
-  async deleteResource (id: string): Promise<void> {
-    const confirmation = await this.dialog.confirmation({
-      message: 'Once deleted you will not be able to recover it. Proceed?',
-      acceptMsg: 'Ok',
-      rejectMsg: 'Cancel'
-    })
+  async deleteResource (id: string, requestConfirmation = true): Promise<void> {
+    let confirmation: boolean | undefined = true
+    if (requestConfirmation) {
+      confirmation = await this.dialog.confirmation({
+        message: 'Once deleted you will not be able to recover it. Proceed?',
+        acceptMsg: 'Ok',
+        rejectMsg: 'Cancel'
+      })
+    }
     if (confirmation === true) {
       await this.store.delete(`resources.${id}`)
+      const resourcesMap = await this.getResources()
+      const resources = Object
+        .keys(resourcesMap)
+        .map(key => resourcesMap[key])
+        .filter((resource) => resource.parentResource === id)
+      for (const resource of resources) {
+        await this.deleteResource(resource.id, false)
+      }
     }
   }
 
   /**
-   * Deletes a given identity (DID)
+   * Deletes a given identity (DID) and all its associated resources
    * @param did
    */
   async deleteIdentity (did: string): Promise<void> {
@@ -642,6 +677,14 @@ export class BaseWallet<
     })
     if (confirmation === true) {
       await this.store.delete(`identities.${did}`)
+      const resourcesMap = await this.getResources()
+      const resources = Object
+        .keys(resourcesMap)
+        .map(key => resourcesMap[key])
+        .filter((resource) => resource.identity === did)
+      for (const resource of resources) {
+        await this.deleteResource(resource.id)
+      }
     }
   }
 
@@ -701,20 +744,41 @@ export class BaseWallet<
       }
       case 'NonRepudiationProof': {
         const decodedProof: NrProofPayload = decodeJWS(resource.resource).payload
+
         const confirmation = await this.dialog.confirmation({
           message: `Do you want to add a non repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`
         })
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })
         }
+
+        // If the data exchange has not been yet created, add it to the resources
+        if (!await this.store.has(`resources.${resource.parentResource as string}`)) {
+          const dataExchange = decodedProof.exchange
+          const { id, cipherblockDgst, blockCommitment, secretCommitment, ...dataExchangeAgreement } = dataExchange
+
+          const dataExchangeResource: DataExchangeResource = {
+            id,
+            parentResource: await digest(dataExchangeAgreement),
+            type: 'DataExchange',
+            resource: dataExchange,
+            name: 'DataExchange ' + id
+          }
+          try {
+            await this.setResource(dataExchangeResource)
+          } catch (error) {
+            throw new WalletError('Failed to add resource', { status: 500 })
+          }
+        }
         break
       }
 
       default:
-        throw new Error('Resource type not supported')
+        throw new WalletError('Resource type not supported', { status: 501 })
     }
 
-    await this.store.set(`resources.${resource.id}`, resource)
+    await this.setResource(resource)
+
     return resource
   }
 

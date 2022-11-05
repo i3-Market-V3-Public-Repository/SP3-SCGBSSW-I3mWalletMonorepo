@@ -7,6 +7,7 @@ export type VerifiableCredentialResource = Resource & { type: 'VerifiableCredent
 export type ObjectResource = Resource & { type: 'Object' }
 export type ContractResource = Resource & { type: 'Contract' }
 export type NonRepudiationProofResource = Resource & { type: 'NonRepudiationProof' }
+export type DataExchangeResource = Resource & { type: 'DataExchange' }
 
 export type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource']
 export type Contract = WalletComponents.Schemas.Contract['resource']

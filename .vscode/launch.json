@@ -2,10 +2,11 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Main Process",
+      "name": "Debug i3M-Wallet desktop",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/packages/wallet-desktop",
+      "env": { "DEBUG": "*" },
       "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/electron",
       "args" : ["./dist/main"],
       "outputCapture": "std"

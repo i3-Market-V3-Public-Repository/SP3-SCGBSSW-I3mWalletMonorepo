@@ -75,10 +75,11 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
-    "@fortawesome/free-solid-svg-icons": "^5.15.3",
+    "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@i3m/base-wallet": "^2.0.2",
     "@i3m/bok-wallet": "^2.0.2",
+    "@i3m/non-repudiation-library": "^2.4.0",
     "@i3m/sw-wallet": "^2.0.2",
     "@i3m/wallet-desktop-openapi": "^2.0.2",
     "@i3m/wallet-protocol": "^2.0.0",

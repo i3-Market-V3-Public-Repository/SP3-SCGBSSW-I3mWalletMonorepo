@@ -1,4 +1,4 @@
-import { parseJwk } from '@i3m/non-repudiation-library'
+import { DataExchange, exchangeId, parseJwk } from '@i3m/non-repudiation-library'
 import spec from '@i3m/wallet-desktop-openapi/openapi_dereferenced.json'
 import { WalletPaths, WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import { validate, Schema } from 'jsonschema'
@@ -10,12 +10,33 @@ import { parseAddress } from './parseAddress'
 export async function validateDataSharingAgreeementSchema (agreement: WalletComponents.Schemas.DataSharingAgreement): Promise<Error[]> {
   const errors: Error[] = []
 
-  const dataSharingAgreementSchema = spec.components.schemas.dataSharingAgreement
+  const dataSharingAgreementSchema = spec.components.schemas.DataSharingAgreement
   const validation = validate(agreement, dataSharingAgreementSchema as Schema)
   if (!validation.valid) {
     validation.errors.forEach(error => {
       errors.push(new Error(`[${error.property}]: ${error.message}`))
     })
+  }
+  return errors
+}
+
+export async function validateDataExchange (dataExchange: DataExchange): Promise<Error[]> {
+  const errors: Error[] = []
+
+  try {
+    const { id, ...dataExchangeButId } = dataExchange
+    if (id !== await exchangeId(dataExchangeButId)) {
+      errors.push(new Error('Invalid dataExchange id'))
+    }
+    const { blockCommitment, secretCommitment, cipherblockDgst, ...dataExchangeAgreement } = dataExchangeButId
+    const deaErrors = await validateDataExchangeAgreement(dataExchangeAgreement)
+    if (deaErrors.length > 0) {
+      deaErrors.forEach((error) => {
+        errors.push(error)
+      })
+    }
+  } catch (error) {
+    errors.push(new Error('Invalid dataExchange'))
   }
   return errors
 }
