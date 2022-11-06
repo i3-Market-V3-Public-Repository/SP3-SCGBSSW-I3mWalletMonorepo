@@ -1,14 +1,17 @@
 # i3m-wallet-monorepo
 
-A monorepo containing all the i3m packages
+A monorepo containing all the i3m packages relaed to the i3-MARKET Wallet.
 
-# Documentation
+## Documentation
 
-The complete documentation can be found [here](https://i3-market.gitlab.io/code/backplane/backplane-api-gateway/backplane-api-specification/systems/trust-security-privacy/smart-wallet/overview.html).
+An overview documentation can be found [here](https://i3-market.gitlab.io/code/backplane/backplane-api-gateway/backplane-api-specification/systems/trust-security-privacy/smart-wallet/overview.html).
 
-# Start
+Or directly go the READMEs of the different packages ;-)
+
+## Prepare the development environment
 
 ```bash
+# Install root dependencies (lerna)
 npm i
 
 # for development of all packages
@@ -20,29 +23,6 @@ npm run install:desktop
 # for development of libraries
 npm run install:libs
 
+# Starts the i3M wallet desktop application
 npm start
 ```
-
-# Publish
-
-To publish the wallet libraries you can:
-
-```bash
-# Execute the libraries script. You have to set up the variable I3M_NPM_REGISTRY_AUTH
-*scripts/libraries.sh*
-
-# Or execute it on a container
-docker-compose run libraries
-```
-
-To publish the wallet-desktop app:
-
-```bash
-# Execute the publish script. Your system must have the .env-template variables configured
-*scripts/publish.sh*
-
-# Or execute it on a container
-docker-compose run publisher
-```
-
-
