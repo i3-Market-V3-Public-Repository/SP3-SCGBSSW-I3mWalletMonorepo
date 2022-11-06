@@ -81,6 +81,7 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
+    "preversion": "run-s lint:src build:js lint:test",
     "version": "run-s docs git:add",
     "postversion": "git push --follow-tags",
     "test": "run-s test:node test:browser-headless",
