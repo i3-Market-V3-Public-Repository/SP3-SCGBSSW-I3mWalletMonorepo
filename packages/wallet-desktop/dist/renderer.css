@@ -170,6 +170,11 @@ select.modern > option {
   user-select: none; /* Unselectable text */
 }
 
+.content {
+  flex: 1;
+  font-size: 20px;
+}
+
 .nav {
   background-image: linear-gradient(to right bottom, #202531, #404A61 90%);
   display: flex;
@@ -211,11 +216,6 @@ select.modern > option {
 .nav .nav-icon-container:hover {
   opacity: 1;
   color: #3BBD59;
-}
-
-.content {
-  flex: 1;
-  font-size: 20px;
 }
 
 .horizontal-accordion {
@@ -618,17 +618,6 @@ select.modern > option {
     opacity: 0;
   }
 }
-.wallet {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.wallet .app {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
-}
-
 div.password-route {
   display: flex;
   flex-direction: column;
@@ -649,6 +638,17 @@ div.password-route > .password-form {
 }
 div.password-route > .password-form > :not(:last-child) {
   margin-bottom: 10px;
+}
+
+.wallet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.wallet .app {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
 }
 
 .status-bar {
@@ -676,23 +676,6 @@ div.password-route > .password-form > :not(:last-child) {
 .status-bar .status-bar-item > .icon {
   width: 16px;
   margin-right: 5px;
-}
-
-.settings .settings-list {
-  flex: 1;
-}
-.settings .settings-group {
-  flex: 3;
-  font-size: 16px;
-}
-.settings .settings-group .settings-item {
-  padding: 5px 20px;
-}
-.settings .settings-group .settings-item.settings-checkbox label {
-  cursor: pointer;
-}
-.settings .settings-group .settings-item.settings-number label {
-  margin-right: 10px;
 }
 
 .explorer {
@@ -919,4 +902,21 @@ div.password-route > .password-form > :not(:last-child) {
 }
 .connect .center-vertically .sync .sync-button > svg {
   width: 32px;
+}
+
+.settings .settings-list {
+  flex: 1;
+}
+.settings .settings-group {
+  flex: 3;
+  font-size: 16px;
+}
+.settings .settings-group .settings-item {
+  padding: 5px 20px;
+}
+.settings .settings-group .settings-item.settings-checkbox label {
+  cursor: pointer;
+}
+.settings .settings-group .settings-item.settings-number label {
+  margin-right: 10px;
 }
