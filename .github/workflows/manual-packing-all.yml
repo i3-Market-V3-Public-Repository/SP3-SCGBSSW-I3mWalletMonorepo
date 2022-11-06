@@ -1,4 +1,4 @@
-name: manual pack for linux
+name: manual pack for linux, windows and mac
 
 on:
   workflow_dispatch:
@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-10.15]
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
