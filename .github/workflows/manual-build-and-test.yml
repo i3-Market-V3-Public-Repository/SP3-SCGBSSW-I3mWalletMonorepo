@@ -27,6 +27,9 @@ jobs:
       - name: Lerna bootstrap (install packages dependecies)
         run: npx lerna bootstrap
       
+      - name: Build
+        run: npm run build
+
       - name: Run tests
         run: npm test
         env:
