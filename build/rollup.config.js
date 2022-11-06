@@ -76,8 +76,8 @@ export default [
     output: [
       {
         file: join(rootDir, exports['./esm-browser-bundle']),
-        format: 'es',
-        plugins: [terser()]
+        format: 'es'
+        // plugins: [terser()]
       },
       {
         file: join(rootDir, exports['./iife-browser-bundle']),
@@ -101,13 +101,13 @@ export default [
         ...tsBundleOptions,
         sourceMap: false
       }),
+      json(),
       resolve({
         browser: true,
         exportConditions: ['browser', 'default'],
         mainFields: ['browser', 'module', 'main']
       }),
-      commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }), // the ".ts" extension is required
-      json()
+      commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }) // the ".ts" extension is required
     ]
   },
   { // Node CJS

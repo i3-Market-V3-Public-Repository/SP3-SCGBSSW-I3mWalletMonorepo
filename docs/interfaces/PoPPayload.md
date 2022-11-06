@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L103)
+[src/ts/types.ts:110](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L110)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:97](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L97)
+[src/ts/types.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L104)
 
 ___
 
@@ -58,7 +58,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:118](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L118)
+[src/ts/types.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L125)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L120)
+[src/ts/types.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L127)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:119](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L119)
+[src/ts/types.ts:126](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L126)
 
 ___
 
@@ -92,7 +92,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L121)
+[src/ts/types.ts:128](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L128)
 
 ___
 
@@ -102,4 +102,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:122](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L122)
+[src/ts/types.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L129)

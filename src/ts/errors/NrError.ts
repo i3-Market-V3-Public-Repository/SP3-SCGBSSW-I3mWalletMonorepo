@@ -14,6 +14,7 @@ export class NrError extends Error {
   }
 
   add (...nrErrors: NrErrorName[]): void {
-    nrErrors.forEach(nrError => this.nrErrors.push(nrError))
+    const errors = this.nrErrors.concat(nrErrors)
+    this.nrErrors = [...(new Set(errors))]
   }
 }

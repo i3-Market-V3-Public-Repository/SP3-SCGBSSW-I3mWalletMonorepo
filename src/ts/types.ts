@@ -1,6 +1,7 @@
 import { ContractInterface } from '@ethersproject/contracts'
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose'
 import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants'
+import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 
 export { KeyLike } from 'jose'
 export { ContractInterface }
@@ -67,26 +68,32 @@ export interface TimestampVerifyOptions {
   tolerance?: number // ms
 }
 
-export interface DataExchangeAgreement {
-  orig: string // Public key in JSON.stringify(JWK) of the block origin (sender)
-  dest: string // Public key in JSON.stringify(JWK) of the block destination (receiver)
-  hashAlg: HashAlg
-  encAlg: EncryptionAlg
-  signingAlg: SigningAlg
-  ledgerContractAddress: string // contract address
-  ledgerSignerAddress: string // address of the orig in the ledger
-  pooToPorDelay: number // max milliseconds between issued PoO and verified PoR
-  pooToPopDelay: number // max milliseconds between issued PoO and issued PoP
-  pooToSecretDelay: number // max milliseconds between issued PoO and secret published on the ledger
-  schema?: string // an optional schema. In the future it will be used to check the decrypted data
-}
+export interface DataSharingAgreement extends WalletComponents.Schemas.DataSharingAgreement {}
 
-export interface DataExchange extends DataExchangeAgreement {
+export interface DataExchangeAgreement extends WalletComponents.Schemas.DataExchangeAgreement {}
+// export interface DataExchangeAgreement {
+//   orig: string // Public key in JSON.stringify(JWK) of the block origin (sender)
+//   dest: string // Public key in JSON.stringify(JWK) of the block destination (receiver)
+//   hashAlg: HashAlg
+//   encAlg: EncryptionAlg
+//   signingAlg: SigningAlg
+//   ledgerContractAddress: string // contract address
+//   ledgerSignerAddress: string // address of the orig in the ledger
+//   pooToPorDelay: number // max milliseconds between issued PoO and verified PoR
+//   pooToPopDelay: number // max milliseconds between issued PoO and issued PoP
+//   pooToSecretDelay: number // max milliseconds between issued PoO and secret published on the ledger
+//   schema?: string // an optional schema. In the future it will be used to check the decrypted data
+// }
+
+export interface DataExchange extends WalletComponents.Schemas.DataExchange {
   id: string // base64url-no-padding encoded uint256 of the sha256(hashable(dataExchangeButId))
-  cipherblockDgst: string // hash of the cipherblock in base64url with no padding
-  blockCommitment: string // hash of the plaintext block in base64url with no padding
-  secretCommitment: string // hash of the secret that can be used to decrypt the block in base64url with no padding
 }
+// export interface DataExchange extends DataExchangeAgreement {
+//   id: string // base64url-no-padding encoded uint256 of the sha256(hashable(dataExchangeButId))
+//   cipherblockDgst: string // hash of the cipherblock in base64url with no padding
+//   blockCommitment: string // hash of the plaintext block in base64url with no padding
+//   secretCommitment: string // hash of the secret that can be used to decrypt the block in base64url with no padding
+// }
 
 export interface JwkPair {
   publicJwk: JWK
@@ -174,6 +181,7 @@ export type NrErrorName =
 'decryption failed' |
 'jws verification failed' |
 'invalid algorithm' |
+'invalid EIP-55 address' |
 'invalid poo' |
 'invalid por' |
 'invalid pop' |

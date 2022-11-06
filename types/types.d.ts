@@ -1,6 +1,7 @@
 import { ContractInterface } from '@ethersproject/contracts';
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose';
 import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants';
+import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
 export { KeyLike } from 'jose';
 export { ContractInterface };
 export declare type HashAlg = typeof HASH_ALGS[number];
@@ -55,24 +56,12 @@ export interface TimestampVerifyOptions {
     notAfter: 'iat' | number;
     tolerance?: number;
 }
-export interface DataExchangeAgreement {
-    orig: string;
-    dest: string;
-    hashAlg: HashAlg;
-    encAlg: EncryptionAlg;
-    signingAlg: SigningAlg;
-    ledgerContractAddress: string;
-    ledgerSignerAddress: string;
-    pooToPorDelay: number;
-    pooToPopDelay: number;
-    pooToSecretDelay: number;
-    schema?: string;
+export interface DataSharingAgreement extends WalletComponents.Schemas.DataSharingAgreement {
 }
-export interface DataExchange extends DataExchangeAgreement {
+export interface DataExchangeAgreement extends WalletComponents.Schemas.DataExchangeAgreement {
+}
+export interface DataExchange extends WalletComponents.Schemas.DataExchange {
     id: string;
-    cipherblockDgst: string;
-    blockCommitment: string;
-    secretCommitment: string;
 }
 export interface JwkPair {
     publicJwk: JWK;
@@ -140,5 +129,5 @@ export interface DecodedProof<T extends ProofPayload> {
     signer?: JWK;
 }
 export declare type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
-export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid timestamp' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
+export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid EIP-55 address' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid timestamp' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
 //# sourceMappingURL=types.d.ts.map

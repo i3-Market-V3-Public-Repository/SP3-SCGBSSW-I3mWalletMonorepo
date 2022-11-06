@@ -6,6 +6,9 @@ import elliptic from 'elliptic';
 import { importJWK, CompactEncrypt, compactDecrypt, jwtVerify, generateSecret, exportJWK, GeneralSign, generalVerify, SignJWT } from 'jose';
 import { ethers, Wallet } from 'ethers';
 import { hashable } from 'object-sha';
+import Ajv from 'ajv-draft-04';
+import addFormats from 'ajv-formats';
+import _ from 'lodash';
 import { SigningKey } from 'ethers/lib/utils';
 
 class NrError extends Error {
@@ -20,7 +23,8 @@ class NrError extends Error {
         }
     }
     add(...nrErrors) {
-        nrErrors.forEach(nrError => this.nrErrors.push(nrError));
+        const errors = this.nrErrors.concat(nrErrors);
+        this.nrErrors = [...(new Set(errors))];
     }
 }
 
@@ -324,6 +328,7203 @@ async function exchangeId(exchange) {
     return b64.encode(await sha(hashable(exchange), 'SHA-256'), true, false);
 }
 
+var id = "https://spec.openapis.org/oas/3.0/schema/2021-09-28";
+var $schema = "http://json-schema.org/draft-04/schema#";
+var description = "The description of OpenAPI v3.0.x documents, as defined by https://spec.openapis.org/oas/v3.0.3";
+var type = "object";
+var required = [
+	"openapi",
+	"info",
+	"paths"
+];
+var properties = {
+	openapi: {
+		type: "string",
+		pattern: "^3\\.0\\.\\d(-.+)?$"
+	},
+	info: {
+		$ref: "#/definitions/Info"
+	},
+	externalDocs: {
+		$ref: "#/definitions/ExternalDocumentation"
+	},
+	servers: {
+		type: "array",
+		items: {
+			$ref: "#/definitions/Server"
+		}
+	},
+	security: {
+		type: "array",
+		items: {
+			$ref: "#/definitions/SecurityRequirement"
+		}
+	},
+	tags: {
+		type: "array",
+		items: {
+			$ref: "#/definitions/Tag"
+		},
+		uniqueItems: true
+	},
+	paths: {
+		$ref: "#/definitions/Paths"
+	},
+	components: {
+		$ref: "#/definitions/Components"
+	}
+};
+var patternProperties = {
+	"^x-": {
+	}
+};
+var additionalProperties = false;
+var definitions = {
+	Reference: {
+		type: "object",
+		required: [
+			"$ref"
+		],
+		patternProperties: {
+			"^\\$ref$": {
+				type: "string",
+				format: "uri-reference"
+			}
+		}
+	},
+	Info: {
+		type: "object",
+		required: [
+			"title",
+			"version"
+		],
+		properties: {
+			title: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			termsOfService: {
+				type: "string",
+				format: "uri-reference"
+			},
+			contact: {
+				$ref: "#/definitions/Contact"
+			},
+			license: {
+				$ref: "#/definitions/License"
+			},
+			version: {
+				type: "string"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Contact: {
+		type: "object",
+		properties: {
+			name: {
+				type: "string"
+			},
+			url: {
+				type: "string",
+				format: "uri-reference"
+			},
+			email: {
+				type: "string",
+				format: "email"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	License: {
+		type: "object",
+		required: [
+			"name"
+		],
+		properties: {
+			name: {
+				type: "string"
+			},
+			url: {
+				type: "string",
+				format: "uri-reference"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Server: {
+		type: "object",
+		required: [
+			"url"
+		],
+		properties: {
+			url: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			variables: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/ServerVariable"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	ServerVariable: {
+		type: "object",
+		required: [
+			"default"
+		],
+		properties: {
+			"enum": {
+				type: "array",
+				items: {
+					type: "string"
+				}
+			},
+			"default": {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Components: {
+		type: "object",
+		properties: {
+			schemas: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Schema"
+							},
+							{
+								$ref: "#/definitions/Reference"
+							}
+						]
+					}
+				}
+			},
+			responses: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Response"
+							}
+						]
+					}
+				}
+			},
+			parameters: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Parameter"
+							}
+						]
+					}
+				}
+			},
+			examples: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Example"
+							}
+						]
+					}
+				}
+			},
+			requestBodies: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/RequestBody"
+							}
+						]
+					}
+				}
+			},
+			headers: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Header"
+							}
+						]
+					}
+				}
+			},
+			securitySchemes: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/SecurityScheme"
+							}
+						]
+					}
+				}
+			},
+			links: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Link"
+							}
+						]
+					}
+				}
+			},
+			callbacks: {
+				type: "object",
+				patternProperties: {
+					"^[a-zA-Z0-9\\.\\-_]+$": {
+						oneOf: [
+							{
+								$ref: "#/definitions/Reference"
+							},
+							{
+								$ref: "#/definitions/Callback"
+							}
+						]
+					}
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Schema: {
+		type: "object",
+		properties: {
+			title: {
+				type: "string"
+			},
+			multipleOf: {
+				type: "number",
+				minimum: 0,
+				exclusiveMinimum: true
+			},
+			maximum: {
+				type: "number"
+			},
+			exclusiveMaximum: {
+				type: "boolean",
+				"default": false
+			},
+			minimum: {
+				type: "number"
+			},
+			exclusiveMinimum: {
+				type: "boolean",
+				"default": false
+			},
+			maxLength: {
+				type: "integer",
+				minimum: 0
+			},
+			minLength: {
+				type: "integer",
+				minimum: 0,
+				"default": 0
+			},
+			pattern: {
+				type: "string",
+				format: "regex"
+			},
+			maxItems: {
+				type: "integer",
+				minimum: 0
+			},
+			minItems: {
+				type: "integer",
+				minimum: 0,
+				"default": 0
+			},
+			uniqueItems: {
+				type: "boolean",
+				"default": false
+			},
+			maxProperties: {
+				type: "integer",
+				minimum: 0
+			},
+			minProperties: {
+				type: "integer",
+				minimum: 0,
+				"default": 0
+			},
+			required: {
+				type: "array",
+				items: {
+					type: "string"
+				},
+				minItems: 1,
+				uniqueItems: true
+			},
+			"enum": {
+				type: "array",
+				items: {
+				},
+				minItems: 1,
+				uniqueItems: false
+			},
+			type: {
+				type: "string",
+				"enum": [
+					"array",
+					"boolean",
+					"integer",
+					"number",
+					"object",
+					"string"
+				]
+			},
+			not: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			allOf: {
+				type: "array",
+				items: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Schema"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			oneOf: {
+				type: "array",
+				items: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Schema"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			anyOf: {
+				type: "array",
+				items: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Schema"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			items: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			properties: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Schema"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			additionalProperties: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					},
+					{
+						type: "boolean"
+					}
+				],
+				"default": true
+			},
+			description: {
+				type: "string"
+			},
+			format: {
+				type: "string"
+			},
+			"default": {
+			},
+			nullable: {
+				type: "boolean",
+				"default": false
+			},
+			discriminator: {
+				$ref: "#/definitions/Discriminator"
+			},
+			readOnly: {
+				type: "boolean",
+				"default": false
+			},
+			writeOnly: {
+				type: "boolean",
+				"default": false
+			},
+			example: {
+			},
+			externalDocs: {
+				$ref: "#/definitions/ExternalDocumentation"
+			},
+			deprecated: {
+				type: "boolean",
+				"default": false
+			},
+			xml: {
+				$ref: "#/definitions/XML"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Discriminator: {
+		type: "object",
+		required: [
+			"propertyName"
+		],
+		properties: {
+			propertyName: {
+				type: "string"
+			},
+			mapping: {
+				type: "object",
+				additionalProperties: {
+					type: "string"
+				}
+			}
+		}
+	},
+	XML: {
+		type: "object",
+		properties: {
+			name: {
+				type: "string"
+			},
+			namespace: {
+				type: "string",
+				format: "uri"
+			},
+			prefix: {
+				type: "string"
+			},
+			attribute: {
+				type: "boolean",
+				"default": false
+			},
+			wrapped: {
+				type: "boolean",
+				"default": false
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Response: {
+		type: "object",
+		required: [
+			"description"
+		],
+		properties: {
+			description: {
+				type: "string"
+			},
+			headers: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Header"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			content: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/MediaType"
+				}
+			},
+			links: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Link"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	MediaType: {
+		type: "object",
+		properties: {
+			schema: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			example: {
+			},
+			examples: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Example"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			encoding: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/Encoding"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false,
+		allOf: [
+			{
+				$ref: "#/definitions/ExampleXORExamples"
+			}
+		]
+	},
+	Example: {
+		type: "object",
+		properties: {
+			summary: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			value: {
+			},
+			externalValue: {
+				type: "string",
+				format: "uri-reference"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Header: {
+		type: "object",
+		properties: {
+			description: {
+				type: "string"
+			},
+			required: {
+				type: "boolean",
+				"default": false
+			},
+			deprecated: {
+				type: "boolean",
+				"default": false
+			},
+			allowEmptyValue: {
+				type: "boolean",
+				"default": false
+			},
+			style: {
+				type: "string",
+				"enum": [
+					"simple"
+				],
+				"default": "simple"
+			},
+			explode: {
+				type: "boolean"
+			},
+			allowReserved: {
+				type: "boolean",
+				"default": false
+			},
+			schema: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			content: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/MediaType"
+				},
+				minProperties: 1,
+				maxProperties: 1
+			},
+			example: {
+			},
+			examples: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Example"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false,
+		allOf: [
+			{
+				$ref: "#/definitions/ExampleXORExamples"
+			},
+			{
+				$ref: "#/definitions/SchemaXORContent"
+			}
+		]
+	},
+	Paths: {
+		type: "object",
+		patternProperties: {
+			"^\\/": {
+				$ref: "#/definitions/PathItem"
+			},
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	PathItem: {
+		type: "object",
+		properties: {
+			$ref: {
+				type: "string"
+			},
+			summary: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			servers: {
+				type: "array",
+				items: {
+					$ref: "#/definitions/Server"
+				}
+			},
+			parameters: {
+				type: "array",
+				items: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Parameter"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				},
+				uniqueItems: true
+			}
+		},
+		patternProperties: {
+			"^(get|put|post|delete|options|head|patch|trace)$": {
+				$ref: "#/definitions/Operation"
+			},
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Operation: {
+		type: "object",
+		required: [
+			"responses"
+		],
+		properties: {
+			tags: {
+				type: "array",
+				items: {
+					type: "string"
+				}
+			},
+			summary: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			externalDocs: {
+				$ref: "#/definitions/ExternalDocumentation"
+			},
+			operationId: {
+				type: "string"
+			},
+			parameters: {
+				type: "array",
+				items: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Parameter"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				},
+				uniqueItems: true
+			},
+			requestBody: {
+				oneOf: [
+					{
+						$ref: "#/definitions/RequestBody"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			responses: {
+				$ref: "#/definitions/Responses"
+			},
+			callbacks: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Callback"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			deprecated: {
+				type: "boolean",
+				"default": false
+			},
+			security: {
+				type: "array",
+				items: {
+					$ref: "#/definitions/SecurityRequirement"
+				}
+			},
+			servers: {
+				type: "array",
+				items: {
+					$ref: "#/definitions/Server"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Responses: {
+		type: "object",
+		properties: {
+			"default": {
+				oneOf: [
+					{
+						$ref: "#/definitions/Response"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			}
+		},
+		patternProperties: {
+			"^[1-5](?:\\d{2}|XX)$": {
+				oneOf: [
+					{
+						$ref: "#/definitions/Response"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			"^x-": {
+			}
+		},
+		minProperties: 1,
+		additionalProperties: false
+	},
+	SecurityRequirement: {
+		type: "object",
+		additionalProperties: {
+			type: "array",
+			items: {
+				type: "string"
+			}
+		}
+	},
+	Tag: {
+		type: "object",
+		required: [
+			"name"
+		],
+		properties: {
+			name: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			externalDocs: {
+				$ref: "#/definitions/ExternalDocumentation"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	ExternalDocumentation: {
+		type: "object",
+		required: [
+			"url"
+		],
+		properties: {
+			description: {
+				type: "string"
+			},
+			url: {
+				type: "string",
+				format: "uri-reference"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	ExampleXORExamples: {
+		description: "Example and examples are mutually exclusive",
+		not: {
+			required: [
+				"example",
+				"examples"
+			]
+		}
+	},
+	SchemaXORContent: {
+		description: "Schema and content are mutually exclusive, at least one is required",
+		not: {
+			required: [
+				"schema",
+				"content"
+			]
+		},
+		oneOf: [
+			{
+				required: [
+					"schema"
+				]
+			},
+			{
+				required: [
+					"content"
+				],
+				description: "Some properties are not allowed if content is present",
+				allOf: [
+					{
+						not: {
+							required: [
+								"style"
+							]
+						}
+					},
+					{
+						not: {
+							required: [
+								"explode"
+							]
+						}
+					},
+					{
+						not: {
+							required: [
+								"allowReserved"
+							]
+						}
+					},
+					{
+						not: {
+							required: [
+								"example"
+							]
+						}
+					},
+					{
+						not: {
+							required: [
+								"examples"
+							]
+						}
+					}
+				]
+			}
+		]
+	},
+	Parameter: {
+		type: "object",
+		properties: {
+			name: {
+				type: "string"
+			},
+			"in": {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			required: {
+				type: "boolean",
+				"default": false
+			},
+			deprecated: {
+				type: "boolean",
+				"default": false
+			},
+			allowEmptyValue: {
+				type: "boolean",
+				"default": false
+			},
+			style: {
+				type: "string"
+			},
+			explode: {
+				type: "boolean"
+			},
+			allowReserved: {
+				type: "boolean",
+				"default": false
+			},
+			schema: {
+				oneOf: [
+					{
+						$ref: "#/definitions/Schema"
+					},
+					{
+						$ref: "#/definitions/Reference"
+					}
+				]
+			},
+			content: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/MediaType"
+				},
+				minProperties: 1,
+				maxProperties: 1
+			},
+			example: {
+			},
+			examples: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Example"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false,
+		required: [
+			"name",
+			"in"
+		],
+		allOf: [
+			{
+				$ref: "#/definitions/ExampleXORExamples"
+			},
+			{
+				$ref: "#/definitions/SchemaXORContent"
+			},
+			{
+				$ref: "#/definitions/ParameterLocation"
+			}
+		]
+	},
+	ParameterLocation: {
+		description: "Parameter location",
+		oneOf: [
+			{
+				description: "Parameter in path",
+				required: [
+					"required"
+				],
+				properties: {
+					"in": {
+						"enum": [
+							"path"
+						]
+					},
+					style: {
+						"enum": [
+							"matrix",
+							"label",
+							"simple"
+						],
+						"default": "simple"
+					},
+					required: {
+						"enum": [
+							true
+						]
+					}
+				}
+			},
+			{
+				description: "Parameter in query",
+				properties: {
+					"in": {
+						"enum": [
+							"query"
+						]
+					},
+					style: {
+						"enum": [
+							"form",
+							"spaceDelimited",
+							"pipeDelimited",
+							"deepObject"
+						],
+						"default": "form"
+					}
+				}
+			},
+			{
+				description: "Parameter in header",
+				properties: {
+					"in": {
+						"enum": [
+							"header"
+						]
+					},
+					style: {
+						"enum": [
+							"simple"
+						],
+						"default": "simple"
+					}
+				}
+			},
+			{
+				description: "Parameter in cookie",
+				properties: {
+					"in": {
+						"enum": [
+							"cookie"
+						]
+					},
+					style: {
+						"enum": [
+							"form"
+						],
+						"default": "form"
+					}
+				}
+			}
+		]
+	},
+	RequestBody: {
+		type: "object",
+		required: [
+			"content"
+		],
+		properties: {
+			description: {
+				type: "string"
+			},
+			content: {
+				type: "object",
+				additionalProperties: {
+					$ref: "#/definitions/MediaType"
+				}
+			},
+			required: {
+				type: "boolean",
+				"default": false
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	SecurityScheme: {
+		oneOf: [
+			{
+				$ref: "#/definitions/APIKeySecurityScheme"
+			},
+			{
+				$ref: "#/definitions/HTTPSecurityScheme"
+			},
+			{
+				$ref: "#/definitions/OAuth2SecurityScheme"
+			},
+			{
+				$ref: "#/definitions/OpenIdConnectSecurityScheme"
+			}
+		]
+	},
+	APIKeySecurityScheme: {
+		type: "object",
+		required: [
+			"type",
+			"name",
+			"in"
+		],
+		properties: {
+			type: {
+				type: "string",
+				"enum": [
+					"apiKey"
+				]
+			},
+			name: {
+				type: "string"
+			},
+			"in": {
+				type: "string",
+				"enum": [
+					"header",
+					"query",
+					"cookie"
+				]
+			},
+			description: {
+				type: "string"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	HTTPSecurityScheme: {
+		type: "object",
+		required: [
+			"scheme",
+			"type"
+		],
+		properties: {
+			scheme: {
+				type: "string"
+			},
+			bearerFormat: {
+				type: "string"
+			},
+			description: {
+				type: "string"
+			},
+			type: {
+				type: "string",
+				"enum": [
+					"http"
+				]
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false,
+		oneOf: [
+			{
+				description: "Bearer",
+				properties: {
+					scheme: {
+						type: "string",
+						pattern: "^[Bb][Ee][Aa][Rr][Ee][Rr]$"
+					}
+				}
+			},
+			{
+				description: "Non Bearer",
+				not: {
+					required: [
+						"bearerFormat"
+					]
+				},
+				properties: {
+					scheme: {
+						not: {
+							type: "string",
+							pattern: "^[Bb][Ee][Aa][Rr][Ee][Rr]$"
+						}
+					}
+				}
+			}
+		]
+	},
+	OAuth2SecurityScheme: {
+		type: "object",
+		required: [
+			"type",
+			"flows"
+		],
+		properties: {
+			type: {
+				type: "string",
+				"enum": [
+					"oauth2"
+				]
+			},
+			flows: {
+				$ref: "#/definitions/OAuthFlows"
+			},
+			description: {
+				type: "string"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	OpenIdConnectSecurityScheme: {
+		type: "object",
+		required: [
+			"type",
+			"openIdConnectUrl"
+		],
+		properties: {
+			type: {
+				type: "string",
+				"enum": [
+					"openIdConnect"
+				]
+			},
+			openIdConnectUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			description: {
+				type: "string"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	OAuthFlows: {
+		type: "object",
+		properties: {
+			implicit: {
+				$ref: "#/definitions/ImplicitOAuthFlow"
+			},
+			password: {
+				$ref: "#/definitions/PasswordOAuthFlow"
+			},
+			clientCredentials: {
+				$ref: "#/definitions/ClientCredentialsFlow"
+			},
+			authorizationCode: {
+				$ref: "#/definitions/AuthorizationCodeOAuthFlow"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	ImplicitOAuthFlow: {
+		type: "object",
+		required: [
+			"authorizationUrl",
+			"scopes"
+		],
+		properties: {
+			authorizationUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			refreshUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			scopes: {
+				type: "object",
+				additionalProperties: {
+					type: "string"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	PasswordOAuthFlow: {
+		type: "object",
+		required: [
+			"tokenUrl",
+			"scopes"
+		],
+		properties: {
+			tokenUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			refreshUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			scopes: {
+				type: "object",
+				additionalProperties: {
+					type: "string"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	ClientCredentialsFlow: {
+		type: "object",
+		required: [
+			"tokenUrl",
+			"scopes"
+		],
+		properties: {
+			tokenUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			refreshUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			scopes: {
+				type: "object",
+				additionalProperties: {
+					type: "string"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	AuthorizationCodeOAuthFlow: {
+		type: "object",
+		required: [
+			"authorizationUrl",
+			"tokenUrl",
+			"scopes"
+		],
+		properties: {
+			authorizationUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			tokenUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			refreshUrl: {
+				type: "string",
+				format: "uri-reference"
+			},
+			scopes: {
+				type: "object",
+				additionalProperties: {
+					type: "string"
+				}
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false
+	},
+	Link: {
+		type: "object",
+		properties: {
+			operationId: {
+				type: "string"
+			},
+			operationRef: {
+				type: "string",
+				format: "uri-reference"
+			},
+			parameters: {
+				type: "object",
+				additionalProperties: {
+				}
+			},
+			requestBody: {
+			},
+			description: {
+				type: "string"
+			},
+			server: {
+				$ref: "#/definitions/Server"
+			}
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		},
+		additionalProperties: false,
+		not: {
+			description: "Operation Id and Operation Ref are mutually exclusive",
+			required: [
+				"operationId",
+				"operationRef"
+			]
+		}
+	},
+	Callback: {
+		type: "object",
+		additionalProperties: {
+			$ref: "#/definitions/PathItem"
+		},
+		patternProperties: {
+			"^x-": {
+			}
+		}
+	},
+	Encoding: {
+		type: "object",
+		properties: {
+			contentType: {
+				type: "string"
+			},
+			headers: {
+				type: "object",
+				additionalProperties: {
+					oneOf: [
+						{
+							$ref: "#/definitions/Header"
+						},
+						{
+							$ref: "#/definitions/Reference"
+						}
+					]
+				}
+			},
+			style: {
+				type: "string",
+				"enum": [
+					"form",
+					"spaceDelimited",
+					"pipeDelimited",
+					"deepObject"
+				]
+			},
+			explode: {
+				type: "boolean"
+			},
+			allowReserved: {
+				type: "boolean",
+				"default": false
+			}
+		},
+		additionalProperties: false
+	}
+};
+var jsonSchema = {
+	id: id,
+	$schema: $schema,
+	description: description,
+	type: type,
+	required: required,
+	properties: properties,
+	patternProperties: patternProperties,
+	additionalProperties: additionalProperties,
+	definitions: definitions
+};
+
+var openapi = "3.0.3";
+var info = {
+	version: "2.1.2",
+	title: "i3M Wallet API",
+	contact: {
+		name: "Juan Hernández Serrano",
+		email: "j.hernandez@upc.edu"
+	},
+	license: {
+		name: "MIT"
+	},
+	description: "i3M-Wallet API that can be used to interact with the i3M-Wallet. Most of the functionalities will also require end-user interaction with the wallet app.\n"
+};
+var tags = [
+	{
+		name: "identities",
+		description: "Endpoints to manage identities (DIDs).\n"
+	},
+	{
+		name: "resources",
+		description: "Besides identities, the wallet MAY securely store arbitrary resources in a secure vault, which may be selectively disclosed upon request. Currently storing verifiable credentials\n"
+	},
+	{
+		name: "selectiveDisclosure",
+		description: "Ednpoints for the selective disclosure process (used to present verifiable credentials)\n"
+	},
+	{
+		name: "transaction",
+		description: "Endpoints for deploying signed transactions to the DLT the wallet is connected to.\n"
+	},
+	{
+		name: "utils",
+		description: "Additional helpler functions\n"
+	}
+];
+var paths = {
+	"/identities": {
+		get: {
+			summary: "List all DIDs",
+			operationId: "identityList",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			parameters: [
+				{
+					"in": "query",
+					name: "alias",
+					schema: {
+						type: "string",
+						description: "An alias for the identity"
+					}
+				}
+			],
+			responses: {
+				"200": {
+					description: "An array of identities",
+					content: {
+						"application/json": {
+							schema: {
+								title: "IdentityListInput",
+								description: "A list of DIDs",
+								type: "array",
+								items: {
+									type: "object",
+									properties: {
+										did: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										}
+									},
+									required: [
+										"did"
+									]
+								}
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		post: {
+			summary: "Create an account",
+			operationId: "identityCreate",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			requestBody: {
+				description: "Create a DID.",
+				required: false,
+				content: {
+					"application/json": {
+						schema: {
+							title: "IdentityCreateInput",
+							description: "Besides the here defined options, provider specific properties should be added here if necessary, e.g. \"path\" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).\n",
+							type: "object",
+							properties: {
+								alias: {
+									type: "string"
+								}
+							},
+							additionalProperties: true
+						}
+					}
+				}
+			},
+			responses: {
+				"201": {
+					description: "the ID and type of the created account",
+					content: {
+						"application/json": {
+							schema: {
+								title: "IdentityCreateOutput",
+								description: "It returns the account id and type\n",
+								type: "object",
+								properties: {
+									did: {
+										description: "a DID using the ethr resolver",
+										type: "string",
+										pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+										example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+									}
+								},
+								additionalProperties: true,
+								required: [
+									"did"
+								]
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/identities/select": {
+		get: {
+			summary: "Gets an identity selected by the user.",
+			operationId: "identitySelect",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			parameters: [
+				{
+					"in": "query",
+					name: "reason",
+					schema: {
+						type: "string",
+						description: "Message to show to the user with the reason to pick an identity"
+					}
+				}
+			],
+			responses: {
+				"200": {
+					description: "Selected identity",
+					content: {
+						"application/json": {
+							schema: {
+								title: "IdentitySelectOutput",
+								type: "object",
+								properties: {
+									did: {
+										description: "a DID using the ethr resolver",
+										type: "string",
+										pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+										example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+									}
+								},
+								required: [
+									"did"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/identities/{did}/sign": {
+		post: {
+			summary: "Signs a message",
+			operationId: "identitySign",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			parameters: [
+				{
+					"in": "path",
+					name: "did",
+					schema: {
+						description: "a DID using the ethr resolver",
+						type: "string",
+						pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+					},
+					required: true
+				}
+			],
+			requestBody: {
+				description: "Data to sign.",
+				required: true,
+				content: {
+					"application/json": {
+						schema: {
+							title: "SignInput",
+							oneOf: [
+								{
+									title: "SignTransaction",
+									type: "object",
+									properties: {
+										type: {
+											"enum": [
+												"Transaction"
+											]
+										},
+										data: {
+											title: "Transaction",
+											type: "object",
+											additionalProperties: true,
+											properties: {
+												from: {
+													type: "string"
+												},
+												to: {
+													type: "string"
+												},
+												nonce: {
+													type: "number"
+												}
+											}
+										}
+									},
+									required: [
+										"type",
+										"data"
+									]
+								},
+								{
+									title: "SignRaw",
+									type: "object",
+									properties: {
+										type: {
+											"enum": [
+												"Raw"
+											]
+										},
+										data: {
+											type: "object",
+											properties: {
+												payload: {
+													description: "Base64Url encoded data to sign",
+													type: "string",
+													pattern: "^[A-Za-z0-9_-]+$"
+												}
+											},
+											required: [
+												"payload"
+											]
+										}
+									},
+									required: [
+										"type",
+										"data"
+									]
+								},
+								{
+									title: "SignJWT",
+									type: "object",
+									properties: {
+										type: {
+											"enum": [
+												"JWT"
+											]
+										},
+										data: {
+											type: "object",
+											properties: {
+												header: {
+													description: "header fields to be added to the JWS header. \"alg\" and \"kid\" will be ignored since they are automatically added by the wallet.",
+													type: "object",
+													additionalProperties: true
+												},
+												payload: {
+													description: "A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.",
+													type: "object",
+													additionalProperties: true
+												}
+											},
+											required: [
+												"payload"
+											]
+										}
+									},
+									required: [
+										"type",
+										"data"
+									]
+								}
+							]
+						}
+					}
+				}
+			},
+			responses: {
+				"200": {
+					description: "Signed data",
+					content: {
+						"application/json": {
+							schema: {
+								title: "SignOutput",
+								type: "object",
+								properties: {
+									signature: {
+										type: "string"
+									}
+								},
+								required: [
+									"signature"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/identities/{did}/info": {
+		get: {
+			summary: "Gets extra information of an identity.",
+			operationId: "identityInfo",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			parameters: [
+				{
+					"in": "path",
+					name: "did",
+					schema: {
+						description: "a DID using the ethr resolver",
+						type: "string",
+						pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+					},
+					required: true
+				}
+			],
+			responses: {
+				"200": {
+					description: "Identity data",
+					content: {
+						"application/json": {
+							schema: {
+								title: "Identity Data",
+								type: "object",
+								properties: {
+									did: {
+										type: "string",
+										example: "did:ethr:i3m:0x03142f480f831e835822fc0cd35726844a7069d28df58fb82037f1598812e1ade8"
+									},
+									alias: {
+										type: "string",
+										example: "identity1"
+									},
+									provider: {
+										type: "string",
+										example: "did:ethr:i3m"
+									},
+									addresses: {
+										type: "array",
+										items: {
+											description: "Ethereum Address in EIP-55 format (with checksum)",
+											type: "string",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
+											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+										},
+										example: [
+											"0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
+										]
+									}
+								},
+								required: [
+									"did"
+								]
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/identities/{did}/deploy-tx": {
+		post: {
+			summary: "Signs and deploys a transaction",
+			operationId: "identityDeployTransaction",
+			"x-eov-operation-handler": "identities",
+			tags: [
+				"identities"
+			],
+			parameters: [
+				{
+					"in": "path",
+					name: "did",
+					schema: {
+						description: "a DID using the ethr resolver",
+						type: "string",
+						pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+					},
+					required: true
+				}
+			],
+			requestBody: {
+				description: "Transaction to sign and deploy",
+				required: true,
+				content: {
+					"application/json": {
+						schema: {
+							title: "Transaction",
+							type: "object",
+							additionalProperties: true,
+							properties: {
+								from: {
+									type: "string"
+								},
+								to: {
+									type: "string"
+								},
+								nonce: {
+									type: "number"
+								}
+							}
+						}
+					}
+				}
+			},
+			responses: {
+				"200": {
+					description: "Selected identity",
+					content: {
+						"application/json": {
+							schema: {
+								title: "Receipt",
+								type: "object",
+								properties: {
+									receipt: {
+										type: "string"
+									}
+								},
+								required: [
+									"receipt"
+								]
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/resources": {
+		get: {
+			summary: "Lists the resources that match the filter specified in the query parameters.",
+			operationId: "resourceList",
+			"x-eov-operation-handler": "resources",
+			tags: [
+				"resources"
+			],
+			parameters: [
+				{
+					"in": "query",
+					name: "type",
+					example: "Contract",
+					schema: {
+						type: "string",
+						"enum": [
+							"VerifiableCredential",
+							"Object",
+							"Contract",
+							"DataExchange",
+							"NonRepudiationProof"
+						]
+					},
+					description: "Filter the resources by resource type."
+				},
+				{
+					"in": "query",
+					name: "identity",
+					example: "",
+					allowEmptyValue: true,
+					schema: {
+						description: "a DID using the ethr resolver",
+						type: "string",
+						pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+					},
+					description: "Filter the resource associated to an identity DID. Send empty value to get all the resources that are not associated to any identity."
+				}
+			],
+			responses: {
+				"200": {
+					description: "A paged array of resources. Only the props requested will be returned. Security policies may prevent some props from being returned.",
+					content: {
+						"application/json": {
+							schema: {
+								title: "ResourceListOutput",
+								description: "A list of resources",
+								type: "array",
+								items: {
+									title: "Resource",
+									anyOf: [
+										{
+											title: "VerifiableCredential",
+											type: "object",
+											properties: {
+												type: {
+													example: "VerifiableCredential",
+													"enum": [
+														"VerifiableCredential"
+													]
+												},
+												name: {
+													type: "string",
+													example: "Resource name"
+												},
+												resource: {
+													type: "object",
+													properties: {
+														"@context": {
+															type: "array",
+															items: {
+																type: "string"
+															},
+															example: [
+																"https://www.w3.org/2018/credentials/v1"
+															]
+														},
+														id: {
+															type: "string",
+															example: "http://example.edu/credentials/1872"
+														},
+														type: {
+															type: "array",
+															items: {
+																type: "string"
+															},
+															example: [
+																"VerifiableCredential"
+															]
+														},
+														issuer: {
+															type: "object",
+															properties: {
+																id: {
+																	description: "a DID using the ethr resolver",
+																	type: "string",
+																	pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																}
+															},
+															additionalProperties: true,
+															required: [
+																"id"
+															]
+														},
+														issuanceDate: {
+															type: "string",
+															format: "date-time",
+															example: "2021-06-10T19:07:28.000Z"
+														},
+														credentialSubject: {
+															type: "object",
+															properties: {
+																id: {
+																	description: "a DID using the ethr resolver",
+																	type: "string",
+																	pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																}
+															},
+															required: [
+																"id"
+															],
+															additionalProperties: true
+														},
+														proof: {
+															type: "object",
+															properties: {
+																type: {
+																	type: "string",
+																	"enum": [
+																		"JwtProof2020"
+																	]
+																}
+															},
+															required: [
+																"type"
+															],
+															additionalProperties: true
+														}
+													},
+													additionalProperties: true,
+													required: [
+														"@context",
+														"type",
+														"issuer",
+														"issuanceDate",
+														"credentialSubject",
+														"proof"
+													]
+												}
+											},
+											required: [
+												"type",
+												"resource"
+											]
+										},
+										{
+											title: "ObjectResource",
+											type: "object",
+											properties: {
+												type: {
+													example: "Object",
+													"enum": [
+														"Object"
+													]
+												},
+												name: {
+													type: "string",
+													example: "Resource name"
+												},
+												parentResource: {
+													type: "string"
+												},
+												identity: {
+													description: "a DID using the ethr resolver",
+													type: "string",
+													pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+												},
+												resource: {
+													type: "object",
+													additionalProperties: true
+												}
+											},
+											required: [
+												"type",
+												"resource"
+											]
+										},
+										{
+											title: "Contract",
+											type: "object",
+											properties: {
+												type: {
+													example: "Contract",
+													"enum": [
+														"Contract"
+													]
+												},
+												name: {
+													type: "string",
+													example: "Resource name"
+												},
+												identity: {
+													description: "a DID using the ethr resolver",
+													type: "string",
+													pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+												},
+												resource: {
+													type: "object",
+													properties: {
+														dataSharingAgreement: {
+															type: "object",
+															required: [
+																"dataOfferingDescription",
+																"parties",
+																"purpose",
+																"duration",
+																"intendedUse",
+																"licenseGrant",
+																"dataStream",
+																"personalData",
+																"pricingModel",
+																"dataExchangeAgreement",
+																"signatures"
+															],
+															properties: {
+																dataOfferingDescription: {
+																	type: "object",
+																	required: [
+																		"dataOfferingId",
+																		"version",
+																		"active"
+																	],
+																	properties: {
+																		dataOfferingId: {
+																			type: "string"
+																		},
+																		version: {
+																			type: "integer"
+																		},
+																		category: {
+																			type: "string"
+																		},
+																		active: {
+																			type: "boolean"
+																		},
+																		title: {
+																			type: "string"
+																		}
+																	}
+																},
+																parties: {
+																	type: "object",
+																	required: [
+																		"providerDid",
+																		"consumerDid"
+																	],
+																	properties: {
+																		providerDid: {
+																			description: "a DID using the ethr resolver",
+																			type: "string",
+																			pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																			example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																		},
+																		consumerDid: {
+																			description: "a DID using the ethr resolver",
+																			type: "string",
+																			pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																			example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																		}
+																	}
+																},
+																purpose: {
+																	type: "string"
+																},
+																duration: {
+																	type: "object",
+																	required: [
+																		"creationDate",
+																		"startDate",
+																		"endDate"
+																	],
+																	properties: {
+																		creationDate: {
+																			type: "integer"
+																		},
+																		startDate: {
+																			type: "integer"
+																		},
+																		endDate: {
+																			type: "integer"
+																		}
+																	}
+																},
+																intendedUse: {
+																	type: "object",
+																	required: [
+																		"processData",
+																		"shareDataWithThirdParty",
+																		"editData"
+																	],
+																	properties: {
+																		processData: {
+																			type: "boolean"
+																		},
+																		shareDataWithThirdParty: {
+																			type: "boolean"
+																		},
+																		editData: {
+																			type: "boolean"
+																		}
+																	}
+																},
+																licenseGrant: {
+																	type: "object",
+																	required: [
+																		"transferable",
+																		"exclusiveness",
+																		"paidUp",
+																		"revocable",
+																		"processing",
+																		"modifying",
+																		"analyzing",
+																		"storingData",
+																		"storingCopy",
+																		"reproducing",
+																		"distributing",
+																		"loaning",
+																		"selling",
+																		"renting",
+																		"furtherLicensing",
+																		"leasing"
+																	],
+																	properties: {
+																		transferable: {
+																			type: "boolean"
+																		},
+																		exclusiveness: {
+																			type: "boolean"
+																		},
+																		paidUp: {
+																			type: "boolean"
+																		},
+																		revocable: {
+																			type: "boolean"
+																		},
+																		processing: {
+																			type: "boolean"
+																		},
+																		modifying: {
+																			type: "boolean"
+																		},
+																		analyzing: {
+																			type: "boolean"
+																		},
+																		storingData: {
+																			type: "boolean"
+																		},
+																		storingCopy: {
+																			type: "boolean"
+																		},
+																		reproducing: {
+																			type: "boolean"
+																		},
+																		distributing: {
+																			type: "boolean"
+																		},
+																		loaning: {
+																			type: "boolean"
+																		},
+																		selling: {
+																			type: "boolean"
+																		},
+																		renting: {
+																			type: "boolean"
+																		},
+																		furtherLicensing: {
+																			type: "boolean"
+																		},
+																		leasing: {
+																			type: "boolean"
+																		}
+																	}
+																},
+																dataStream: {
+																	type: "boolean"
+																},
+																personalData: {
+																	type: "boolean"
+																},
+																pricingModel: {
+																	type: "object",
+																	required: [
+																		"basicPrice",
+																		"currency",
+																		"hasFreePrice"
+																	],
+																	properties: {
+																		paymentType: {
+																			type: "string"
+																		},
+																		pricingModelName: {
+																			type: "string"
+																		},
+																		basicPrice: {
+																			type: "number",
+																			format: "float"
+																		},
+																		currency: {
+																			type: "string"
+																		},
+																		fee: {
+																			type: "number",
+																			format: "float"
+																		},
+																		hasPaymentOnSubscription: {
+																			type: "object",
+																			properties: {
+																				paymentOnSubscriptionName: {
+																					type: "string"
+																				},
+																				paymentType: {
+																					type: "string"
+																				},
+																				timeDuration: {
+																					type: "string"
+																				},
+																				description: {
+																					type: "string"
+																				},
+																				repeat: {
+																					type: "string"
+																				},
+																				hasSubscriptionPrice: {
+																					type: "integer"
+																				}
+																			}
+																		},
+																		hasFreePrice: {
+																			type: "object",
+																			properties: {
+																				hasPriceFree: {
+																					type: "boolean"
+																				}
+																			}
+																		}
+																	}
+																},
+																dataExchangeAgreement: {
+																	type: "object",
+																	required: [
+																		"orig",
+																		"dest",
+																		"encAlg",
+																		"signingAlg",
+																		"hashAlg",
+																		"ledgerContractAddress",
+																		"ledgerSignerAddress",
+																		"pooToPorDelay",
+																		"pooToPopDelay",
+																		"pooToSecretDelay"
+																	],
+																	properties: {
+																		orig: {
+																			type: "string",
+																			description: "A stringified JWK with alphabetically sorted claims",
+																			example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+																		},
+																		dest: {
+																			type: "string",
+																			description: "A stringified JWK with alphabetically sorted claims",
+																			example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+																		},
+																		encAlg: {
+																			type: "string",
+																			"enum": [
+																				"A128GCM",
+																				"A256GCM"
+																			],
+																			example: "A256GCM"
+																		},
+																		signingAlg: {
+																			type: "string",
+																			"enum": [
+																				"ES256",
+																				"ES384",
+																				"ES512"
+																			],
+																			example: "ES256"
+																		},
+																		hashAlg: {
+																			type: "string",
+																			"enum": [
+																				"SHA-256",
+																				"SHA-384",
+																				"SHA-512"
+																			],
+																			example: "SHA-256"
+																		},
+																		ledgerContractAddress: {
+																			description: "Ethereum Address in EIP-55 format (with checksum)",
+																			type: "string",
+																			pattern: "^0x([0-9A-Fa-f]){40}$",
+																			example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																		},
+																		ledgerSignerAddress: {
+																			description: "Ethereum Address in EIP-55 format (with checksum)",
+																			type: "string",
+																			pattern: "^0x([0-9A-Fa-f]){40}$",
+																			example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																		},
+																		pooToPorDelay: {
+																			description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+																			type: "integer",
+																			minimum: 1,
+																			example: 10000
+																		},
+																		pooToPopDelay: {
+																			description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+																			type: "integer",
+																			minimum: 1,
+																			example: 20000
+																		},
+																		pooToSecretDelay: {
+																			description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+																			type: "integer",
+																			minimum: 1,
+																			example: 180000
+																		},
+																		schema: {
+																			description: "A stringified JSON-LD schema describing the data format",
+																			type: "string"
+																		}
+																	}
+																},
+																signatures: {
+																	type: "object",
+																	required: [
+																		"providerSignature",
+																		"consumerSignature"
+																	],
+																	properties: {
+																		providerSignature: {
+																			title: "CompactJWS",
+																			type: "string",
+																			pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+																		},
+																		consumerSignature: {
+																			title: "CompactJWS",
+																			type: "string",
+																			pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+																		}
+																	}
+																}
+															}
+														},
+														keyPair: {
+															type: "object",
+															properties: {
+																privateJwk: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+																},
+																publicJwk: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+																}
+															},
+															required: [
+																"privateJwk",
+																"publicJwk"
+															]
+														}
+													},
+													required: [
+														"dataSharingAgreement",
+														"keyPair"
+													]
+												}
+											},
+											required: [
+												"type",
+												"resource"
+											]
+										},
+										{
+											title: "NonRepudiationProof",
+											type: "object",
+											properties: {
+												type: {
+													example: "NonRepudiationProof",
+													"enum": [
+														"NonRepudiationProof"
+													]
+												},
+												name: {
+													type: "string",
+													example: "Resource name"
+												},
+												resource: {
+													description: "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+												}
+											},
+											required: [
+												"type",
+												"resource"
+											]
+										},
+										{
+											title: "DataExchangeResource",
+											type: "object",
+											properties: {
+												type: {
+													example: "DataExchange",
+													"enum": [
+														"DataExchange"
+													]
+												},
+												name: {
+													type: "string",
+													example: "Resource name"
+												},
+												resource: {
+													allOf: [
+														{
+															type: "object",
+															required: [
+																"orig",
+																"dest",
+																"encAlg",
+																"signingAlg",
+																"hashAlg",
+																"ledgerContractAddress",
+																"ledgerSignerAddress",
+																"pooToPorDelay",
+																"pooToPopDelay",
+																"pooToSecretDelay"
+															],
+															properties: {
+																orig: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+																},
+																dest: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+																},
+																encAlg: {
+																	type: "string",
+																	"enum": [
+																		"A128GCM",
+																		"A256GCM"
+																	],
+																	example: "A256GCM"
+																},
+																signingAlg: {
+																	type: "string",
+																	"enum": [
+																		"ES256",
+																		"ES384",
+																		"ES512"
+																	],
+																	example: "ES256"
+																},
+																hashAlg: {
+																	type: "string",
+																	"enum": [
+																		"SHA-256",
+																		"SHA-384",
+																		"SHA-512"
+																	],
+																	example: "SHA-256"
+																},
+																ledgerContractAddress: {
+																	description: "Ethereum Address in EIP-55 format (with checksum)",
+																	type: "string",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
+																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																},
+																ledgerSignerAddress: {
+																	description: "Ethereum Address in EIP-55 format (with checksum)",
+																	type: "string",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
+																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																},
+																pooToPorDelay: {
+																	description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+																	type: "integer",
+																	minimum: 1,
+																	example: 10000
+																},
+																pooToPopDelay: {
+																	description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+																	type: "integer",
+																	minimum: 1,
+																	example: 20000
+																},
+																pooToSecretDelay: {
+																	description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+																	type: "integer",
+																	minimum: 1,
+																	example: 180000
+																},
+																schema: {
+																	description: "A stringified JSON-LD schema describing the data format",
+																	type: "string"
+																}
+															}
+														},
+														{
+															type: "object",
+															properties: {
+																cipherblockDgst: {
+																	type: "string",
+																	description: "hash of the cipherblock in base64url with no padding",
+																	pattern: "^[a-zA-Z0-9_-]+$"
+																},
+																blockCommitment: {
+																	type: "string",
+																	description: "hash of the plaintext block in base64url with no padding",
+																	pattern: "^[a-zA-Z0-9_-]+$"
+																},
+																secretCommitment: {
+																	type: "string",
+																	description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+																	pattern: "^[a-zA-Z0-9_-]+$"
+																}
+															},
+															required: [
+																"cipherblockDgst",
+																"blockCommitment",
+																"secretCommitment"
+															]
+														}
+													]
+												}
+											},
+											required: [
+												"type",
+												"resource"
+											]
+										}
+									]
+								}
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		post: {
+			summary: "Create a resource",
+			operationId: "resourceCreate",
+			"x-eov-operation-handler": "resources",
+			tags: [
+				"resources"
+			],
+			requestBody: {
+				description: "Create a resource. Nowadays it only supports storage of verifiable credentials.",
+				content: {
+					"application/json": {
+						schema: {
+							title: "Resource",
+							anyOf: [
+								{
+									title: "VerifiableCredential",
+									type: "object",
+									properties: {
+										type: {
+											example: "VerifiableCredential",
+											"enum": [
+												"VerifiableCredential"
+											]
+										},
+										name: {
+											type: "string",
+											example: "Resource name"
+										},
+										resource: {
+											type: "object",
+											properties: {
+												"@context": {
+													type: "array",
+													items: {
+														type: "string"
+													},
+													example: [
+														"https://www.w3.org/2018/credentials/v1"
+													]
+												},
+												id: {
+													type: "string",
+													example: "http://example.edu/credentials/1872"
+												},
+												type: {
+													type: "array",
+													items: {
+														type: "string"
+													},
+													example: [
+														"VerifiableCredential"
+													]
+												},
+												issuer: {
+													type: "object",
+													properties: {
+														id: {
+															description: "a DID using the ethr resolver",
+															type: "string",
+															pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+														}
+													},
+													additionalProperties: true,
+													required: [
+														"id"
+													]
+												},
+												issuanceDate: {
+													type: "string",
+													format: "date-time",
+													example: "2021-06-10T19:07:28.000Z"
+												},
+												credentialSubject: {
+													type: "object",
+													properties: {
+														id: {
+															description: "a DID using the ethr resolver",
+															type: "string",
+															pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+															example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+														}
+													},
+													required: [
+														"id"
+													],
+													additionalProperties: true
+												},
+												proof: {
+													type: "object",
+													properties: {
+														type: {
+															type: "string",
+															"enum": [
+																"JwtProof2020"
+															]
+														}
+													},
+													required: [
+														"type"
+													],
+													additionalProperties: true
+												}
+											},
+											additionalProperties: true,
+											required: [
+												"@context",
+												"type",
+												"issuer",
+												"issuanceDate",
+												"credentialSubject",
+												"proof"
+											]
+										}
+									},
+									required: [
+										"type",
+										"resource"
+									]
+								},
+								{
+									title: "ObjectResource",
+									type: "object",
+									properties: {
+										type: {
+											example: "Object",
+											"enum": [
+												"Object"
+											]
+										},
+										name: {
+											type: "string",
+											example: "Resource name"
+										},
+										parentResource: {
+											type: "string"
+										},
+										identity: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										},
+										resource: {
+											type: "object",
+											additionalProperties: true
+										}
+									},
+									required: [
+										"type",
+										"resource"
+									]
+								},
+								{
+									title: "Contract",
+									type: "object",
+									properties: {
+										type: {
+											example: "Contract",
+											"enum": [
+												"Contract"
+											]
+										},
+										name: {
+											type: "string",
+											example: "Resource name"
+										},
+										identity: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										},
+										resource: {
+											type: "object",
+											properties: {
+												dataSharingAgreement: {
+													type: "object",
+													required: [
+														"dataOfferingDescription",
+														"parties",
+														"purpose",
+														"duration",
+														"intendedUse",
+														"licenseGrant",
+														"dataStream",
+														"personalData",
+														"pricingModel",
+														"dataExchangeAgreement",
+														"signatures"
+													],
+													properties: {
+														dataOfferingDescription: {
+															type: "object",
+															required: [
+																"dataOfferingId",
+																"version",
+																"active"
+															],
+															properties: {
+																dataOfferingId: {
+																	type: "string"
+																},
+																version: {
+																	type: "integer"
+																},
+																category: {
+																	type: "string"
+																},
+																active: {
+																	type: "boolean"
+																},
+																title: {
+																	type: "string"
+																}
+															}
+														},
+														parties: {
+															type: "object",
+															required: [
+																"providerDid",
+																"consumerDid"
+															],
+															properties: {
+																providerDid: {
+																	description: "a DID using the ethr resolver",
+																	type: "string",
+																	pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																},
+																consumerDid: {
+																	description: "a DID using the ethr resolver",
+																	type: "string",
+																	pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+																	example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+																}
+															}
+														},
+														purpose: {
+															type: "string"
+														},
+														duration: {
+															type: "object",
+															required: [
+																"creationDate",
+																"startDate",
+																"endDate"
+															],
+															properties: {
+																creationDate: {
+																	type: "integer"
+																},
+																startDate: {
+																	type: "integer"
+																},
+																endDate: {
+																	type: "integer"
+																}
+															}
+														},
+														intendedUse: {
+															type: "object",
+															required: [
+																"processData",
+																"shareDataWithThirdParty",
+																"editData"
+															],
+															properties: {
+																processData: {
+																	type: "boolean"
+																},
+																shareDataWithThirdParty: {
+																	type: "boolean"
+																},
+																editData: {
+																	type: "boolean"
+																}
+															}
+														},
+														licenseGrant: {
+															type: "object",
+															required: [
+																"transferable",
+																"exclusiveness",
+																"paidUp",
+																"revocable",
+																"processing",
+																"modifying",
+																"analyzing",
+																"storingData",
+																"storingCopy",
+																"reproducing",
+																"distributing",
+																"loaning",
+																"selling",
+																"renting",
+																"furtherLicensing",
+																"leasing"
+															],
+															properties: {
+																transferable: {
+																	type: "boolean"
+																},
+																exclusiveness: {
+																	type: "boolean"
+																},
+																paidUp: {
+																	type: "boolean"
+																},
+																revocable: {
+																	type: "boolean"
+																},
+																processing: {
+																	type: "boolean"
+																},
+																modifying: {
+																	type: "boolean"
+																},
+																analyzing: {
+																	type: "boolean"
+																},
+																storingData: {
+																	type: "boolean"
+																},
+																storingCopy: {
+																	type: "boolean"
+																},
+																reproducing: {
+																	type: "boolean"
+																},
+																distributing: {
+																	type: "boolean"
+																},
+																loaning: {
+																	type: "boolean"
+																},
+																selling: {
+																	type: "boolean"
+																},
+																renting: {
+																	type: "boolean"
+																},
+																furtherLicensing: {
+																	type: "boolean"
+																},
+																leasing: {
+																	type: "boolean"
+																}
+															}
+														},
+														dataStream: {
+															type: "boolean"
+														},
+														personalData: {
+															type: "boolean"
+														},
+														pricingModel: {
+															type: "object",
+															required: [
+																"basicPrice",
+																"currency",
+																"hasFreePrice"
+															],
+															properties: {
+																paymentType: {
+																	type: "string"
+																},
+																pricingModelName: {
+																	type: "string"
+																},
+																basicPrice: {
+																	type: "number",
+																	format: "float"
+																},
+																currency: {
+																	type: "string"
+																},
+																fee: {
+																	type: "number",
+																	format: "float"
+																},
+																hasPaymentOnSubscription: {
+																	type: "object",
+																	properties: {
+																		paymentOnSubscriptionName: {
+																			type: "string"
+																		},
+																		paymentType: {
+																			type: "string"
+																		},
+																		timeDuration: {
+																			type: "string"
+																		},
+																		description: {
+																			type: "string"
+																		},
+																		repeat: {
+																			type: "string"
+																		},
+																		hasSubscriptionPrice: {
+																			type: "integer"
+																		}
+																	}
+																},
+																hasFreePrice: {
+																	type: "object",
+																	properties: {
+																		hasPriceFree: {
+																			type: "boolean"
+																		}
+																	}
+																}
+															}
+														},
+														dataExchangeAgreement: {
+															type: "object",
+															required: [
+																"orig",
+																"dest",
+																"encAlg",
+																"signingAlg",
+																"hashAlg",
+																"ledgerContractAddress",
+																"ledgerSignerAddress",
+																"pooToPorDelay",
+																"pooToPopDelay",
+																"pooToSecretDelay"
+															],
+															properties: {
+																orig: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+																},
+																dest: {
+																	type: "string",
+																	description: "A stringified JWK with alphabetically sorted claims",
+																	example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+																},
+																encAlg: {
+																	type: "string",
+																	"enum": [
+																		"A128GCM",
+																		"A256GCM"
+																	],
+																	example: "A256GCM"
+																},
+																signingAlg: {
+																	type: "string",
+																	"enum": [
+																		"ES256",
+																		"ES384",
+																		"ES512"
+																	],
+																	example: "ES256"
+																},
+																hashAlg: {
+																	type: "string",
+																	"enum": [
+																		"SHA-256",
+																		"SHA-384",
+																		"SHA-512"
+																	],
+																	example: "SHA-256"
+																},
+																ledgerContractAddress: {
+																	description: "Ethereum Address in EIP-55 format (with checksum)",
+																	type: "string",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
+																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																},
+																ledgerSignerAddress: {
+																	description: "Ethereum Address in EIP-55 format (with checksum)",
+																	type: "string",
+																	pattern: "^0x([0-9A-Fa-f]){40}$",
+																	example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+																},
+																pooToPorDelay: {
+																	description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+																	type: "integer",
+																	minimum: 1,
+																	example: 10000
+																},
+																pooToPopDelay: {
+																	description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+																	type: "integer",
+																	minimum: 1,
+																	example: 20000
+																},
+																pooToSecretDelay: {
+																	description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+																	type: "integer",
+																	minimum: 1,
+																	example: 180000
+																},
+																schema: {
+																	description: "A stringified JSON-LD schema describing the data format",
+																	type: "string"
+																}
+															}
+														},
+														signatures: {
+															type: "object",
+															required: [
+																"providerSignature",
+																"consumerSignature"
+															],
+															properties: {
+																providerSignature: {
+																	title: "CompactJWS",
+																	type: "string",
+																	pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+																},
+																consumerSignature: {
+																	title: "CompactJWS",
+																	type: "string",
+																	pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+																}
+															}
+														}
+													}
+												},
+												keyPair: {
+													type: "object",
+													properties: {
+														privateJwk: {
+															type: "string",
+															description: "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+															example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+														},
+														publicJwk: {
+															type: "string",
+															description: "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+															example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+														}
+													},
+													required: [
+														"privateJwk",
+														"publicJwk"
+													]
+												}
+											},
+											required: [
+												"dataSharingAgreement",
+												"keyPair"
+											]
+										}
+									},
+									required: [
+										"type",
+										"resource"
+									]
+								},
+								{
+									title: "NonRepudiationProof",
+									type: "object",
+									properties: {
+										type: {
+											example: "NonRepudiationProof",
+											"enum": [
+												"NonRepudiationProof"
+											]
+										},
+										name: {
+											type: "string",
+											example: "Resource name"
+										},
+										resource: {
+											description: "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+										}
+									},
+									required: [
+										"type",
+										"resource"
+									]
+								},
+								{
+									title: "DataExchangeResource",
+									type: "object",
+									properties: {
+										type: {
+											example: "DataExchange",
+											"enum": [
+												"DataExchange"
+											]
+										},
+										name: {
+											type: "string",
+											example: "Resource name"
+										},
+										resource: {
+											allOf: [
+												{
+													type: "object",
+													required: [
+														"orig",
+														"dest",
+														"encAlg",
+														"signingAlg",
+														"hashAlg",
+														"ledgerContractAddress",
+														"ledgerSignerAddress",
+														"pooToPorDelay",
+														"pooToPopDelay",
+														"pooToSecretDelay"
+													],
+													properties: {
+														orig: {
+															type: "string",
+															description: "A stringified JWK with alphabetically sorted claims",
+															example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+														},
+														dest: {
+															type: "string",
+															description: "A stringified JWK with alphabetically sorted claims",
+															example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+														},
+														encAlg: {
+															type: "string",
+															"enum": [
+																"A128GCM",
+																"A256GCM"
+															],
+															example: "A256GCM"
+														},
+														signingAlg: {
+															type: "string",
+															"enum": [
+																"ES256",
+																"ES384",
+																"ES512"
+															],
+															example: "ES256"
+														},
+														hashAlg: {
+															type: "string",
+															"enum": [
+																"SHA-256",
+																"SHA-384",
+																"SHA-512"
+															],
+															example: "SHA-256"
+														},
+														ledgerContractAddress: {
+															description: "Ethereum Address in EIP-55 format (with checksum)",
+															type: "string",
+															pattern: "^0x([0-9A-Fa-f]){40}$",
+															example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+														},
+														ledgerSignerAddress: {
+															description: "Ethereum Address in EIP-55 format (with checksum)",
+															type: "string",
+															pattern: "^0x([0-9A-Fa-f]){40}$",
+															example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+														},
+														pooToPorDelay: {
+															description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+															type: "integer",
+															minimum: 1,
+															example: 10000
+														},
+														pooToPopDelay: {
+															description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+															type: "integer",
+															minimum: 1,
+															example: 20000
+														},
+														pooToSecretDelay: {
+															description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+															type: "integer",
+															minimum: 1,
+															example: 180000
+														},
+														schema: {
+															description: "A stringified JSON-LD schema describing the data format",
+															type: "string"
+														}
+													}
+												},
+												{
+													type: "object",
+													properties: {
+														cipherblockDgst: {
+															type: "string",
+															description: "hash of the cipherblock in base64url with no padding",
+															pattern: "^[a-zA-Z0-9_-]+$"
+														},
+														blockCommitment: {
+															type: "string",
+															description: "hash of the plaintext block in base64url with no padding",
+															pattern: "^[a-zA-Z0-9_-]+$"
+														},
+														secretCommitment: {
+															type: "string",
+															description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+															pattern: "^[a-zA-Z0-9_-]+$"
+														}
+													},
+													required: [
+														"cipherblockDgst",
+														"blockCommitment",
+														"secretCommitment"
+													]
+												}
+											]
+										}
+									},
+									required: [
+										"type",
+										"resource"
+									]
+								}
+							]
+						}
+					}
+				}
+			},
+			responses: {
+				"201": {
+					description: "the ID and type of the created resource",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								properties: {
+									id: {
+										type: "string"
+									}
+								},
+								required: [
+									"id"
+								]
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/disclosure/{jwt}": {
+		get: {
+			summary: "Request selective disclosure of resources",
+			operationId: "selectiveDisclosure",
+			"x-eov-operation-handler": "disclosure",
+			tags: [
+				"selectiveDisclosure"
+			],
+			parameters: [
+				{
+					"in": "path",
+					name: "jwt",
+					schema: {
+						type: "string",
+						pattern: "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$"
+					},
+					required: true,
+					description: "A JWT containing a selective disclosure object. The payload MUST contain:\n\n```json\n{\n  \"type\": \"selectiveDisclosureReq\", // MUST be selectiveDisclosureReq\n  \"iss\": \"did:\", // the DID of the OIDC Provider\n  \"aud\": \"\", // DID of the OIDC RP\n  \"iat\": 4354535,\t// The time of issuance\n  \"exp\": 3452345, // [OPTIONAL] Expiration time of JWT\n  callback: \"https://...\", // Callback URL for returning the response to a request\n  resources: [\n    { \"id\": \"id\", \"mandatory\": true, \"iss\": [ { did: or url:} ], \"reason\": \"\" }\n  ]\n}\n```\n"
+				}
+			],
+			responses: {
+				"200": {
+					description: "Disclosure ok (mandatory claims provided)",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								properties: {
+									jwt: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/transaction/deploy": {
+		post: {
+			summary: "Deploy a signed transaction",
+			operationId: "transactionDeploy",
+			"x-eov-operation-handler": "transaction",
+			tags: [
+				"transaction"
+			],
+			requestBody: {
+				description: "Create a resource.",
+				content: {
+					"application/json": {
+						schema: {
+							title: "SignedTransaction",
+							description: "A list of resources",
+							type: "object",
+							properties: {
+								transaction: {
+									type: "string",
+									pattern: "^0x(?:[A-Fa-f0-9])+$"
+								}
+							}
+						}
+					}
+				}
+			},
+			responses: {
+				"200": {
+					description: "Deployment OK"
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/did-jwt/verify": {
+		post: {
+			summary: "Use the wallet to verify a JWT. The Wallet only supports DID issuers and the 'ES256K1' algorithm. Useful to verify JWT created by another wallet instance.\n",
+			operationId: "didJwtVerify",
+			"x-eov-operation-handler": "did-jwt",
+			tags: [
+				"utils"
+			],
+			requestBody: {
+				description: "Verify a JWT resolving the public key from the signer DID and optionally check values for expected payload claims",
+				required: true,
+				content: {
+					"application/json": {
+						schema: {
+							type: "object",
+							properties: {
+								jwt: {
+									type: "string",
+									pattern: "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
+									example: "eyJhbGciOiJFUzI1NksiLCJ0eXAiOiJKV1QifQ.eyJmaWVsZDEiOiJzYWRzYWQ3NSIsImZpZWxkMiI6ImFmZnNhczlmODdzIiwiaXNzIjoiZGlkOmV0aHI6aTNtOjB4MDNmOTcwNjRhMzUzZmFmNWRkNTQwYWE2N2I2OTE2YmY1NmMwOWM1MGNjODAzN2E0NTNlNzg1ODdmMjdmYjg4ZTk0IiwiaWF0IjoxNjY1NDAwMzYzfQ.IpQ7WprvDMk6QWcJXuPBazat-2657dWIK-iGvOOB5oAhAmMqDBm8OEtKordqeqcEWwhWw_C7_ziMMZkPz1JIkw"
+								},
+								expectedPayloadClaims: {
+									type: "object",
+									additionalProperties: true,
+									description: "The expected values of the proof's payload claims. An expected value of '' can be used to just check that the claim is in the payload. An example could be:\n\n```json\n{\n  iss: 'orig',\n  exchange: {\n    id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',\n    orig: '{\"kty\":\"EC\",\"x\":\"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY\",\"y\":\"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0\",\"crv\":\"P-256\"}', // Public key in JSON.stringify(JWK) of the block origin (sender)\n    dest: '{\"kty\":\"EC\",\"x\":\"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA\",\"y\":\"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY\",\"crv\":\"P-256\"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)\n    hash_alg: 'SHA-256',\n    cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding\n    block_commitment: '', // hash of the plaintext block in base64url with no padding\n    secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding\n  }\n}\n```\n"
+								}
+							},
+							required: [
+								"jwt"
+							]
+						}
+					}
+				}
+			},
+			responses: {
+				"200": {
+					description: "A verification object. If `verification` equals `success` all checkings have passed; if it is `failed`, you can access the error message in `error`. Unless the JWT decoding fails (invalid format), the decoded JWT payload can be accessed in `payload`.\n\nExample of success:\n\n```json\n{\n  \"verification\": \"success\",\n  \"payload\": {\n    \"iss\": \"did:ethr:i3m:0x02d846307c9fd53106eb20db5a774c4b71f25c59c7bc423990f942e3fdb02c5898\",\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n\nExample of failure:\n\n```json\n{\n  \"verification\": \"failed\",\n  \"error\": \"invalid_jwt: JWT iss is required\"\n  \"payload\": {\n    \"iat\": 1665138018,\n    \"action\": \"buy 1457adf6\"\n  }\n}\n```\n",
+					content: {
+						"application/json": {
+							schema: {
+								title: "VerificationOutput",
+								type: "object",
+								properties: {
+									verification: {
+										type: "string",
+										"enum": [
+											"success",
+											"failed"
+										],
+										description: "whether verification has been successful or has failed"
+									},
+									error: {
+										type: "string",
+										description: "error message if verification failed"
+									},
+									decodedJwt: {
+										description: "the decoded JWT"
+									}
+								},
+								required: [
+									"verification"
+								]
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"/providerinfo": {
+		get: {
+			summary: "Gets info of the DLT provider the wallet is using",
+			operationId: "providerinfoGet",
+			"x-eov-operation-handler": "providerinfo",
+			tags: [
+				"utils"
+			],
+			responses: {
+				"200": {
+					description: "A JSON object with information of the DLT provider currently in use.",
+					content: {
+						"application/json": {
+							schema: {
+								title: "ProviderData",
+								description: "A JSON object with information of the DLT provider currently in use.",
+								type: "object",
+								properties: {
+									provider: {
+										type: "string",
+										example: "did:ethr:i3m"
+									},
+									network: {
+										type: "string",
+										example: "i3m"
+									},
+									rpcUrl: {
+										type: "string",
+										example: "http://95.211.3.250:8545"
+									}
+								},
+								additionalProperties: true
+							}
+						}
+					}
+				},
+				"default": {
+					description: "unexpected error",
+					content: {
+						"application/json": {
+							schema: {
+								type: "object",
+								title: "Error",
+								required: [
+									"code",
+									"message"
+								],
+								properties: {
+									code: {
+										type: "integer",
+										format: "int32"
+									},
+									message: {
+										type: "string"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var components = {
+	schemas: {
+		IdentitySelectOutput: {
+			title: "IdentitySelectOutput",
+			type: "object",
+			properties: {
+				did: {
+					description: "a DID using the ethr resolver",
+					type: "string",
+					pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+				}
+			},
+			required: [
+				"did"
+			]
+		},
+		SignInput: {
+			title: "SignInput",
+			oneOf: [
+				{
+					title: "SignTransaction",
+					type: "object",
+					properties: {
+						type: {
+							"enum": [
+								"Transaction"
+							]
+						},
+						data: {
+							title: "Transaction",
+							type: "object",
+							additionalProperties: true,
+							properties: {
+								from: {
+									type: "string"
+								},
+								to: {
+									type: "string"
+								},
+								nonce: {
+									type: "number"
+								}
+							}
+						}
+					},
+					required: [
+						"type",
+						"data"
+					]
+				},
+				{
+					title: "SignRaw",
+					type: "object",
+					properties: {
+						type: {
+							"enum": [
+								"Raw"
+							]
+						},
+						data: {
+							type: "object",
+							properties: {
+								payload: {
+									description: "Base64Url encoded data to sign",
+									type: "string",
+									pattern: "^[A-Za-z0-9_-]+$"
+								}
+							},
+							required: [
+								"payload"
+							]
+						}
+					},
+					required: [
+						"type",
+						"data"
+					]
+				},
+				{
+					title: "SignJWT",
+					type: "object",
+					properties: {
+						type: {
+							"enum": [
+								"JWT"
+							]
+						},
+						data: {
+							type: "object",
+							properties: {
+								header: {
+									description: "header fields to be added to the JWS header. \"alg\" and \"kid\" will be ignored since they are automatically added by the wallet.",
+									type: "object",
+									additionalProperties: true
+								},
+								payload: {
+									description: "A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.",
+									type: "object",
+									additionalProperties: true
+								}
+							},
+							required: [
+								"payload"
+							]
+						}
+					},
+					required: [
+						"type",
+						"data"
+					]
+				}
+			]
+		},
+		SignRaw: {
+			title: "SignRaw",
+			type: "object",
+			properties: {
+				type: {
+					"enum": [
+						"Raw"
+					]
+				},
+				data: {
+					type: "object",
+					properties: {
+						payload: {
+							description: "Base64Url encoded data to sign",
+							type: "string",
+							pattern: "^[A-Za-z0-9_-]+$"
+						}
+					},
+					required: [
+						"payload"
+					]
+				}
+			},
+			required: [
+				"type",
+				"data"
+			]
+		},
+		SignTransaction: {
+			title: "SignTransaction",
+			type: "object",
+			properties: {
+				type: {
+					"enum": [
+						"Transaction"
+					]
+				},
+				data: {
+					title: "Transaction",
+					type: "object",
+					additionalProperties: true,
+					properties: {
+						from: {
+							type: "string"
+						},
+						to: {
+							type: "string"
+						},
+						nonce: {
+							type: "number"
+						}
+					}
+				}
+			},
+			required: [
+				"type",
+				"data"
+			]
+		},
+		SignJWT: {
+			title: "SignJWT",
+			type: "object",
+			properties: {
+				type: {
+					"enum": [
+						"JWT"
+					]
+				},
+				data: {
+					type: "object",
+					properties: {
+						header: {
+							description: "header fields to be added to the JWS header. \"alg\" and \"kid\" will be ignored since they are automatically added by the wallet.",
+							type: "object",
+							additionalProperties: true
+						},
+						payload: {
+							description: "A JSON object to be signed by the wallet. It will become the payload of the generated JWS. 'iss' (issuer) and 'iat' (issued at) will be automatically added by the wallet and will override provided values.",
+							type: "object",
+							additionalProperties: true
+						}
+					},
+					required: [
+						"payload"
+					]
+				}
+			},
+			required: [
+				"type",
+				"data"
+			]
+		},
+		Transaction: {
+			title: "Transaction",
+			type: "object",
+			additionalProperties: true,
+			properties: {
+				from: {
+					type: "string"
+				},
+				to: {
+					type: "string"
+				},
+				nonce: {
+					type: "number"
+				}
+			}
+		},
+		SignOutput: {
+			title: "SignOutput",
+			type: "object",
+			properties: {
+				signature: {
+					type: "string"
+				}
+			},
+			required: [
+				"signature"
+			]
+		},
+		Receipt: {
+			title: "Receipt",
+			type: "object",
+			properties: {
+				receipt: {
+					type: "string"
+				}
+			},
+			required: [
+				"receipt"
+			]
+		},
+		SignTypes: {
+			title: "SignTypes",
+			type: "string",
+			"enum": [
+				"Transaction",
+				"Raw",
+				"JWT"
+			]
+		},
+		IdentityListInput: {
+			title: "IdentityListInput",
+			description: "A list of DIDs",
+			type: "array",
+			items: {
+				type: "object",
+				properties: {
+					did: {
+						description: "a DID using the ethr resolver",
+						type: "string",
+						pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+						example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+					}
+				},
+				required: [
+					"did"
+				]
+			}
+		},
+		IdentityCreateInput: {
+			title: "IdentityCreateInput",
+			description: "Besides the here defined options, provider specific properties should be added here if necessary, e.g. \"path\" for BIP21 wallets, or the key algorithm (if the wallet supports multiple algorithm).\n",
+			type: "object",
+			properties: {
+				alias: {
+					type: "string"
+				}
+			},
+			additionalProperties: true
+		},
+		IdentityCreateOutput: {
+			title: "IdentityCreateOutput",
+			description: "It returns the account id and type\n",
+			type: "object",
+			properties: {
+				did: {
+					description: "a DID using the ethr resolver",
+					type: "string",
+					pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+				}
+			},
+			additionalProperties: true,
+			required: [
+				"did"
+			]
+		},
+		ResourceListOutput: {
+			title: "ResourceListOutput",
+			description: "A list of resources",
+			type: "array",
+			items: {
+				title: "Resource",
+				anyOf: [
+					{
+						title: "VerifiableCredential",
+						type: "object",
+						properties: {
+							type: {
+								example: "VerifiableCredential",
+								"enum": [
+									"VerifiableCredential"
+								]
+							},
+							name: {
+								type: "string",
+								example: "Resource name"
+							},
+							resource: {
+								type: "object",
+								properties: {
+									"@context": {
+										type: "array",
+										items: {
+											type: "string"
+										},
+										example: [
+											"https://www.w3.org/2018/credentials/v1"
+										]
+									},
+									id: {
+										type: "string",
+										example: "http://example.edu/credentials/1872"
+									},
+									type: {
+										type: "array",
+										items: {
+											type: "string"
+										},
+										example: [
+											"VerifiableCredential"
+										]
+									},
+									issuer: {
+										type: "object",
+										properties: {
+											id: {
+												description: "a DID using the ethr resolver",
+												type: "string",
+												pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+											}
+										},
+										additionalProperties: true,
+										required: [
+											"id"
+										]
+									},
+									issuanceDate: {
+										type: "string",
+										format: "date-time",
+										example: "2021-06-10T19:07:28.000Z"
+									},
+									credentialSubject: {
+										type: "object",
+										properties: {
+											id: {
+												description: "a DID using the ethr resolver",
+												type: "string",
+												pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+												example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+											}
+										},
+										required: [
+											"id"
+										],
+										additionalProperties: true
+									},
+									proof: {
+										type: "object",
+										properties: {
+											type: {
+												type: "string",
+												"enum": [
+													"JwtProof2020"
+												]
+											}
+										},
+										required: [
+											"type"
+										],
+										additionalProperties: true
+									}
+								},
+								additionalProperties: true,
+								required: [
+									"@context",
+									"type",
+									"issuer",
+									"issuanceDate",
+									"credentialSubject",
+									"proof"
+								]
+							}
+						},
+						required: [
+							"type",
+							"resource"
+						]
+					},
+					{
+						title: "ObjectResource",
+						type: "object",
+						properties: {
+							type: {
+								example: "Object",
+								"enum": [
+									"Object"
+								]
+							},
+							name: {
+								type: "string",
+								example: "Resource name"
+							},
+							parentResource: {
+								type: "string"
+							},
+							identity: {
+								description: "a DID using the ethr resolver",
+								type: "string",
+								pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+								example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+							},
+							resource: {
+								type: "object",
+								additionalProperties: true
+							}
+						},
+						required: [
+							"type",
+							"resource"
+						]
+					},
+					{
+						title: "Contract",
+						type: "object",
+						properties: {
+							type: {
+								example: "Contract",
+								"enum": [
+									"Contract"
+								]
+							},
+							name: {
+								type: "string",
+								example: "Resource name"
+							},
+							identity: {
+								description: "a DID using the ethr resolver",
+								type: "string",
+								pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+								example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+							},
+							resource: {
+								type: "object",
+								properties: {
+									dataSharingAgreement: {
+										type: "object",
+										required: [
+											"dataOfferingDescription",
+											"parties",
+											"purpose",
+											"duration",
+											"intendedUse",
+											"licenseGrant",
+											"dataStream",
+											"personalData",
+											"pricingModel",
+											"dataExchangeAgreement",
+											"signatures"
+										],
+										properties: {
+											dataOfferingDescription: {
+												type: "object",
+												required: [
+													"dataOfferingId",
+													"version",
+													"active"
+												],
+												properties: {
+													dataOfferingId: {
+														type: "string"
+													},
+													version: {
+														type: "integer"
+													},
+													category: {
+														type: "string"
+													},
+													active: {
+														type: "boolean"
+													},
+													title: {
+														type: "string"
+													}
+												}
+											},
+											parties: {
+												type: "object",
+												required: [
+													"providerDid",
+													"consumerDid"
+												],
+												properties: {
+													providerDid: {
+														description: "a DID using the ethr resolver",
+														type: "string",
+														pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+														example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+													},
+													consumerDid: {
+														description: "a DID using the ethr resolver",
+														type: "string",
+														pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+														example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+													}
+												}
+											},
+											purpose: {
+												type: "string"
+											},
+											duration: {
+												type: "object",
+												required: [
+													"creationDate",
+													"startDate",
+													"endDate"
+												],
+												properties: {
+													creationDate: {
+														type: "integer"
+													},
+													startDate: {
+														type: "integer"
+													},
+													endDate: {
+														type: "integer"
+													}
+												}
+											},
+											intendedUse: {
+												type: "object",
+												required: [
+													"processData",
+													"shareDataWithThirdParty",
+													"editData"
+												],
+												properties: {
+													processData: {
+														type: "boolean"
+													},
+													shareDataWithThirdParty: {
+														type: "boolean"
+													},
+													editData: {
+														type: "boolean"
+													}
+												}
+											},
+											licenseGrant: {
+												type: "object",
+												required: [
+													"transferable",
+													"exclusiveness",
+													"paidUp",
+													"revocable",
+													"processing",
+													"modifying",
+													"analyzing",
+													"storingData",
+													"storingCopy",
+													"reproducing",
+													"distributing",
+													"loaning",
+													"selling",
+													"renting",
+													"furtherLicensing",
+													"leasing"
+												],
+												properties: {
+													transferable: {
+														type: "boolean"
+													},
+													exclusiveness: {
+														type: "boolean"
+													},
+													paidUp: {
+														type: "boolean"
+													},
+													revocable: {
+														type: "boolean"
+													},
+													processing: {
+														type: "boolean"
+													},
+													modifying: {
+														type: "boolean"
+													},
+													analyzing: {
+														type: "boolean"
+													},
+													storingData: {
+														type: "boolean"
+													},
+													storingCopy: {
+														type: "boolean"
+													},
+													reproducing: {
+														type: "boolean"
+													},
+													distributing: {
+														type: "boolean"
+													},
+													loaning: {
+														type: "boolean"
+													},
+													selling: {
+														type: "boolean"
+													},
+													renting: {
+														type: "boolean"
+													},
+													furtherLicensing: {
+														type: "boolean"
+													},
+													leasing: {
+														type: "boolean"
+													}
+												}
+											},
+											dataStream: {
+												type: "boolean"
+											},
+											personalData: {
+												type: "boolean"
+											},
+											pricingModel: {
+												type: "object",
+												required: [
+													"basicPrice",
+													"currency",
+													"hasFreePrice"
+												],
+												properties: {
+													paymentType: {
+														type: "string"
+													},
+													pricingModelName: {
+														type: "string"
+													},
+													basicPrice: {
+														type: "number",
+														format: "float"
+													},
+													currency: {
+														type: "string"
+													},
+													fee: {
+														type: "number",
+														format: "float"
+													},
+													hasPaymentOnSubscription: {
+														type: "object",
+														properties: {
+															paymentOnSubscriptionName: {
+																type: "string"
+															},
+															paymentType: {
+																type: "string"
+															},
+															timeDuration: {
+																type: "string"
+															},
+															description: {
+																type: "string"
+															},
+															repeat: {
+																type: "string"
+															},
+															hasSubscriptionPrice: {
+																type: "integer"
+															}
+														}
+													},
+													hasFreePrice: {
+														type: "object",
+														properties: {
+															hasPriceFree: {
+																type: "boolean"
+															}
+														}
+													}
+												}
+											},
+											dataExchangeAgreement: {
+												type: "object",
+												required: [
+													"orig",
+													"dest",
+													"encAlg",
+													"signingAlg",
+													"hashAlg",
+													"ledgerContractAddress",
+													"ledgerSignerAddress",
+													"pooToPorDelay",
+													"pooToPopDelay",
+													"pooToSecretDelay"
+												],
+												properties: {
+													orig: {
+														type: "string",
+														description: "A stringified JWK with alphabetically sorted claims",
+														example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+													},
+													dest: {
+														type: "string",
+														description: "A stringified JWK with alphabetically sorted claims",
+														example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+													},
+													encAlg: {
+														type: "string",
+														"enum": [
+															"A128GCM",
+															"A256GCM"
+														],
+														example: "A256GCM"
+													},
+													signingAlg: {
+														type: "string",
+														"enum": [
+															"ES256",
+															"ES384",
+															"ES512"
+														],
+														example: "ES256"
+													},
+													hashAlg: {
+														type: "string",
+														"enum": [
+															"SHA-256",
+															"SHA-384",
+															"SHA-512"
+														],
+														example: "SHA-256"
+													},
+													ledgerContractAddress: {
+														description: "Ethereum Address in EIP-55 format (with checksum)",
+														type: "string",
+														pattern: "^0x([0-9A-Fa-f]){40}$",
+														example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+													},
+													ledgerSignerAddress: {
+														description: "Ethereum Address in EIP-55 format (with checksum)",
+														type: "string",
+														pattern: "^0x([0-9A-Fa-f]){40}$",
+														example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+													},
+													pooToPorDelay: {
+														description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+														type: "integer",
+														minimum: 1,
+														example: 10000
+													},
+													pooToPopDelay: {
+														description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+														type: "integer",
+														minimum: 1,
+														example: 20000
+													},
+													pooToSecretDelay: {
+														description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+														type: "integer",
+														minimum: 1,
+														example: 180000
+													},
+													schema: {
+														description: "A stringified JSON-LD schema describing the data format",
+														type: "string"
+													}
+												}
+											},
+											signatures: {
+												type: "object",
+												required: [
+													"providerSignature",
+													"consumerSignature"
+												],
+												properties: {
+													providerSignature: {
+														title: "CompactJWS",
+														type: "string",
+														pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+													},
+													consumerSignature: {
+														title: "CompactJWS",
+														type: "string",
+														pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+													}
+												}
+											}
+										}
+									},
+									keyPair: {
+										type: "object",
+										properties: {
+											privateJwk: {
+												type: "string",
+												description: "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+												example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+											},
+											publicJwk: {
+												type: "string",
+												description: "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+												example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+											}
+										},
+										required: [
+											"privateJwk",
+											"publicJwk"
+										]
+									}
+								},
+								required: [
+									"dataSharingAgreement",
+									"keyPair"
+								]
+							}
+						},
+						required: [
+							"type",
+							"resource"
+						]
+					},
+					{
+						title: "NonRepudiationProof",
+						type: "object",
+						properties: {
+							type: {
+								example: "NonRepudiationProof",
+								"enum": [
+									"NonRepudiationProof"
+								]
+							},
+							name: {
+								type: "string",
+								example: "Resource name"
+							},
+							resource: {
+								description: "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+							}
+						},
+						required: [
+							"type",
+							"resource"
+						]
+					},
+					{
+						title: "DataExchangeResource",
+						type: "object",
+						properties: {
+							type: {
+								example: "DataExchange",
+								"enum": [
+									"DataExchange"
+								]
+							},
+							name: {
+								type: "string",
+								example: "Resource name"
+							},
+							resource: {
+								allOf: [
+									{
+										type: "object",
+										required: [
+											"orig",
+											"dest",
+											"encAlg",
+											"signingAlg",
+											"hashAlg",
+											"ledgerContractAddress",
+											"ledgerSignerAddress",
+											"pooToPorDelay",
+											"pooToPopDelay",
+											"pooToSecretDelay"
+										],
+										properties: {
+											orig: {
+												type: "string",
+												description: "A stringified JWK with alphabetically sorted claims",
+												example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+											},
+											dest: {
+												type: "string",
+												description: "A stringified JWK with alphabetically sorted claims",
+												example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+											},
+											encAlg: {
+												type: "string",
+												"enum": [
+													"A128GCM",
+													"A256GCM"
+												],
+												example: "A256GCM"
+											},
+											signingAlg: {
+												type: "string",
+												"enum": [
+													"ES256",
+													"ES384",
+													"ES512"
+												],
+												example: "ES256"
+											},
+											hashAlg: {
+												type: "string",
+												"enum": [
+													"SHA-256",
+													"SHA-384",
+													"SHA-512"
+												],
+												example: "SHA-256"
+											},
+											ledgerContractAddress: {
+												description: "Ethereum Address in EIP-55 format (with checksum)",
+												type: "string",
+												pattern: "^0x([0-9A-Fa-f]){40}$",
+												example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+											},
+											ledgerSignerAddress: {
+												description: "Ethereum Address in EIP-55 format (with checksum)",
+												type: "string",
+												pattern: "^0x([0-9A-Fa-f]){40}$",
+												example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+											},
+											pooToPorDelay: {
+												description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+												type: "integer",
+												minimum: 1,
+												example: 10000
+											},
+											pooToPopDelay: {
+												description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+												type: "integer",
+												minimum: 1,
+												example: 20000
+											},
+											pooToSecretDelay: {
+												description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+												type: "integer",
+												minimum: 1,
+												example: 180000
+											},
+											schema: {
+												description: "A stringified JSON-LD schema describing the data format",
+												type: "string"
+											}
+										}
+									},
+									{
+										type: "object",
+										properties: {
+											cipherblockDgst: {
+												type: "string",
+												description: "hash of the cipherblock in base64url with no padding",
+												pattern: "^[a-zA-Z0-9_-]+$"
+											},
+											blockCommitment: {
+												type: "string",
+												description: "hash of the plaintext block in base64url with no padding",
+												pattern: "^[a-zA-Z0-9_-]+$"
+											},
+											secretCommitment: {
+												type: "string",
+												description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+												pattern: "^[a-zA-Z0-9_-]+$"
+											}
+										},
+										required: [
+											"cipherblockDgst",
+											"blockCommitment",
+											"secretCommitment"
+										]
+									}
+								]
+							}
+						},
+						required: [
+							"type",
+							"resource"
+						]
+					}
+				]
+			}
+		},
+		Resource: {
+			title: "Resource",
+			anyOf: [
+				{
+					title: "VerifiableCredential",
+					type: "object",
+					properties: {
+						type: {
+							example: "VerifiableCredential",
+							"enum": [
+								"VerifiableCredential"
+							]
+						},
+						name: {
+							type: "string",
+							example: "Resource name"
+						},
+						resource: {
+							type: "object",
+							properties: {
+								"@context": {
+									type: "array",
+									items: {
+										type: "string"
+									},
+									example: [
+										"https://www.w3.org/2018/credentials/v1"
+									]
+								},
+								id: {
+									type: "string",
+									example: "http://example.edu/credentials/1872"
+								},
+								type: {
+									type: "array",
+									items: {
+										type: "string"
+									},
+									example: [
+										"VerifiableCredential"
+									]
+								},
+								issuer: {
+									type: "object",
+									properties: {
+										id: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										}
+									},
+									additionalProperties: true,
+									required: [
+										"id"
+									]
+								},
+								issuanceDate: {
+									type: "string",
+									format: "date-time",
+									example: "2021-06-10T19:07:28.000Z"
+								},
+								credentialSubject: {
+									type: "object",
+									properties: {
+										id: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										}
+									},
+									required: [
+										"id"
+									],
+									additionalProperties: true
+								},
+								proof: {
+									type: "object",
+									properties: {
+										type: {
+											type: "string",
+											"enum": [
+												"JwtProof2020"
+											]
+										}
+									},
+									required: [
+										"type"
+									],
+									additionalProperties: true
+								}
+							},
+							additionalProperties: true,
+							required: [
+								"@context",
+								"type",
+								"issuer",
+								"issuanceDate",
+								"credentialSubject",
+								"proof"
+							]
+						}
+					},
+					required: [
+						"type",
+						"resource"
+					]
+				},
+				{
+					title: "ObjectResource",
+					type: "object",
+					properties: {
+						type: {
+							example: "Object",
+							"enum": [
+								"Object"
+							]
+						},
+						name: {
+							type: "string",
+							example: "Resource name"
+						},
+						parentResource: {
+							type: "string"
+						},
+						identity: {
+							description: "a DID using the ethr resolver",
+							type: "string",
+							pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+						},
+						resource: {
+							type: "object",
+							additionalProperties: true
+						}
+					},
+					required: [
+						"type",
+						"resource"
+					]
+				},
+				{
+					title: "Contract",
+					type: "object",
+					properties: {
+						type: {
+							example: "Contract",
+							"enum": [
+								"Contract"
+							]
+						},
+						name: {
+							type: "string",
+							example: "Resource name"
+						},
+						identity: {
+							description: "a DID using the ethr resolver",
+							type: "string",
+							pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+						},
+						resource: {
+							type: "object",
+							properties: {
+								dataSharingAgreement: {
+									type: "object",
+									required: [
+										"dataOfferingDescription",
+										"parties",
+										"purpose",
+										"duration",
+										"intendedUse",
+										"licenseGrant",
+										"dataStream",
+										"personalData",
+										"pricingModel",
+										"dataExchangeAgreement",
+										"signatures"
+									],
+									properties: {
+										dataOfferingDescription: {
+											type: "object",
+											required: [
+												"dataOfferingId",
+												"version",
+												"active"
+											],
+											properties: {
+												dataOfferingId: {
+													type: "string"
+												},
+												version: {
+													type: "integer"
+												},
+												category: {
+													type: "string"
+												},
+												active: {
+													type: "boolean"
+												},
+												title: {
+													type: "string"
+												}
+											}
+										},
+										parties: {
+											type: "object",
+											required: [
+												"providerDid",
+												"consumerDid"
+											],
+											properties: {
+												providerDid: {
+													description: "a DID using the ethr resolver",
+													type: "string",
+													pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+												},
+												consumerDid: {
+													description: "a DID using the ethr resolver",
+													type: "string",
+													pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+													example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+												}
+											}
+										},
+										purpose: {
+											type: "string"
+										},
+										duration: {
+											type: "object",
+											required: [
+												"creationDate",
+												"startDate",
+												"endDate"
+											],
+											properties: {
+												creationDate: {
+													type: "integer"
+												},
+												startDate: {
+													type: "integer"
+												},
+												endDate: {
+													type: "integer"
+												}
+											}
+										},
+										intendedUse: {
+											type: "object",
+											required: [
+												"processData",
+												"shareDataWithThirdParty",
+												"editData"
+											],
+											properties: {
+												processData: {
+													type: "boolean"
+												},
+												shareDataWithThirdParty: {
+													type: "boolean"
+												},
+												editData: {
+													type: "boolean"
+												}
+											}
+										},
+										licenseGrant: {
+											type: "object",
+											required: [
+												"transferable",
+												"exclusiveness",
+												"paidUp",
+												"revocable",
+												"processing",
+												"modifying",
+												"analyzing",
+												"storingData",
+												"storingCopy",
+												"reproducing",
+												"distributing",
+												"loaning",
+												"selling",
+												"renting",
+												"furtherLicensing",
+												"leasing"
+											],
+											properties: {
+												transferable: {
+													type: "boolean"
+												},
+												exclusiveness: {
+													type: "boolean"
+												},
+												paidUp: {
+													type: "boolean"
+												},
+												revocable: {
+													type: "boolean"
+												},
+												processing: {
+													type: "boolean"
+												},
+												modifying: {
+													type: "boolean"
+												},
+												analyzing: {
+													type: "boolean"
+												},
+												storingData: {
+													type: "boolean"
+												},
+												storingCopy: {
+													type: "boolean"
+												},
+												reproducing: {
+													type: "boolean"
+												},
+												distributing: {
+													type: "boolean"
+												},
+												loaning: {
+													type: "boolean"
+												},
+												selling: {
+													type: "boolean"
+												},
+												renting: {
+													type: "boolean"
+												},
+												furtherLicensing: {
+													type: "boolean"
+												},
+												leasing: {
+													type: "boolean"
+												}
+											}
+										},
+										dataStream: {
+											type: "boolean"
+										},
+										personalData: {
+											type: "boolean"
+										},
+										pricingModel: {
+											type: "object",
+											required: [
+												"basicPrice",
+												"currency",
+												"hasFreePrice"
+											],
+											properties: {
+												paymentType: {
+													type: "string"
+												},
+												pricingModelName: {
+													type: "string"
+												},
+												basicPrice: {
+													type: "number",
+													format: "float"
+												},
+												currency: {
+													type: "string"
+												},
+												fee: {
+													type: "number",
+													format: "float"
+												},
+												hasPaymentOnSubscription: {
+													type: "object",
+													properties: {
+														paymentOnSubscriptionName: {
+															type: "string"
+														},
+														paymentType: {
+															type: "string"
+														},
+														timeDuration: {
+															type: "string"
+														},
+														description: {
+															type: "string"
+														},
+														repeat: {
+															type: "string"
+														},
+														hasSubscriptionPrice: {
+															type: "integer"
+														}
+													}
+												},
+												hasFreePrice: {
+													type: "object",
+													properties: {
+														hasPriceFree: {
+															type: "boolean"
+														}
+													}
+												}
+											}
+										},
+										dataExchangeAgreement: {
+											type: "object",
+											required: [
+												"orig",
+												"dest",
+												"encAlg",
+												"signingAlg",
+												"hashAlg",
+												"ledgerContractAddress",
+												"ledgerSignerAddress",
+												"pooToPorDelay",
+												"pooToPopDelay",
+												"pooToSecretDelay"
+											],
+											properties: {
+												orig: {
+													type: "string",
+													description: "A stringified JWK with alphabetically sorted claims",
+													example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+												},
+												dest: {
+													type: "string",
+													description: "A stringified JWK with alphabetically sorted claims",
+													example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+												},
+												encAlg: {
+													type: "string",
+													"enum": [
+														"A128GCM",
+														"A256GCM"
+													],
+													example: "A256GCM"
+												},
+												signingAlg: {
+													type: "string",
+													"enum": [
+														"ES256",
+														"ES384",
+														"ES512"
+													],
+													example: "ES256"
+												},
+												hashAlg: {
+													type: "string",
+													"enum": [
+														"SHA-256",
+														"SHA-384",
+														"SHA-512"
+													],
+													example: "SHA-256"
+												},
+												ledgerContractAddress: {
+													description: "Ethereum Address in EIP-55 format (with checksum)",
+													type: "string",
+													pattern: "^0x([0-9A-Fa-f]){40}$",
+													example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+												},
+												ledgerSignerAddress: {
+													description: "Ethereum Address in EIP-55 format (with checksum)",
+													type: "string",
+													pattern: "^0x([0-9A-Fa-f]){40}$",
+													example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+												},
+												pooToPorDelay: {
+													description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+													type: "integer",
+													minimum: 1,
+													example: 10000
+												},
+												pooToPopDelay: {
+													description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+													type: "integer",
+													minimum: 1,
+													example: 20000
+												},
+												pooToSecretDelay: {
+													description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+													type: "integer",
+													minimum: 1,
+													example: 180000
+												},
+												schema: {
+													description: "A stringified JSON-LD schema describing the data format",
+													type: "string"
+												}
+											}
+										},
+										signatures: {
+											type: "object",
+											required: [
+												"providerSignature",
+												"consumerSignature"
+											],
+											properties: {
+												providerSignature: {
+													title: "CompactJWS",
+													type: "string",
+													pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+												},
+												consumerSignature: {
+													title: "CompactJWS",
+													type: "string",
+													pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+												}
+											}
+										}
+									}
+								},
+								keyPair: {
+									type: "object",
+									properties: {
+										privateJwk: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+										},
+										publicJwk: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+										}
+									},
+									required: [
+										"privateJwk",
+										"publicJwk"
+									]
+								}
+							},
+							required: [
+								"dataSharingAgreement",
+								"keyPair"
+							]
+						}
+					},
+					required: [
+						"type",
+						"resource"
+					]
+				},
+				{
+					title: "NonRepudiationProof",
+					type: "object",
+					properties: {
+						type: {
+							example: "NonRepudiationProof",
+							"enum": [
+								"NonRepudiationProof"
+							]
+						},
+						name: {
+							type: "string",
+							example: "Resource name"
+						},
+						resource: {
+							description: "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+						}
+					},
+					required: [
+						"type",
+						"resource"
+					]
+				},
+				{
+					title: "DataExchangeResource",
+					type: "object",
+					properties: {
+						type: {
+							example: "DataExchange",
+							"enum": [
+								"DataExchange"
+							]
+						},
+						name: {
+							type: "string",
+							example: "Resource name"
+						},
+						resource: {
+							allOf: [
+								{
+									type: "object",
+									required: [
+										"orig",
+										"dest",
+										"encAlg",
+										"signingAlg",
+										"hashAlg",
+										"ledgerContractAddress",
+										"ledgerSignerAddress",
+										"pooToPorDelay",
+										"pooToPopDelay",
+										"pooToSecretDelay"
+									],
+									properties: {
+										orig: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+										},
+										dest: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+										},
+										encAlg: {
+											type: "string",
+											"enum": [
+												"A128GCM",
+												"A256GCM"
+											],
+											example: "A256GCM"
+										},
+										signingAlg: {
+											type: "string",
+											"enum": [
+												"ES256",
+												"ES384",
+												"ES512"
+											],
+											example: "ES256"
+										},
+										hashAlg: {
+											type: "string",
+											"enum": [
+												"SHA-256",
+												"SHA-384",
+												"SHA-512"
+											],
+											example: "SHA-256"
+										},
+										ledgerContractAddress: {
+											description: "Ethereum Address in EIP-55 format (with checksum)",
+											type: "string",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
+											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+										},
+										ledgerSignerAddress: {
+											description: "Ethereum Address in EIP-55 format (with checksum)",
+											type: "string",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
+											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+										},
+										pooToPorDelay: {
+											description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+											type: "integer",
+											minimum: 1,
+											example: 10000
+										},
+										pooToPopDelay: {
+											description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+											type: "integer",
+											minimum: 1,
+											example: 20000
+										},
+										pooToSecretDelay: {
+											description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+											type: "integer",
+											minimum: 1,
+											example: 180000
+										},
+										schema: {
+											description: "A stringified JSON-LD schema describing the data format",
+											type: "string"
+										}
+									}
+								},
+								{
+									type: "object",
+									properties: {
+										cipherblockDgst: {
+											type: "string",
+											description: "hash of the cipherblock in base64url with no padding",
+											pattern: "^[a-zA-Z0-9_-]+$"
+										},
+										blockCommitment: {
+											type: "string",
+											description: "hash of the plaintext block in base64url with no padding",
+											pattern: "^[a-zA-Z0-9_-]+$"
+										},
+										secretCommitment: {
+											type: "string",
+											description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+											pattern: "^[a-zA-Z0-9_-]+$"
+										}
+									},
+									required: [
+										"cipherblockDgst",
+										"blockCommitment",
+										"secretCommitment"
+									]
+								}
+							]
+						}
+					},
+					required: [
+						"type",
+						"resource"
+					]
+				}
+			]
+		},
+		VerifiableCredential: {
+			title: "VerifiableCredential",
+			type: "object",
+			properties: {
+				type: {
+					example: "VerifiableCredential",
+					"enum": [
+						"VerifiableCredential"
+					]
+				},
+				name: {
+					type: "string",
+					example: "Resource name"
+				},
+				resource: {
+					type: "object",
+					properties: {
+						"@context": {
+							type: "array",
+							items: {
+								type: "string"
+							},
+							example: [
+								"https://www.w3.org/2018/credentials/v1"
+							]
+						},
+						id: {
+							type: "string",
+							example: "http://example.edu/credentials/1872"
+						},
+						type: {
+							type: "array",
+							items: {
+								type: "string"
+							},
+							example: [
+								"VerifiableCredential"
+							]
+						},
+						issuer: {
+							type: "object",
+							properties: {
+								id: {
+									description: "a DID using the ethr resolver",
+									type: "string",
+									pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+								}
+							},
+							additionalProperties: true,
+							required: [
+								"id"
+							]
+						},
+						issuanceDate: {
+							type: "string",
+							format: "date-time",
+							example: "2021-06-10T19:07:28.000Z"
+						},
+						credentialSubject: {
+							type: "object",
+							properties: {
+								id: {
+									description: "a DID using the ethr resolver",
+									type: "string",
+									pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+									example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+								}
+							},
+							required: [
+								"id"
+							],
+							additionalProperties: true
+						},
+						proof: {
+							type: "object",
+							properties: {
+								type: {
+									type: "string",
+									"enum": [
+										"JwtProof2020"
+									]
+								}
+							},
+							required: [
+								"type"
+							],
+							additionalProperties: true
+						}
+					},
+					additionalProperties: true,
+					required: [
+						"@context",
+						"type",
+						"issuer",
+						"issuanceDate",
+						"credentialSubject",
+						"proof"
+					]
+				}
+			},
+			required: [
+				"type",
+				"resource"
+			]
+		},
+		ObjectResource: {
+			title: "ObjectResource",
+			type: "object",
+			properties: {
+				type: {
+					example: "Object",
+					"enum": [
+						"Object"
+					]
+				},
+				name: {
+					type: "string",
+					example: "Resource name"
+				},
+				parentResource: {
+					type: "string"
+				},
+				identity: {
+					description: "a DID using the ethr resolver",
+					type: "string",
+					pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+				},
+				resource: {
+					type: "object",
+					additionalProperties: true
+				}
+			},
+			required: [
+				"type",
+				"resource"
+			]
+		},
+		Contract: {
+			title: "Contract",
+			type: "object",
+			properties: {
+				type: {
+					example: "Contract",
+					"enum": [
+						"Contract"
+					]
+				},
+				name: {
+					type: "string",
+					example: "Resource name"
+				},
+				identity: {
+					description: "a DID using the ethr resolver",
+					type: "string",
+					pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+					example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+				},
+				resource: {
+					type: "object",
+					properties: {
+						dataSharingAgreement: {
+							type: "object",
+							required: [
+								"dataOfferingDescription",
+								"parties",
+								"purpose",
+								"duration",
+								"intendedUse",
+								"licenseGrant",
+								"dataStream",
+								"personalData",
+								"pricingModel",
+								"dataExchangeAgreement",
+								"signatures"
+							],
+							properties: {
+								dataOfferingDescription: {
+									type: "object",
+									required: [
+										"dataOfferingId",
+										"version",
+										"active"
+									],
+									properties: {
+										dataOfferingId: {
+											type: "string"
+										},
+										version: {
+											type: "integer"
+										},
+										category: {
+											type: "string"
+										},
+										active: {
+											type: "boolean"
+										},
+										title: {
+											type: "string"
+										}
+									}
+								},
+								parties: {
+									type: "object",
+									required: [
+										"providerDid",
+										"consumerDid"
+									],
+									properties: {
+										providerDid: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										},
+										consumerDid: {
+											description: "a DID using the ethr resolver",
+											type: "string",
+											pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+											example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+										}
+									}
+								},
+								purpose: {
+									type: "string"
+								},
+								duration: {
+									type: "object",
+									required: [
+										"creationDate",
+										"startDate",
+										"endDate"
+									],
+									properties: {
+										creationDate: {
+											type: "integer"
+										},
+										startDate: {
+											type: "integer"
+										},
+										endDate: {
+											type: "integer"
+										}
+									}
+								},
+								intendedUse: {
+									type: "object",
+									required: [
+										"processData",
+										"shareDataWithThirdParty",
+										"editData"
+									],
+									properties: {
+										processData: {
+											type: "boolean"
+										},
+										shareDataWithThirdParty: {
+											type: "boolean"
+										},
+										editData: {
+											type: "boolean"
+										}
+									}
+								},
+								licenseGrant: {
+									type: "object",
+									required: [
+										"transferable",
+										"exclusiveness",
+										"paidUp",
+										"revocable",
+										"processing",
+										"modifying",
+										"analyzing",
+										"storingData",
+										"storingCopy",
+										"reproducing",
+										"distributing",
+										"loaning",
+										"selling",
+										"renting",
+										"furtherLicensing",
+										"leasing"
+									],
+									properties: {
+										transferable: {
+											type: "boolean"
+										},
+										exclusiveness: {
+											type: "boolean"
+										},
+										paidUp: {
+											type: "boolean"
+										},
+										revocable: {
+											type: "boolean"
+										},
+										processing: {
+											type: "boolean"
+										},
+										modifying: {
+											type: "boolean"
+										},
+										analyzing: {
+											type: "boolean"
+										},
+										storingData: {
+											type: "boolean"
+										},
+										storingCopy: {
+											type: "boolean"
+										},
+										reproducing: {
+											type: "boolean"
+										},
+										distributing: {
+											type: "boolean"
+										},
+										loaning: {
+											type: "boolean"
+										},
+										selling: {
+											type: "boolean"
+										},
+										renting: {
+											type: "boolean"
+										},
+										furtherLicensing: {
+											type: "boolean"
+										},
+										leasing: {
+											type: "boolean"
+										}
+									}
+								},
+								dataStream: {
+									type: "boolean"
+								},
+								personalData: {
+									type: "boolean"
+								},
+								pricingModel: {
+									type: "object",
+									required: [
+										"basicPrice",
+										"currency",
+										"hasFreePrice"
+									],
+									properties: {
+										paymentType: {
+											type: "string"
+										},
+										pricingModelName: {
+											type: "string"
+										},
+										basicPrice: {
+											type: "number",
+											format: "float"
+										},
+										currency: {
+											type: "string"
+										},
+										fee: {
+											type: "number",
+											format: "float"
+										},
+										hasPaymentOnSubscription: {
+											type: "object",
+											properties: {
+												paymentOnSubscriptionName: {
+													type: "string"
+												},
+												paymentType: {
+													type: "string"
+												},
+												timeDuration: {
+													type: "string"
+												},
+												description: {
+													type: "string"
+												},
+												repeat: {
+													type: "string"
+												},
+												hasSubscriptionPrice: {
+													type: "integer"
+												}
+											}
+										},
+										hasFreePrice: {
+											type: "object",
+											properties: {
+												hasPriceFree: {
+													type: "boolean"
+												}
+											}
+										}
+									}
+								},
+								dataExchangeAgreement: {
+									type: "object",
+									required: [
+										"orig",
+										"dest",
+										"encAlg",
+										"signingAlg",
+										"hashAlg",
+										"ledgerContractAddress",
+										"ledgerSignerAddress",
+										"pooToPorDelay",
+										"pooToPopDelay",
+										"pooToSecretDelay"
+									],
+									properties: {
+										orig: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+										},
+										dest: {
+											type: "string",
+											description: "A stringified JWK with alphabetically sorted claims",
+											example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+										},
+										encAlg: {
+											type: "string",
+											"enum": [
+												"A128GCM",
+												"A256GCM"
+											],
+											example: "A256GCM"
+										},
+										signingAlg: {
+											type: "string",
+											"enum": [
+												"ES256",
+												"ES384",
+												"ES512"
+											],
+											example: "ES256"
+										},
+										hashAlg: {
+											type: "string",
+											"enum": [
+												"SHA-256",
+												"SHA-384",
+												"SHA-512"
+											],
+											example: "SHA-256"
+										},
+										ledgerContractAddress: {
+											description: "Ethereum Address in EIP-55 format (with checksum)",
+											type: "string",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
+											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+										},
+										ledgerSignerAddress: {
+											description: "Ethereum Address in EIP-55 format (with checksum)",
+											type: "string",
+											pattern: "^0x([0-9A-Fa-f]){40}$",
+											example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+										},
+										pooToPorDelay: {
+											description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+											type: "integer",
+											minimum: 1,
+											example: 10000
+										},
+										pooToPopDelay: {
+											description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+											type: "integer",
+											minimum: 1,
+											example: 20000
+										},
+										pooToSecretDelay: {
+											description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+											type: "integer",
+											minimum: 1,
+											example: 180000
+										},
+										schema: {
+											description: "A stringified JSON-LD schema describing the data format",
+											type: "string"
+										}
+									}
+								},
+								signatures: {
+									type: "object",
+									required: [
+										"providerSignature",
+										"consumerSignature"
+									],
+									properties: {
+										providerSignature: {
+											title: "CompactJWS",
+											type: "string",
+											pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+										},
+										consumerSignature: {
+											title: "CompactJWS",
+											type: "string",
+											pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+										}
+									}
+								}
+							}
+						},
+						keyPair: {
+							type: "object",
+							properties: {
+								privateJwk: {
+									type: "string",
+									description: "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+									example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+								},
+								publicJwk: {
+									type: "string",
+									description: "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+									example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+								}
+							},
+							required: [
+								"privateJwk",
+								"publicJwk"
+							]
+						}
+					},
+					required: [
+						"dataSharingAgreement",
+						"keyPair"
+					]
+				}
+			},
+			required: [
+				"type",
+				"resource"
+			]
+		},
+		DataExchangeResource: {
+			title: "DataExchangeResource",
+			type: "object",
+			properties: {
+				type: {
+					example: "DataExchange",
+					"enum": [
+						"DataExchange"
+					]
+				},
+				name: {
+					type: "string",
+					example: "Resource name"
+				},
+				resource: {
+					allOf: [
+						{
+							type: "object",
+							required: [
+								"orig",
+								"dest",
+								"encAlg",
+								"signingAlg",
+								"hashAlg",
+								"ledgerContractAddress",
+								"ledgerSignerAddress",
+								"pooToPorDelay",
+								"pooToPopDelay",
+								"pooToSecretDelay"
+							],
+							properties: {
+								orig: {
+									type: "string",
+									description: "A stringified JWK with alphabetically sorted claims",
+									example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+								},
+								dest: {
+									type: "string",
+									description: "A stringified JWK with alphabetically sorted claims",
+									example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+								},
+								encAlg: {
+									type: "string",
+									"enum": [
+										"A128GCM",
+										"A256GCM"
+									],
+									example: "A256GCM"
+								},
+								signingAlg: {
+									type: "string",
+									"enum": [
+										"ES256",
+										"ES384",
+										"ES512"
+									],
+									example: "ES256"
+								},
+								hashAlg: {
+									type: "string",
+									"enum": [
+										"SHA-256",
+										"SHA-384",
+										"SHA-512"
+									],
+									example: "SHA-256"
+								},
+								ledgerContractAddress: {
+									description: "Ethereum Address in EIP-55 format (with checksum)",
+									type: "string",
+									pattern: "^0x([0-9A-Fa-f]){40}$",
+									example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+								},
+								ledgerSignerAddress: {
+									description: "Ethereum Address in EIP-55 format (with checksum)",
+									type: "string",
+									pattern: "^0x([0-9A-Fa-f]){40}$",
+									example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+								},
+								pooToPorDelay: {
+									description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+									type: "integer",
+									minimum: 1,
+									example: 10000
+								},
+								pooToPopDelay: {
+									description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+									type: "integer",
+									minimum: 1,
+									example: 20000
+								},
+								pooToSecretDelay: {
+									description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+									type: "integer",
+									minimum: 1,
+									example: 180000
+								},
+								schema: {
+									description: "A stringified JSON-LD schema describing the data format",
+									type: "string"
+								}
+							}
+						},
+						{
+							type: "object",
+							properties: {
+								cipherblockDgst: {
+									type: "string",
+									description: "hash of the cipherblock in base64url with no padding",
+									pattern: "^[a-zA-Z0-9_-]+$"
+								},
+								blockCommitment: {
+									type: "string",
+									description: "hash of the plaintext block in base64url with no padding",
+									pattern: "^[a-zA-Z0-9_-]+$"
+								},
+								secretCommitment: {
+									type: "string",
+									description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+									pattern: "^[a-zA-Z0-9_-]+$"
+								}
+							},
+							required: [
+								"cipherblockDgst",
+								"blockCommitment",
+								"secretCommitment"
+							]
+						}
+					]
+				}
+			},
+			required: [
+				"type",
+				"resource"
+			]
+		},
+		NonRepudiationProof: {
+			title: "NonRepudiationProof",
+			type: "object",
+			properties: {
+				type: {
+					example: "NonRepudiationProof",
+					"enum": [
+						"NonRepudiationProof"
+					]
+				},
+				name: {
+					type: "string",
+					example: "Resource name"
+				},
+				resource: {
+					description: "a non-repudiation proof (either a PoO, a PoR or a PoP) as a compact JWS"
+				}
+			},
+			required: [
+				"type",
+				"resource"
+			]
+		},
+		ResourceId: {
+			type: "object",
+			properties: {
+				id: {
+					type: "string"
+				}
+			},
+			required: [
+				"id"
+			]
+		},
+		ResourceType: {
+			type: "string",
+			"enum": [
+				"VerifiableCredential",
+				"Object",
+				"Contract",
+				"DataExchange",
+				"NonRepudiationProof"
+			]
+		},
+		SignedTransaction: {
+			title: "SignedTransaction",
+			description: "A list of resources",
+			type: "object",
+			properties: {
+				transaction: {
+					type: "string",
+					pattern: "^0x(?:[A-Fa-f0-9])+$"
+				}
+			}
+		},
+		DecodedJwt: {
+			title: "JwtPayload",
+			type: "object",
+			properties: {
+				header: {
+					type: "object",
+					properties: {
+						typ: {
+							type: "string",
+							"enum": [
+								"JWT"
+							]
+						},
+						alg: {
+							type: "string",
+							"enum": [
+								"ES256K"
+							]
+						}
+					},
+					required: [
+						"typ",
+						"alg"
+					],
+					additionalProperties: true
+				},
+				payload: {
+					type: "object",
+					properties: {
+						iss: {
+							description: "a DID using the ethr resolver",
+							type: "string",
+							pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+						}
+					},
+					required: [
+						"iss"
+					],
+					additionalProperties: true
+				},
+				signature: {
+					type: "string",
+					format: "^[A-Za-z0-9_-]+$"
+				},
+				data: {
+					type: "string",
+					format: "^[A-Za-z0-9_-]+\\.[A-Za-z0-9_-]+$",
+					description: "<base64url(header)>.<base64url(payload)>"
+				}
+			},
+			required: [
+				"signature",
+				"data"
+			]
+		},
+		VerificationOutput: {
+			title: "VerificationOutput",
+			type: "object",
+			properties: {
+				verification: {
+					type: "string",
+					"enum": [
+						"success",
+						"failed"
+					],
+					description: "whether verification has been successful or has failed"
+				},
+				error: {
+					type: "string",
+					description: "error message if verification failed"
+				},
+				decodedJwt: {
+					description: "the decoded JWT"
+				}
+			},
+			required: [
+				"verification"
+			]
+		},
+		ProviderData: {
+			title: "ProviderData",
+			description: "A JSON object with information of the DLT provider currently in use.",
+			type: "object",
+			properties: {
+				provider: {
+					type: "string",
+					example: "did:ethr:i3m"
+				},
+				network: {
+					type: "string",
+					example: "i3m"
+				},
+				rpcUrl: {
+					type: "string",
+					example: "http://95.211.3.250:8545"
+				}
+			},
+			additionalProperties: true
+		},
+		EthereumAddress: {
+			description: "Ethereum Address in EIP-55 format (with checksum)",
+			type: "string",
+			pattern: "^0x([0-9A-Fa-f]){40}$",
+			example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+		},
+		did: {
+			description: "a DID using the ethr resolver",
+			type: "string",
+			pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+			example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+		},
+		IdentityData: {
+			title: "Identity Data",
+			type: "object",
+			properties: {
+				did: {
+					type: "string",
+					example: "did:ethr:i3m:0x03142f480f831e835822fc0cd35726844a7069d28df58fb82037f1598812e1ade8"
+				},
+				alias: {
+					type: "string",
+					example: "identity1"
+				},
+				provider: {
+					type: "string",
+					example: "did:ethr:i3m"
+				},
+				addresses: {
+					type: "array",
+					items: {
+						description: "Ethereum Address in EIP-55 format (with checksum)",
+						type: "string",
+						pattern: "^0x([0-9A-Fa-f]){40}$",
+						example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+					},
+					example: [
+						"0x8646cAcF516de1292be1D30AB68E7Ea51e9B1BE7"
+					]
+				}
+			},
+			required: [
+				"did"
+			]
+		},
+		ApiError: {
+			type: "object",
+			title: "Error",
+			required: [
+				"code",
+				"message"
+			],
+			properties: {
+				code: {
+					type: "integer",
+					format: "int32"
+				},
+				message: {
+					type: "string"
+				}
+			}
+		},
+		CompactJWS: {
+			title: "CompactJWS",
+			type: "string",
+			pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+		},
+		DataExchangeAgreement: {
+			type: "object",
+			required: [
+				"orig",
+				"dest",
+				"encAlg",
+				"signingAlg",
+				"hashAlg",
+				"ledgerContractAddress",
+				"ledgerSignerAddress",
+				"pooToPorDelay",
+				"pooToPopDelay",
+				"pooToSecretDelay"
+			],
+			properties: {
+				orig: {
+					type: "string",
+					description: "A stringified JWK with alphabetically sorted claims",
+					example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+				},
+				dest: {
+					type: "string",
+					description: "A stringified JWK with alphabetically sorted claims",
+					example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+				},
+				encAlg: {
+					type: "string",
+					"enum": [
+						"A128GCM",
+						"A256GCM"
+					],
+					example: "A256GCM"
+				},
+				signingAlg: {
+					type: "string",
+					"enum": [
+						"ES256",
+						"ES384",
+						"ES512"
+					],
+					example: "ES256"
+				},
+				hashAlg: {
+					type: "string",
+					"enum": [
+						"SHA-256",
+						"SHA-384",
+						"SHA-512"
+					],
+					example: "SHA-256"
+				},
+				ledgerContractAddress: {
+					description: "Ethereum Address in EIP-55 format (with checksum)",
+					type: "string",
+					pattern: "^0x([0-9A-Fa-f]){40}$",
+					example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+				},
+				ledgerSignerAddress: {
+					description: "Ethereum Address in EIP-55 format (with checksum)",
+					type: "string",
+					pattern: "^0x([0-9A-Fa-f]){40}$",
+					example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+				},
+				pooToPorDelay: {
+					description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+					type: "integer",
+					minimum: 1,
+					example: 10000
+				},
+				pooToPopDelay: {
+					description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+					type: "integer",
+					minimum: 1,
+					example: 20000
+				},
+				pooToSecretDelay: {
+					description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+					type: "integer",
+					minimum: 1,
+					example: 180000
+				},
+				schema: {
+					description: "A stringified JSON-LD schema describing the data format",
+					type: "string"
+				}
+			}
+		},
+		DataSharingAgreement: {
+			type: "object",
+			required: [
+				"dataOfferingDescription",
+				"parties",
+				"purpose",
+				"duration",
+				"intendedUse",
+				"licenseGrant",
+				"dataStream",
+				"personalData",
+				"pricingModel",
+				"dataExchangeAgreement",
+				"signatures"
+			],
+			properties: {
+				dataOfferingDescription: {
+					type: "object",
+					required: [
+						"dataOfferingId",
+						"version",
+						"active"
+					],
+					properties: {
+						dataOfferingId: {
+							type: "string"
+						},
+						version: {
+							type: "integer"
+						},
+						category: {
+							type: "string"
+						},
+						active: {
+							type: "boolean"
+						},
+						title: {
+							type: "string"
+						}
+					}
+				},
+				parties: {
+					type: "object",
+					required: [
+						"providerDid",
+						"consumerDid"
+					],
+					properties: {
+						providerDid: {
+							description: "a DID using the ethr resolver",
+							type: "string",
+							pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+						},
+						consumerDid: {
+							description: "a DID using the ethr resolver",
+							type: "string",
+							pattern: "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+							example: "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+						}
+					}
+				},
+				purpose: {
+					type: "string"
+				},
+				duration: {
+					type: "object",
+					required: [
+						"creationDate",
+						"startDate",
+						"endDate"
+					],
+					properties: {
+						creationDate: {
+							type: "integer"
+						},
+						startDate: {
+							type: "integer"
+						},
+						endDate: {
+							type: "integer"
+						}
+					}
+				},
+				intendedUse: {
+					type: "object",
+					required: [
+						"processData",
+						"shareDataWithThirdParty",
+						"editData"
+					],
+					properties: {
+						processData: {
+							type: "boolean"
+						},
+						shareDataWithThirdParty: {
+							type: "boolean"
+						},
+						editData: {
+							type: "boolean"
+						}
+					}
+				},
+				licenseGrant: {
+					type: "object",
+					required: [
+						"transferable",
+						"exclusiveness",
+						"paidUp",
+						"revocable",
+						"processing",
+						"modifying",
+						"analyzing",
+						"storingData",
+						"storingCopy",
+						"reproducing",
+						"distributing",
+						"loaning",
+						"selling",
+						"renting",
+						"furtherLicensing",
+						"leasing"
+					],
+					properties: {
+						transferable: {
+							type: "boolean"
+						},
+						exclusiveness: {
+							type: "boolean"
+						},
+						paidUp: {
+							type: "boolean"
+						},
+						revocable: {
+							type: "boolean"
+						},
+						processing: {
+							type: "boolean"
+						},
+						modifying: {
+							type: "boolean"
+						},
+						analyzing: {
+							type: "boolean"
+						},
+						storingData: {
+							type: "boolean"
+						},
+						storingCopy: {
+							type: "boolean"
+						},
+						reproducing: {
+							type: "boolean"
+						},
+						distributing: {
+							type: "boolean"
+						},
+						loaning: {
+							type: "boolean"
+						},
+						selling: {
+							type: "boolean"
+						},
+						renting: {
+							type: "boolean"
+						},
+						furtherLicensing: {
+							type: "boolean"
+						},
+						leasing: {
+							type: "boolean"
+						}
+					}
+				},
+				dataStream: {
+					type: "boolean"
+				},
+				personalData: {
+					type: "boolean"
+				},
+				pricingModel: {
+					type: "object",
+					required: [
+						"basicPrice",
+						"currency",
+						"hasFreePrice"
+					],
+					properties: {
+						paymentType: {
+							type: "string"
+						},
+						pricingModelName: {
+							type: "string"
+						},
+						basicPrice: {
+							type: "number",
+							format: "float"
+						},
+						currency: {
+							type: "string"
+						},
+						fee: {
+							type: "number",
+							format: "float"
+						},
+						hasPaymentOnSubscription: {
+							type: "object",
+							properties: {
+								paymentOnSubscriptionName: {
+									type: "string"
+								},
+								paymentType: {
+									type: "string"
+								},
+								timeDuration: {
+									type: "string"
+								},
+								description: {
+									type: "string"
+								},
+								repeat: {
+									type: "string"
+								},
+								hasSubscriptionPrice: {
+									type: "integer"
+								}
+							}
+						},
+						hasFreePrice: {
+							type: "object",
+							properties: {
+								hasPriceFree: {
+									type: "boolean"
+								}
+							}
+						}
+					}
+				},
+				dataExchangeAgreement: {
+					type: "object",
+					required: [
+						"orig",
+						"dest",
+						"encAlg",
+						"signingAlg",
+						"hashAlg",
+						"ledgerContractAddress",
+						"ledgerSignerAddress",
+						"pooToPorDelay",
+						"pooToPopDelay",
+						"pooToSecretDelay"
+					],
+					properties: {
+						orig: {
+							type: "string",
+							description: "A stringified JWK with alphabetically sorted claims",
+							example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+						},
+						dest: {
+							type: "string",
+							description: "A stringified JWK with alphabetically sorted claims",
+							example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+						},
+						encAlg: {
+							type: "string",
+							"enum": [
+								"A128GCM",
+								"A256GCM"
+							],
+							example: "A256GCM"
+						},
+						signingAlg: {
+							type: "string",
+							"enum": [
+								"ES256",
+								"ES384",
+								"ES512"
+							],
+							example: "ES256"
+						},
+						hashAlg: {
+							type: "string",
+							"enum": [
+								"SHA-256",
+								"SHA-384",
+								"SHA-512"
+							],
+							example: "SHA-256"
+						},
+						ledgerContractAddress: {
+							description: "Ethereum Address in EIP-55 format (with checksum)",
+							type: "string",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
+							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+						},
+						ledgerSignerAddress: {
+							description: "Ethereum Address in EIP-55 format (with checksum)",
+							type: "string",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
+							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+						},
+						pooToPorDelay: {
+							description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+							type: "integer",
+							minimum: 1,
+							example: 10000
+						},
+						pooToPopDelay: {
+							description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+							type: "integer",
+							minimum: 1,
+							example: 20000
+						},
+						pooToSecretDelay: {
+							description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+							type: "integer",
+							minimum: 1,
+							example: 180000
+						},
+						schema: {
+							description: "A stringified JSON-LD schema describing the data format",
+							type: "string"
+						}
+					}
+				},
+				signatures: {
+					type: "object",
+					required: [
+						"providerSignature",
+						"consumerSignature"
+					],
+					properties: {
+						providerSignature: {
+							title: "CompactJWS",
+							type: "string",
+							pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+						},
+						consumerSignature: {
+							title: "CompactJWS",
+							type: "string",
+							pattern: "^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+$"
+						}
+					}
+				}
+			}
+		},
+		DataExchange: {
+			allOf: [
+				{
+					type: "object",
+					required: [
+						"orig",
+						"dest",
+						"encAlg",
+						"signingAlg",
+						"hashAlg",
+						"ledgerContractAddress",
+						"ledgerSignerAddress",
+						"pooToPorDelay",
+						"pooToPopDelay",
+						"pooToSecretDelay"
+					],
+					properties: {
+						orig: {
+							type: "string",
+							description: "A stringified JWK with alphabetically sorted claims",
+							example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo\",\"y\":\"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0\"}"
+						},
+						dest: {
+							type: "string",
+							description: "A stringified JWK with alphabetically sorted claims",
+							example: "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k\",\"y\":\"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4\"}"
+						},
+						encAlg: {
+							type: "string",
+							"enum": [
+								"A128GCM",
+								"A256GCM"
+							],
+							example: "A256GCM"
+						},
+						signingAlg: {
+							type: "string",
+							"enum": [
+								"ES256",
+								"ES384",
+								"ES512"
+							],
+							example: "ES256"
+						},
+						hashAlg: {
+							type: "string",
+							"enum": [
+								"SHA-256",
+								"SHA-384",
+								"SHA-512"
+							],
+							example: "SHA-256"
+						},
+						ledgerContractAddress: {
+							description: "Ethereum Address in EIP-55 format (with checksum)",
+							type: "string",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
+							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+						},
+						ledgerSignerAddress: {
+							description: "Ethereum Address in EIP-55 format (with checksum)",
+							type: "string",
+							pattern: "^0x([0-9A-Fa-f]){40}$",
+							example: "0x71C7656EC7ab88b098defB751B7401B5f6d8976F"
+						},
+						pooToPorDelay: {
+							description: "Maximum acceptable time in milliseconds between issued PoO and verified PoR",
+							type: "integer",
+							minimum: 1,
+							example: 10000
+						},
+						pooToPopDelay: {
+							description: "Maximum acceptable time in milliseconds between issued PoO and issued PoP",
+							type: "integer",
+							minimum: 1,
+							example: 20000
+						},
+						pooToSecretDelay: {
+							description: "Maximum acceptable time between issued PoO and secret published on the ledger",
+							type: "integer",
+							minimum: 1,
+							example: 180000
+						},
+						schema: {
+							description: "A stringified JSON-LD schema describing the data format",
+							type: "string"
+						}
+					}
+				},
+				{
+					type: "object",
+					properties: {
+						cipherblockDgst: {
+							type: "string",
+							description: "hash of the cipherblock in base64url with no padding",
+							pattern: "^[a-zA-Z0-9_-]+$"
+						},
+						blockCommitment: {
+							type: "string",
+							description: "hash of the plaintext block in base64url with no padding",
+							pattern: "^[a-zA-Z0-9_-]+$"
+						},
+						secretCommitment: {
+							type: "string",
+							description: "ash of the secret that can be used to decrypt the block in base64url with no padding",
+							pattern: "^[a-zA-Z0-9_-]+$"
+						}
+					},
+					required: [
+						"cipherblockDgst",
+						"blockCommitment",
+						"secretCommitment"
+					]
+				}
+			]
+		}
+	}
+};
+var spec = {
+	openapi: openapi,
+	info: info,
+	tags: tags,
+	paths: paths,
+	components: components
+};
+
 const HASH_ALGS = ['SHA-256', 'SHA-384', 'SHA-512'];
 const SIGNING_ALGS = ['ES256', 'ES384', 'ES512'];
 const ENC_ALGS = ['A128GCM', 'A256GCM'];
@@ -336,60 +7537,118 @@ function parseTimestamp(timestamp) {
         throw new NrError(new Error('invalid timestamp'), ['invalid timestamp']);
     }
 }
-async function validateAgreement(agreement) {
+async function validateDataSharingAgreementSchema(agreement) {
+    const errors = [];
+    const ajv = new Ajv({ strictSchema: false, removeAdditional: 'all' });
+    ajv.addMetaSchema(jsonSchema);
+    addFormats(ajv);
+    const schema = spec.components.schemas.DataSharingAgreement;
+    try {
+        const validate = ajv.compile(schema);
+        const clonedAgreement = _.cloneDeep(agreement);
+        const valid = validate(agreement);
+        if (!valid) {
+            if (validate.errors !== null && validate.errors !== undefined && validate.errors.length > 0) {
+                validate.errors.forEach(error => {
+                    errors.push(new NrError(`[${error.instancePath}] ${error.message ?? 'unknown'}`, ['invalid format']));
+                });
+            }
+        }
+        if (hashable(clonedAgreement) !== hashable(agreement)) {
+            errors.push(new NrError('Additional claims beyond the schema are not supported', ['invalid format']));
+        }
+    }
+    catch (error) {
+        errors.push(new NrError(error, ['invalid format']));
+    }
+    return errors;
+}
+async function validateDataExchange(dataExchange) {
+    const errors = [];
+    try {
+        const { id, ...dataExchangeButId } = dataExchange;
+        if (id !== await exchangeId(dataExchangeButId)) {
+            errors.push(new NrError('Invalid dataExchange id', ['cannot verify', 'invalid format']));
+        }
+        const { blockCommitment, secretCommitment, cipherblockDgst, ...dataExchangeAgreement } = dataExchangeButId;
+        const deaErrors = await validateDataExchangeAgreement(dataExchangeAgreement);
+        if (deaErrors.length > 0) {
+            deaErrors.forEach((error) => {
+                errors.push(error);
+            });
+        }
+    }
+    catch (error) {
+        errors.push(new NrError('Invalid dataExchange', ['cannot verify', 'invalid format']));
+    }
+    return errors;
+}
+async function validateDataExchangeAgreement(agreement) {
+    const errors = [];
     const agreementClaims = Object.keys(agreement);
     if (agreementClaims.length < 10 || agreementClaims.length > 11) {
-        throw new NrError(new Error('Invalid agreeemt: ' + JSON.stringify(agreement, undefined, 2)), ['invalid format']);
+        errors.push(new NrError(new Error('Invalid agreeemt: ' + JSON.stringify(agreement, undefined, 2)), ['invalid format']));
     }
     for (const key of agreementClaims) {
         let parsedAddress;
         switch (key) {
             case 'orig':
             case 'dest':
-                if (agreement[key] !== await parseJwk(JSON.parse(agreement[key]), true)) {
-                    throw new NrError(`[dataExchangeAgreeement.${key}] A valid stringified JWK must be provided. For uniqueness, JWK claims must be sorted in the stringified JWK. You can use the parseJWK(jwk, true) for that purpose`, ['invalid key', 'invalid format']);
+                try {
+                    if (agreement[key] !== await parseJwk(JSON.parse(agreement[key]), true)) {
+                        errors.push(new NrError(`[dataExchangeAgreeement.${key}] A valid stringified JWK must be provided. For uniqueness, JWK claims must be alphabetically sorted in the stringified JWK. You can use the parseJWK(jwk, true) for that purpose.\n${agreement[key]}`, ['invalid key', 'invalid format']));
+                    }
+                }
+                catch (error) {
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}] A valid stringified JWK must be provided. For uniqueness, JWK claims must be alphabetically sorted in the stringified JWK. You can use the parseJWK(jwk, true) for that purpose.`, ['invalid key', 'invalid format']));
                 }
                 break;
             case 'ledgerContractAddress':
             case 'ledgerSignerAddress':
                 try {
                     parsedAddress = parseAddress(agreement[key]);
+                    if (agreement[key] !== parsedAddress) {
+                        errors.push(new NrError(`[dataExchangeAgreeement.${key}] Invalid EIP-55 address ${agreement[key]}. Did you mean ${parsedAddress} instead?`, ['invalid EIP-55 address', 'invalid format']));
+                    }
                 }
                 catch (error) {
-                    throw new NrError(error.message, ['invalid format']);
-                }
-                if (agreement[key] !== parsedAddress) {
-                    throw new NrError(`[dataExchangeAgreeement.${key}] Invalid EIP-55 address ${agreement[key]}. Did you mean ${parsedAddress} instead?`, ['invalid format']);
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}] Invalid EIP-55 address ${agreement[key]}.`, ['invalid EIP-55 address', 'invalid format']));
                 }
                 break;
             case 'pooToPorDelay':
             case 'pooToPopDelay':
             case 'pooToSecretDelay':
-                if (agreement[key] !== parseTimestamp(agreement[key])) {
-                    throw new NrError(`[dataExchangeAgreeement.${key}] < 0 or not a number`, ['invalid format']);
+                try {
+                    if (agreement[key] !== parseTimestamp(agreement[key])) {
+                        errors.push(new NrError(`[dataExchangeAgreeement.${key}] < 0 or not a number`, ['invalid timestamp', 'invalid format']));
+                    }
+                }
+                catch (error) {
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}] < 0 or not a number`, ['invalid timestamp', 'invalid format']));
                 }
                 break;
             case 'hashAlg':
                 if (!HASH_ALGS.includes(agreement[key])) {
-                    throw new NrError(new Error('Invalid hash algorithm'), ['invalid algorithm']);
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}Invalid hash algorithm '${agreement[key]}'. It must be one of: ${HASH_ALGS.join(', ')}`, ['invalid algorithm']));
                 }
                 break;
             case 'encAlg':
                 if (!ENC_ALGS.includes(agreement[key])) {
-                    throw new NrError(new Error('Invalid hash algorithm'), ['invalid algorithm']);
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}Invalid encryption algorithm '${agreement[key]}'. It must be one of: ${ENC_ALGS.join(', ')}`, ['invalid algorithm']));
                 }
                 break;
             case 'signingAlg':
                 if (!SIGNING_ALGS.includes(agreement[key])) {
-                    throw new NrError(new Error('Invalid hash algorithm'), ['invalid algorithm']);
+                    errors.push(new NrError(`[dataExchangeAgreeement.${key}Invalid signing algorithm '${agreement[key]}'. It must be one of: ${SIGNING_ALGS.join(', ')}`, ['invalid algorithm']));
                 }
                 break;
             case 'schema':
                 break;
             default:
-                throw new NrError(new Error(`Property ${key} not allowed in dataAgreement`), ['invalid format']);
+                errors.push(new NrError(new Error(`Property ${key} not allowed in dataAgreement`), ['invalid format']));
         }
     }
+    return errors;
 }
 
 async function createProof(payload, privateJwk) {
@@ -1162,7 +8421,17 @@ class NonRepudiationDest {
         });
     }
     async asyncConstructor(agreement, privateJwk, dltAgent) {
-        await validateAgreement(agreement);
+        const errors = await validateDataExchangeAgreement(agreement);
+        if (errors.length > 0) {
+            const errorMsg = [];
+            let nrErrors = [];
+            errors.forEach((error) => {
+                errorMsg.push(error.message);
+                nrErrors = nrErrors.concat(error.nrErrors);
+            });
+            nrErrors = [...(new Set(nrErrors))];
+            throw new NrError('Resource has not been validated:\n' + errorMsg.join('\n'), nrErrors);
+        }
         this.agreement = agreement;
         this.jwkPairDest = {
             privateJwk: privateJwk,
@@ -1350,7 +8619,17 @@ class NonRepudiationOrig {
         });
     }
     async init(agreement, dltAgent) {
-        await validateAgreement(agreement);
+        const errors = await validateDataExchangeAgreement(agreement);
+        if (errors.length > 0) {
+            const errorMsg = [];
+            let nrErrors = [];
+            errors.forEach((error) => {
+                errorMsg.push(error.message);
+                nrErrors = nrErrors.concat(error.nrErrors);
+            });
+            nrErrors = [...(new Set(nrErrors))];
+            throw new NrError('Resource has not been validated:\n' + errorMsg.join('\n'), nrErrors);
+        }
         this.agreement = agreement;
         await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk);
         const secret = await oneTimeSecret(this.agreement.encAlg);
@@ -1452,5 +8731,5 @@ var index = /*#__PURE__*/Object.freeze({
     NonRepudiationOrig: NonRepudiationOrig
 });
 
-export { index$2 as ConflictResolution, ENC_ALGS, EthersIoAgentDest, EthersIoAgentOrig, HASH_ALGS, I3mServerWalletAgentDest, I3mServerWalletAgentOrig, I3mWalletAgentDest, I3mWalletAgentOrig, index as NonRepudiationProtocol, NrError, SIGNING_ALGS, index$1 as Signers, checkTimestamp, createProof, defaultDltConfig, exchangeId, generateKeys, getDltAddress, importJwk, jsonSort, jweDecrypt, jweEncrypt, jwsDecode, oneTimeSecret, parseAddress, parseHex, parseJwk, sha, validateAgreement, verifyKeyPair, verifyProof };
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguYnJvd3Nlci5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL2Vycm9ycy9OckVycm9yLnRzIiwiLi4vLi4vc3JjL3RzL2NyeXB0by9nZW5lcmF0ZUtleXMudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL2ltcG9ydEp3ay50cyIsIi4uLy4uL3NyYy90cy9jcnlwdG8vandlLnRzIiwiLi4vLi4vc3JjL3RzL2NyeXB0by9qd3NEZWNvZGUudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvdGltZXN0YW1wcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9qc29uU29ydC50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUhleC50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUp3ay50cyIsIi4uLy4uL3NyYy90cy91dGlscy9zaGEudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvcGFyc2VBZGRyZXNzLnRzIiwiLi4vLi4vc3JjL3RzL3V0aWxzL2dldERsdEFkZHJlc3MudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL29uZVRpbWVTZWNyZXQudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL3ZlcmlmeUtleVBhaXIudHMiLCIuLi8uLi9zcmMvdHMvZXhjaGFuZ2UvZXhjaGFuZ2VJZC50cyIsIi4uLy4uL3NyYy90cy9jb25zdGFudHMudHMiLCIuLi8uLi9zcmMvdHMvZXhjaGFuZ2UvY2hlY2tBZ3JlZW1lbnQudHMiLCIuLi8uLi9zcmMvdHMvcHJvb2ZzL2NyZWF0ZVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL3Byb29mcy92ZXJpZnlQcm9vZi50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL3ZlcmlmeVBvci50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL2NoZWNrQ29tcGxldGVuZXNzLnRzIiwiLi4vLi4vc3JjL3RzL2NvbmZsaWN0LXJlc29sdXRpb24vY2hlY2tEZWNyeXB0aW9uLnRzIiwiLi4vLi4vc3JjL3RzL2NvbmZsaWN0LXJlc29sdXRpb24vQ29uZmxpY3RSZXNvbHZlci50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL2dlbmVyYXRlVmVyaWZpY2F0aW9uUmVxdWVzdC50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL3ZlcmlmeVJlc29sdXRpb24udHMiLCIuLi8uLi9zcmMvdHMvZGx0L2RlZmF1bHREbHRDb25maWcudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9zZWNyZXQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9OcnBEbHRBZ2VudC50cyIsIi4uLy4uL3NyYy90cy9kbHQvYWdlbnRzL0V0aGVyc0lvQWdlbnQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9kZXN0L0V0aGVyc0lvQWdlbnREZXN0LnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvSTNtV2FsbGV0QWdlbnQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9kZXN0L0kzbVdhbGxldEFnZW50RGVzdC50cyIsIi4uLy4uL3NyYy90cy9kbHQvYWdlbnRzL0kzbVNlcnZlcldhbGxldEFnZW50LnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvZGVzdC9JM21TZXJ2ZXJXYWxsZXRBZ2VudERlc3QudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9vcmlnL0V0aGVyc0lvQWdlbnRPcmlnLnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvb3JpZy9JM21XYWxsZXRBZ2VudE9yaWcudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9vcmlnL0kzbVNlcnZlcldhbGxldEFnZW50T3JpZy50cyIsIi4uLy4uL3NyYy90cy9ub24tcmVwdWRpYXRpb24tcHJvdG9jb2wvTm9uUmVwdWRpYXRpb25EZXN0LnRzIiwiLi4vLi4vc3JjL3RzL25vbi1yZXB1ZGlhdGlvbi1wcm90b2NvbC9Ob25SZXB1ZGlhdGlvbk9yaWcudHMiXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm5hbWVzIjpbImltcG9ydEpXS2pv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RUFBRSxDQUFBO0lBRWhDLE1BQU0sSUFBSSxHQUFHLEtBQUssQ0FBQyxJQUFJLEVBQUUsQ0FBQyxRQUFRLENBQUMsS0FBSyxDQUFDLENBQUMsUUFBUSxDQUFDLFNBQVMsR0FBRyxDQUFDLEVBQUUsR0FBRyxDQUFDLENBQUE7SUFDdEUsTUFBTSxJQUFJLEdBQUcsS0FBSyxDQUFDLElBQUksRUFBRSxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQyxRQUFRLENBQUMsU0FBUyxHQUFHLENBQUMsRUFBRSxHQUFHLENBQUMsQ0FBQTtBQUN0RSxJQUFBLE1BQU0sSUFBSSxHQUFHLE1BQU0sQ0FBQyxVQUFVLENBQUMsS0FBSyxDQUFDLENBQUMsUUFBUSxDQUFDLFNBQVMsR0FBRyxDQUFDLEVBQUUsR0FBRyxDQUFDLENBQUE7QUFFbEUsSUFBQSxNQUFNLENBQUMsR0FBRyxHQUFHLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsRUFBRSxJQUFJLEVBQUUsS0FBSyxDQUFDLENBQUE7QUFDakQsSUFBQSxNQUFNLENBQUMsR0FBRyxHQUFHLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsRUFBRSxJQUFJLEVBQUUsS0FBSyxDQUFDLENBQUE7QUFDakQsSUFBQSxNQUFNLENBQUMsR0FBRyxHQUFHLENBQUMsTUFBTSxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsRUFBRSxJQUFJLEVBQUUsS0FBSyxDQUFDLENBQUE7QUFFakQsSUFBQSxNQUFNLFVBQVUsR0FBUSxFQUFFLEdBQUcsRUFBRSxJQUFJLEVBQUUsR0FBRyxFQUFFLFVBQVUsRUFBRSxDQUFDLEVBQUUsQ0FBQyxFQUFFLENBQUMsRUFBRSxHQUFHLEVBQUUsQ0FBQTtBQUVwRSxJQUFBLE1BQU0sU0FBUyxHQUFRLEVBQUUsR0FBRyxVQUFVLEVBQUUsQ0FBQTtJQUN4QyxPQUFPLFNBQVMsQ0FBQyxDQUFDLENBQUE7SUFFbEIsT0FBTztRQUNMLFNBQVM7UUFDVCxVQUFVO0tBQ1gsQ0FBQTtBQUNIOztBQ3BFTyxlQUFlLFNBQVMsQ0FB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
+export { index$2 as ConflictResolution, ENC_ALGS, EthersIoAgentDest, EthersIoAgentOrig, HASH_ALGS, I3mServerWalletAgentDest, I3mServerWalletAgentOrig, I3mWalletAgentDest, I3mWalletAgentOrig, index as NonRepudiationProtocol, NrError, SIGNING_ALGS, index$1 as Signers, checkTimestamp, createProof, defaultDltConfig, exchangeId, generateKeys, getDltAddress, importJwk, jsonSort, jweDecrypt, jweEncrypt, jwsDecode, oneTimeSecret, parseAddress, parseHex, parseJwk, sha, validateDataExchange, validateDataExchangeAgreement, validateDataSharingAgreementSchema, verifyKeyPair, verifyProof };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguYnJvd3Nlci5qcyIsInNvdXJjZXMiOlsiLi4vLi4vc3JjL3RzL2Vycm9ycy9OckVycm9yLnRzIiwiLi4vLi4vc3JjL3RzL2NyeXB0by9nZW5lcmF0ZUtleXMudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL2ltcG9ydEp3ay50cyIsIi4uLy4uL3NyYy90cy9jcnlwdG8vandlLnRzIiwiLi4vLi4vc3JjL3RzL2NyeXB0by9qd3NEZWNvZGUudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvdGltZXN0YW1wcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9qc29uU29ydC50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUhleC50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUp3ay50cyIsIi4uLy4uL3NyYy90cy91dGlscy9zaGEudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvcGFyc2VBZGRyZXNzLnRzIiwiLi4vLi4vc3JjL3RzL3V0aWxzL2dldERsdEFkZHJlc3MudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL29uZVRpbWVTZWNyZXQudHMiLCIuLi8uLi9zcmMvdHMvY3J5cHRvL3ZlcmlmeUtleVBhaXIudHMiLCIuLi8uLi9zcmMvdHMvZXhjaGFuZ2UvZXhjaGFuZ2VJZC50cyIsIi4uLy4uL3NyYy90cy9jb25zdGFudHMudHMiLCIuLi8uLi9zcmMvdHMvZXhjaGFuZ2UvY2hlY2tBZ3JlZW1lbnQudHMiLCIuLi8uLi9zcmMvdHMvcHJvb2ZzL2NyZWF0ZVByb29mLnRzIiwiLi4vLi4vc3JjL3RzL3Byb29mcy92ZXJpZnlQcm9vZi50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL3ZlcmlmeVBvci50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL2NoZWNrQ29tcGxldGVuZXNzLnRzIiwiLi4vLi4vc3JjL3RzL2NvbmZsaWN0LXJlc29sdXRpb24vY2hlY2tEZWNyeXB0aW9uLnRzIiwiLi4vLi4vc3JjL3RzL2NvbmZsaWN0LXJlc29sdXRpb24vQ29uZmxpY3RSZXNvbHZlci50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL2dlbmVyYXRlVmVyaWZpY2F0aW9uUmVxdWVzdC50cyIsIi4uLy4uL3NyYy90cy9jb25mbGljdC1yZXNvbHV0aW9uL3ZlcmlmeVJlc29sdXRpb24udHMiLCIuLi8uLi9zcmMvdHMvZGx0L2RlZmF1bHREbHRDb25maWcudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9zZWNyZXQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9OcnBEbHRBZ2VudC50cyIsIi4uLy4uL3NyYy90cy9kbHQvYWdlbnRzL0V0aGVyc0lvQWdlbnQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9kZXN0L0V0aGVyc0lvQWdlbnREZXN0LnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvSTNtV2FsbGV0QWdlbnQudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9kZXN0L0kzbVdhbGxldEFnZW50RGVzdC50cyIsIi4uLy4uL3NyYy90cy9kbHQvYWdlbnRzL0kzbVNlcnZlcldhbGxldEFnZW50LnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvZGVzdC9JM21TZXJ2ZXJXYWxsZXRBZ2VudERlc3QudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9vcmlnL0V0aGVyc0lvQWdlbnRPcmlnLnRzIiwiLi4vLi4vc3JjL3RzL2RsdC9hZ2VudHMvb3JpZy9JM21XYWxsZXRBZ2VudE9yaWcudHMiLCIuLi8uLi9zcmMvdHMvZGx0L2FnZW50cy9vcmlnL0kzbVNlcnZlcldhbGxldEFnZW50T3JpZy50cyIsIi4uLy4uL3NyYy90cy9ub24tcmVwdWRpYXRpb24tcHJvdG9jb2wvTm9uUmVwdWRpYXRpb25EZXN0LnRzIiwiLi4vLi4vc3JjL3RzL25vbi1yZXB1ZGlhdGlvbi1wcm90b2NvbC9Ob25SZXB1ZGlhdGlvbk9yaWcudHMiXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm5hbWVzIjpbImltcG9ydEpXS2pv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QUMsVUFBVSxDQUFDLENBQUE7QUFDNUMsSUFBQSxNQUFNLEtBQUssR0FBRyxNQUFNLENBQUMsU0FBUyxFQUFFLENBQUE7SUFFaEMsTUFBTSxJQUFJLEdBQUcsS0FBSyxDQUFDLElBQUksRUFBRSxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQyxRQUFRLENBQUMsU0FBUyxHQUFHLENBQUMsRUFBRSxHQUFHLENBQUMsQ0FBQTtJQUN0RSxNQUFNLElBQUksR0FBRyxLQUFLLENBQUMsSUFBSSxFQUFFLENBQUMsUUFBUSxDQUFDLEtBQUssQ0FBQyxDQUFDLFFBQVEsQ0FBQyxTQUFTLEdBQUcsQ0FBQyxFQUFFLEdBQUcsQ0FBQyxDQUFBO0FBQ3RFLElBQUEsTUFBTSxJQUFJLEdBQUcsTUFBTSxDQUFDLFVBQVUsQ0FBQyxLQUFLLENBQUMsQ0FBQyxRQUFRLENBQUMsU0FBUyxHQUFHLENBQUMsRUFBRSxHQUFHLENBQUMsQ0FBQTtBQUVsRSxJQUFBLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxFQUFFLElBQUksRUFBRSxLQUFLLENBQUMsQ0FBQTtBQUNqRCxJQUFBLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxFQUFFLElBQUksRUFBRSxLQUFLLENBQUMsQ0FBQTtBQUNqRCxJQUFBLE1BQU0sQ0FBQyxHQUFHLEdBQUcsQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxFQUFFLElBQUksRUFBRSxLQUFLLENBQUMsQ0FBQTtBQUVqRCxJQUFBLE1BQU0sVUFBVSxHQUFRLEVBQUUsR0FBRyxFQUFFLElBQUksRUFBRSxHQUFHLEVBQUUsVUFBVSxFQUFFLENBQUMsRUFBRSxDQUFDLEVBQUUsQ0FBQyxFQUFFLEdBQUcsRUFBRSxDQUFBO0FBRXBFLElBQUEsTUFBTSxTQUFTLEdBQVEsRUFBRSxHQUFHLFVBQVUsRUFBRSxDQUFBO0lBQ3hDLE9BQU8sU0FBUyxDQUFDLENBQUMsQ0FBQTtJQUVsQixP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Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7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

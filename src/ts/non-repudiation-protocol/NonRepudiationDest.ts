@@ -5,10 +5,10 @@ import { generateVerificationRequest } from '../conflict-resolution/'
 import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
 import { NrpDltAgentDest } from '../dlt/'
 import { NrError } from '../errors'
-import { exchangeId, validateAgreement } from '../exchange'
+import { exchangeId, validateDataExchangeAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkTimestamp, sha } from '../utils/'
-import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
+import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, NrErrorName, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -40,7 +40,17 @@ export class NonRepudiationDest {
   }
 
   private async asyncConstructor (agreement: DataExchangeAgreement, privateJwk: JWK, dltAgent: NrpDltAgentDest): Promise<void> {
-    await validateAgreement(agreement)
+    const errors = await validateDataExchangeAgreement(agreement)
+    if (errors.length > 0) {
+      const errorMsg: string[] = []
+      let nrErrors: NrErrorName[] = []
+      errors.forEach((error) => {
+        errorMsg.push(error.message)
+        nrErrors = nrErrors.concat(error.nrErrors)
+      })
+      nrErrors = [...(new Set(nrErrors))]
+      throw new NrError('Resource has not been validated:\n' + errorMsg.join('\n'), nrErrors)
+    }
     this.agreement = agreement
 
     this.jwkPairDest = {

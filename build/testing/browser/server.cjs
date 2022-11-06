@@ -58,7 +58,8 @@ async function buildTests (testFiles) {
   const inputOptions = {
     input,
     plugins: [
-      multi({ exports: true }),
+      multi(),
+      json(),
       replace({
         '#pkg': `/${name}.esm.js`,
         delimiters: ['', ''],
@@ -72,10 +73,10 @@ async function buildTests (testFiles) {
       resolve({
         browser: true,
         exportConditions: ['browser', 'default'],
-        mainFields: ['browser', 'module', 'main']
+        mainFields: ['browser', 'module', 'main'],
+        preferBuiltins: false
       }),
-      commonjs(),
-      json()
+      commonjs()
     ],
     external: [`/${name}.esm.js`]
   }

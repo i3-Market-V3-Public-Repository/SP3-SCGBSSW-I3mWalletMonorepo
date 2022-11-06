@@ -2,7 +2,7 @@
 
 ## Hierarchy
 
-- [`DataExchangeAgreement`](DataExchangeAgreement.md)
+- `DataExchange`
 
   ↳ **`DataExchange`**
 
@@ -32,9 +32,15 @@
 
 • **blockCommitment**: `string`
 
+hash of the plaintext block in base64url with no padding
+
+#### Inherited from
+
+WalletComponents.Schemas.DataExchange.blockCommitment
+
 #### Defined in
 
-[src/ts/types.ts:87](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L87)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:268
 
 ___
 
@@ -42,9 +48,15 @@ ___
 
 • **cipherblockDgst**: `string`
 
+hash of the cipherblock in base64url with no padding
+
+#### Inherited from
+
+WalletComponents.Schemas.DataExchange.cipherblockDgst
+
 #### Defined in
 
-[src/ts/types.ts:86](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L86)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:264
 
 ___
 
@@ -52,13 +64,17 @@ ___
 
 • **dest**: `string`
 
+A stringified JWK with alphabetically sorted claims
+example:
+{"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"}
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[dest](DataExchangeAgreement.md#dest)
+WalletComponents.Schemas.DataExchange.dest
 
 #### Defined in
 
-[src/ts/types.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L72)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:211
 
 ___
 
@@ -66,13 +82,16 @@ ___
 
 • **encAlg**: ``"A128GCM"`` \| ``"A256GCM"``
 
+example:
+A256GCM
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[encAlg](DataExchangeAgreement.md#encalg)
+WalletComponents.Schemas.DataExchange.encAlg
 
 #### Defined in
 
-[src/ts/types.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L74)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:216
 
 ___
 
@@ -80,13 +99,16 @@ ___
 
 • **hashAlg**: ``"SHA-256"`` \| ``"SHA-384"`` \| ``"SHA-512"``
 
+example:
+SHA-256
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[hashAlg](DataExchangeAgreement.md#hashalg)
+WalletComponents.Schemas.DataExchange.hashAlg
 
 #### Defined in
 
-[src/ts/types.ts:73](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L73)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:226
 
 ___
 
@@ -96,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:85](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L85)
+[src/ts/types.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/edcf437/src/ts/types.ts#L89)
 
 ___
 
@@ -104,13 +126,17 @@ ___
 
 • **ledgerContractAddress**: `string`
 
+Ethereum Address in EIP-55 format (with checksum)
+example:
+0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[ledgerContractAddress](DataExchangeAgreement.md#ledgercontractaddress)
+WalletComponents.Schemas.DataExchange.ledgerContractAddress
 
 #### Defined in
 
-[src/ts/types.ts:76](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L76)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:232
 
 ___
 
@@ -118,13 +144,17 @@ ___
 
 • **ledgerSignerAddress**: `string`
 
+Ethereum Address in EIP-55 format (with checksum)
+example:
+0x71C7656EC7ab88b098defB751B7401B5f6d8976F
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[ledgerSignerAddress](DataExchangeAgreement.md#ledgersigneraddress)
+WalletComponents.Schemas.DataExchange.ledgerSignerAddress
 
 #### Defined in
 
-[src/ts/types.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L77)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:238
 
 ___
 
@@ -132,13 +162,17 @@ ___
 
 • **orig**: `string`
 
+A stringified JWK with alphabetically sorted claims
+example:
+{"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"}
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[orig](DataExchangeAgreement.md#orig)
+WalletComponents.Schemas.DataExchange.orig
 
 #### Defined in
 
-[src/ts/types.ts:71](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L71)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:205
 
 ___
 
@@ -146,13 +180,17 @@ ___
 
 • **pooToPopDelay**: `number`
 
+Maximum acceptable time in milliseconds between issued PoO and issued PoP
+example:
+20000
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[pooToPopDelay](DataExchangeAgreement.md#pootopopdelay)
+WalletComponents.Schemas.DataExchange.pooToPopDelay
 
 #### Defined in
 
-[src/ts/types.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L79)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:250
 
 ___
 
@@ -160,13 +198,17 @@ ___
 
 • **pooToPorDelay**: `number`
 
+Maximum acceptable time in milliseconds between issued PoO and verified PoR
+example:
+10000
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[pooToPorDelay](DataExchangeAgreement.md#pootopordelay)
+WalletComponents.Schemas.DataExchange.pooToPorDelay
 
 #### Defined in
 
-[src/ts/types.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L78)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:244
 
 ___
 
@@ -174,13 +216,17 @@ ___
 
 • **pooToSecretDelay**: `number`
 
+Maximum acceptable time between issued PoO and secret published on the ledger
+example:
+180000
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[pooToSecretDelay](DataExchangeAgreement.md#pootosecretdelay)
+WalletComponents.Schemas.DataExchange.pooToSecretDelay
 
 #### Defined in
 
-[src/ts/types.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L80)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:256
 
 ___
 
@@ -188,13 +234,15 @@ ___
 
 • `Optional` **schema**: `string`
 
+A stringified JSON-LD schema describing the data format
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[schema](DataExchangeAgreement.md#schema)
+WalletComponents.Schemas.DataExchange.schema
 
 #### Defined in
 
-[src/ts/types.ts:81](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L81)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:260
 
 ___
 
@@ -202,9 +250,15 @@ ___
 
 • **secretCommitment**: `string`
 
+ash of the secret that can be used to decrypt the block in base64url with no padding
+
+#### Inherited from
+
+WalletComponents.Schemas.DataExchange.secretCommitment
+
 #### Defined in
 
-[src/ts/types.ts:88](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L88)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:272
 
 ___
 
@@ -212,10 +266,13 @@ ___
 
 • **signingAlg**: ``"ES256"`` \| ``"ES384"`` \| ``"ES512"``
 
+example:
+ES256
+
 #### Inherited from
 
-[DataExchangeAgreement](DataExchangeAgreement.md).[signingAlg](DataExchangeAgreement.md#signingalg)
+WalletComponents.Schemas.DataExchange.signingAlg
 
 #### Defined in
 
-[src/ts/types.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/c2d8b20/src/ts/types.ts#L75)
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:221

@@ -2,11 +2,12 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { generateVerificationRequest } from '../conflict-resolution/'
 import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { exchangeId, validateAgreement } from '../exchange'
+import { exchangeId, validateDataExchangeAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
-import { DataExchange, DataExchangeAgreement, JWK, JwkPair, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
+import { DataExchange, DataExchangeAgreement, JWK, JwkPair, NrErrorName, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
 import { parseHex, sha } from '../utils'
 import { NrpDltAgentOrig } from '../dlt/agents'
+import { NrError } from '../errors'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -50,7 +51,17 @@ export class NonRepudiationOrig {
   }
 
   private async init (agreement: DataExchangeAgreement, dltAgent: NrpDltAgentOrig): Promise<void> {
-    await validateAgreement(agreement)
+    const errors = await validateDataExchangeAgreement(agreement)
+    if (errors.length > 0) {
+      const errorMsg: string[] = []
+      let nrErrors: NrErrorName[] = []
+      errors.forEach((error) => {
+        errorMsg.push(error.message)
+        nrErrors = nrErrors.concat(error.nrErrors)
+      })
+      nrErrors = [...(new Set(nrErrors))]
+      throw new NrError('Resource has not been validated:\n' + errorMsg.join('\n'), nrErrors)
+    }
     this.agreement = agreement
 
     await verifyKeyPair(this.jwkPairOrig.publicJwk, this.jwkPairOrig.privateJwk)

@@ -115,6 +115,13 @@ Steps for creating a token:
       let providerWalletAgent: _pkg.I3mServerWalletAgentOrig
       let consumerWalletAgent: _pkg.I3mWalletAgentDest
 
+      let consumerJwks: _pkg.JwkPair
+      let providerJwks: _pkg.JwkPair
+
+      let dataExchangeAgreement: _pkg.DataExchangeAgreement
+
+      let block: Uint8Array
+
       before('should prepare agents and check that the provider one has funds to interact with the DLT', async function () {
         // Prepare consumer agent
         consumerWalletAgent = new _pkg.I3mWalletAgentDest(consumerWallet, dids.consumer)
@@ -131,18 +138,18 @@ Steps for creating a token:
         expect(providerBalance.toBigInt() > 50000000000000n).to.be.true
       })
 
-      it('should prepare and store in the wallets a valid data sharing agreeemt', async function () {
+      it('should prepare a valid data sharing agreeemt', async function () {
         // Create a random block of data for the data exchange
-        const block = new Uint8Array(await randBytes(256))
+        block = new Uint8Array(await randBytes(256))
 
         // Create random fresh keys for the data exchange
-        const consumerJwks = await _pkg.generateKeys('ES256')
-        const providerJwks = await _pkg.generateKeys('ES256')
+        consumerJwks = await _pkg.generateKeys('ES256')
+        providerJwks = await _pkg.generateKeys('ES256')
 
         // Prepare the data sharing agreeement
         dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
 
-        const dataExchangeAgreement: _pkg.DataExchangeAgreement = {
+        dataExchangeAgreement = {
           ...dataSharingAgreement.dataExchangeAgreement,
           orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
           dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
@@ -162,8 +169,17 @@ Steps for creating a token:
         dataSharingAgreement.signatures.providerSignature = (await providerOperatorWallet.identitySign({ did: dids.providerOperator }, { type: 'JWT', data: { payload } })).signature
         dataSharingAgreement.signatures.consumerSignature = (await consumerWallet.identities.sign({ did: dids.consumer }, { type: 'JWT', data: { payload } })).signature
 
-        console.log(dataSharingAgreement)
+        console.log(JSON.stringify({
+          dataSharingAgreement,
+          providerJwks,
+          consumerJwks
+        }, undefined, 2))
 
+        const errors = await _pkg.validateDataSharingAgreementSchema(dataSharingAgreement)
+        if (errors.length > 0) console.log(errors)
+        expect(errors.length).to.equal(0)
+      })
+      it('provider operator, provider and consumer should be able to store the agreement', async function () {
         // provider stores agreement
         const resource = await providerWallet.resourceCreate({
           type: 'Contract',

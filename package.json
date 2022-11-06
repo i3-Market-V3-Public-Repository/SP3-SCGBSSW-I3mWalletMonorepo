@@ -111,7 +111,8 @@
   },
   "devDependencies": {
     "@i3m/server-wallet": "^2.1.1",
-    "@i3m/wallet-protocol-api": "^2.1.1",
+    "@i3m/wallet-desktop-openapi": "^2.1.2",
+    "@i3m/wallet-protocol-api": "^2.1.2",
     "@rollup/plugin-commonjs": "^23.0.2",
     "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-multi-entry": "^6.0.0",
@@ -120,6 +121,7 @@
     "@rollup/plugin-typescript": "^9.0.2",
     "@types/chai": "^4.2.22",
     "@types/elliptic": "^6.4.14",
+    "@types/lodash": "^4.14.188",
     "@types/mocha": "^10.0.0",
     "@types/uuid": "^8.3.4",
     "c8": "^7.12.0",
@@ -144,13 +146,19 @@
     "uuid": "^9.0.0"
   },
   "dependencies": {
+    "@apidevtools/openapi-schemas": "^2.1.0",
     "@i3m/non-repudiation-protocol-smart-contract": "^1.0.1",
     "@juanelas/base64": "^1.0.4",
+    "ajv": "^8.11.0",
+    "ajv-draft-04": "^1.0.0",
+    "ajv-formats": "^2.1.1",
+    "ajv-keywords": "^5.1.0",
     "bigint-conversion": "^2.2.1",
     "bigint-crypto-utils": "^3.0.21",
     "elliptic": "^6.5.4",
     "ethers": "^5.5.2",
     "jose": "^4.3.7",
+    "lodash": "^4.17.21",
     "object-sha": "^2.0.6"
   }
 }
