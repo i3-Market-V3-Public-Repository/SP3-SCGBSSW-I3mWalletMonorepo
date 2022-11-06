@@ -45,7 +45,8 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18.x'
+          registry-url: 'https://registry.npmjs.org'
            
       - name: NPM publish
         run: ./scripts/libraries.sh
