@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[protocol/state.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/40dcec0/packages/wallet-protocol/src/ts/protocol/state.ts#L29)
+[protocol/state.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f222a90/packages/wallet-protocol/src/ts/protocol/state.ts#L29)
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 #### Defined in
 
-[protocol/state.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/40dcec0/packages/wallet-protocol/src/ts/protocol/state.ts#L30)
+[protocol/state.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f222a90/packages/wallet-protocol/src/ts/protocol/state.ts#L30)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[protocol/state.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/40dcec0/packages/wallet-protocol/src/ts/protocol/state.ts#L33)
+[protocol/state.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f222a90/packages/wallet-protocol/src/ts/protocol/state.ts#L33)
 
 ___
 
@@ -47,4 +47,4 @@ ___
 
 #### Defined in
 
-[protocol/state.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/40dcec0/packages/wallet-protocol/src/ts/protocol/state.ts#L32)
+[protocol/state.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f222a90/packages/wallet-protocol/src/ts/protocol/state.ts#L32)

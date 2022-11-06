@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-desktop-openapi",
-  "version": "2.1.4",
+  "version": "2.1.6",
   "description": "The API of the i3m-wallet desktop application",
   "main": "openapi.json",
   "exports": {
@@ -23,7 +23,7 @@
     "lint": "ts-standard --fix",
     "postbuild": "npm run lint",
     "preversion": "npm run build && npm test",
-    "version": "npm run docs && git add -A",
+    "version": "git add -A",
     "test": "echo \"Warning: You must specify tests for this package\""
   },
   "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
