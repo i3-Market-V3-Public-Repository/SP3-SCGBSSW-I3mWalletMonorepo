@@ -1,10 +1,6 @@
-name: build
+name: manual build and test (node and browser)
 
 on:
-  push:
-    branches: [ public ]
-    tags-ignore:
-      - "v*.*.*"
   workflow_dispatch:
 
 jobs:

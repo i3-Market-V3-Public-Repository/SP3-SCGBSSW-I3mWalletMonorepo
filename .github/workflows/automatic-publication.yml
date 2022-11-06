@@ -1,4 +1,4 @@
-name: build
+name: build, test (node and browser), publish to NPM
 
 on:
   push:
