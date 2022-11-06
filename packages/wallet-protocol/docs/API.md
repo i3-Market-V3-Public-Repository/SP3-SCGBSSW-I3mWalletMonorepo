@@ -55,7 +55,7 @@ This module runs perfectly in node.js and browsers
 
 #### Defined in
 
-[transport/transport.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ce12c4/packages/wallet-protocol/src/ts/transport/transport.ts#L12)
+[transport/transport.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/642640f/packages/wallet-protocol/src/ts/transport/transport.ts#L12)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ce12c4/packages/wallet-protocol/src/ts/transport/transport.ts#L13)
+[transport/transport.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/642640f/packages/wallet-protocol/src/ts/transport/transport.ts#L13)
 
 ## Variables
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[constants/index.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ce12c4/packages/wallet-protocol/src/ts/constants/index.ts#L4)
+[constants/index.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/642640f/packages/wallet-protocol/src/ts/constants/index.ts#L4)
 
 ___
 
@@ -104,4 +104,4 @@ ___
 
 #### Defined in
 
-[protocol/code-generator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ce12c4/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L9)
+[protocol/code-generator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/642640f/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L9)
