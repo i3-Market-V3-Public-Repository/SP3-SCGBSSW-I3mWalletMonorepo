@@ -1,7 +1,6 @@
-import { DataExchange, jwsDecode, NrProofPayload } from '@i3m/non-repudiation-library'
+import { DataExchange, jwsDecode, NrProofPayload, validateDataExchange } from '@i3m/non-repudiation-library'
 import Debug from 'debug'
 import { NonRepudiationProofResource } from '../app'
-import { validateDataExchange } from '../utils'
 import { Validator } from './resource-validator'
 
 const debug = Debug('base-wallet:NrpValidator')

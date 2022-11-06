@@ -1,11 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 
-import Ajv from 'ajv'
-import _ from 'lodash'
 import SwaggerParser from '@apidevtools/swagger-parser'
-import { OpenAPIV3 } from 'openapi-types'
 import jsYaml from 'js-yaml'
+import _ from 'lodash'
+import { OpenAPIV3 } from 'openapi-types'
 
 import pkgJson from '../package.json'
 
@@ -76,18 +75,7 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 
   const dereferencedBundledSpec = await parser.dereference(bundledSpec) as OpenAPIV3.Document
 
-  const ajv = new Ajv()
-
-  if (dereferencedBundledSpec.components?.schemas !== undefined) {
-    for (const key in dereferencedBundledSpec.components.schemas) {
-      const schema = dereferencedBundledSpec.components.schemas[key]
-      const valid = ajv.validateSchema(schema)
-      if (valid === false) {
-        console.log(ajv.errors)
-        throw new Error('invalid schema')
-      }
-    }
-  }
+  await SwaggerParser.validate(dereferencedBundledSpec)
 
   return {
     api: bundledSpec,

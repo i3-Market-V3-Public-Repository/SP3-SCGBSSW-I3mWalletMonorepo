@@ -1,8 +1,8 @@
 import { ContractResource } from '../app'
-import { validateDataExchangeAgreement, validateDataSharingAgreeementSchema, verifyDataSharingAgreementSignature } from '../utils'
+import { verifyDataSharingAgreementSignature } from '../utils'
 import { Validator } from './resource-validator'
 import { digest } from 'object-sha'
-import { verifyKeyPair } from '@i3m/non-repudiation-library'
+import { verifyKeyPair, validateDataSharingAgreementSchema, validateDataExchangeAgreement } from '@i3m/non-repudiation-library'
 
 export const contractValidator: Validator<ContractResource> = async (resource, veramo) => {
   const errors: Error[] = []
@@ -11,7 +11,7 @@ export const contractValidator: Validator<ContractResource> = async (resource, v
     const { dataSharingAgreement, keyPair } = resource.resource
 
     // Verify schema
-    const schemaValidationErrors = await validateDataSharingAgreeementSchema(dataSharingAgreement)
+    const schemaValidationErrors = await validateDataSharingAgreementSchema(dataSharingAgreement)
     if (schemaValidationErrors.length > 0) return schemaValidationErrors
 
     if (dataSharingAgreement.parties.consumerDid === dataSharingAgreement.parties.providerDid) {

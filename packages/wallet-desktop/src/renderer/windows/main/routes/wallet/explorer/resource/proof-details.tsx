@@ -1,5 +1,5 @@
 import { NonRepudiationProofResource } from '@i3m/base-wallet'
-import { NrProofPayload } from '@i3m/non-repudiation-library'
+import { NrProofPayload } from '@i3m/non-repudiation-library/types'
 import { decodeJwt } from 'jose'
 
 interface Props {
