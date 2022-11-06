@@ -1,4 +1,4 @@
-name: automatic npm publication and release draft
+name: auto test npm-publish and release draft 
 
 on:
   push:
