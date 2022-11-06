@@ -671,7 +671,7 @@ export class BaseWallet<
    */
   async deleteIdentity (did: string): Promise<void> {
     const confirmation = await this.dialog.confirmation({
-      message: 'Are you sure you want to delete this identity and all its associated resources (if any)? This action cannot be undone',
+      message: 'Are you sure you want to delete this identity and all its associated resources (if any)?\n' + did + '\nThis action cannot be undone',
       acceptMsg: 'Delete',
       rejectMsg: 'Cancel'
     })
@@ -708,7 +708,7 @@ export class BaseWallet<
       validation.errors.forEach((error) => {
         errorMsg.push(error.message)
       })
-      throw new WalletError('Resource has not been validated:\n' + errorMsg.join('\n'), { status: 400 })
+      throw new WalletError('Resource validation failed:\n' + errorMsg.join('\n'), { status: 400 })
     }
 
     switch (resource.type) {

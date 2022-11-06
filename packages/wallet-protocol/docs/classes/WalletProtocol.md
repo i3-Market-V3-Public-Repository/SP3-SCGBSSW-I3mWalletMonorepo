@@ -58,7 +58,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[protocol/protocol.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L20)
+[protocol/protocol.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L20)
 
 ## Properties
 
@@ -72,7 +72,7 @@ EventEmitter.events
 
 #### Defined in
 
-[protocol/event-emitter.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/event-emitter.ts#L3)
+[protocol/event-emitter.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/event-emitter.ts#L3)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L20)
+[protocol/protocol.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L20)
 
 ## Methods
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L36)
+[protocol/protocol.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L36)
 
 ___
 
@@ -126,7 +126,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:82](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L82)
+[protocol/protocol.ts:82](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L82)
 
 ___
 
@@ -140,7 +140,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L28)
+[protocol/protocol.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L28)
 
 ___
 
@@ -161,7 +161,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L24)
+[protocol/protocol.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L24)
 
 ___
 
@@ -186,7 +186,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[protocol/protocol.ts:164](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L164)
+[protocol/protocol.ts:164](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L164)
 
 ▸ **emit**(`event`, `masterKey`): `boolean`
 
@@ -207,7 +207,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[protocol/protocol.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L165)
+[protocol/protocol.ts:165](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L165)
 
 ▸ **emit**(`event`): `boolean`
 
@@ -227,7 +227,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[protocol/protocol.ts:166](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L166)
+[protocol/protocol.ts:166](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L166)
 
 ___
 
@@ -252,7 +252,7 @@ EventEmitter.on
 
 #### Defined in
 
-[protocol/protocol.ts:157](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L157)
+[protocol/protocol.ts:157](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L157)
 
 ▸ **on**(`event`, `listener`): [`WalletProtocol`](WalletProtocol.md)<`T`\>
 
@@ -273,7 +273,7 @@ EventEmitter.on
 
 #### Defined in
 
-[protocol/protocol.ts:158](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L158)
+[protocol/protocol.ts:158](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L158)
 
 ▸ **on**(`event`, `listener`): [`WalletProtocol`](WalletProtocol.md)<`T`\>
 
@@ -294,7 +294,7 @@ EventEmitter.on
 
 #### Defined in
 
-[protocol/protocol.ts:159](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L159)
+[protocol/protocol.ts:159](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L159)
 
 ___
 
@@ -308,7 +308,7 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:116](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L116)
+[protocol/protocol.ts:116](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L116)
 
 ___
 
@@ -329,4 +329,4 @@ ___
 
 #### Defined in
 
-[protocol/protocol.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fbbadb/packages/wallet-protocol/src/ts/protocol/protocol.ts#L57)
+[protocol/protocol.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/94408e5/packages/wallet-protocol/src/ts/protocol/protocol.ts#L57)
