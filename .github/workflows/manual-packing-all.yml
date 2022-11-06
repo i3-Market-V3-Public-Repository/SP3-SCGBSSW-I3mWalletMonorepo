@@ -1,12 +1,14 @@
-name: manual pack for windows
+name: manual pack for linux
 
 on:
   workflow_dispatch:
 
 jobs:
   pack:
-    name: pack and generate release draft
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -14,7 +16,7 @@ jobs:
       - name: Install Node.js, NPM and Yarn
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: 18x
       
       - name: Install root dependencies
         run: npm ci

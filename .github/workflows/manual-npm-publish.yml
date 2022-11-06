@@ -2,8 +2,6 @@ name: manual test and NPM publish
 
 on:
   workflow_dispatch:
-    tags:
-      - 'v*.*.*'
 
 jobs:
   test:

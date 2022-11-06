@@ -2,8 +2,6 @@ name: manual pack for linux
 
 on:
   workflow_dispatch:
-    tags:
-      - 'v*.*.*'
 
 jobs:
   pack:
