@@ -5,10 +5,11 @@
   "main": "dist/index.js",
   "scripts": {
     "build:ts": "tsc --project tsconfig.build.json ",
-    "build": "run-s build:ts",
+    "build": "npm run build:ts",
     "build:watch": "tsc -w --preserveWatchOutput --project tsconfig.build.json ",
     "test": "jest --config=jest.config.js --coverage=false",
-    "test:watch": "jest --config=jest.config.js --coverage=false --watch"
+    "test:watch": "jest --config=jest.config.js --coverage=false --watch",
+    "preversion": "npm run build && npm test"
   },
   "keywords": [
     "wallet",
@@ -55,6 +56,7 @@
     ]
   },
   "author": "Fernando Román García",
+  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "license": "EUPL-1.2",
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
@@ -74,7 +76,6 @@
     "dotenv": "^8.6.0",
     "electron": "^6.1.12",
     "jest": "^29.1.2",
-    "npm-run-all": "^4.1.5",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.0.0",
     "ts-standard": "^10.0.0",

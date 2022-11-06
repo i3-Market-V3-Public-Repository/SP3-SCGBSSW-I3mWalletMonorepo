@@ -16,19 +16,24 @@
     "build": "./build"
   },
   "scripts": {
-    "build": "run-s bundle types",
+    "build": "npm run bundle && npm run types",
     "bundle": "ts-node build/createOASJsonBundle.ts",
     "commit": "git commit -a -m \"$npm_package_version\"",
     "types": "ts-node build/openApiTypes.ts",
     "lint": "ts-standard --fix",
     "postbuild": "npm run lint",
+    "preversion": "npm run build && npm test",
+    "version": "npm run docs && git add -A",
     "test": "echo \"Warning: You must specify tests for this package\""
   },
-  "repository": {
-    "type": "git",
-    "url": "git@gitlab.com:i3-market/code/wp3/t3.2/i3m-wallet/wallet-desktop-openapi.git"
-  },
-  "keywords": [],
+  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
+  "keywords": [
+    "i3-MARKET",
+    "Wallet",
+    "OpenApi",
+    "OAS",
+    "schema"
+  ],
   "author": "Juan Hernández Serrano",
   "license": "EUPL-1.2",
   "devDependencies": {
@@ -43,7 +48,6 @@
     "jose": "^4.10.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
-    "npm-run-all": "^4.1.5",
     "openapi-types": "^12.0.2",
     "ts-node": "^10.9.1",
     "ts-standard": "^10.0.0",

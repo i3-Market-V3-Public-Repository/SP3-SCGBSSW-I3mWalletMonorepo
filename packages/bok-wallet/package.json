@@ -88,7 +88,7 @@
     "mocha-ts": "./.mocha-ts"
   },
   "scripts": {
-    "build": "run-s lint:src build:js lint:test docs",
+    "build": "npm run lint:src && npm run build:js && npm run lint:test && npm run docs",
     "build:js": "rollup -c build/rollup.config.js",
     "clean": "rimraf .mocha-ts coverage dist types docs",
     "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",
@@ -102,8 +102,9 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
-    "version": "node build/build.docs.cjs",
-    "test": "run-s test:node-cjs test:node-esm",
+    "preversion": "npm run build && npm test",
+    "version": "npm run docs && git add -A",
+    "test": "npm run test:node-cjs && npm run test:node-esm",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
     "watch": "npm run mocha-ts:watch "
@@ -147,7 +148,6 @@
     "json5": "^2.2.0",
     "minimatch": "^5.0.1",
     "mocha": "^10.0.0",
-    "npm-run-all": "^4.1.5",
     "pirates": "^4.0.1",
     "puppeteer": "^18.0.5",
     "rimraf": "^3.0.2",

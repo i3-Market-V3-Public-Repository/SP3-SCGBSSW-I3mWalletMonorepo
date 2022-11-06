@@ -1,0 +1,53 @@
+name: manual test and NPM publish
+
+on:
+  workflow_dispatch:
+    branches: [ public ]
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16, 18]
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      
+      - name: Install root dependecies
+        run: npm ci
+
+      - name: Lerna bootstrap (install packages dependecies)
+        run: npx lerna bootstrap
+      
+      - name: Run tests
+        run: npm test
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+  
+  npm-publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js, NPM and Yarn
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+           
+      - name: NPM publish
+        run: ./scripts/libraries.sh
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,9 +1,3 @@
-#
-/dist
-/docs
-/types
-.vscode
-
 # Logs
 logs
 *.log
@@ -15,11 +9,15 @@ node_modules
 # Output of 'npm pack'
 *.tgz
 
-# MYC output
-.nyc_output
+# Coverage
 coverage
+
+# Environment files
+*.env
 
 # Test temporal files
 .mocha-ts
+.tsconfig.json
 
-!releases/*
+# docs temporal files
+.nojekyll

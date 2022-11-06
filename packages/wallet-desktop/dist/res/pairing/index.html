@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>
+        Forge
+    </title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@0.7.0/dist/forge.min.js"></script>
+    <script src="@i3m/wallet-protocol/dist/bundles/umd.js"></script>
+    <script src="@i3m/wallet-protocol-utils/dist/bundles/umd.js"></script>
+    <script src="./main.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+        }
+        .box {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid black;
+            border-radius: 2px;
+            padding: 10px;
+            margin: 10px;
+            width: 40%;
+        }
+        .box > * {
+            margin: 5px 0px;
+        }
+
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+
+    </style>
+    <!-- <script src="dist/wallet-connector.js"></script> -->
+</head>
+<body>
+    <div class='box'>
+        <label>Session <span id='session-state'></span></label>
+        <button id='protocol-button'>Start protocol</button>
+        <button id='session-button'>Session to clipboard</button>
+        <button id='remove-button'>Remove session</button>
+    </div>
+    <div class='box'>
+        <label>Query</label>
+        <input id='url-input' type='text' value='/identities' placeholder="URL..."/>
+        <select id='method-input' type='' value='/identities' placeholder="URL...">
+            <option>GET</option>
+            <option>POST</option>
+        </select>
+        <spa>Request Body</spa>
+        <textarea id='body-input'></textarea>
+        <spa>Response</spa>
+        <textarea id='response-input' readonly></textarea>
+        <button id='query-button'>Execute</button>
+    </div>
+</body>
+</html>

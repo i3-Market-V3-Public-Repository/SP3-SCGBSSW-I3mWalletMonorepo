@@ -1,0 +1,1 @@
+{"version":3,"file":"code-generator.d.ts","sourceRoot":"","sources":["../../src/ts/protocol/code-generator.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,SAAS,EAAE,MAAM,cAAc,CAAA;AAExC,MAAM,WAAW,aAAa;IAC5B,QAAQ,EAAE,CAAC,SAAS,EAAE,SAAS,KAAK,OAAO,CAAC,UAAU,CAAC,CAAA;IACvD,YAAY,EAAE,CAAC,IAAI,EAAE,UAAU,KAAK,OAAO,CAAC,SAAS,CAAC,CAAA;CACvD;AAED,eAAO,MAAM,oBAAoB,EAAE,aAUlC,CAAA"}

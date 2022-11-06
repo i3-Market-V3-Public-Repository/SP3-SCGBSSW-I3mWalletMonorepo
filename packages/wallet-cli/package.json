@@ -2,6 +2,7 @@
   "name": "@i3m/wallet-cli",
   "version": "2.0.0",
   "description": "Wallet client",
+  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "main": "index.js",
   "scripts": {
     "start": "ts-node --files ./src",

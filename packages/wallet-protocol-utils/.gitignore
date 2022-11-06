@@ -1,2 +1,23 @@
-dist
-types
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+node_modules
+
+# Output of 'npm pack'
+*.tgz
+
+# Coverage
+coverage
+
+# Environment files
+*.env
+
+# Test temporal files
+.mocha-ts
+.tsconfig.json
+
+# docs temporal files
+.nojekyll

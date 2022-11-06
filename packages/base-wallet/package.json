@@ -40,7 +40,7 @@
     "mocha-ts": "./.mocha-ts"
   },
   "scripts": {
-    "build": "run-s lint build:iwallet build:js docs",
+    "build": "npm run lint && npm run build:iwallet && npm run build:js && npm run docs",
     "prebuild:iwallet": "tsc --esModuleInterop --resolveJsonModule prebuild/walletInterface.cts",
     "build:iwallet": "node prebuild/walletInterface.cjs",
     "build:js": "rollup -c build/rollup.config.js",
@@ -56,7 +56,8 @@
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "mocha-ts:browser": "node build/testing/browser/index.cjs ",
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
-    "version": "node build/build.docs.cjs",
+    "preversion": "npm run build && npm test",
+    "version": "npm run docs && git add -A",
     "test": "echo \"Warning: You must specify tests for this package\"",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
@@ -102,7 +103,6 @@
     "json5": "^2.2.0",
     "minimatch": "^5.0.1",
     "mocha": "^10.0.0",
-    "npm-run-all": "^4.1.5",
     "pirates": "^4.0.1",
     "puppeteer": "^18.0.5",
     "rimraf": "^3.0.2",
