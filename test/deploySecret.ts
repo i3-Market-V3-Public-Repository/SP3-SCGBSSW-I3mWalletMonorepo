@@ -53,7 +53,7 @@ describe('Non-repudiation protocol', function () {
       pooToPopDelay: 30000,
       pooToSecretDelay: 180000 // 3 minutes
     }
-    console.log(dataExchangeAgreement)
+    console.log(JSON.stringify(dataExchangeAgreement))
   })
 
   describe('deploySecret', function () {

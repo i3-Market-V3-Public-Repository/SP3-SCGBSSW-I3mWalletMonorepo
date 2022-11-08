@@ -23,11 +23,20 @@ describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base
     const otp = await _pkg.oneTimeSecret('A128GCM', secret)
     chai.expect(otp).to.not.equal(undefined)
   })
-  it('should throw error if provided secret does not meet the required algorithm secret length', async function () {
+  it('should throw error if provided secret does not meet the required algorithm secret length (Uint8Array | Buffer)', async function () {
     const secret = await randBytes(13)
     let err
     try {
       await _pkg.oneTimeSecret('A128GCM', secret)
+    } catch (error) {
+      err = error
+    }
+    chai.expect(err).to.not.equal(undefined)
+  })
+  it('should throw error if provided secret does not meet the required algorithm secret length (hex string)', async function () {
+    let err
+    try {
+      await _pkg.oneTimeSecret('A128GCM', '6132343231653966383765383233313')
     } catch (error) {
       err = error
     }

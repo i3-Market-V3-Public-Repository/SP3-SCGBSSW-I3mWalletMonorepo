@@ -1,10 +1,9 @@
 import * as b64 from '@juanelas/base64'
 import { decode as base64decode } from '@juanelas/base64'
-import { bufToHex, hexToBuf } from 'bigint-conversion'
+import { bufToHex, hexToBuf, parseHex } from 'bigint-conversion'
 import { exportJWK, generateSecret, KeyLike } from 'jose'
 import { NrError } from '../errors'
 import { Block, EncryptionAlg, JWK } from '../types'
-import { parseHex } from '../utils'
 
 /**
  * Create a JWK random (high entropy) symmetric secret
@@ -33,8 +32,12 @@ export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|
     if (typeof secret === 'string') {
       if (base64 === true) {
         key = b64.decode(secret) as Uint8Array
-      } else {
-        key = new Uint8Array(hexToBuf(parseHex(secret, undefined, secretLength)))
+      } else { // The secret is provided as hex
+        const parsedSecret = parseHex(secret, false)
+        if (parsedSecret !== parseHex(secret, false, secretLength)) {
+          throw new NrError(new RangeError(`Expected hex length ${secretLength * 2} does not meet provided one ${parsedSecret.length / 2}`), ['invalid key'])
+        }
+        key = new Uint8Array(hexToBuf(secret))
       }
     } else {
       key = secret
@@ -54,5 +57,5 @@ export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|
   // jwk.kid = thumbprint
   jwk.alg = encAlg
 
-  return { jwk: jwk as JWK, hex: bufToHex(base64decode(jwk.k as string) as Uint8Array) }
+  return { jwk: jwk as JWK, hex: bufToHex(base64decode(jwk.k as string) as Uint8Array, false, secretLength) }
 }

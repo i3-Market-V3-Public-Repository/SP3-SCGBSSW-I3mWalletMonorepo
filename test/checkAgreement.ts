@@ -32,7 +32,7 @@ describe('checkAgreement', function () {
     chai.expect(errors.length).to.be.greaterThan(0)
   })
 
-  it('should fail if it a did has an invalid format', async function () {
+  it('should fail if a did has an invalid format', async function () {
     const badParties = { ...dataSharingAgreement.parties }
     badParties.consumerDid = 'asfgag'
     const badAgreement = { ...dataSharingAgreement, parties: badParties }

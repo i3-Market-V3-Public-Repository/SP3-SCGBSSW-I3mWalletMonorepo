@@ -1,4 +1,6 @@
 import { ethers } from 'ethers'
+import { NrError } from '../errors'
+import { parseHex } from './parseHex'
 /**
  * Verifies and returns the ethereum address in EIP-55 format
  * @param a
@@ -9,6 +11,10 @@ export function parseAddress (a: string): string {
   if (hexMatch == null) {
     throw new RangeError('incorrect address format')
   }
-  const hex = hexMatch[2]
-  return ethers.utils.getAddress('0x' + hex)
+  try {
+    const hex = parseHex(a, true, 20)
+    return ethers.utils.getAddress(hex)
+  } catch (error) {
+    throw new NrError(error, ['invalid EIP-55 address'])
+  }
 }
