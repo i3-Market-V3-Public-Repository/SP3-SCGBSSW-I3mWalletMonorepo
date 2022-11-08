@@ -193,7 +193,7 @@ function _getEnvVarsReplacements (testsCode) {
     if (process.env[envVar] !== undefined) {
       replacements[match[0]] = '`' + process.env[envVar] + '`'
     } else {
-      missingEnvVars.push(envVar)
+      replacements[match[0]] = undefined
     }
   }
   for (const match of testsCode.matchAll(/process\.env\[['"](\w+)['"]\]/g)) {
@@ -201,11 +201,11 @@ function _getEnvVarsReplacements (testsCode) {
     if (process.env[envVar] !== undefined) {
       replacements[match[0]] = '`' + process.env[envVar] + '`'
     } else {
-      missingEnvVars.push(envVar)
+      replacements[match[0]] = undefined
     }
   }
   if (missingEnvVars.length > 0) {
-    console.warn('The folloinwg environment variables may be missing in your .env file: ' + [...(new Set(missingEnvVars)).values()].join(', '))
+    console.warn('The folloinwg environment variables are missing in your .env file and will be replaced with "undefined": ' + [...(new Set(missingEnvVars)).values()].join(', '))
   }
   return replacements
 }
