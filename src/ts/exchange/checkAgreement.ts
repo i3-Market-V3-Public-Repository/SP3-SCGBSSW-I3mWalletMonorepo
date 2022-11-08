@@ -1,14 +1,14 @@
-import jsonSchema from './oas3.0.3.json'
 import spec from '@i3m/wallet-desktop-openapi/openapi_dereferenced.json'
 import Ajv from 'ajv-draft-04'
+import addFormats from 'ajv-formats'
+import _ from 'lodash'
+import { hashable } from 'object-sha'
 import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from '../constants'
 import { NrError } from '../errors'
 import { DataExchange, DataExchangeAgreement, DataSharingAgreement } from '../types'
 import { parseAddress, parseJwk } from '../utils'
 import { exchangeId } from './exchangeId'
-import addFormats from 'ajv-formats'
-import _ from 'lodash'
-import { hashable } from 'object-sha'
+import jsonSchema from './oas3.0.3.json'
 
 function parseTimestamp (timestamp: number | string): number {
   if ((new Date(timestamp)).getTime() > 0) {
