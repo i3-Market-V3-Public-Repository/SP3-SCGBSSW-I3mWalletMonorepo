@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L57)
+[src/ts/types.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L57)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L50)
+[src/ts/types.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L50)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L52)
+[src/ts/types.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L52)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L51)
+[src/ts/types.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L51)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L56)
+[src/ts/types.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L56)
 
 ___
 
@@ -106,4 +106,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/86c5ed0/src/ts/types.ts#L58)
+[src/ts/types.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/f2aad91/src/ts/types.ts#L58)
