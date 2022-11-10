@@ -5,7 +5,6 @@ import { hashable } from 'object-sha'
 import { ServerWallet } from '@i3m/server-wallet/types'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import * as _pkg from '#pkg'
-import { expect } from 'chai'
 
 if (!IS_BROWSER) {
   describe('testing NRP with @i3m/server-wallet wallets', function () {
@@ -113,7 +112,7 @@ if (!IS_BROWSER) {
         const providerBalance = await providerWalletAgent.provider.getBalance(providerLedgerAddress)
         console.log(`Provider balance: ${providerBalance.toString()}`)
 
-        expect(providerBalance.toBigInt() > 50000000000000n).to.be.true
+        chai.expect(providerBalance.toBigInt() > 50000000000000n).to.be.true
       })
 
       it('should prepare and store in the wallets a valid data sharing agreeemt', async function () {
@@ -178,7 +177,7 @@ if (!IS_BROWSER) {
         console.log('Consumer stores data sharing agreement with id: ', resource2.id)
         chai.expect(resource2.id).to.not.be.undefined
 
-        expect(resource.id).to.be.equal(resource2.id)
+        chai.expect(resource.id).to.be.equal(resource2.id)
 
         // Ready for starting the NRP
         nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerWalletAgent)
