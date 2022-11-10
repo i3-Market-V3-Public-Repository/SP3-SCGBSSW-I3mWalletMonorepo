@@ -238,42 +238,6 @@ select.modern > option {
   background-image: linear-gradient(to bottom left, white, #D2D6E1);
 }
 
-.tree-list {
-  display: flex;
-  flex-direction: column;
-  outline: none;
-  flex: 1;
-}
-.tree-list:focus .tree-list-item .tree-list-name.selected {
-  background-color: rgba(59, 189, 89, 0.3333333333);
-}
-.tree-list:focus .tree-list-item .tree-list-name.cursor {
-  border-color: #3BBD59;
-}
-.tree-list .tree-list-item > .tree-list-name {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  border: 1px solid transparent;
-  font-size: 16px;
-  cursor: pointer;
-}
-.tree-list .tree-list-item > .tree-list-name > span {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tree-list .tree-list-item > .tree-list-name > .tree-list-icon {
-  width: auto;
-  height: 15px;
-  margin-right: 6px;
-}
-.tree-list .tree-list-item > .tree-list-name:hover {
-  background-color: rgba(130, 143, 172, 0.1333333333);
-}
-.tree-list .tree-list-item > .tree-list-name.selected {
-  background-color: rgba(130, 143, 172, 0.2666666667);
-}
-
 .list-selector {
   display: flex;
   flex-direction: column;
@@ -297,6 +261,40 @@ select.modern > option {
 }
 .list-selector .list-selector-item.selected {
   background-color: rgba(130, 143, 172, 0.2666666667);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.section > .header {
+  padding-left: 10px;
+  background-color: rgba(48, 56, 73, 0.4666666667);
+  border: 2px solid #1A1E27;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+}
+.section > .header .label {
+  margin: 5px 0;
+  margin-right: 10px;
+  flex: 1 1 auto;
+}
+.section > .header .operation-icon {
+  height: 21px;
+  padding: 5px 3px;
+  margin: 0px 2px;
+  opacity: 0.8;
+  cursor: pointer;
+}
+.section > .header .operation-icon:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.section > .header .operation-icon:active {
+  opacity: 1;
+  color: rgba(109, 193, 105, 0.8);
 }
 
 .context-menu-overlay {
@@ -333,38 +331,40 @@ select.modern > option {
   opacity: 0.4;
 }
 
-.section {
+.tree-list {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  outline: none;
+  flex: 1;
 }
-.section > .header {
-  padding-left: 10px;
-  background-color: rgba(48, 56, 73, 0.4666666667);
-  border: 2px solid #1A1E27;
-  font-size: 18px;
-  font-weight: bold;
+.tree-list:focus .tree-list-item .tree-list-name.selected {
+  background-color: rgba(59, 189, 89, 0.3333333333);
+}
+.tree-list:focus .tree-list-item .tree-list-name.cursor {
+  border-color: #3BBD59;
+}
+.tree-list .tree-list-item > .tree-list-name {
   display: flex;
   align-items: center;
-}
-.section > .header .label {
-  margin: 5px 0;
-  margin-right: 10px;
-  flex: 1 1 auto;
-}
-.section > .header .operation-icon {
-  height: 21px;
-  padding: 5px 3px;
-  margin: 0px 2px;
-  opacity: 0.8;
+  padding: 5px;
+  border: 1px solid transparent;
+  font-size: 16px;
   cursor: pointer;
 }
-.section > .header .operation-icon:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+.tree-list .tree-list-item > .tree-list-name > span {
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.section > .header .operation-icon:active {
-  opacity: 1;
-  color: rgba(109, 193, 105, 0.8);
+.tree-list .tree-list-item > .tree-list-name > .tree-list-icon {
+  width: auto;
+  height: 15px;
+  margin-right: 6px;
+}
+.tree-list .tree-list-item > .tree-list-name:hover {
+  background-color: rgba(130, 143, 172, 0.1333333333);
+}
+.tree-list .tree-list-item > .tree-list-name.selected {
+  background-color: rgba(130, 143, 172, 0.2666666667);
 }
 
 @keyframes highlight {
