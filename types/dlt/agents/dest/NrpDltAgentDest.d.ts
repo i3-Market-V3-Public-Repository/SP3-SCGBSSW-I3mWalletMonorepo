@@ -1,6 +1,6 @@
 import { NrpDltAgent } from '../NrpDltAgent';
 export interface NrpDltAgentDest extends NrpDltAgent {
-    getSecretFromLedger: (signerAddress: string, exchangeId: string, timeout: number) => Promise<{
+    getSecretFromLedger: (secretLength: number, signerAddress: string, exchangeId: string, timeout: number) => Promise<{
         hex: string;
         iat: number;
     }>;

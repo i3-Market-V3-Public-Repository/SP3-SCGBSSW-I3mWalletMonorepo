@@ -52,7 +52,7 @@ I3mWalletAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/I3mWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/I3mWalletAgent.ts#L12)
+[src/ts/dlt/agents/I3mWalletAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/I3mWalletAgent.ts#L12)
 
 ## Properties
 
@@ -66,7 +66,7 @@ I3mWalletAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/EthersIoAgent.ts#L11)
 
 ___
 
@@ -80,7 +80,7 @@ I3mWalletAgent.did
 
 #### Defined in
 
-[src/ts/dlt/agents/I3mWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/I3mWalletAgent.ts#L10)
+[src/ts/dlt/agents/I3mWalletAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/I3mWalletAgent.ts#L10)
 
 ___
 
@@ -94,7 +94,7 @@ I3mWalletAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/EthersIoAgent.ts#L10)
 
 ___
 
@@ -108,7 +108,7 @@ I3mWalletAgent.initialized
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/EthersIoAgent.ts#L13)
+[src/ts/dlt/agents/EthersIoAgent.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/EthersIoAgent.ts#L13)
 
 ___
 
@@ -122,7 +122,7 @@ I3mWalletAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/EthersIoAgent.ts#L12)
 
 ___
 
@@ -136,7 +136,7 @@ I3mWalletAgent.wallet
 
 #### Defined in
 
-[src/ts/dlt/agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/I3mWalletAgent.ts#L9)
+[src/ts/dlt/agents/I3mWalletAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/I3mWalletAgent.ts#L9)
 
 ## Methods
 
@@ -160,13 +160,13 @@ I3mWalletAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/EthersIoAgent.ts#L43)
+[src/ts/dlt/agents/EthersIoAgent.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/EthersIoAgent.ts#L43)
 
 ___
 
 ### getSecretFromLedger
 
-▸ **getSecretFromLedger**(`signerAddress`, `exchangeId`, `timeout`): `Promise`<{ `hex`: `string` ; `iat`: `number`  }\>
+▸ **getSecretFromLedger**(`secretLength`, `signerAddress`, `exchangeId`, `timeout`): `Promise`<{ `hex`: `string` ; `iat`: `number`  }\>
 
 Just in case the PoP is not received, the secret can be downloaded from the ledger.
 The secret should be downloaded before poo.iat + pooToPop max delay.
@@ -175,6 +175,7 @@ The secret should be downloaded before poo.iat + pooToPop max delay.
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
+| `secretLength` | `number` | the expected length of the secret to get |
 | `signerAddress` | `string` | the address (hexadecimal) of the entity publishing the secret. |
 | `exchangeId` | `string` | the id of the data exchange |
 | `timeout` | `number` | the timeout in seconds for waiting for the secret to be published on the ledger |
@@ -191,4 +192,4 @@ NrpDltAgentDest.getSecretFromLedger
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/I3mWalletAgentDest.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/75b7c79/src/ts/dlt/agents/dest/I3mWalletAgentDest.ts#L9)
+[src/ts/dlt/agents/dest/I3mWalletAgentDest.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/bf09997/src/ts/dlt/agents/dest/I3mWalletAgentDest.ts#L9)
