@@ -570,11 +570,24 @@ export class BaseWallet<
   }
 
   /**
-   * Gets a resource stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
+   * Get resources stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
    * @returns
    */
   async getResources (): Promise<ResourceMap> {
     return await this.store.get('resources', {})
+  }
+
+  private async getResource (id?: keyof BaseWalletModel['resources']): Promise<Resource> {
+    const resourcesMap = await this.getResources()
+    const resources = Object
+      .keys(resourcesMap)
+      .map(key => resourcesMap[key])
+      .filter((resource) => resource.id === id)
+
+    if (resources.length !== 1) {
+      throw Error('resource not found')
+    }
+    return resources[0]
   }
 
   private async setResource (resource: Resource): Promise<void> {
@@ -619,8 +632,22 @@ export class BaseWallet<
         filters.push((resource) => resource.identity === undefined)
       }
     }
+    if (queries.includes('parentResource')) {
+      let parentResource: Resource
+      try {
+        parentResource = await this.getResource(query.parentResource)
+      } catch (error) {
+        throw new WalletError('Invalid parentResource id', { status: 400 })
+      }
+      if (query.parentResource !== '' && query.parentResource !== undefined) {
+        extraConsent.push(`parent-resource:\n\tid '<code>${query.parentResource}</code>\n\t<code>${parentResource.type}</code>'`)
+        filters.push((resource) => resource.parentResource === query.parentResource)
+      } else {
+        filters.push((resource) => resource.parentResource === undefined)
+      }
+    }
     // TODO: Use wallet-protocol token to get the application name
-    const consentText = `One application wants to get all the resources${extraConsent.length > 0 ? ' with ' + extraConsent.join(' and ') : ''}.\nDo you agree?`
+    const consentText = `One application wants to retrieve all your stored resources${extraConsent.length > 0 ? ' with:\n' + extraConsent.join('\n\t') : ''}.\nDo you agree?`
     const confirmation = await this.dialog.confirmation({
       message: consentText,
       acceptMsg: 'Yes',
@@ -735,7 +762,7 @@ export class BaseWallet<
       }
       case 'Contract': {
         const confirmation = await this.dialog.confirmation({
-          message: `Do you want to add a contract signed by ${resource.resource.dataSharingAgreement.parties.providerDid} and ${resource.resource.dataSharingAgreement.parties.consumerDid} into your wallet?`
+          message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${resource.resource.dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${resource.resource.dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${resource.resource.dataSharingAgreement.parties.consumerDid}`
         })
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })

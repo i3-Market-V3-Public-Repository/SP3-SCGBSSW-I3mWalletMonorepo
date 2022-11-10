@@ -48,7 +48,7 @@
 
 #### Defined in
 
-[protocol/master-key.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L28)
+[protocol/master-key.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L28)
 
 ## Properties
 
@@ -58,7 +58,7 @@
 
 #### Defined in
 
-[protocol/master-key.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L25)
+[protocol/master-key.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L25)
 
 ___
 
@@ -68,7 +68,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L26)
+[protocol/master-key.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L26)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L30)
+[protocol/master-key.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L30)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L32)
+[protocol/master-key.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L32)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L33)
+[protocol/master-key.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L33)
 
 ___
 
@@ -108,7 +108,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L29)
+[protocol/master-key.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L29)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L34)
+[protocol/master-key.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L34)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L31)
+[protocol/master-key.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L31)
 
 ## Methods
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L46)
+[protocol/master-key.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L46)
 
 ___
 
@@ -168,7 +168,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L42)
+[protocol/master-key.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L42)
 
 ___
 
@@ -182,7 +182,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L61)
+[protocol/master-key.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L61)
 
 ___
 
@@ -196,7 +196,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L65)
+[protocol/master-key.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L65)
 
 ___
 
@@ -210,7 +210,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L50)
+[protocol/master-key.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L50)
 
 ___
 
@@ -230,7 +230,7 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L79)
+[protocol/master-key.ts:79](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L79)
 
 ___
 
@@ -255,4 +255,4 @@ ___
 
 #### Defined in
 
-[protocol/master-key.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1881fda/packages/wallet-protocol/src/ts/protocol/master-key.ts#L69)
+[protocol/master-key.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/742d14e/packages/wallet-protocol/src/ts/protocol/master-key.ts#L69)

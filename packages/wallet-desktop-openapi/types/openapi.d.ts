@@ -2405,6 +2405,7 @@ export namespace WalletPaths {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       export type Identity = string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+      export type ParentResource = string
       export type Type = 'VerifiableCredential' | 'Object' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
     }
     export interface QueryParameters {
@@ -2415,6 +2416,7 @@ export namespace WalletPaths {
              * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
              */
       Parameters.Identity /* ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$ */
+      parentResource?: Parameters.ParentResource
     }
     export namespace Responses {
       /**

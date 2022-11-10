@@ -64,12 +64,12 @@
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
     "preversion": "npm run lint:src && npm run build:js && npm run lint:test && npm run test",
     "version": "npm run docs && git add -A",
-    "test": "echo \"tests should be run manually (pairing with a running wallet is required)\"",
+    "test": "npm run test:node",
     "test:browser": "npm run mocha-ts:browser ",
     "test:browser-headless": "npm run mocha-ts:browser-headless ",
     "test:node": "npm run test:node-cjs && npm run test:node-esm",
-    "test:node-cjs": "npm run mocha-ts:cjs -- {test/tests.ts}",
-    "test:node-esm": "npm run mocha-ts -- {test/tests.ts}",
+    "test:node-cjs": "npm run mocha-ts:cjs -- test/tests.ts",
+    "test:node-esm": "npm run mocha-ts -- test/tests.ts",
     "watch": "npm run mocha-ts:watch "
   },
   "ts-standard": {
@@ -93,6 +93,7 @@
   "devDependencies": {
     "@i3m/base-wallet": "^2.1.9",
     "@i3m/bok-wallet": "^2.1.9",
+    "@i3m/non-repudiation-library": "^2.5.0",
     "@rollup/plugin-commonjs": "^23.0.2",
     "@rollup/plugin-json": "^5.0.1",
     "@rollup/plugin-multi-entry": "^6.0.0",

@@ -68,10 +68,11 @@ export declare class BaseWallet<Options extends WalletOptions<Model>, Model exte
     identityInfo(pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200>;
     identityDeployTransaction(pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletComponents.Schemas.Transaction): Promise<WalletComponents.Schemas.Receipt>;
     /**
-     * Gets a resource stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
+     * Get resources stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
      * @returns
      */
     getResources(): Promise<ResourceMap>;
+    private getResource;
     private setResource;
     /**
      * Gets a list of resources stored in the wallet's vault.

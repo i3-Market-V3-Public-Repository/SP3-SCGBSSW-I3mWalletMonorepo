@@ -203,7 +203,7 @@ describe('@i3m/server-wallet', function () {
       chai.expect(resource.id).to.not.be.undefined
     })
 
-    it('should not allow to store an data sharing agreement if the provided keyPair is not part of the exchange agreeement', async function () {
+    it('should not allow to store a data sharing agreement if the provided keyPair is not part of the exchange agreeement', async function () {
       const dataSharingAgreementResource: WalletComponents.Schemas.Contract = {
         type: 'Contract',
         identity: identities.alice,

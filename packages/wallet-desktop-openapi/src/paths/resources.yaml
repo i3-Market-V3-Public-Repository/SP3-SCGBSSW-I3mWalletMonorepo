@@ -17,17 +17,26 @@ paths:
         - in: query
           name: type
           example: Contract
+          required: false
           schema:
             $ref:  "#/components/schemas/ResourceType"
           description: Filter the resources by resource type.
         - in: query
           name: identity
-          example: ''
+          example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
           allowEmptyValue: true
+          required: false
           schema:
             $ref: "../schema/identity.yaml#/components/schemas/did"
           description: 
             Filter the resource associated to an identity DID. Send empty value to get all the resources that are not associated to any identity.
+        - in: query
+          name: parentResource
+          required: false
+          schema:
+            type: string
+          description: 
+            Get only resources with the given parent resource id.
       responses:
         "200":
           description: A paged array of resources. Only the props requested will be returned. Security policies may prevent some props from being returned.

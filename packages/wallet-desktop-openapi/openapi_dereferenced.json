@@ -547,6 +547,7 @@
             "in": "query",
             "name": "type",
             "example": "Contract",
+            "required": false,
             "schema": {
               "type": "string",
               "enum": [
@@ -562,8 +563,9 @@
           {
             "in": "query",
             "name": "identity",
-            "example": "",
+            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863",
             "allowEmptyValue": true,
+            "required": false,
             "schema": {
               "description": "a DID using the ethr resolver",
               "type": "string",
@@ -571,6 +573,15 @@
               "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
             },
             "description": "Filter the resource associated to an identity DID. Send empty value to get all the resources that are not associated to any identity."
+          },
+          {
+            "in": "query",
+            "name": "parentResource",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Get only resources with the given parent resource id."
           }
         ],
         "responses": {
