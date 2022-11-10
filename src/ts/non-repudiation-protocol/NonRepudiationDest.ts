@@ -8,7 +8,7 @@ import { NrError } from '../errors'
 import { exchangeId, validateDataExchangeAgreement } from '../exchange'
 import { createProof, verifyProof } from '../proofs/'
 import { checkTimestamp, sha } from '../utils/'
-import { secretLength } from '../utils/secretLength'
+import { algByteLength } from '../utils/algByteLength'
 import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, NrErrorName, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
 
 /**
@@ -215,7 +215,7 @@ export class NonRepudiationDest {
     const maxTimeForSecret = this.block.poo.payload.iat * 1000 + this.agreement.pooToSecretDelay
     const timeout = Math.round((maxTimeForSecret - currentTimestamp) / 1000)
 
-    const { hex: secretHex, iat } = await this.dltAgent.getSecretFromLedger(secretLength(this.agreement.encAlg), this.agreement.ledgerSignerAddress, this.exchange.id, timeout)
+    const { hex: secretHex, iat } = await this.dltAgent.getSecretFromLedger(algByteLength(this.agreement.encAlg), this.agreement.ledgerSignerAddress, this.exchange.id, timeout)
 
     this.block.secret = await oneTimeSecret(this.exchange.encAlg, secretHex)
 

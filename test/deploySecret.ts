@@ -1,6 +1,11 @@
 import * as _pkg from '#pkg'
+import { EncryptionAlg, HashAlg, SigningAlg } from '#pkg'
 import { randBytes } from 'bigint-crypto-utils'
 import { ethers } from 'ethers'
+
+function algByteLength (alg: EncryptionAlg | HashAlg | SigningAlg): number {
+  return Number((alg.match(/\d{3}/) as RegExpMatchArray)[0]) / 8
+}
 
 describe('Non-repudiation protocol', function () {
   this.timeout(2000000)
@@ -67,7 +72,7 @@ describe('Non-repudiation protocol', function () {
       nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
       await nrpConsumer.initialized
       const timeout = Math.round(nrpConsumer.agreement.pooToSecretDelay / 1000)
-      const secret = await nrpConsumer.dltAgent.getSecretFromLedger(_pkg.secretLength(this.agreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProvider.exchange.id, timeout)
+      const secret = await nrpConsumer.dltAgent.getSecretFromLedger(algByteLength(dataExchangeAgreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProvider.exchange.id, timeout)
 
       chai.expect(secret.hex).to.equal(nrpProvider.block.secret.hex)
     })
@@ -90,7 +95,7 @@ describe('Non-repudiation protocol', function () {
         nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
         await nrpConsumer.initialized
         const timeout = Math.round(nrpConsumer.agreement.pooToSecretDelay / 1000)
-        const secret = await nrpConsumer.dltAgent.getSecretFromLedger(_pkg.secretLength(this.agreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProviders[i].exchange.id, timeout)
+        const secret = await nrpConsumer.dltAgent.getSecretFromLedger(algByteLength(dataExchangeAgreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProviders[i].exchange.id, timeout)
         retrievedSecrets.push(secret.hex)
       }
       chai.expect(retrievedSecrets).to.eql(publishedSecrets) // deep equality (to.equal would fail always)
@@ -113,7 +118,7 @@ describe('Non-repudiation protocol', function () {
         nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
         await nrpConsumer.initialized
         const timeout = Math.round(nrpConsumer.agreement.pooToSecretDelay / 1000)
-        const secret = await nrpConsumer.dltAgent.getSecretFromLedger(_pkg.secretLength(this.agreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProviders[i].exchange.id, timeout)
+        const secret = await nrpConsumer.dltAgent.getSecretFromLedger(algByteLength(dataExchangeAgreement.encAlg), dataExchangeAgreement.ledgerSignerAddress, nrpProviders[i].exchange.id, timeout)
         retrievedSecrets.push(secret.hex)
       }
       chai.expect(retrievedSecrets).to.eql(publishedSecrets) // deep equality (to.equal would fail always)

@@ -2,8 +2,10 @@ import * as b64 from '@juanelas/base64'
 import { decode as base64decode } from '@juanelas/base64'
 import { bufToHex, hexToBuf, parseHex } from 'bigint-conversion'
 import { exportJWK, generateSecret, KeyLike } from 'jose'
+import { ENC_ALGS } from '../constants'
 import { NrError } from '../errors'
 import { Block, EncryptionAlg, JWK } from '../types'
+import { algByteLength } from '../utils/algByteLength'
 
 /**
  * Create a JWK random (high entropy) symmetric secret
@@ -17,17 +19,12 @@ import { Block, EncryptionAlg, JWK } from '../types'
 export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean): Promise<Exclude<Block['secret'], undefined>> {
   let key: Uint8Array | KeyLike
 
-  let secretLength: number
-  switch (encAlg) {
-    case 'A128GCM':
-      secretLength = 16
-      break
-    case 'A256GCM':
-      secretLength = 32
-      break
-    default:
-      throw new NrError(new Error(`Invalid encAlg '${encAlg as string}'. Supported values are: ${(['A128GCM', 'A256GCM'] as EncryptionAlg[]).toString()}`), ['invalid algorithm'])
+  if (!ENC_ALGS.includes(encAlg)) {
+    throw new NrError(new Error(`Invalid encAlg '${encAlg as string}'. Supported values are: ${ENC_ALGS.toString()}`), ['invalid algorithm'])
   }
+
+  const secretLength = algByteLength(encAlg)
+
   if (secret !== undefined) {
     if (typeof secret === 'string') {
       if (base64 === true) {

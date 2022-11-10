@@ -41,6 +41,8 @@ export class EthersIoAgentOrig extends EthersIoAgent implements NrpDltAgentOrig 
    * @returns a receipt of the deployment. In Ethereum-like DLTs it contains the transaction hash, which can be used to track the transaction on the ledger, and the nonce of the transaction
    */
   async deploySecret (secretHex: string, exchangeId: string): Promise<string> {
+    await this.initialized
+
     const unsignedTx = await secretUnisgnedTransaction(secretHex, exchangeId, this) as any
 
     const signedTx = await this.signer.signTransaction(unsignedTx)
@@ -55,10 +57,14 @@ export class EthersIoAgentOrig extends EthersIoAgent implements NrpDltAgentOrig 
   }
 
   async getAddress (): Promise<string> {
+    await this.initialized
+
     return this.signer.address
   }
 
   async nextNonce (): Promise<number> {
+    await this.initialized
+
     const publishedCount = await this.provider.getTransactionCount(await this.getAddress(), 'pending') // Nonce of the next transaction to be published (including nonces in pending state)
     if (publishedCount > this.count) {
       this.count = publishedCount

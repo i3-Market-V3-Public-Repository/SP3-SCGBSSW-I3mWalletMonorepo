@@ -2,6 +2,7 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { randBytes } from 'bigint-crypto-utils'
 import elliptic from 'elliptic'
+import { SIGNING_ALGS } from '../constants'
 import { NrError } from '../errors'
 import { JWK, JwkPair, SigningAlg } from '../types'
 
@@ -15,8 +16,7 @@ const { ec: Ec } = elliptic
  * @returns
  */
 export async function generateKeys (alg: SigningAlg, privateKey?: Uint8Array | string, base64?: boolean): Promise<JwkPair> {
-  const algs: SigningAlg[] = ['ES256', 'ES384', 'ES512']
-  if (!algs.includes(alg)) throw new NrError(new RangeError(`Invalid signature algorithm '${alg}''. Allowed algorithms are ${algs.toString()}`), ['invalid algorithm'])
+  if (!SIGNING_ALGS.includes(alg)) throw new NrError(new RangeError(`Invalid signature algorithm '${alg}''. Allowed algorithms are ${SIGNING_ALGS.toString()}`), ['invalid algorithm'])
 
   let keyLength: number
   let namedCurve: string

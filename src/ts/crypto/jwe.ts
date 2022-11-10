@@ -2,6 +2,7 @@ import { compactDecrypt, CompactDecryptResult, CompactEncrypt } from 'jose'
 import { EncryptionAlg, JWK } from '../types'
 import { NrError } from '../errors'
 import { importJwk } from './importJwk'
+import { ENC_ALGS, SIGNING_ALGS } from '../constants'
 
 /**
  * Encrypts a block of data to JWE
@@ -17,10 +18,10 @@ export async function jweEncrypt (block: Uint8Array, secretOrPublicKey: JWK, enc
 
   const jwk = { ...secretOrPublicKey }
 
-  if (secretOrPublicKey.alg === 'A128GCM' || secretOrPublicKey.alg === 'A256GCM') {
+  if ((ENC_ALGS as unknown as string[]).includes(secretOrPublicKey.alg)) {
     // this is a symmetric secret
     alg = 'dir'
-  } else if (secretOrPublicKey.alg === 'ES256' || secretOrPublicKey.alg === 'ES384' || secretOrPublicKey.alg === 'ES512') {
+  } else if ((SIGNING_ALGS as unknown as string[]).includes(secretOrPublicKey.alg)) {
     alg = 'ECDH-ES'
     jwk.alg = alg as any
     // jwk.use = 'enc'
@@ -53,13 +54,13 @@ export async function jweDecrypt (jwe: string, secretOrPrivateKey: JWK, encAlg: 
   try {
     const jwk = { ...secretOrPrivateKey }
 
-    if (secretOrPrivateKey.alg === 'ES256' || secretOrPrivateKey.alg === 'ES384' || secretOrPrivateKey.alg === 'ES512') {
+    if ((SIGNING_ALGS as unknown as string[]).includes(secretOrPrivateKey.alg)) {
       jwk.alg = 'ECDH-ES' as any
       // jwk.use = 'enc'
       // jwk.ext = true
       // jwk.key_ops = ['wrapKey', 'encrypt', 'deriveBits', 'deriveKey']
-    } else if (secretOrPrivateKey.alg !== 'A128GCM' && secretOrPrivateKey.alg !== 'A256GCM') {
-      throw new NrError(`Not a valid symmetric or assymetric alg: ${secretOrPrivateKey.alg as string}`, ['encryption failed', 'invalid key', 'invalid algorithm'])
+    } else if (!(ENC_ALGS as unknown as string[]).includes(secretOrPrivateKey.alg)) {
+      throw new NrError(`Not a valid symmetric or assymetric alg: ${secretOrPrivateKey.alg as string}`, ['decryption failed', 'invalid key', 'invalid algorithm'])
     }
     const key = await importJwk(jwk)
 

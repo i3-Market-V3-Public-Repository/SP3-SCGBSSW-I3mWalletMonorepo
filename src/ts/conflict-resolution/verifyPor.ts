@@ -5,7 +5,7 @@ import { NrError } from '../errors'
 import { verifyProof } from '../proofs'
 import { Dict, JWK, PoOPayload, PoRPayload } from '../types'
 import { checkTimestamp } from '../utils'
-import { secretLength } from '../utils/secretLength'
+import { algByteLength } from '../utils/algByteLength'
 
 export async function verifyPor (por: string, wallet: NrpDltAgentDest, connectionTimeout = 10): Promise<{ porPayload: PoRPayload, pooPayload: PoOPayload, secretHex: string, destPublicJwk: JWK, origPublicJwk: JWK}> {
   const { payload: porPayload } = await jwsDecode<Dict<PoRPayload>>(por)
@@ -53,7 +53,7 @@ export async function verifyPor (por: string, wallet: NrpDltAgentDest, connectio
 
   let secretHex: string, iat: number
   try {
-    const secret = await wallet.getSecretFromLedger(secretLength(exchange.encAlg), exchange.ledgerSignerAddress, exchange.id, connectionTimeout)
+    const secret = await wallet.getSecretFromLedger(algByteLength(exchange.encAlg), exchange.ledgerSignerAddress, exchange.id, connectionTimeout)
     secretHex = secret.hex
     iat = secret.iat
   } catch (error) {
