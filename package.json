@@ -1,6 +1,6 @@
 {
   "name": "@i3m/non-repudiation-library",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description": "Library for the i3-market non-repudiation protocol that helps generate/verifying the necessary proofs and the received block of data",
   "keywords": [
     "non-repudiation",
