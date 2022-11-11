@@ -4,7 +4,7 @@
 
 # {{PKG_NAME}}
 
-This is a base class with a reference implementation of the required i3M-Wallet funcionalities
+{{PKG_DESCRIPTION}}
 
 ## Usage
 

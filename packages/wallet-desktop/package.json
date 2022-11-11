@@ -21,11 +21,16 @@
     "preversion": "npm run build"
   },
   "keywords": [],
-  "author": {
-    "name": "ISG UPC",
-    "email": "fernando.roman@upc.edu"
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/wallet-desktop"
   },
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "license": "EUPL-1.2",
   "ts-standard": {
     "ignore": [

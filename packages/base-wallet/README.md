@@ -4,7 +4,7 @@
 
 # @i3m/base-wallet
 
-This is a base class with a reference implementation of the required i3M-Wallet funcionalities
+A base packet with a reference TypeScript implementation (called BaseWallet) of the required functionalities for the i3-market wallet. It makes use of a KeyWallet interface that allows delegating the complexity of the wallet key management to other packages, like the sw-wallet, bok-wallet, and hw-wallet
 
 ## Usage
 

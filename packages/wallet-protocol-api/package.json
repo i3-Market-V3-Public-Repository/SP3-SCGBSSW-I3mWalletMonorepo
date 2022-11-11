@@ -1,18 +1,23 @@
 {
   "name": "@i3m/wallet-protocol-api",
   "version": "2.2.0",
-  "description": "This library can be used to connect connect to an i3m Wallet (through its API)",
+  "description": "A TypeScript/JavaScript library that can be used to easily connect to an i3m Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers.",
   "keywords": [
     "i3-market",
     "wallet",
     "i3-wallet"
   ],
   "license": "EUPL-1.2",
-  "author": {
-    "name": "Fernando Roman-Garcia",
-    "email": "fernando.roman@upc.edu"
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/wallet-protocol-api"
   },
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "type": "module",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",

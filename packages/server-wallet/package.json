@@ -2,14 +2,22 @@
   "name": "@i3m/server-wallet",
   "version": "2.2.0",
   "description": "Get a ready-to-go Wallet requiring no user interaction and using a simple file to store wallet data. It should be used only when no human interaction is possible.",
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "keywords": [
     "wallet",
     "i3-market",
     "service-wallet",
     "i3-market"
   ],
-  "author": "Juan Hernandez Serrano",
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Juan Hernández Serrno <j.hernandez@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/server-wallet"
+  },
   "license": "EUPL-1.2",
   "type": "module",
   "types": "./types/index.d.ts",

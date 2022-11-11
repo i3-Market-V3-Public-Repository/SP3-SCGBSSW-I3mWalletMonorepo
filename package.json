@@ -1,7 +1,7 @@
 {
   "name": "i3m-wallet-monorepo",
   "version": "1.1.8",
-  "description": "",
+  "description": "A monorepo containing all the packages related to the i3-MARKET Wallet, a.k.a. i3M Wallet.",
   "main": "index.js",
   "scripts": {
     "install:dev": "run-s bootstrap build",
@@ -22,8 +22,20 @@
     "pack:win": "lerna run --stream pack:win"
   },
   "private": true,
-  "keywords": [],
-  "author": "Fernando Roman Garcia",
+  "keywords": [
+    "i3-MARKET",
+    "i3M",
+    "Wallet",
+    "Blockchain",
+    "DLT",
+    "Self-Sovereign Identity",
+    "SSI"
+  ],
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
   "license": "EUPL-1.2",
   "devDependencies": {
     "dotenv": "^16.0.3",

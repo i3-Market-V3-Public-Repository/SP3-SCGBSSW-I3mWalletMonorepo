@@ -1,8 +1,16 @@
 {
   "name": "@i3m/wallet-protocol-utils",
   "version": "2.2.0",
-  "description": "Wallet protocol utilities",
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
+  "description": "A set of utilities to use wallet protocol on browsers including a PIN input modal and a local storage session manager",
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/wallet-protocol-utils"
+  },
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
   "browser": "./dist/esm/index.browser.js",
@@ -33,7 +41,6 @@
     "test": "echo \"Warning: You must specify tests for this package\""
   },
   "keywords": [],
-  "author": "Fernando Román García",
   "license": "EUPL-1.2",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^22.0.0",

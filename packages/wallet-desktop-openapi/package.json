@@ -26,7 +26,16 @@
     "version": "git add -A",
     "test": "echo \"Warning: You must specify tests for this package\""
   },
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Juan Hernández Serrno <j.hernandez@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/wallet-desktop-openapi"
+  },
   "keywords": [
     "i3-MARKET",
     "Wallet",
@@ -34,7 +43,6 @@
     "OAS",
     "schema"
   ],
-  "author": "Juan Hernández Serrano",
   "license": "EUPL-1.2",
   "devDependencies": {
     "@apidevtools/swagger-parser": "^10.0.2",

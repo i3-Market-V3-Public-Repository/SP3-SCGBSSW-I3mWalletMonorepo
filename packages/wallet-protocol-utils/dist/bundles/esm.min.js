@@ -382,12 +382,12 @@ function digest(obj, algorithm = 'SHA-256') {
 }
 
 const PORT_LENGTH = 12;
-const DEFAULT_RANDOM_LENGTH = 36; // In bits
-const DEFAULT_TIMEOUT = 30000; // in milliseconds
+const DEFAULT_RANDOM_LENGTH = 36;
+const DEFAULT_TIMEOUT = 30000;
 const PORT_SPACE = 2 ** PORT_LENGTH;
 const INITIAL_PORT = 29170;
-const NONCE_LENGTH = 128; // In bits
-const COMMITMENT_LENGTH = 256; // In bits
+const NONCE_LENGTH = 128;
+const COMMITMENT_LENGTH = 256;
 
 var protocolConstants = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -411,17 +411,6 @@ var httpConstants = /*#__PURE__*/Object.freeze({
     ...protocolConstants,
     ...httpConstants
 });
-class BaseRandom {
-    async randomFill(buffer, start, size) {
-        throw new Error('not implemented');
-    }
-    async randomFillBits(buffer, start, size) {
-        const byteLen = Math.ceil(size / 8);
-        const randomBytes = new Uint8Array(byteLen);
-        await this.randomFill(randomBytes, 0, byteLen);
-        bufferUtils.insertBits(randomBytes, buffer, 0, start, size);
-    }
-}
 class BaseCipher {
     constructor(algorithm, key) {
         this.algorithm = algorithm;
@@ -432,57 +421,6 @@ class BaseCipher {
     }
     async decrypt(ciphertext) {
         throw new Error('not implemented');
-    }
-}
-
-class BrowserRandom extends BaseRandom {
-    async randomFill(buffer, start, size) {
-        const newBuffer = new Uint8Array(size);
-        crypto.getRandomValues(newBuffer);
-        for (let i = 0; i < size; i++) {
-            buffer[start + i] = newBuffer[i];
-        }
-    }
-}
-const random = new BrowserRandom();
-
-const NODE_TO_BROWSER_CIPHER_ALGORITHMS = {
-    'aes-256-gcm': {
-        name: 'AES-GCM',
-        tagLength: 16 * 8
-    }
-};
-class Cipher extends BaseCipher {
-    async encrypt(message) {
-        const iv = new Uint8Array(12);
-        await random.randomFill(iv, 0, iv.length);
-        const alg = NODE_TO_BROWSER_CIPHER_ALGORITHMS[this.algorithm];
-        const cryptoKey = await crypto.subtle.importKey('raw', this.key, alg, false, ['encrypt']);
-        const ciphertext = await crypto.subtle.encrypt({
-            ...alg,
-            iv
-        }, cryptoKey, message);
-        const buffers = [];
-        buffers.push(iv);
-        buffers.push(new Uint8Array(ciphertext));
-        return bufferUtils.join(...buffers);
-    }
-    async decrypt(cryptosecuence) {
-        const sizes = [];
-        switch (this.algorithm) {
-            case 'aes-256-gcm':
-                sizes[0] = 12; // IV Size
-                break;
-        }
-        sizes[1] = cryptosecuence.length - sizes[0];
-        const [iv, ciphertext] = bufferUtils.split(cryptosecuence, ...sizes);
-        const alg = NODE_TO_BROWSER_CIPHER_ALGORITHMS[this.algorithm];
-        const cryptoKey = await crypto.subtle.importKey('raw', this.key, alg, false, ['decrypt']);
-        const message = await crypto.subtle.decrypt({
-            ...alg,
-            iv
-        }, cryptoKey, ciphertext);
-        return new Uint8Array(message);
     }
 }
 
@@ -577,7 +515,6 @@ const bufferUtils = {
             }
             const bitSet = ((dst[toByteIndex] & ~(128 >> toBitIndex)) | currBit);
             dst[toByteIndex] = bitSet;
-            // Move pointers
             fromBitIndex++;
             toBitIndex++;
             if (fromBitIndex >= 8) {
@@ -600,12 +537,10 @@ const bufferUtils = {
 };
 
 const deriveKey = async (from, to, secret) => {
-    // Prepare data
     const salt = new Uint8Array(16);
     const pbkdf2Input = new Uint8Array(32 * 3);
     const fromBuffer = format.hex2U8Arr(from);
     const toBuffer = format.hex2U8Arr(to);
-    // Prepare input
     bufferUtils.insertBytes(secret, pbkdf2Input, 0, 0, 32);
     bufferUtils.insertBytes(fromBuffer, pbkdf2Input, 0, 32, 32);
     bufferUtils.insertBytes(toBuffer, pbkdf2Input, 0, 32 * 2, 32);
@@ -620,8 +555,8 @@ class MasterKey {
         this.na = na;
         this.nb = nb;
         this.secret = secret;
-        this.cipher = new Cipher('aes-256-gcm', encryptKey);
-        this.decipher = new Cipher('aes-256-gcm', decryptKey);
+        this.cipher = new BaseCipher('aes-256-gcm', encryptKey);
+        this.decipher = new BaseCipher('aes-256-gcm', decryptKey);
     }
     async encrypt(message) {
         return await this.cipher.encrypt(message);

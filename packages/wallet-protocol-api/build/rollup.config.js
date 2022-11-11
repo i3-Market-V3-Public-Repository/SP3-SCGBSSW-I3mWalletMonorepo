@@ -104,8 +104,7 @@ export default [
       resolve({
         browser: true,
         exportConditions: ['browser', 'default'],
-        mainFields: ['browser', 'module', 'main'],
-        preferBuiltins: false
+        mainFields: ['browser', 'module', 'main']
       }),
       commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }), // the ".ts" extension is required
       json()

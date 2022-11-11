@@ -1,13 +1,21 @@
 {
   "name": "@i3m/base-wallet",
   "version": "2.2.0",
-  "description": "The abstract class defining an i3-market wallet",
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
+  "description": "A base packet with a reference TypeScript implementation (called BaseWallet) of the required functionalities for the i3-market wallet. It makes use of a KeyWallet interface that allows delegating the complexity of the wallet key management to other packages, like the sw-wallet, bok-wallet, and hw-wallet",
   "keywords": [
     "wallet",
     "i3-market"
   ],
-  "author": "Fernando Román García",
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/base-wallet"
+  },
   "license": "EUPL-1.2",
   "type": "module",
   "types": "./types/index.d.ts",

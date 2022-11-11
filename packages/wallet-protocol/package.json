@@ -1,17 +1,21 @@
 {
   "name": "@i3m/wallet-protocol",
   "version": "2.2.0",
-  "description": "A wallet protocol",
+  "description": "The implementation of a protocol that can securely connect the i3M Wallet with another application.",
   "keywords": [
     "i3-market",
     "wallet"
   ],
   "license": "EUPL-1.2",
-  "author": {
-    "name": "Fernando Roman-Garcia",
-    "email": "fernando.roman@upc.edu"
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/wallet-protocol"
   },
-  "repository": "github.com:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
   "type": "module",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",

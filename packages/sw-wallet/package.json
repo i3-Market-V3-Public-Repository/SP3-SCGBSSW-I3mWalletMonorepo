@@ -1,7 +1,7 @@
 {
   "name": "@i3m/sw-wallet",
   "version": "2.2.0",
-  "description": "",
+  "description": "An implementation of a software hierarchical deterministic wallet using the BaseWallet class defined in the @i3m/base-wallet package.",
   "main": "dist/index.js",
   "scripts": {
     "build:ts": "tsc --project tsconfig.build.json ",
@@ -55,8 +55,15 @@
       }
     ]
   },
-  "author": "Fernando Román García",
-  "repository": "github:i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo",
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>"
+  ],
+  "author": "Fernando Román García <fernando.roman@upc.edu>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/sw-wallet"
+  },
   "license": "EUPL-1.2",
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
