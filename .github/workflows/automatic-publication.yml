@@ -38,6 +38,7 @@ jobs:
 
   browser:
     name: test in browser
+    needs: [node]
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
