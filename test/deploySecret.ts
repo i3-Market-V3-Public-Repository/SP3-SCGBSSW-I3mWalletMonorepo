@@ -8,7 +8,9 @@ function algByteLength (alg: EncryptionAlg | HashAlg | SigningAlg): number {
 }
 
 describe('Non-repudiation protocol', function () {
+  this.bail() // stop after a test fails
   this.timeout(2000000)
+
   const SIGNING_ALG: _pkg.SigningAlg = 'ES256'
 
   const rpcProviderUrl = process.env.RPC_PROVIDER_URL as string

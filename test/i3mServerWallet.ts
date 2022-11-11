@@ -272,7 +272,7 @@ if (!IS_BROWSER) {
       })
 
       describe('get secret from ledger', function () {
-        const timeout = 180000 // 3 minutes (we currently have one block every 2 minutes)
+        const timeout = 240000 // 4 minutes (we currently have one block every 2 minutes)
         this.timeout(timeout)
         it('should be the same secret as the one obtained in the PoP', async function () {
           const secret = { ...nrpConsumer.block.secret }
