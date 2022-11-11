@@ -1,5 +1,5 @@
-import { randBytes } from 'bigint-crypto-utils'
 import * as _pkg from '#pkg'
+import { randBytes } from 'bigint-crypto-utils'
 
 describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean)', function () {
   it('should work with AES-128-GCM', async function () {
@@ -41,5 +41,13 @@ describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base
       err = error
     }
     chai.expect(err).to.not.equal(undefined)
+  })
+  it('should be able to encrypt and decrypt using a one-time secret', async function () {
+    const plaintext = await randBytes(1024)
+    const secret = await _pkg.oneTimeSecret('A128GCM')
+    console.log(JSON.stringify(secret.jwk, undefined, 2))
+    const jwe = await _pkg.jweEncrypt(plaintext, secret.jwk)
+    const decrypted = await _pkg.jweDecrypt(jwe, secret.jwk)
+    chai.expect(decrypted.plaintext).to.eql(plaintext)
   })
 })

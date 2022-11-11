@@ -1,32 +1,36 @@
-import { compactDecrypt, CompactDecryptResult, CompactEncrypt } from 'jose'
-import { EncryptionAlg, JWK } from '../types'
+import { compactDecrypt, CompactDecryptResult, CompactEncrypt, decodeProtectedHeader } from 'jose'
+import { ENC_ALGS, KEY_AGREEMENT_ALGS, SIGNING_ALGS } from '../constants'
 import { NrError } from '../errors'
+import { EncryptionAlg, JWK } from '../types'
 import { importJwk } from './importJwk'
-import { ENC_ALGS, SIGNING_ALGS } from '../constants'
 
 /**
  * Encrypts a block of data to JWE
  *
  * @param block - a block of data to encrypt
  * @param secretOrPublicKey - a one-time secret for encrypting this block or publicKey to encrypt a content encryption key to encrypt the block
- * @param encAlg - the algorithm for content encryption
+ * @param encAlg - the algorithm for content encryption. Only necessary if a public key is provided; otherwise it will be used instead of secretOrPublicKey.alg
  * @returns a Compact JWE
  */
-export async function jweEncrypt (block: Uint8Array, secretOrPublicKey: JWK, encAlg: EncryptionAlg): Promise<string> {
+export async function jweEncrypt (block: Uint8Array, secretOrPublicKey: JWK, encAlg?: EncryptionAlg): Promise<string> {
   // const input: Uint8Array = (typeof block === 'string') ? (new TextEncoder()).encode(block) : new Uint8Array(block)
   let alg: 'dir' | 'ECDH-ES'
+  let enc: EncryptionAlg
 
   const jwk = { ...secretOrPublicKey }
 
   if ((ENC_ALGS as unknown as string[]).includes(secretOrPublicKey.alg)) {
     // this is a symmetric secret
     alg = 'dir'
-  } else if ((SIGNING_ALGS as unknown as string[]).includes(secretOrPublicKey.alg)) {
+    enc = encAlg !== undefined ? encAlg : secretOrPublicKey.alg as EncryptionAlg
+  } else if ((SIGNING_ALGS as unknown as string[]).concat(KEY_AGREEMENT_ALGS).includes(secretOrPublicKey.alg)) {
+    // It is a public key
+    if (encAlg === undefined) {
+      throw new NrError('An encryption algorith encAlg for content encryption should be provided. Allowed values are: ' + ENC_ALGS.join(','), ['encryption failed'])
+    }
+    enc = encAlg
     alg = 'ECDH-ES'
     jwk.alg = alg as any
-    // jwk.use = 'enc'
-    // jwk.ext = true
-    // jwk.key_ops = ['wrapKey', 'encrypt', 'deriveBits', 'deriveKey']
   } else {
     throw new NrError(`Not a valid symmetric or assymetric alg: ${secretOrPublicKey.alg as string}`, ['encryption failed', 'invalid key', 'invalid algorithm'])
   }
@@ -35,7 +39,7 @@ export async function jweEncrypt (block: Uint8Array, secretOrPublicKey: JWK, enc
   let jwe
   try {
     jwe = await new CompactEncrypt(block)
-      .setProtectedHeader({ alg, enc: encAlg, kid: secretOrPublicKey.kid })
+      .setProtectedHeader({ alg, enc, kid: secretOrPublicKey.kid })
       .encrypt(key)
     return jwe
   } catch (error) {
@@ -47,25 +51,21 @@ export async function jweEncrypt (block: Uint8Array, secretOrPublicKey: JWK, enc
  * Decrypts jwe
  * @param jwe - a JWE
  * @param secretOrPrivateKey - a one-time secret for decrypting this block or a privateKey to decrypt a content encryption key and then decrypt the block
- * @param encAlg - the algorithm used for contentEncryption
  * @returns the plaintext
  */
-export async function jweDecrypt (jwe: string, secretOrPrivateKey: JWK, encAlg: EncryptionAlg = 'A256GCM'): Promise<CompactDecryptResult> {
+export async function jweDecrypt (jwe: string, secretOrPrivateKey: JWK): Promise<CompactDecryptResult> {
   try {
     const jwk = { ...secretOrPrivateKey }
-
-    if ((SIGNING_ALGS as unknown as string[]).includes(secretOrPrivateKey.alg)) {
-      jwk.alg = 'ECDH-ES' as any
-      // jwk.use = 'enc'
-      // jwk.ext = true
-      // jwk.key_ops = ['wrapKey', 'encrypt', 'deriveBits', 'deriveKey']
-    } else if (!(ENC_ALGS as unknown as string[]).includes(secretOrPrivateKey.alg)) {
-      throw new NrError(`Not a valid symmetric or assymetric alg: ${secretOrPrivateKey.alg as string}`, ['decryption failed', 'invalid key', 'invalid algorithm'])
+    const { alg, enc } = decodeProtectedHeader(jwe)
+    if (alg === undefined || enc === undefined) {
+      throw new NrError('missing enc or alg in jwe header', ['invalid format'])
+    }
+    if (alg === 'ECDH-ES') {
+      jwk.alg = alg as any
     }
     const key = await importJwk(jwk)
 
-    return await compactDecrypt(jwe, key, { contentEncryptionAlgorithms: [encAlg] })
-    // return await compactDecrypt(jwe, key)
+    return await compactDecrypt(jwe, key, { contentEncryptionAlgorithms: [enc] })
   } catch (error) {
     const nrError = new NrError(error, ['decryption failed'])
     throw nrError

@@ -10,7 +10,7 @@ import { importJwk } from './importJwk'
  * @param publicJwk - either a public key as a JWK or a function that resolves to a JWK. If not provided, the JWS signature is not verified
  */
 export async function jwsDecode<T extends ProofPayload> (jws: string, publicJwk?: JWK | getFromJws<T>): Promise<DecodedProof<T>> {
-  const regex = /^([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/
+  const regex = /^([a-zA-Z0-9_-]+)\.{1,2}([a-zA-Z0-9_-]+)\.([a-zA-Z0-9_-]+)$/
   const match = jws.match(regex)
 
   if (match === null) {
