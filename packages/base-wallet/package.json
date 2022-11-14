@@ -1,6 +1,6 @@
 {
   "name": "@i3m/base-wallet",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "A base packet with a reference TypeScript implementation (called BaseWallet) of the required functionalities for the i3-market wallet. It makes use of a KeyWallet interface that allows delegating the complexity of the wallet key management to other packages, like the sw-wallet, bok-wallet, and hw-wallet",
   "keywords": [
     "wallet",
@@ -124,7 +124,7 @@
   },
   "dependencies": {
     "@i3m/non-repudiation-library": "^2.5.0",
-    "@i3m/wallet-desktop-openapi": "^2.2.1",
+    "@i3m/wallet-desktop-openapi": "^2.2.2",
     "@veramo/core": "^1.2.0",
     "@veramo/credential-w3c": "^1.2.0",
     "@veramo/did-jwt": "^1.2.0",
