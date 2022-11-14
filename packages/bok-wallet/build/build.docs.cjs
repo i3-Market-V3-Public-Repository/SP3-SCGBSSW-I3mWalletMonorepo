@@ -107,26 +107,13 @@ function variableReplacements () {
   const { name } = pkgJson.name.match(regex).groups
   const camelCaseName = camelise(name)
 
-  const iifeBundlePath = path.relative('.', pkgJson.exports['./iife-browser-bundle'])
-  const esmBundlePath = path.relative('.', pkgJson.exports['./esm-browser-bundle'])
-  const umdBundlePath = path.relative('.', pkgJson.exports['./umd-browser-bundle'])
-
-  let iifeBundle, esmBundle, umdBundle, workflowBadget, coverallsBadge
+  let workflowBadget, coverallsBadge
   if (repoProvider) {
     switch (repoProvider) {
       case 'github':
-        iifeBundle = `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${iifeBundlePath})`
-        esmBundle = `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${esmBundlePath})`
-        umdBundle = `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${umdBundlePath})`
         workflowBadget = `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml)`
         coverallsBadge = ''
         // coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=main)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=main)`
-        break
-
-      case 'gitlab':
-        iifeBundle = `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${iifeBundlePath}?inline=false)`
-        esmBundle = `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${esmBundlePath}?inline=false)`
-        umdBundle = `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${umdBundlePath}?inline=false)`
         break
 
       default:
@@ -138,9 +125,6 @@ function variableReplacements () {
     .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
     .replace(/\{\{PKG_DESCRIPTION\}\}/g, pkgJson.description)
     .replace(/\{\{PKG_CAMELCASE\}\}/g, camelCaseName)
-    .replace(/\{\{IIFE_BUNDLE\}\}/g, iifeBundle || 'IIFE bundle')
-    .replace(/\{\{ESM_BUNDLE\}\}/g, esmBundle || 'ESM bundle')
-    .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
   if (repoProvider && repoProvider === 'github') {
     template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, (workflowBadget ?? '') + (coverallsBadge ? '\n' + coverallsBadge : '') + '\n')

@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[base-wallet/src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1804f63/packages/base-wallet/src/ts/errors.ts#L11)
+[base-wallet/src/ts/errors.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/72430c8/packages/base-wallet/src/ts/errors.ts#L11)
 
 ## Properties
 
@@ -55,7 +55,7 @@ Error.constructor
 
 #### Defined in
 
-[base-wallet/src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1804f63/packages/base-wallet/src/ts/errors.ts#L8)
+[base-wallet/src/ts/errors.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/72430c8/packages/base-wallet/src/ts/errors.ts#L8)
 
 ___
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1804f63/packages/base-wallet/src/ts/errors.ts#L9)
+[base-wallet/src/ts/errors.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/72430c8/packages/base-wallet/src/ts/errors.ts#L9)
 
 ___
 

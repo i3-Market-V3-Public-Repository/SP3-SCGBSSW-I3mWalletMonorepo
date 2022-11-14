@@ -4,7 +4,7 @@
 
 # @i3m/wallet-protocol-api
 
-A TypeScript/JavaScript library that can be used to easily connect to an i3m Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers..
+A TypeScript/JavaScript library that can be used to easily connect to an i3m Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers.
 
 The wallet protocol description is explained [here](../wallet-protocol/README.md)
 

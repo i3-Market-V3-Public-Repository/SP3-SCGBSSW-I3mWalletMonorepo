@@ -64,7 +64,8 @@ export default [
     plugins: [
       replace({
         IS_BROWSER: true,
-        preventAssignment: true
+        preventAssignment: true,
+        environment: 'browser'
       }),
       typescriptPlugin(tsBundleOptions),
       commonjs({ extensions: ['.js', '.cjs', '.ts', '.jsx', '.cjsx', '.tsx'] }), // the ".ts" extension is required
@@ -95,6 +96,7 @@ export default [
     plugins: [
       replace({
         IS_BROWSER: true,
+        environment: 'browser',
         preventAssignment: true
       }),
       typescriptPlugin({
@@ -131,6 +133,7 @@ export default [
       }),
       replace({
         IS_BROWSER: false,
+        environment: 'nodejs',
         preventAssignment: true
       }),
       typescriptPlugin(tsBundleOptions),
@@ -157,6 +160,7 @@ export default [
     plugins: [
       replace({
         IS_BROWSER: false,
+        environment: 'nodejs',
         __filename: `'${exports['.'].node.import}'`,
         __dirname: `'${dirname(exports['.'].node.import)}'`,
         preventAssignment: true
