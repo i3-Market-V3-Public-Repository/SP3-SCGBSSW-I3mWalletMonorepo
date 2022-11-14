@@ -12,18 +12,19 @@ const rootDir = path.join(__dirname, '..')
 const templateFilePath = path.join(rootDir, pkgJson.directories.src, 'docs/index.md')
 let template = fs.readFileSync(templateFilePath, { encoding: 'utf-8' })
 
-// Let us replace relative paths
-replaceRelativeLinks()
+async function main () {
+  // Let us replace variables and badges
+  variableReplacements()
 
-// Let us replace variables and badges
-variableReplacements()
+  // Generate API doc with typedoc
+  await typedoc()
+  replaceRelativeLinks()
 
-const readmeFile = path.join(rootDir, 'README.md')
-fs.writeFileSync(readmeFile, template)
+  const readmeFile = path.join(rootDir, 'README.md')
+  fs.writeFileSync(readmeFile, template)
+}
 
-// Generate API doc with typedoc
-typedoc()
-
+main()
 /* ------------------------------------------------------------------------- |
 |                               UTILITY FUNCTIONS                            |
 | ------------------------------------------------------------------------- */
@@ -107,13 +108,26 @@ function variableReplacements () {
   const { name } = pkgJson.name.match(regex).groups
   const camelCaseName = camelise(name)
 
-  let workflowBadget, coverallsBadge
+  const iifeBundlePath = pkgJson.exports['./iife-browser-bundle'] !== undefined ? path.relative('.', pkgJson.exports['./iife-browser-bundle']) : undefined
+  const esmBundlePath = pkgJson.exports['./esm-browser-bundle'] !== undefined ? path.relative('.', pkgJson.exports['./esm-browser-bundle']) : undefined
+  const umdBundlePath = pkgJson.exports['./umd-browser-bundle'] !== undefined ? path.relative('.', pkgJson.exports['./umd-browser-bundle']) : undefined
+
+  let iifeBundle, esmBundle, umdBundle, workflowBadget, coverallsBadge
   if (repoProvider) {
     switch (repoProvider) {
       case 'github':
+        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${iifeBundlePath})` : undefined
+        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${esmBundlePath})` : undefined
+        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${umdBundlePath})` : undefined
         workflowBadget = `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml)`
         coverallsBadge = ''
         // coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=main)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=main)`
+        break
+
+      case 'gitlab':
+        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${iifeBundlePath}?inline=false)` : undefined
+        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${esmBundlePath}?inline=false)` : undefined
+        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${umdBundlePath}?inline=false)` : undefined
         break
 
       default:
@@ -123,8 +137,12 @@ function variableReplacements () {
 
   template = template
     .replace(/\{\{PKG_NAME\}\}/g, pkgJson.name)
+    .replace(/\{\{PKG_LICENSE\}\}/g, pkgJson.license.replace('-', '_'))
     .replace(/\{\{PKG_DESCRIPTION\}\}/g, pkgJson.description)
     .replace(/\{\{PKG_CAMELCASE\}\}/g, camelCaseName)
+    .replace(/\{\{IIFE_BUNDLE\}\}/g, iifeBundle || 'IIFE bundle')
+    .replace(/\{\{ESM_BUNDLE\}\}/g, esmBundle || 'ESM bundle')
+    .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
   if (repoProvider && repoProvider === 'github') {
     template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, (workflowBadget ?? '') + (coverallsBadge ? '\n' + coverallsBadge : '') + '\n')

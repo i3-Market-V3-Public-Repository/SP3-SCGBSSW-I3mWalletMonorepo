@@ -175,26 +175,6 @@ select.modern > option {
   font-size: 20px;
 }
 
-.horizontal-accordion {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
-  background-image: linear-gradient(to bottom, #202531, #3D465C 100%);
-  color: #D2D6E1;
-}
-.horizontal-accordion > * {
-  overflow: auto;
-}
-.horizontal-accordion > .accordion-fixed {
-  color: #D2D6E1;
-}
-.horizontal-accordion > .accordion-extendible {
-  flex: 1;
-  color: #202531;
-  background-image: linear-gradient(to bottom left, white, #D2D6E1);
-}
-
 .nav {
   background-image: linear-gradient(to right bottom, #202531, #404A61 90%);
   display: flex;
@@ -238,29 +218,24 @@ select.modern > option {
   color: #3BBD59;
 }
 
-.list-selector {
+.horizontal-accordion {
   display: flex;
-  flex-direction: column;
-  outline: none;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(to bottom, #202531, #3D465C 100%);
+  color: #D2D6E1;
+}
+.horizontal-accordion > * {
+  overflow: auto;
+}
+.horizontal-accordion > .accordion-fixed {
+  color: #D2D6E1;
+}
+.horizontal-accordion > .accordion-extendible {
   flex: 1;
-}
-.list-selector:focus .list-selector-item.selected {
-  background-color: rgba(59, 189, 89, 0.3333333333);
-}
-.list-selector:focus .list-selector-item.cursor {
-  border-color: #3BBD59;
-}
-.list-selector .list-selector-item {
-  padding: 5px;
-  font-size: 16px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-.list-selector .list-selector-item:hover {
-  background-color: rgba(130, 143, 172, 0.1333333333);
-}
-.list-selector .list-selector-item.selected {
-  background-color: rgba(130, 143, 172, 0.2666666667);
+  color: #202531;
+  background-image: linear-gradient(to bottom left, white, #D2D6E1);
 }
 
 .section {
@@ -297,38 +272,29 @@ select.modern > option {
   color: rgba(109, 193, 105, 0.8);
 }
 
-.context-menu-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-}
-
-.context-menu {
-  position: absolute;
-  background-color: white;
+.list-selector {
   display: flex;
   flex-direction: column;
-  padding: 4px 0;
-  border: 1px solid black;
-  font-size: 15px;
-  box-shadow: 2px 2px 20px 1px rgba(0, 0, 0, 0.75);
+  outline: none;
+  flex: 1;
 }
-.context-menu > span.separator {
-  height: 1px;
-  margin: 3px 5px;
-  background-color: rgba(0, 0, 0, 0.1333333333);
+.list-selector:focus .list-selector-item.selected {
+  background-color: rgba(59, 189, 89, 0.3333333333);
 }
-.context-menu > span.button {
-  padding: 5px 20px;
+.list-selector:focus .list-selector-item.cursor {
+  border-color: #3BBD59;
 }
-.context-menu > span.button:not(.disabled) {
+.list-selector .list-selector-item {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid transparent;
   cursor: pointer;
 }
-.context-menu > span.button:not(.disabled):hover {
-  background-color: rgba(0, 0, 0, 0.1333333333);
+.list-selector .list-selector-item:hover {
+  background-color: rgba(130, 143, 172, 0.1333333333);
 }
-.context-menu > span.button.disabled {
-  opacity: 0.4;
+.list-selector .list-selector-item.selected {
+  background-color: rgba(130, 143, 172, 0.2666666667);
 }
 
 .tree-list {
@@ -365,6 +331,40 @@ select.modern > option {
 }
 .tree-list .tree-list-item > .tree-list-name.selected {
   background-color: rgba(130, 143, 172, 0.2666666667);
+}
+
+.context-menu-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.context-menu {
+  position: absolute;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+  border: 1px solid black;
+  font-size: 15px;
+  box-shadow: 2px 2px 20px 1px rgba(0, 0, 0, 0.75);
+}
+.context-menu > span.separator {
+  height: 1px;
+  margin: 3px 5px;
+  background-color: rgba(0, 0, 0, 0.1333333333);
+}
+.context-menu > span.button {
+  padding: 5px 20px;
+}
+.context-menu > span.button:not(.disabled) {
+  cursor: pointer;
+}
+.context-menu > span.button:not(.disabled):hover {
+  background-color: rgba(0, 0, 0, 0.1333333333);
+}
+.context-menu > span.button.disabled {
+  opacity: 0.4;
 }
 
 @keyframes highlight {
@@ -678,23 +678,6 @@ div.password-route > .password-form > :not(:last-child) {
   margin-right: 5px;
 }
 
-.settings .settings-list {
-  flex: 1;
-}
-.settings .settings-group {
-  flex: 3;
-  font-size: 16px;
-}
-.settings .settings-group .settings-item {
-  padding: 5px 20px;
-}
-.settings .settings-group .settings-item.settings-checkbox label {
-  cursor: pointer;
-}
-.settings .settings-group .settings-item.settings-number label {
-  margin-right: 10px;
-}
-
 .explorer {
   display: flex;
   flex-direction: row;
@@ -810,6 +793,23 @@ div.password-route > .password-form > :not(:last-child) {
 }
 .explorer .list-selector {
   overflow: auto;
+}
+
+.settings .settings-list {
+  flex: 1;
+}
+.settings .settings-group {
+  flex: 3;
+  font-size: 16px;
+}
+.settings .settings-group .settings-item {
+  padding: 5px 20px;
+}
+.settings .settings-group .settings-item.settings-checkbox label {
+  cursor: pointer;
+}
+.settings .settings-group .settings-item.settings-number label {
+  margin-right: 10px;
 }
 
 @keyframes wave {
