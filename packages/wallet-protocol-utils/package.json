@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-utils",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "A set of utilities to use wallet protocol on browsers including a PIN input modal and a local storage session manager",
   "contributors": [
     "Fernando Román García <fernando.roman@upc.edu>"
@@ -52,7 +52,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@i3m/wallet-protocol": "^2.2.0",
+    "@i3m/wallet-protocol": "^2.2.1",
     "rollup-plugin-import-css": "^3.0.3",
     "rxjs": "^7.5.5"
   }

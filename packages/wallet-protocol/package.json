@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "The implementation of a protocol that can securely connect the i3M Wallet with another application.",
   "keywords": [
     "i3-market",
