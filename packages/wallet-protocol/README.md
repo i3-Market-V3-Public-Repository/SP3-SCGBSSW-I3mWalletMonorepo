@@ -88,3 +88,7 @@ api.identities.create()
 ## API reference documentation
 
 [Check the API](docs/API.md)
+
+## Initiator example
+
+A complete example on how to program an initiator for the wallet protocol can be found [here](docs/INITIATOR_EXAMPLE.md)
