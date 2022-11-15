@@ -25654,8 +25654,8 @@ function TreeList(props) {
         }
         return (React.createElement("div", { key: i, className: 'tree-list-item' },
             React.createElement("div", { title: text, className: joinClassNames('tree-list-name', isSelected ? 'selected' : undefined, hasCursor ? 'cursor' : undefined), style: { paddingLeft: `${(tab * 15) + 5}px` }, ...extraParams },
-                itemChildren.length > 0 || showCollapseIcon === true ? (React.createElement(FontAwesomeIcon, { className: 'tree-list-icon', icon: collapsed ? faChevronRight : faChevronDown, onClick: () => toogleCollapse(item) })) : null,
-                icon !== undefined ? (React.createElement(FontAwesomeIcon, { className: 'tree-list-icon', icon: icon, style: { color: iconColor } })) : null,
+                React.createElement("div", { className: 'collapse-container' }, itemChildren.length > 0 || showCollapseIcon === true ? (React.createElement(FontAwesomeIcon, { className: 'tree-list-icon', icon: collapsed ? faChevronRight : faChevronDown, onClick: () => toogleCollapse(item) })) : null),
+                React.createElement("div", { className: 'icon-container' }, icon !== undefined ? (React.createElement(FontAwesomeIcon, { className: 'tree-list-icon', icon: icon, style: { color: iconColor } })) : null),
                 React.createElement("span", null, text)),
             (itemChildren !== undefined && !collapsed) ? (React.createElement(TreeList, { listRef: listRef, cursorRef: cursorRef, items: itemChildren, selectedState: selectedState, cursorState: cursorState, collapsedState: collapsedState, tab: tab + 1 })) : null));
     })));

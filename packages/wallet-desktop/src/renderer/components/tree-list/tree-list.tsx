@@ -263,15 +263,19 @@ export function TreeList<T = string> (props: Props<T>): JSX.Element {
               style={{ paddingLeft: `${(tab * 15) + 5}px` }}
               {...extraParams}
             >
-              {itemChildren.length > 0 || showCollapseIcon === true ? (
-                <FontAwesomeIcon
-                  className='tree-list-icon' icon={collapsed ? faChevronRight : faChevronDown}
-                  onClick={() => toogleCollapse(item)}
-                />
-              ) : null}
-              {icon !== undefined ? (
-                <FontAwesomeIcon className='tree-list-icon' icon={icon} style={{ color: iconColor }} />
-              ) : null}
+              <div className='collapse-container'>
+                {itemChildren.length > 0 || showCollapseIcon === true ? (
+                  <FontAwesomeIcon
+                    className='tree-list-icon' icon={collapsed ? faChevronRight : faChevronDown}
+                    onClick={() => toogleCollapse(item)}
+                  />
+                ) : null}
+              </div>
+              <div className='icon-container'>
+                {icon !== undefined ? (
+                  <FontAwesomeIcon className='tree-list-icon' icon={icon} style={{ color: iconColor }} />
+                ) : null}
+              </div>
               <span>{text}</span>
             </div>
             {(itemChildren !== undefined && !collapsed) ? (

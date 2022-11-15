@@ -15,7 +15,7 @@
 
 #### Defined in
 
-[transport/http/http-initiator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8058f2f/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L9)
+[transport/http/http-initiator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L9)
 
 ___
 
@@ -25,4 +25,4 @@ ___
 
 #### Defined in
 
-[transport/http/http-initiator.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8058f2f/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L8)
+[transport/http/http-initiator.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L8)

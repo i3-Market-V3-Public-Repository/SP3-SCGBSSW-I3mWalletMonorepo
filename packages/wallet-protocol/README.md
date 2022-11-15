@@ -91,4 +91,4 @@ api.identities.create()
 
 ## Initiator example
 
-A complete example on how to program an initiator for the wallet protocol can be found [here](docs/INITIATOR_EXAMPLE.md)
+A complete example on how to program an initiator for the wallet protocol can be found [here](src/docs/example/initiator-example.md)
