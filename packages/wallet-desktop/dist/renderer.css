@@ -175,6 +175,26 @@ select.modern > option {
   font-size: 20px;
 }
 
+.horizontal-accordion {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+  background-image: linear-gradient(to bottom, #202531, #3D465C 100%);
+  color: #D2D6E1;
+}
+.horizontal-accordion > * {
+  overflow: auto;
+}
+.horizontal-accordion > .accordion-fixed {
+  color: #D2D6E1;
+}
+.horizontal-accordion > .accordion-extendible {
+  flex: 1;
+  color: #202531;
+  background-image: linear-gradient(to bottom left, white, #D2D6E1);
+}
+
 .nav {
   background-image: linear-gradient(to right bottom, #202531, #404A61 90%);
   display: flex;
@@ -218,51 +238,6 @@ select.modern > option {
   color: #3BBD59;
 }
 
-.horizontal-accordion {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  width: 100%;
-  background-image: linear-gradient(to bottom, #202531, #3D465C 100%);
-  color: #D2D6E1;
-}
-.horizontal-accordion > * {
-  overflow: auto;
-}
-.horizontal-accordion > .accordion-fixed {
-  color: #D2D6E1;
-}
-.horizontal-accordion > .accordion-extendible {
-  flex: 1;
-  color: #202531;
-  background-image: linear-gradient(to bottom left, white, #D2D6E1);
-}
-
-.list-selector {
-  display: flex;
-  flex-direction: column;
-  outline: none;
-  flex: 1;
-}
-.list-selector:focus .list-selector-item.selected {
-  background-color: rgba(59, 189, 89, 0.3333333333);
-}
-.list-selector:focus .list-selector-item.cursor {
-  border-color: #3BBD59;
-}
-.list-selector .list-selector-item {
-  padding: 5px;
-  font-size: 16px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-.list-selector .list-selector-item:hover {
-  background-color: rgba(130, 143, 172, 0.1333333333);
-}
-.list-selector .list-selector-item.selected {
-  background-color: rgba(130, 143, 172, 0.2666666667);
-}
-
 .section {
   display: flex;
   flex-direction: column;
@@ -295,6 +270,31 @@ select.modern > option {
 .section > .header .operation-icon:active {
   opacity: 1;
   color: rgba(109, 193, 105, 0.8);
+}
+
+.list-selector {
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  flex: 1;
+}
+.list-selector:focus .list-selector-item.selected {
+  background-color: rgba(59, 189, 89, 0.3333333333);
+}
+.list-selector:focus .list-selector-item.cursor {
+  border-color: #3BBD59;
+}
+.list-selector .list-selector-item {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.list-selector .list-selector-item:hover {
+  background-color: rgba(130, 143, 172, 0.1333333333);
+}
+.list-selector .list-selector-item.selected {
+  background-color: rgba(130, 143, 172, 0.2666666667);
 }
 
 .context-menu-overlay {
@@ -651,6 +651,33 @@ div.password-route > .password-form > :not(:last-child) {
   overflow: hidden;
 }
 
+.status-bar {
+  display: flex;
+  align-items: stretch;
+  height: 24px;
+  padding: 0px 10px;
+  font-size: 14px;
+  color: #E8F5E7;
+  border-top: 2px solid #119540;
+  background-image: linear-gradient(to right bottom, #119540, #3BBD59 90%);
+}
+.status-bar .status-bar-item {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 0px 5px;
+}
+.status-bar .status-bar-item.clickable {
+  cursor: pointer;
+}
+.status-bar .status-bar-item.clickable:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+.status-bar .status-bar-item > .icon {
+  width: 16px;
+  margin-right: 5px;
+}
+
 .explorer {
   display: flex;
   flex-direction: row;
@@ -766,33 +793,6 @@ div.password-route > .password-form > :not(:last-child) {
 }
 .explorer .list-selector {
   overflow: auto;
-}
-
-.status-bar {
-  display: flex;
-  align-items: stretch;
-  height: 24px;
-  padding: 0px 10px;
-  font-size: 14px;
-  color: #E8F5E7;
-  border-top: 2px solid #119540;
-  background-image: linear-gradient(to right bottom, #119540, #3BBD59 90%);
-}
-.status-bar .status-bar-item {
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  padding: 0px 5px;
-}
-.status-bar .status-bar-item.clickable {
-  cursor: pointer;
-}
-.status-bar .status-bar-item.clickable:hover {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-.status-bar .status-bar-item > .icon {
-  width: 16px;
-  margin-right: 5px;
 }
 
 .settings .settings-list {
