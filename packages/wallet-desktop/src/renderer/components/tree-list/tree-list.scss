@@ -34,7 +34,14 @@
         white-space: nowrap;
       }
 
-      > .tree-list-icon {
+      .collapse-container, .icon-container {
+        width: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tree-list-icon {
         width: auto;
         height: 15px;
         margin-right: 6px;
