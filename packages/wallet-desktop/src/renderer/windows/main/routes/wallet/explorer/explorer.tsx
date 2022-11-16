@@ -2,8 +2,8 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { createWalletAction } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
-import { Section, HorizontalAccordion, Fixed, DividerOperation, TreeList, InterfaceObject } from '@wallet/renderer/components'
-import { usePresistentState } from '@wallet/renderer/hooks/use-presistent-state'
+import { Section, HorizontalAccordion, Resizeable, DividerOperation, TreeList, InterfaceObject } from '@wallet/renderer/components'
+import { usePresistentState } from '@wallet/renderer/hooks'
 import { Details } from './details'
 
 import './explorer.scss'
@@ -43,7 +43,7 @@ export function Explorer (): JSX.Element {
 
   return (
     <HorizontalAccordion className='explorer'>
-      <Fixed className='explorer-content'>
+      <Resizeable className='explorer-content' stateId='wallet.explorer.tree-list' resizeWidth>
         <Section title='Wallets' operations={walletOperations}>
           <div className='scroll' ref={listRef}>
             <TreeList
@@ -54,7 +54,7 @@ export function Explorer (): JSX.Element {
             />
           </div>
         </Section>
-      </Fixed>
+      </Resizeable>
       <Details item={selected} />
     </HorizontalAccordion>
   )

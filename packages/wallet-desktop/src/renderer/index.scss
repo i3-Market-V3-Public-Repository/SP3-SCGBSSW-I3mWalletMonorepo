@@ -177,3 +177,9 @@ select.modern {
 ::-webkit-scrollbar-thumb:active {
   background: transparentize($secondary, $amount: 0.2);
 }
+
+::-webkit-scrollbar-corner {
+  background: transparentize($dark-gray, $amount: 0.8);
+  border: 1px solid transparentize($dark-gray, $amount: 0.7);
+}
+

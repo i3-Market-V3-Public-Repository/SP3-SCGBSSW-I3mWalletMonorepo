@@ -1,4 +1,4 @@
-import { HorizontalAccordion, Fixed, Extendible, Section, ListSelector } from '@wallet/renderer/components'
+import { HorizontalAccordion, Extendible, Section, ListSelector, Resizeable } from '@wallet/renderer/components'
 import { SettingsItem } from './settings-item'
 import { SettingsMetadata } from './settings-metadata'
 
@@ -36,11 +36,11 @@ export function Settings (): JSX.Element {
 
   return (
     <HorizontalAccordion className='settings'>
-      <Fixed className='settings-list'>
+      <Resizeable className='settings-list' stateId='wallet.settings.tree-list' resizeWidth>
         <Section title='Settings'>
           <ListSelector selected={settingsGroup} items={groups} onSelect={setSettingsGroup} />
         </Section>
-      </Fixed>
+      </Resizeable>
       <Extendible className='settings-group'>
         {settingsGroup !== undefined ? (
           <Section title={settingsGroup}>

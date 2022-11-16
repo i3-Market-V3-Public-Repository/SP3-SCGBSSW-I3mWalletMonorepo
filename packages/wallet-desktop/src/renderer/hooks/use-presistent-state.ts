@@ -11,12 +11,24 @@ export function usePresistentState<T> (id: string, defaultValue: T): UseState<T>
   if (localStorageState === null) {
     initialValue = defaultValue
   } else {
-    initialValue = JSON.parse(localStorageState) as T
+    try {
+      initialValue = JSON.parse(localStorageState) as T
+    } catch (ex) {
+      initialValue = defaultValue
+      console.warn('Error parsing localstorage', ex)
+    }
   }
 
   const [state, setState] = React.useState<T>(initialValue)
 
-  return [state, (newState) => {
+  return [state, (newStateDispatch) => {
+    let newState: T
+    if (newStateDispatch instanceof Function) {
+      newState = newStateDispatch(state)
+    } else {
+      newState = newStateDispatch
+    }
+
     localStorage.setItem(localStorageIdentifier, JSON.stringify(newState))
     setState(newState)
   }]

@@ -159,6 +159,11 @@ select.modern > option {
   background: rgba(109, 193, 105, 0.8);
 }
 
+::-webkit-scrollbar-corner {
+  background: rgba(166, 175, 196, 0.2);
+  border: 1px solid rgba(166, 175, 196, 0.3);
+}
+
 .window {
   display: flex;
   position: absolute;
@@ -168,11 +173,6 @@ select.modern > option {
   right: 0;
   bottom: 0;
   user-select: none; /* Unselectable text */
-}
-
-.content {
-  flex: 1;
-  font-size: 20px;
 }
 
 .nav {
@@ -218,6 +218,11 @@ select.modern > option {
   color: #3BBD59;
 }
 
+.content {
+  flex: 1;
+  font-size: 20px;
+}
+
 .horizontal-accordion {
   display: flex;
   flex-direction: row;
@@ -236,31 +241,6 @@ select.modern > option {
   flex: 1;
   color: #202531;
   background-image: linear-gradient(to bottom left, white, #D2D6E1);
-}
-
-.list-selector {
-  display: flex;
-  flex-direction: column;
-  outline: none;
-  flex: 1;
-}
-.list-selector:focus .list-selector-item.selected {
-  background-color: rgba(59, 189, 89, 0.3333333333);
-}
-.list-selector:focus .list-selector-item.cursor {
-  border-color: #3BBD59;
-}
-.list-selector .list-selector-item {
-  padding: 5px;
-  font-size: 16px;
-  border: 1px solid transparent;
-  cursor: pointer;
-}
-.list-selector .list-selector-item:hover {
-  background-color: rgba(130, 143, 172, 0.1333333333);
-}
-.list-selector .list-selector-item.selected {
-  background-color: rgba(130, 143, 172, 0.2666666667);
 }
 
 .section {
@@ -297,6 +277,113 @@ select.modern > option {
   color: rgba(109, 193, 105, 0.8);
 }
 
+.list-selector {
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  flex: 1;
+}
+.list-selector:focus .list-selector-item.selected {
+  background-color: rgba(59, 189, 89, 0.3333333333);
+}
+.list-selector:focus .list-selector-item.cursor {
+  border-color: #3BBD59;
+}
+.list-selector .list-selector-item {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.list-selector .list-selector-item:hover {
+  background-color: rgba(130, 143, 172, 0.1333333333);
+}
+.list-selector .list-selector-item.selected {
+  background-color: rgba(130, 143, 172, 0.2666666667);
+}
+
+.tree-list {
+  display: flex;
+  flex-direction: column;
+  outline: none;
+  flex: 1;
+}
+.tree-list:focus .tree-list-item .tree-list-name.selected {
+  background-color: rgba(59, 189, 89, 0.3333333333);
+}
+.tree-list:focus .tree-list-item .tree-list-name.cursor {
+  border-color: #3BBD59;
+}
+.tree-list .tree-list-item > .tree-list-name {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid transparent;
+  font-size: 16px;
+  cursor: pointer;
+}
+.tree-list .tree-list-item > .tree-list-name > span {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tree-list .tree-list-item > .tree-list-name .collapse-container, .tree-list .tree-list-item > .tree-list-name .icon-container {
+  width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tree-list .tree-list-item > .tree-list-name .tree-list-icon {
+  width: auto;
+  height: 15px;
+  margin-right: 6px;
+}
+.tree-list .tree-list-item > .tree-list-name:hover {
+  background-color: rgba(130, 143, 172, 0.1333333333);
+}
+.tree-list .tree-list-item > .tree-list-name.selected {
+  background-color: rgba(130, 143, 172, 0.2666666667);
+}
+
+.resizeable {
+  position: relative;
+}
+.resizeable.horizontal {
+  padding-right: 4px;
+}
+.resizeable.horizontal .draghandle.vertical {
+  width: calc(100% - 4px);
+}
+.resizeable.vertical {
+  padding-bottom: 4px;
+}
+.resizeable.vertical .draghandle.horizontal {
+  height: calc(100% - 4px);
+}
+.resizeable .draghandle {
+  position: absolute;
+  min-width: 4px;
+  min-height: 4px;
+  background-color: rgba(255, 255, 255, 0.2117647059);
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
+.resizeable .draghandle:hover {
+  background-color: rgba(255, 255, 255, 0.5019607843);
+}
+.resizeable .draghandle.horizontal {
+  top: 0;
+  right: 0;
+  height: 100%;
+  cursor: ew-resize;
+}
+.resizeable .draghandle.vertical {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  cursor: ns-resize;
+}
+
 .context-menu-overlay {
   position: absolute;
   width: 100%;
@@ -329,42 +416,6 @@ select.modern > option {
 }
 .context-menu > span.button.disabled {
   opacity: 0.4;
-}
-
-.tree-list {
-  display: flex;
-  flex-direction: column;
-  outline: none;
-  flex: 1;
-}
-.tree-list:focus .tree-list-item .tree-list-name.selected {
-  background-color: rgba(59, 189, 89, 0.3333333333);
-}
-.tree-list:focus .tree-list-item .tree-list-name.cursor {
-  border-color: #3BBD59;
-}
-.tree-list .tree-list-item > .tree-list-name {
-  display: flex;
-  align-items: center;
-  padding: 5px;
-  border: 1px solid transparent;
-  font-size: 16px;
-  cursor: pointer;
-}
-.tree-list .tree-list-item > .tree-list-name > span {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tree-list .tree-list-item > .tree-list-name > .tree-list-icon {
-  width: auto;
-  height: 15px;
-  margin-right: 6px;
-}
-.tree-list .tree-list-item > .tree-list-name:hover {
-  background-color: rgba(130, 143, 172, 0.1333333333);
-}
-.tree-list .tree-list-item > .tree-list-name.selected {
-  background-color: rgba(130, 143, 172, 0.2666666667);
 }
 
 @keyframes highlight {
@@ -618,6 +669,17 @@ select.modern > option {
     opacity: 0;
   }
 }
+.wallet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.wallet .app {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
 div.password-route {
   display: flex;
   flex-direction: column;
@@ -638,17 +700,6 @@ div.password-route > .password-form {
 }
 div.password-route > .password-form > :not(:last-child) {
   margin-bottom: 10px;
-}
-
-.wallet {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.wallet .app {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
 }
 
 .status-bar {
@@ -688,7 +739,8 @@ div.password-route > .password-form > :not(:last-child) {
 .explorer .explorer-content {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
 }
 .explorer .details {
   display: flex;
@@ -795,6 +847,26 @@ div.password-route > .password-form > :not(:last-child) {
   overflow: auto;
 }
 
+.settings .settings-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: 500px;
+}
+.settings .settings-group {
+  flex: 3;
+  font-size: 16px;
+}
+.settings .settings-group .settings-item {
+  padding: 5px 20px;
+}
+.settings .settings-group .settings-item.settings-checkbox label {
+  cursor: pointer;
+}
+.settings .settings-group .settings-item.settings-number label {
+  margin-right: 10px;
+}
+
 @keyframes wave {
   0% {
     transform: scale(0.3, 0.3);
@@ -832,6 +904,13 @@ div.password-route > .password-form > :not(:last-child) {
   margin-top: 5px;
   opacity: 80%;
 }
+.connect .center-vertically .connect-box > .pin {
+  height: 30px;
+  margin-top: 6%;
+  font-weight: bold;
+  font-size: 24px;
+  font-family: monospace;
+}
 .connect .center-vertically .pairing > .sync .wave {
   animation-name: wave;
   animation-timing-function: linear;
@@ -839,7 +918,7 @@ div.password-route > .password-form > :not(:last-child) {
   animation-duration: 2s;
 }
 .connect .center-vertically .sync {
-  margin-top: 15%;
+  margin-top: 6%;
   display: flex;
   justify-content: center;
   position: relative;
@@ -902,21 +981,4 @@ div.password-route > .password-form > :not(:last-child) {
 }
 .connect .center-vertically .sync .sync-button > svg {
   width: 32px;
-}
-
-.settings .settings-list {
-  flex: 1;
-}
-.settings .settings-group {
-  flex: 3;
-  font-size: 16px;
-}
-.settings .settings-group .settings-item {
-  padding: 5px 20px;
-}
-.settings .settings-group .settings-item.settings-checkbox label {
-  cursor: pointer;
-}
-.settings .settings-group .settings-item.settings-number label {
-  margin-right: 10px;
 }
