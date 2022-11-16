@@ -51,7 +51,7 @@ export function WalletDetails (props: Props): JSX.Element {
               ))}
             </div>
           </div>
-          {sharedMemory.settings.developer.enableDeveloperFunctions === true ? (
+          {sharedMemory.settings.developer.enableDeveloperFunctions ? (
             <div className='details-param'>
               <span className='details-title'>Developer Functions</span>
               <div className='details-buttons'>

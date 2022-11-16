@@ -14,8 +14,10 @@ export function Connect (): JSX.Element {
   const [mem] = useSharedMemory()
   const pairing = mem.connectData.walletProtocol.connectString !== undefined
   let message = 'Click the button to start the protocol...'
+  let pin: string | undefined
   if (pairing) {
-    message = `Pairing... PIN: ${mem.connectData.walletProtocol.connectString as string}`
+    message = 'Pairing... PIN:'
+    pin = mem.connectData.walletProtocol.connectString as string
   }
 
   const startPairing = (): void => {
@@ -34,6 +36,7 @@ export function Connect (): JSX.Element {
         >
           <span className='title'>You can connect applications using the wallet protocol</span>
           <span className='message'>{message}</span>
+          <span className='pin'>{pin}</span>
           <div className='sync'>
             <div className='radar'>
               <Wave />
