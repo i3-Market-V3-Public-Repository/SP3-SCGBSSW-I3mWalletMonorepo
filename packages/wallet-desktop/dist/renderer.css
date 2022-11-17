@@ -175,6 +175,11 @@ select.modern > option {
   user-select: none; /* Unselectable text */
 }
 
+.content {
+  flex: 1;
+  font-size: 20px;
+}
+
 .nav {
   background-image: linear-gradient(to right bottom, #202531, #404A61 90%);
   display: flex;
@@ -216,11 +221,6 @@ select.modern > option {
 .nav .nav-icon-container:hover {
   opacity: 1;
   color: #3BBD59;
-}
-
-.content {
-  flex: 1;
-  font-size: 20px;
 }
 
 .horizontal-accordion {
@@ -629,6 +629,46 @@ select.modern > option {
     opacity: 0;
   }
 }
+.resizeable {
+  position: relative;
+}
+.resizeable.horizontal {
+  padding-right: 4px;
+}
+.resizeable.horizontal .draghandle.vertical {
+  width: calc(100% - 4px);
+}
+.resizeable.vertical {
+  padding-bottom: 4px;
+}
+.resizeable.vertical .draghandle.horizontal {
+  height: calc(100% - 4px);
+}
+.resizeable .draghandle {
+  position: absolute;
+  min-width: 4px;
+  min-height: 4px;
+  background-color: rgba(255, 255, 255, 0.2117647059);
+  right: 0;
+  bottom: 0;
+  cursor: nwse-resize;
+}
+.resizeable .draghandle:hover {
+  background-color: rgba(255, 255, 255, 0.5019607843);
+}
+.resizeable .draghandle.horizontal {
+  top: 0;
+  right: 0;
+  height: 100%;
+  cursor: ew-resize;
+}
+.resizeable .draghandle.vertical {
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  cursor: ns-resize;
+}
+
 .wallet {
   display: flex;
   flex-direction: column;
@@ -687,6 +727,142 @@ div.password-route > .password-form > :not(:last-child) {
 .status-bar .status-bar-item > .icon {
   width: 16px;
   margin-right: 5px;
+}
+
+@keyframes wave {
+  0% {
+    transform: scale(0.3, 0.3);
+  }
+  66% {
+    transform: scale(1.5, 1.5);
+  }
+  100% {
+    transform: scale(1.5, 1.5);
+  }
+}
+.connect {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.connect .center-vertically {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+.connect .center-vertically .connect-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+.connect .center-vertically .connect-box > .title {
+  font-size: 20px;
+  font-weight: bold;
+}
+.connect .center-vertically .connect-box > .message {
+  font-weight: 18px;
+  margin-top: 5px;
+  opacity: 80%;
+}
+.connect .center-vertically .connect-box > .pin {
+  height: 30px;
+  margin-top: 6%;
+  font-weight: bold;
+  font-size: 24px;
+  font-family: monospace;
+}
+.connect .center-vertically .pairing > .sync .wave {
+  animation-name: wave;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 2s;
+}
+.connect .center-vertically .sync {
+  margin-top: 6%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: 126px;
+}
+.connect .center-vertically .sync .radar {
+  position: absolute;
+  width: 208px;
+  height: 108px;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+  overflow: hidden;
+}
+.connect .center-vertically .sync .radar > * {
+  position: absolute;
+}
+.connect .center-vertically .sync .radar > .wave {
+  left: 0;
+  position: absolute;
+  width: 208px;
+  height: 208px;
+  border-radius: 100px;
+  transform: scale(0, 0);
+  background-image: radial-gradient(circle, rgba(210, 214, 225, 0) 50%, #D2D6E1);
+}
+.connect .center-vertically .sync .radar > .circle {
+  border: 4px solid #D2D6E1;
+  border-radius: 100px;
+}
+.connect .center-vertically .sync .radar > .circle.one {
+  width: 200px;
+  height: 200px;
+  opacity: 5%;
+}
+.connect .center-vertically .sync .radar > .circle.two {
+  width: 135px;
+  height: 135px;
+  top: 33px;
+  left: 33px;
+  opacity: 10%;
+}
+.connect .center-vertically .sync .radar > .circle.three {
+  width: 70px;
+  height: 70px;
+  top: 65px;
+  left: 65px;
+  opacity: 20%;
+}
+.connect .center-vertically .sync .sync-button {
+  padding: 10px;
+  color: #202531;
+  background-color: #D2D6E1;
+  border-radius: 50px;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  top: 78px;
+  cursor: pointer;
+}
+.connect .center-vertically .sync .sync-button > svg {
+  width: 32px;
+}
+
+.settings .settings-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  max-width: 500px;
+}
+.settings .settings-group {
+  flex: 3;
+  font-size: 16px;
+}
+.settings .settings-group .settings-item {
+  padding: 5px 20px;
+}
+.settings .settings-group .settings-item.settings-checkbox label {
+  cursor: pointer;
+}
+.settings .settings-group .settings-item.settings-number label {
+  margin-right: 10px;
 }
 
 .explorer {
@@ -805,137 +981,4 @@ div.password-route > .password-form > :not(:last-child) {
 }
 .explorer .list-selector {
   overflow: auto;
-}
-
-.settings .settings-list {
-  flex: 1;
-}
-.settings .settings-group {
-  flex: 3;
-  font-size: 16px;
-}
-.settings .settings-group .settings-item {
-  padding: 5px 20px;
-}
-.settings .settings-group .settings-item.settings-checkbox label {
-  cursor: pointer;
-}
-.settings .settings-group .settings-item.settings-number label {
-  margin-right: 10px;
-}
-
-@keyframes wave {
-  0% {
-    transform: scale(0.3, 0.3);
-  }
-  66% {
-    transform: scale(1.5, 1.5);
-  }
-  100% {
-    transform: scale(1.5, 1.5);
-  }
-}
-.connect {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-.connect .center-vertically {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-}
-.connect .center-vertically .connect-box {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-.connect .center-vertically .connect-box > .title {
-  font-size: 20px;
-  font-weight: bold;
-}
-.connect .center-vertically .connect-box > .message {
-  font-weight: 18px;
-  margin-top: 5px;
-  opacity: 80%;
-}
-.connect .center-vertically .connect-box > .pin {
-  height: 30px;
-  margin-top: 6%;
-  font-weight: bold;
-  font-size: 24px;
-  font-family: monospace;
-}
-.connect .center-vertically .pairing > .sync .wave {
-  animation-name: wave;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-  animation-duration: 2s;
-}
-.connect .center-vertically .sync {
-  margin-top: 6%;
-  display: flex;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-  height: 126px;
-}
-.connect .center-vertically .sync .radar {
-  position: absolute;
-  width: 208px;
-  height: 108px;
-  border-top-left-radius: 100px;
-  border-top-right-radius: 100px;
-  overflow: hidden;
-}
-.connect .center-vertically .sync .radar > * {
-  position: absolute;
-}
-.connect .center-vertically .sync .radar > .wave {
-  left: 0;
-  position: absolute;
-  width: 208px;
-  height: 208px;
-  border-radius: 100px;
-  transform: scale(0, 0);
-  background-image: radial-gradient(circle, rgba(210, 214, 225, 0) 50%, #D2D6E1);
-}
-.connect .center-vertically .sync .radar > .circle {
-  border: 4px solid #D2D6E1;
-  border-radius: 100px;
-}
-.connect .center-vertically .sync .radar > .circle.one {
-  width: 200px;
-  height: 200px;
-  opacity: 5%;
-}
-.connect .center-vertically .sync .radar > .circle.two {
-  width: 135px;
-  height: 135px;
-  top: 33px;
-  left: 33px;
-  opacity: 10%;
-}
-.connect .center-vertically .sync .radar > .circle.three {
-  width: 70px;
-  height: 70px;
-  top: 65px;
-  left: 65px;
-  opacity: 20%;
-}
-.connect .center-vertically .sync .sync-button {
-  padding: 10px;
-  color: #202531;
-  background-color: #D2D6E1;
-  border-radius: 50px;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: 78px;
-  cursor: pointer;
-}
-.connect .center-vertically .sync .sync-button > svg {
-  width: 32px;
 }
