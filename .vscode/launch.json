@@ -8,7 +8,7 @@
       "cwd": "${workspaceFolder}/packages/wallet-desktop",
       "env": { "DEBUG": "*" },
       "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/electron",
-      "args" : ["./dist/main"],
+      "args" : ["--no-sandbox", "./dist/main"],
       "outputCapture": "std"
     }
   ]
