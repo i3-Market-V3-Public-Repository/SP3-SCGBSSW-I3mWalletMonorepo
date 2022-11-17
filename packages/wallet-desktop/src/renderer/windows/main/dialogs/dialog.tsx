@@ -20,6 +20,10 @@ interface FormIndicatorProps {
   formValues: Array<DialogOption<any> | undefined>
 }
 
+function escapeRegExp (str: string) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
 function FormIndicator (props: FormIndicatorProps): JSX.Element {
   const { order, tabIndex } = props
 
@@ -65,7 +69,8 @@ export function Dialog (props: DialogProps): JSX.Element {
   const title = props.title
   const allowCancel = props.allowCancel ?? true
   const onClose = props.onClose ?? (() => {})
-  const regex = new RegExp(`^(.*?)(${text.trim().split('').join(')(.*?)(')})(.*?)$`, 'gi')
+  const parsedText = escapeRegExp(text.trim())
+  const regex = new RegExp(`^(.*?)(${parsedText.split('').join(')(.*?)(')})(.*?)$`, 'gi')
 
   let message = props.message
   let options: Array<DialogOption<{}>> = []

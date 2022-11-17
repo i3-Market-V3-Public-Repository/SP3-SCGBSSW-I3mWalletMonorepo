@@ -26734,6 +26734,9 @@ function Wallet() {
         React.createElement(StatusBar, null)));
 }
 
+function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
 function FormIndicator(props) {
     const { order, tabIndex } = props;
     return (React.createElement("div", { className: 'form-indicator' },
@@ -26758,7 +26761,8 @@ function Dialog(props) {
     const title = props.title;
     const allowCancel = props.allowCancel ?? true;
     const onClose = props.onClose ?? (() => { });
-    const regex = new RegExp(`^(.*?)(${text.trim().split('').join(')(.*?)(')})(.*?)$`, 'gi');
+    const parsedText = escapeRegExp(text.trim());
+    const regex = new RegExp(`^(.*?)(${parsedText.split('').join(')(.*?)(')})(.*?)$`, 'gi');
     let message = props.message;
     let options = [];
     let hiddenText = false;
