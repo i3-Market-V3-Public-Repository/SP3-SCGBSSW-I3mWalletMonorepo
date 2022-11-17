@@ -1,4 +1,4 @@
-# Wallet protocol initiator example
+# Wallet pairing and use from a JS application
 
 This section contains a complete example on how to pair a JavaScript application running in a browser (hereby the initiator) with the i3M-Wallet app, and then interacting with the wallet from the JS app.
 
