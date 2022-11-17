@@ -25288,11 +25288,6 @@ function HorizontalAccordion(props) {
     return (React.createElement("div", { className: joinClassNames('horizontal-accordion', className), ...extraProps }, props.children));
 }
 
-function Fixed(props) {
-    const { className, ...extraProps } = props;
-    return (React.createElement("div", { className: joinClassNames('accordion-fixed', className), ...extraProps }, props.children));
-}
-
 function Extendible(props) {
     const { className, ...extraProps } = props;
     return (React.createElement("div", { className: joinClassNames('accordion-extendible', className), ...extraProps }, props.children));
@@ -25714,6 +25709,106 @@ function ContextMenu(props) {
 
 const useContextMenu = () => React.useContext(ContextMenuContext);
 
+const useFocus = () => {
+    const ref = React.useRef(null);
+    const focus = () => {
+        if (ref.current !== null) {
+            ref.current.focus();
+        }
+    };
+    return [ref, focus];
+};
+
+function usePresistentState(id, defaultValue) {
+    const localStorageIdentifier = id;
+    const localStorageState = localStorage.getItem(localStorageIdentifier);
+    let initialValue;
+    if (localStorageState === null) {
+        initialValue = defaultValue;
+    }
+    else {
+        try {
+            initialValue = JSON.parse(localStorageState);
+        }
+        catch (ex) {
+            initialValue = defaultValue;
+            console.warn('Error parsing localstorage', ex);
+        }
+    }
+    const [state, setState] = React.useState(initialValue);
+    return [state, (newStateDispatch) => {
+            let newState;
+            if (newStateDispatch instanceof Function) {
+                newState = newStateDispatch(state);
+            }
+            else {
+                newState = newStateDispatch;
+            }
+            localStorage.setItem(localStorageIdentifier, JSON.stringify(newState));
+            setState(newState);
+        }];
+}
+
+function Resizeable(props) {
+    const { stateId, children, className, resizeHeight: inResizeHeight, resizeWidth: inResizeWidth, ...extraProps } = props;
+    const resizeWidth = inResizeWidth ?? false;
+    const resizeHeight = inResizeHeight ?? false;
+    const style = {};
+    const classNames = [className];
+    const [size, setSize] = usePresistentState(stateId, { width: 400, height: 300 });
+    const element = React.useRef(null);
+    if (resizeWidth) {
+        style.width = size.width;
+        classNames.push('horizontal');
+    }
+    if (resizeHeight) {
+        style.height = size.height;
+        classNames.push('vertical');
+    }
+    const horizontalHandler = (start, end) => ({
+        width: end.width - start.width
+    });
+    const verticalHandler = (start, end) => ({
+    // height: curr.height - start.pageY + end.pageY
+    });
+    const vhHandler = (start, end) => ({
+    // width: curr.width - start.pageX + end.pageX,
+    // height: curr.height - start.pageY + end.pageY
+    });
+    const handlerBuilder = (handler) => {
+        return (mouseDownEvent) => {
+            function onMouseMove(mouseMoveEvent) {
+                if (element.current !== null) {
+                    const start = {
+                        height: element.current.offsetTop,
+                        width: element.current.offsetLeft
+                    };
+                    const end = {
+                        height: mouseMoveEvent.pageY,
+                        width: mouseMoveEvent.pageX
+                    };
+                    console.log(start, end);
+                    setSize((state) => {
+                        return Object.assign({}, state, handler(start, end));
+                    });
+                }
+            }
+            function onMouseUp() {
+                document.body.removeEventListener('mousemove', onMouseMove);
+                // uncomment the following line if not using `{ once: true }`
+                // document.body.removeEventListener("mouseup", onMouseUp);
+            }
+            document.body.addEventListener('mousemove', onMouseMove);
+            document.body.addEventListener('mouseup', onMouseUp, { once: true });
+        };
+    };
+    return (React.createElement("div", { className: joinClassNames('resizeable', ...classNames), ref: element, style: style, ...extraProps },
+        children,
+        resizeWidth ? React.createElement("span", { className: 'draghandle horizontal', onMouseDown: handlerBuilder(horizontalHandler) }) : null,
+        resizeHeight ? React.createElement("span", { className: 'draghandle vertical', onMouseDown: handlerBuilder(verticalHandler) }) : null,
+        resizeWidth && resizeHeight ? React.createElement("span", { className: 'draghandle', onMouseDown: handlerBuilder(vhHandler) }) : null));
+}
+
 const { Redirect: Redirect$1 } = ReactRouterDOM;
 function Password() {
     const [state, setState] = React.useState({
@@ -25765,23 +25860,6 @@ function CurrentWallet() {
 function StatusBar() {
     return (React.createElement("div", { className: 'status-bar' },
         React.createElement(CurrentWallet, null)));
-}
-
-function usePresistentState(id, defaultValue) {
-    const localStorageIdentifier = id;
-    const localStorageState = localStorage.getItem(localStorageIdentifier);
-    let initialValue;
-    if (localStorageState === null) {
-        initialValue = defaultValue;
-    }
-    else {
-        initialValue = JSON.parse(localStorageState);
-    }
-    const [state, setState] = React.useState(initialValue);
-    return [state, (newState) => {
-            localStorage.setItem(localStorageIdentifier, JSON.stringify(newState));
-            setState(newState);
-        }];
 }
 
 function IdentityResource(props) {
@@ -26098,7 +26176,7 @@ function WalletDetails(props) {
 function Details(props) {
     const { item } = props;
     if (item === undefined) {
-        return null;
+        return React.createElement(Extendible, { className: 'details' });
     }
     const [sharedMemory] = useSharedMemory();
     switch (item.type) {
@@ -26385,7 +26463,7 @@ function Explorer() {
         wallets, sharedMemory, onSelect, dispatch
     });
     return (React.createElement(HorizontalAccordion, { className: 'explorer' },
-        React.createElement(Fixed, { className: 'explorer-content' },
+        React.createElement(Resizeable, { className: 'explorer-content', stateId: 'wallet.explorer.tree-list', resizeWidth: true },
             React.createElement(Section, { title: 'Wallets', operations: walletOperations },
                 React.createElement("div", { className: 'scroll', ref: listRef },
                     React.createElement(TreeList, { listRef: listRef, items: items, selectedState: selectedState, cursorState: cursorState, collapsedState: treeViewState })))),
@@ -26476,7 +26554,7 @@ function Settings() {
     const groups = Object.keys(settingsMetadatas);
     const [settingsGroup, setSettingsGroup] = React.useState(groups[0]);
     return (React.createElement(HorizontalAccordion, { className: 'settings' },
-        React.createElement(Fixed, { className: 'settings-list' },
+        React.createElement(Resizeable, { className: 'settings-list', stateId: 'wallet.settings.tree-list', resizeWidth: true },
             React.createElement(Section, { title: 'Settings' },
                 React.createElement(ListSelector, { selected: settingsGroup, items: groups, onSelect: setSettingsGroup }))),
         React.createElement(Extendible, { className: 'settings-group' }, settingsGroup !== undefined ? (React.createElement(Section, { title: settingsGroup }, settingsMetadatas[settingsGroup].map((metadata, i) => (React.createElement(SettingsItem, { key: i, metadata: metadata }))))) : null)));
@@ -26655,16 +26733,6 @@ function Wallet() {
                     React.createElement(Redirect, { to: defaultPath })))),
         React.createElement(StatusBar, null)));
 }
-
-const useFocus = () => {
-    const ref = React.useRef(null);
-    const focus = () => {
-        if (ref.current !== null) {
-            ref.current.focus();
-        }
-    };
-    return [ref, focus];
-};
 
 function FormIndicator(props) {
     const { order, tabIndex } = props;

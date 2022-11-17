@@ -1,5 +1,5 @@
 import { useSharedMemory } from '@wallet/renderer/communication'
-import { InterfaceObject } from '@wallet/renderer/components'
+import { Extendible, InterfaceObject } from '@wallet/renderer/components'
 
 import { IdentityDetails } from './identity'
 import { ResourceDetails } from './resource'
@@ -12,7 +12,7 @@ export interface Props {
 export function Details (props: Props): JSX.Element | null {
   const { item } = props
   if (item === undefined) {
-    return null
+    return <Extendible className='details' />
   }
 
   const [sharedMemory] = useSharedMemory()

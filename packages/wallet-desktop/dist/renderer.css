@@ -159,6 +159,11 @@ select.modern > option {
   background: rgba(109, 193, 105, 0.8);
 }
 
+::-webkit-scrollbar-corner {
+  background: rgba(166, 175, 196, 0.2);
+  border: 1px solid rgba(166, 175, 196, 0.3);
+}
+
 .window {
   display: flex;
   position: absolute;
@@ -168,11 +173,6 @@ select.modern > option {
   right: 0;
   bottom: 0;
   user-select: none; /* Unselectable text */
-}
-
-.content {
-  flex: 1;
-  font-size: 20px;
 }
 
 .nav {
@@ -216,6 +216,11 @@ select.modern > option {
 .nav .nav-icon-container:hover {
   opacity: 1;
   color: #3BBD59;
+}
+
+.content {
+  flex: 1;
+  font-size: 20px;
 }
 
 .horizontal-accordion {
@@ -624,6 +629,17 @@ select.modern > option {
     opacity: 0;
   }
 }
+.wallet {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.wallet .app {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
 div.password-route {
   display: flex;
   flex-direction: column;
@@ -644,17 +660,6 @@ div.password-route > .password-form {
 }
 div.password-route > .password-form > :not(:last-child) {
   margin-bottom: 10px;
-}
-
-.wallet {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-.wallet .app {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
 }
 
 .status-bar {
@@ -694,7 +699,8 @@ div.password-route > .password-form > :not(:last-child) {
 .explorer .explorer-content {
   display: flex;
   flex-direction: column;
-  flex: 1;
+  min-width: 200px;
+  max-width: 500px;
 }
 .explorer .details {
   display: flex;
