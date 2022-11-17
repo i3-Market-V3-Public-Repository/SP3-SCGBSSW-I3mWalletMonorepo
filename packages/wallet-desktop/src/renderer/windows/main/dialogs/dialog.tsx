@@ -69,8 +69,20 @@ export function Dialog (props: DialogProps): JSX.Element {
   const title = props.title
   const allowCancel = props.allowCancel ?? true
   const onClose = props.onClose ?? (() => {})
-  const parsedText = escapeRegExp(text.trim())
-  const regex = new RegExp(`^(.*?)(${parsedText.split('').join(')(.*?)(')})(.*?)$`, 'gi')
+
+  const parsedText = text
+    // Remove initial and final spaces
+    .trim()
+    // Split the string in characters
+    .split('')
+    // Espace each regex character
+    .map(escapeRegExp)
+    // Join all the characters again.
+    // We want to create regex groups for each character that the user typed.
+    // Then we use the matches of the selected options to highligth the matched
+    // letters.
+    .join(')(.*?)(')
+  const regex = new RegExp(`^(.*?)(${parsedText})(.*?)$`, 'gi')
 
   let message = props.message
   let options: Array<DialogOption<{}>> = []
