@@ -244,7 +244,7 @@ const session = await Session.fromJSON(transport, sessionObj)
 consumerWallet = new WalletApi(session)
 
 // Select an identity to use. In this example we get the one with alias set to 'consumer'
-const availableIdentities = await providerWallet.identityList({ alias: 'consumer' })
+const availableIdentities = await consumerWallet.identities.list({ alias: 'consumer' })
 
 // The consumer DID
 const consumerDid = availableIdentities[0]
