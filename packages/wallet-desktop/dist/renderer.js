@@ -26089,7 +26089,7 @@ function WalletDetails(props) {
                 React.createElement("div", { className: 'details-param' },
                     React.createElement("span", { className: 'details-title' }, "Wallet Functions"),
                     React.createElement("div", { className: 'details-buttons' }, walletFunctions.map((walletFunction, i) => (React.createElement("button", { disabled: !enabled, onClick: () => executeWalletFunction(walletFunction), key: i }, walletFunction.name))))),
-                sharedMemory.settings.developer.enableDeveloperFunctions === true ? (React.createElement("div", { className: 'details-param' },
+                sharedMemory.settings.developer.enableDeveloperFunctions ? (React.createElement("div", { className: 'details-param' },
                     React.createElement("span", { className: 'details-title' }, "Developer Functions"),
                     React.createElement("div", { className: 'details-buttons' }, developerFunctions.map((walletFunction, i) => (React.createElement("button", { disabled: !enabled, onClick: () => executeWalletFunction(walletFunction), key: i }, walletFunction.name)))))) : null,
                 !enabled ? React.createElement("span", null, "*To enable wallet functions, you must select this wallet fist") : null))));
@@ -26613,8 +26613,10 @@ function Connect() {
     const [mem] = useSharedMemory();
     const pairing = mem.connectData.walletProtocol.connectString !== undefined;
     let message = 'Click the button to start the protocol...';
+    let pin;
     if (pairing) {
-        message = `Pairing... PIN: ${mem.connectData.walletProtocol.connectString}`;
+        message = 'Pairing... PIN:';
+        pin = mem.connectData.walletProtocol.connectString;
     }
     const startPairing = () => {
         const action = walletProtocolPairingAction.create();
@@ -26625,6 +26627,7 @@ function Connect() {
             React.createElement("div", { className: joinClassNames('wallet-protocol', 'connect-box', pairing ? 'pairing' : undefined) },
                 React.createElement("span", { className: 'title' }, "You can connect applications using the wallet protocol"),
                 React.createElement("span", { className: 'message' }, message),
+                React.createElement("span", { className: 'pin' }, pin),
                 React.createElement("div", { className: 'sync' },
                     React.createElement("div", { className: 'radar' },
                         React.createElement(Wave, null),

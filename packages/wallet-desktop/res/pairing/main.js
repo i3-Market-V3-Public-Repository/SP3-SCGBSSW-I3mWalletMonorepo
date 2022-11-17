@@ -12,7 +12,7 @@
 /* eslint-disable */
 
 const { WalletProtocol, HttpInitiatorTransport } = walletProtocol
-const { openModal, LocalSessionManager } = walletProtocolUtils
+const { pinDialog, SessionManager } = walletProtocolUtils
 
 const main = async () => {
   const urlInput = document.getElementById('url-input')
@@ -25,9 +25,9 @@ const main = async () => {
   const removeButton = document.getElementById('remove-button')
   const queryButton = document.getElementById('query-button')
 
-  const transport = new HttpInitiatorTransport({ getConnectionString: openModal })
+  const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
   const protocol = new WalletProtocol(transport)
-  const sessionManager = new LocalSessionManager(protocol)
+  const sessionManager = new SessionManager({protocol})
 
   sessionManager
     .$session

@@ -1141,10 +1141,10 @@ components:
         - data
     VerificationOutput: *ref_26
     ProviderData: *ref_27
+    ApiError: *ref_1
     EthereumAddress: *ref_3
     did: *ref_0
     IdentityData: *ref_28
-    ApiError: *ref_1
     CompactJWS: *ref_4
     DataExchangeAgreement: *ref_5
     DataSharingAgreement: *ref_29

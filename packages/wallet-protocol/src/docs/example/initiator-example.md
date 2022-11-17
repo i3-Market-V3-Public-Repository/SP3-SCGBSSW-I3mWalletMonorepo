@@ -1,15 +1,24 @@
 # Wallet protocol initiator example
 
-This section contains a complete example on how to use all the wallet-protocol packages (@i3m/wallet-protocol, @i3m/wallet-protocol-utils and @i3m/wallet-protocol-api) from the browser point of view.
+This section contains a complete example on how to pair a JavaScript application running in a browser (hereby the initiator) with the i3M-Wallet app.
 
-## Preparing the environment
+It first initializes a `transport` object, which defines how messages are exchanged between the to peers of the protocol, namely the initiator (a JS app) and the wallet.
 
-First we have to start a Node.js project:
+## Installation
 
-```bash
-npm init -y
+We are going to need the following packages:
+
+- [`@i3m/wallet-protocol`](../../)
+- [`@i3m/wallet-protocol-utils`](../../../wallet-protocol-utils/)
+- [`@i3m/wallet-protocol-api`](../../../wallet-protocol-api/)
+
+If using NPM, you can just install them from the NPM.js public repository with:
+
+```console
 npm i @i3m/wallet-protocol @i3m/wallet-protocol-api @i3m/wallet-protocol-utils
 ```
+
+Otherwise, you can just download the browser bundles (see each package's documentation)
 
 ## Node.js
 
@@ -17,9 +26,11 @@ For simplicity, we will start with an example using Node.js.
 
 ### Creating a transport
 
-The first thing we have to do is to initialize a transport object. These objects define how does the protocol send the messages to the other agent.
+The first thing we have to do is to initialize the initiator's transport object. The `transport` object defines how messages are exchanged between the two peers of the protocol, namely the initiator (a JS app) and the wallet.
 
-In this case we have to use an initiator transport, because we are the initiator agent. We also have to use an HTTP transport as it is the protocol we are using to send the messages.
+Put the i3M-Wallet in pairing mode, it will show a PIN. The initiators' `transport` object should be initialized with that PIN. Therefore, it requires a `getConnectionString` function that resolves to the user-provided PIN.
+
+In Node.js we could use the command line to retrieve the PIN, while in a browser 
 
 As previously seen in the general flow of the protocol, the initiator needs the PIN. Transports should be initialized with the `getConnectionString(): Promise<string>` callback function. This function is called when the protocol is executed. As we are using a Node.js application, we will get the PIN reading the `stdin` stream. The code will look like:
 
@@ -46,7 +57,7 @@ const transport = new HttpInitiatorTransport({ getConnectionString: getConsolePi
 
 ### Executing the protocol
 
-After the transport is properly initialized we can execute the protocol. The result is a session object. Sessions contain all the cryptographic information to create a secure channel.
+After the transport is properly initialized, we can execute the protocol. The result is a session object. Sessions contain all the cryptographic information to create a secure channel.
 
 ```javascript
 const { WalletProtocol, HttpInitiatorTransport } = require('@i3m/wallet-protocol')
@@ -258,7 +269,7 @@ async function query() {
 ```javascript
 const { WalletProtocol, HttpInitiatorTransport, Session } = walletProtocol
 const { WalletApi } = walletProtocolApi
-const { openModal, LocalSessionManager } = walletProtocolUtils
+const { pinDialog, SessionManager } = walletProtocolUtils
 
 let sessionManager
 
@@ -267,7 +278,7 @@ async function main() {
   const transport = new HttpInitiatorTransport({ getConnectionString: openModal })
   const protocol = new WalletProtocol(transport)
 
-  sessionManager = new LocalSessionManager(protocol)
+  sessionManager = new SessionManager(protocol)
   sessionManager
     .$session
     // This function is called each time 

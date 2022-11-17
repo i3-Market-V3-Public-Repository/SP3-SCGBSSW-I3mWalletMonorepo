@@ -1,6 +1,10 @@
 import { Store, BaseWalletModel } from '../../app';
 /**
- * A class that implements a storage in a file to be used by a wallet
+ * A class that implements a storage for the wallet in a single file. The server wallet uses a file as storage.
+ *
+ * `filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
+ *
+ * The wallet's storage-file can be encrypted for added security by passing an optional `password`.
  */
 export declare class FileStore implements Store<BaseWalletModel> {
     filepath: string;

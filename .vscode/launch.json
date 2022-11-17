@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/packages/wallet-desktop",
-      "env": { "DEBUG": "@i3m/*" },
+      "env": { "DEBUG": "*" },
       "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/electron",
       "args" : ["./dist/main"],
       "outputCapture": "std"

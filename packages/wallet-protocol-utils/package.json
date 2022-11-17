@@ -1,9 +1,17 @@
 {
   "name": "@i3m/wallet-protocol-utils",
   "version": "2.2.2",
-  "description": "A set of utilities to use wallet protocol on browsers including a PIN input modal and a local storage session manager",
+  "description": "A set of utilities for the wallet protocol. It includes dialogs for setting the PIN in browser JS apps and Node.js, and session managers for managing wallet-protocol's session obtained after successful pairing with an i3M-Wallet desktop app.",
+  "keywords": [
+    "i3-MARKET",
+    "i3M-Wallet",
+    "Wallet",
+    "Pairing"
+  ],
+  "license": "EUPL-1.2",
   "contributors": [
-    "Fernando Román García <fernando.roman@upc.edu>"
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrano <j.hernandez@upc.edu>"
   ],
   "author": "Fernando Román García <fernando.roman@upc.edu>",
   "repository": {
@@ -11,6 +19,7 @@
     "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
     "directory": "packages/wallet-protocol-utils"
   },
+  "type": "module",
   "types": "./types/index.d.ts",
   "main": "./dist/cjs/index.node.cjs",
   "browser": "./dist/esm/index.browser.js",
@@ -19,7 +28,8 @@
     ".": {
       "node": {
         "require": "./dist/cjs/index.node.cjs",
-        "import": "./dist/esm/index.node.js"
+        "import": "./dist/esm/index.node.js",
+        "module": "./dist/esm/index.node.js"
       },
       "default": "./dist/esm/index.browser.js"
     },
@@ -28,32 +38,103 @@
     "./umd-browser-bundle": "./dist/bundles/umd.js",
     "./types": "./types/index.d.ts"
   },
+  "imports": {
+    "#pkg": {
+      "import": "./dist/esm/index.node.js",
+      "require": "./dist/cjs/index.node.cjs"
+    }
+  },
   "directories": {
     "build": "./build",
     "dist": "./dist",
     "docs": "./docs",
     "src": "./src",
-    "test": "./test"
+    "test": "./test",
+    "benchmark": "./benchmark",
+    "mocha-ts": "./.mocha-ts"
   },
   "scripts": {
-    "build": "rollup -c ./build/rollup.config.js",
-    "preversion": "npm run build",
-    "test": "echo \"Warning: You must specify tests for this package\""
+    "build": "npm run lint:src && npm run build:js && npm run docs",
+    "build:js": "rollup -c build/rollup.config.js",
+    "clean": "rimraf .mocha-ts coverage dist types docs",
+    "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",
+    "docs": "node build/build.docs.cjs",
+    "git:add": "git add -A",
+    "lint": "ts-standard --fix",
+    "lint:src": "ts-standard --fix 'src/**/!(*.spec).ts'",
+    "lint:test": "ts-standard --fix '{test/**/*.ts,src/**/*.spec.ts}'",
+    "mocha-ts": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./build/bin/mocha-ts.cjs ",
+    "mocha-ts:cjs": "node ./build/bin/mocha-ts.cjs --commonjs ",
+    "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
+    "mocha-ts:browser": "node build/testing/browser/index.cjs ",
+    "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
+    "preversion": "npm run build && npm test",
+    "version": "npm run docs && git add -A",
+    "test": "echo \"Warning: You must specify tests for this package\"",
+    "test:browser": "npm run mocha-ts:browser-headless ",
+    "test:node-cjs": "npm run mocha-ts:cjs ",
+    "test:node-esm": "npm run mocha-ts ",
+    "watch": "npm run mocha-ts:watch "
   },
-  "keywords": [],
-  "license": "EUPL-1.2",
+  "ts-standard": {
+    "project": "tsconfig.json",
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "IS_BROWSER",
+      "browser",
+      "page",
+      "chai"
+    ],
+    "ignore": [
+      "dist/**/*",
+      "examples/**/*",
+      "types/**/*",
+      "benchmark/**/*"
+    ]
+  },
+  "nodeBrowserSkel": {
+    "badges": {
+      "workflow": true,
+      "coveralls": false
+    },
+    "git": {
+      "branch": "public"
+    }
+  },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^22.0.0",
-    "@rollup/plugin-node-resolve": "^13.2.1",
-    "@rollup/plugin-typescript": "^8.3.2",
-    "rollup": "^2.70.2",
-    "rollup-plugin-dts-bundle-generator": "^1.3.1",
-    "rollup-plugin-typescript2": "^0.32.1",
-    "typescript": "^4.6.3"
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-multi-entry": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@types/chai": "^4.2.22",
+    "@types/mocha": "^10.0.0",
+    "c8": "^7.12.0",
+    "chai": "^4.3.3",
+    "dotenv": "^16.0.3",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.1",
+    "json5": "^2.2.0",
+    "minimatch": "^5.0.1",
+    "mocha": "^10.0.0",
+    "npm-run-all": "^4.1.5",
+    "pirates": "^4.0.1",
+    "puppeteer": "^19.1.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-import-css": "^3.0.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-standard": "^11.0.0",
+    "tslib": "^2.3.1",
+    "typedoc": "^0.23.0",
+    "typedoc-plugin-markdown": "^3.11.0",
+    "typescript": "^4.4.3"
   },
   "dependencies": {
     "@i3m/wallet-protocol": "^2.2.2",
-    "rollup-plugin-import-css": "^3.0.3",
     "rxjs": "^7.5.5"
   }
 }

@@ -1,6 +1,10 @@
 # Class: FileStore
 
-A class that implements a storage in a file to be used by a wallet
+A class that implements a storage for the wallet in a single file. The server wallet uses a file as storage.
+
+`filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
+
+The wallet's storage-file can be encrypted for added security by passing an optional `password`.
 
 ## Implements
 
@@ -40,7 +44,7 @@ A class that implements a storage in a file to be used by a wallet
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L19)
+[base-wallet/src/ts/impl/stores/file-store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L23)
 
 ## Properties
 
@@ -50,7 +54,7 @@ A class that implements a storage in a file to be used by a wallet
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L11)
+[base-wallet/src/ts/impl/stores/file-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L15)
 
 ___
 
@@ -60,7 +64,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L12)
+[base-wallet/src/ts/impl/stores/file-store.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L16)
 
 ## Methods
 
@@ -80,7 +84,7 @@ Store.clear
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L148)
+[base-wallet/src/ts/impl/stores/file-store.ts:152](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L152)
 
 ___
 
@@ -112,7 +116,7 @@ Delete an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:141](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L141)
+[base-wallet/src/ts/impl/stores/file-store.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L145)
 
 ___
 
@@ -139,7 +143,7 @@ Get an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:121](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L121)
+[base-wallet/src/ts/impl/stores/file-store.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L125)
 
 ___
 
@@ -171,7 +175,7 @@ Check if an item exists.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:135](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L135)
+[base-wallet/src/ts/impl/stores/file-store.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L139)
 
 ___
 
@@ -198,4 +202,4 @@ Set an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:127](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/59ecfa8/packages/base-wallet/src/ts/impl/stores/file-store.ts#L127)
+[base-wallet/src/ts/impl/stores/file-store.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/3111bbd/packages/base-wallet/src/ts/impl/stores/file-store.ts#L131)

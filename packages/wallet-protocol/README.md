@@ -10,27 +10,52 @@ The protocol is based on the Bluetooth pairing. To create a secure channel, the 
 
 ![Wallet protocol summary](src/docs/protocol-summary.png)
 
-## Diagram
+## Installation
+
+`@i3m/wallet-protocol` can be imported to your project with `npm`:
+
+```console
+npm install @i3m/wallet-protocol
+```
+
+Then either require (Node.js CJS):
+
+```javascript
+const walletProtocol = require('@i3m/wallet-protocol')
+```
+
+or import (JavaScript ES module):
+
+```javascript
+import * as walletProtocol from '@i3m/wallet-protocol'
+```
+
+The appropriate version for browser or node is automatically exported.
+
+You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/wallet-protocol` in your project, just get the bundles from `node_modules/@i3m/wallet-protocol/dist/bundles/`.
+
+## Wallet pairing protocol's sequence diagram
 
 The complete wallet protocol sequence diagram is the following:
 
 ![Wallet protocol sequence diagram](src/docs/wallet-protocol-seq.png)
 
-## Libraries
+## Wallet protocol's related libraries
 
 There are 3 libraries related with the wallet protocol.
 
-| **Name**              | **Package**                  | **Description**                                                                                                      |
-|-----------------------|------------------------------|----------------------------------------------------------------------------------------------------------------------|
-| Wallet Protocol       | `@i3m/wallet-protocol`       | Main implementation of the wallet protocol                                                                           |
-| Wallet Protocol Utils | `@i3m/wallet-protocol-utils` | Utilities to execute the protocol. It includes:   - A modal to introduce the PIN   - A local storage session manager |
-| Wallet Protocol API   | `@i3m/wallet-protocol-api`   | A library that uses a wallet protocol session to call the wallet-desktop-openapi                                     |
+| **Name**              | **Package**                  | **Description**                            |
+|-----------------------|------------------------------|--------------------------------------------|
+| Wallet Protocol       | `@i3m/wallet-protocol`       | Main implementation of the wallet protocol, which after successful pairing creates a secure session between the initiator (a JavaScript application) and an i3M-Wallet |
+| Wallet Protocol Utils | `@i3m/wallet-protocol-utils` | Utilities to execute the protocol. It includes:<ul><li>A modal to introduce the PIN</li><li>A local storage session manager (for browsers)</li></ul> |
+| Wallet Protocol API   | `@i3m/wallet-protocol-api`   | A library that uses a wallet protocol session to call the [`wallet-desktop-openapi`](../../../wallet-desktop-openapi/)  |
 
 ### @i3m/wallet-protocol
 
 Create a session with a wallet:
 
 ```typescript
+import { openModal, LocalSessionManager } from '@i3m/wallet-protocol-utils'
 import { HttpInitiatorTransport, WalletProtocol } from '@i3m/wallet-protocol'
 
 // openModal is a function that returns a Promise<string> that resolves to the PIN
