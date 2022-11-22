@@ -1,9 +1,9 @@
 import { app, BrowserWindow, session, dialog } from 'electron'
 import path from 'path'
-import { generateSecret, exportJWK, importJWK, JWK } from 'jose'
+import { importJWK, JWK } from 'jose'
 import packageJson from '../../package.json'
 
-import { initContext, Provider } from '@wallet/lib'
+import { initContext } from '@wallet/lib'
 
 import {
   logger,
@@ -13,7 +13,6 @@ import {
   ApiManager,
   MainContext,
   FeatureManager,
-  initSettings,
   SharedMemoryManager,
   WalletFactory,
   ElectronDialog,
@@ -22,72 +21,17 @@ import {
   ActionReducer,
   LocalAuthentication,
   ConnectManager,
-  VersionManager
+  VersionManager,
+  initPrivateSettings,
+  initPublicSettings
 } from './internal'
 
-function validProviders (providers: Provider[]): boolean {
-  if (providers === undefined || providers.length === 0) {
-    return false
-  }
-
-  // Creates an object which parameters say if all providers have this field set
-  const filledArguments = providers.reduce((prev, curr) => ({
-    name: prev.name || curr.name === undefined,
-    provider: prev.provider || curr.provider === undefined,
-    network: prev.network || curr.network === undefined,
-    rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined
-  }), { name: false, provider: false, network: false, rpcUrl: false })
-
-  return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
-}
-
-async function getAppSettings (locals: Locals): Promise<MainContext> {
+async function initApplication (ctx: MainContext, locals: Locals): Promise<void> {
   const sharedMemoryManager = new SharedMemoryManager()
   locals.sharedMemoryManager = sharedMemoryManager
 
-  const settings = initSettings({
-    cwd: app.getPath('userData')
-  }, sharedMemoryManager)
-  const providers = settings.get('providers')
-
-  // Setup default providers
-  if (!validProviders(providers)) {
-    settings.set('providers', [
-      { name: 'Rinkeby', provider: 'did:ethr:rinkeby', network: 'rinkeby', rpcUrl: 'https://rpc.ankr.com/eth_rinkeby' },
-      { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' }
-    ])
-  }
-
-  const wallet = settings.get('wallet')
-  wallet.packages = [
-    '@i3m/sw-wallet',
-    '@i3m/bok-wallet'
-  ]
-  settings.set('wallet', wallet)
-
-  const secret = settings.get('secret')
-  if (secret === undefined) {
-    const key = await generateSecret('HS256', { extractable: true })
-    const jwk = await exportJWK(key)
-    settings.set('secret', jwk)
-  }
-
-  // Syncronize shared memory and settings
-  sharedMemoryManager.update((mem) => ({
-    ...mem,
-    settings: settings.store
-  }))
-  sharedMemoryManager.on('change', (mem) => {
-    settings.set(mem.settings)
-  })
-
-  locals.settings = settings
-
-  const ctx = initContext<MainContext>({
-    appPath: path.resolve(__dirname, '../../')
-  })
-
-  return ctx
+  const publicSettings = await initPublicSettings({ cwd: ctx.settingsPath }, locals)
+  locals.publicSettings = publicSettings
 }
 
 async function initActions (ctx: MainContext, locals: Locals): Promise<void> {
@@ -146,6 +90,11 @@ async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
   locals.auth = auth
 
   await auth.authenticate()
+
+  const settings = await initPrivateSettings({
+    cwd: ctx.settingsPath
+  }, locals)
+  locals.settings = settings
 }
 
 async function initFeatureManager (ctx: MainContext, locals: Locals): Promise<void> {
@@ -183,15 +132,23 @@ async function initWalletFactory (
  */
 async function onReady (): Promise<void> {
   const locals: Locals = { packageJson } as any
-  const ctx = await getAppSettings(locals)
+  const ctx = initContext<MainContext>({
+    appPath: path.resolve(__dirname, '../../'),
+    settingsPath: app.getPath('userData')
+  })
 
+  // Preauthentication initialization
+  await initApplication(ctx, locals)
   await initActions(ctx, locals)
   await initUI(ctx, locals)
   await initVersionManager(ctx, locals)
   await initFeatureManager(ctx, locals)
-  await initApi(ctx, locals)
 
+  // Authentication
   await initAuth(ctx, locals)
+
+  // Postauthentication initialization
+  await initApi(ctx, locals)
   await initWalletFactory(ctx, locals)
 
   // Launch UI

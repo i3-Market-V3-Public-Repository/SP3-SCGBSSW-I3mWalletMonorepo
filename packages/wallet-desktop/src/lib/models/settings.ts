@@ -38,19 +38,21 @@ export interface AuthSettings {
   salt: string
 }
 
-export interface Settings {
-  version: string
+export interface PrivateSettings {
   wallet: WalletSettings
   providers: Provider[]
   developer: DeveloperSettings
   connect: WalletConnectSettings
-  auth?: AuthSettings
   secret?: JWK
 }
 
-export function createDefaultSettings (): Settings {
+export interface PublicSettings {
+  version: string
+  auth?: AuthSettings
+}
+
+export function createDefaultPrivateSettings (): PrivateSettings {
   return {
-    version: '',
     wallet: {
       wallets: {},
       packages: ['@i3m/sw-wallet']

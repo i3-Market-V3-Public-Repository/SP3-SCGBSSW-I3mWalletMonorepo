@@ -18,6 +18,8 @@ export class LocalAuthentication {
 
   protected pekSettings: PbkdfSettings
   protected authSettings: PbkdfSettings
+
+  // pek stands for pree encryption key
   protected pek?: Buffer
 
   constructor (protected locals: Locals) {
@@ -125,7 +127,7 @@ export class LocalAuthentication {
       salt: salt.toString('base64'),
       localAuth: Buffer.from(localAuth).toString('base64')
     }
-    this.locals.settings.set('auth', auth)
+    this.locals.publicSettings.set('auth', auth)
 
     this.pek = Buffer.from(await this.deriveKey(validPassword, salt, this.pekSettings))
   }
@@ -148,9 +150,9 @@ export class LocalAuthentication {
   }
 
   async authenticate (): Promise<void> {
-    const { settings } = this.locals
+    const { publicSettings } = this.locals
 
-    const auth = settings.get('auth')
+    const auth = publicSettings.get('auth')
     if (auth === undefined) {
       await this.initializePassword()
     } else {
@@ -175,5 +177,19 @@ export class LocalAuthentication {
     const wk = await this.deriveKey(this.pek, salt.subarray(0, 15), wkSettings)
 
     return Buffer.from(wk)
+  }
+
+  async computeSettingsKey (): Promise<Buffer> {
+    if (this.pek === undefined) {
+      throw new Error('cannot compute wallet key before a correct application authentication')
+    }
+    const wkSettings: PbkdfSettings = {
+      ...this.pekSettings,
+      usage: 'sek'
+    }
+
+    const sek = await this.deriveKey(this.pek, Buffer.alloc(16), wkSettings)
+
+    return Buffer.from(sek)
   }
 }
