@@ -223,25 +223,39 @@ const consumerJwks = await {{PKG_CAMELCASE}}.generateKeys('ES256')
 
 > We will assume that the consumer is using the i3-MARKET Wallet Desktop App
 
-For connecting to the i3M-Wallet application, you need to pair with the wallet in order to obtain a session token:
-
-- Set your wallet in pairing mode. A PIN appears in the screen
-- Connect a browser to http://localhost:29170/pairing
-  - If session is ON (PIN is not requested), click "Remove session" and then "Start protocol"
-  - Fill in the PIN
-  - After successful pairing, click "Session to clipboard"
-- Paste the copied session to create a `sessionObj`
+For connecting to the i3M-Wallet application, you need to pair first the NRP JS app with the wallet. We are using next a similar approach to [this example](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/blob/public/packages/wallet-protocol/src/docs/example/initiator-example.md):
   
 ```typescript
-import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
+import { WalletProtocol, HttpInitiatorTransport } from '@i3m/wallet-protocol'
+import { pinDialog, SessionManager } from '@i3m/wallet-protocol-utils'
 import { WalletApi } from '@i3m/wallet-protocol-api'
 
-const sessionObj = JSON.parse('<PASTE HERE>')
+...
+// NEXT CODE IS RUN INSIDE AN ASYNC FUNCTION!
+const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
 
-// Setup consumer wallet
-const transport = new HttpInitiatorTransport()
-const session = await Session.fromJSON(transport, sessionObj)
-consumerWallet = new WalletApi(session)
+const protocol = new WalletProtocol(transport)
+const sessionManager = new SessionManager({ protocol })
+
+sessionManager
+  .$session
+  // We can subscribe to events when the session is deleted/end and when a new one is created
+  .subscribe((session) => {
+    if (session !== undefined) {
+      console.log('New session loaded')
+    } else {
+      console.log('Session deleted')
+    }
+  })
+
+// Loads the current stored session (if any). Use it to recover a previously created session
+await sessionManager.loadSession()
+
+// creates a secure session (if it does not exist yet)
+await sessionManager.createIfNotExists()
+
+// Setup the connection to the consumerWallet API
+const consumerWallet = new WalletApi(sessionManager.session)
 
 // Select an identity to use. In this example we get the one with alias set to 'consumer'
 const availableIdentities = await consumerWallet.identities.list({ alias: 'consumer' })
