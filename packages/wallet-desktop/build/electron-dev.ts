@@ -15,6 +15,7 @@ export class ElectronDev {
   started: boolean
   refreshLevel: RefreshLevel
 
+  electronDir: string
   mainDir: string
   libDir: string
   resDir: string
@@ -23,6 +24,7 @@ export class ElectronDev {
     this.started = false
     this.refreshLevel = RefreshLevel.none
 
+    this.electronDir = path.resolve(paths.root)
     this.mainDir = path.resolve(paths.dist, 'src', 'main')
     this.libDir = path.resolve(paths.dist, 'src', 'lib')
     this.resDir = path.resolve(paths.dist, 'res')
@@ -32,7 +34,7 @@ export class ElectronDev {
     const electronConnect = require('electron-connect') // eslint-disable-line
     this.electronServer = electronConnect.server.create({
       electron,
-      path: this.mainDir
+      path: this.electronDir
     })
   }
 
