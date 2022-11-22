@@ -33,38 +33,37 @@ Once we have a `transport` (and so the PIN is shared between the i3M-Wallet and 
 ```typescript
 import { WalletProtocol, HttpInitiatorTransport } from '@i3m/wallet-protocol'
 import { pinDialog, SessionManager } from '@i3m/wallet-protocol-utils'
+...
 
-async () => {
-  const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
+// BELOW CODE IS ASSUMED TO BE RUN FROM A ASYNC FUNCTION
+const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
 
-  const protocol = new WalletProtocol(transport)
+const protocol = new WalletProtocol(transport)
 
-  const sessionManager = new SessionManager({ protocol })
+const sessionManager = new SessionManager({ protocol })
 
-  sessionManager
-    .$session
-    // We can subscribe to events when the session is deleted/end and when a new one is created
-    .subscribe((session) => {
-      if (session !== undefined) {
-        console.log('New session loaded')
-      } else {
-        console.log('Session deleted')
-      }
-    })
+sessionManager
+  .$session
+  // We can subscribe to events when the session is deleted/end and when a new one is created
+  .subscribe((session) => {
+    if (session !== undefined) {
+      console.log('New session loaded')
+    } else {
+      console.log('Session deleted')
+    }
+  })
 
-  // Loads the current stored session (if any). Use it to recover a previously created session
-  await sessionManager.loadSession()
+// Loads the current stored session (if any). Use it to recover a previously created session
+await sessionManager.loadSession()
 
-  // creates a secure session (if it does not exist yet)
-  await sessionManager.createIfNotExists()
-}
-
-
+// creates a secure session (if it does not exist yet)
+await sessionManager.createIfNotExists()
 ```
 
 Obviously the session manager can also be used to remove a session:
 
 ```typescript
+// remove existing session
 await sessionManager.removeSession()
 ```
 
@@ -77,10 +76,11 @@ Once we have a secure session with the wallet, we can use it to interact with it
 import { WalletApi } from '@i3m/wallet-protocol-api'
 ...
 
-// We have already initialized a sessionManager and created a secure sessiot
+// Let us initialize a the object that implements interactions with thw Wallet HTTP API
 const walletApi = new WalletApi(sessionManager.session)
 
-// Let us query the identities in the wallet. Assuming we are in a async function
+// BELOW CODE IS ASSUMED TO BE RUN FROM A ASYNC FUNCTION
+// For example, let us query the identities in the wallet
 const identities = await walletApi.identities.list()
 
 console.log('List of all the identity DIDs', identities) 
