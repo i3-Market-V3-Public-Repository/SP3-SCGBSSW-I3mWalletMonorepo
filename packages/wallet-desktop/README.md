@@ -52,7 +52,7 @@ To proceed with the pairing, you should put your wallet in pairing mode. Just op
 
 To finish the pairing, you should manually type this PIN in the JS application. Follow the [`@i3m/wallet-protocol` documentation](../wallet-protocol/README.md) and/or the [pairing example documentation](../wallet-protocol/src/docs/example/initiator-example.md) to learn how to easily pair you JS application (either browser or node.js) to your wallet.
 
-> [ONLY FOR DEVELOPERS] You can generate a session token using the test pairing application built in the developer API. For more information got to [Settings](#settings). 
+> [ONLY FOR DEVELOPERS] You can generate a session token using the test pairing application built in the developer API. For more information got to [Settings](#settings).
 
 #### Settings
 
