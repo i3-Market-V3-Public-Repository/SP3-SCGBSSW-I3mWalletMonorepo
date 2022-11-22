@@ -1,5 +1,5 @@
 import { Resource, Identity, WalletMetadata, ToastOptions } from '@i3m/base-wallet'
-import { Settings, createDefaultSettings, DialogData, ConnectData } from '../internal'
+import { PrivateSettings, createDefaultPrivateSettings, DialogData, ConnectData } from '../internal'
 
 export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
@@ -11,7 +11,7 @@ export interface ToastData extends ToastOptions {
 
 export interface SharedMemory {
   hasStore: boolean
-  settings: Settings
+  settings: PrivateSettings
   identities: {
     [did: string]: Identity | undefined
   }
@@ -30,7 +30,7 @@ export interface SharedMemory {
 }
 
 export function createDefaultSharedMemory (values?: Partial<SharedMemory>): SharedMemory {
-  const settings = values?.settings ?? createDefaultSettings()
+  const settings = values?.settings ?? createDefaultPrivateSettings()
 
   return {
     hasStore: false,
