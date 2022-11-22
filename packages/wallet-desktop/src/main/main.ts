@@ -132,8 +132,11 @@ async function initVersionManager (ctx: MainContext, locals: Locals): Promise<vo
 
   if (await versionManager.needsUpdate()) {
     locals.toast.show({
-      message: `Your current version (${versionManager.currentVersion}) is outdated. Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'`,
-      type: 'warning'
+      message: 'Update pending...',
+      details: `Your current version (${versionManager.currentVersion}) is outdated. \n Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'.`,
+
+      type: 'warning',
+      timeout: 0 // never close this alert!
     })
   }
 }
