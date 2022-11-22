@@ -25,6 +25,10 @@ export default {
     await fs.copy(paths.res, path.resolve(paths.dist, 'res'))
   },
 
+  buildRenderer: async () => {
+    await concurrently(['npm:build:renderer'])
+  },
+
   buildSource: async ({ watch = false }) => {
     const npmMethod = watch ? 'watch' : 'build'
     await concurrently([`npm:${npmMethod}:main`, `npm:${npmMethod}:renderer`])

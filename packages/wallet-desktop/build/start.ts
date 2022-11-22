@@ -7,6 +7,9 @@ const main = async (): Promise<void> => {
   console.log('Copy resources...')
   await procedures.copyResources()
 
+  console.log('Build renderer')
+  await procedures.buildRenderer()
+
   console.log('Watch source files...')
   procedures.buildSource({ watch: true }).catch(err => {
     console.log('Cannot build source', err)
@@ -16,7 +19,7 @@ const main = async (): Promise<void> => {
   await procedures.start()
 
   process.on('SIGINT', () => {
-    // Stop all the runing listeners by force!
+    // Stop all the running listeners by force!
     // TODO: Maybe try kindly :)
     process.exit()
   })

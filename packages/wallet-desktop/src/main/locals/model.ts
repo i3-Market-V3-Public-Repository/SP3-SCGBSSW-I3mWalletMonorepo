@@ -1,5 +1,6 @@
 
 import { Dialog, Toast } from '@i3m/base-wallet'
+import packageJson from '../../../package.json'
 import {
   Tray,
   WalletFactory,
@@ -11,7 +12,8 @@ import {
   FeatureManager,
   ActionReducer,
   ConnectManager,
-  LocalAuthentication
+  LocalAuthentication,
+  VersionManager
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -29,4 +31,6 @@ export interface Locals {
   auth: LocalAuthentication
   connectManager: ConnectManager
   password: string
+  versionManager: VersionManager
+  packageJson: typeof packageJson
 }

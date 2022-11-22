@@ -23,8 +23,8 @@ export class ElectronDev {
     this.started = false
     this.refreshLevel = RefreshLevel.none
 
-    this.mainDir = path.resolve(paths.dist, 'main')
-    this.libDir = path.resolve(paths.dist, 'lib')
+    this.mainDir = path.resolve(paths.dist, 'src', 'main')
+    this.libDir = path.resolve(paths.dist, 'src', 'lib')
     this.resDir = path.resolve(paths.dist, 'res')
   }
 

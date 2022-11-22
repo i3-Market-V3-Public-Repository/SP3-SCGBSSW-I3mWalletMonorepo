@@ -1,6 +1,7 @@
 import { app, BrowserWindow, session, dialog } from 'electron'
 import path from 'path'
 import { generateSecret, exportJWK, importJWK, JWK } from 'jose'
+import packageJson from '../../package.json'
 
 import { initContext, Provider } from '@wallet/lib'
 
@@ -20,7 +21,8 @@ import {
   StartFeatureError,
   ActionReducer,
   LocalAuthentication,
-  ConnectManager
+  ConnectManager,
+  VersionManager
 } from './internal'
 
 function validProviders (providers: Provider[]): boolean {
@@ -33,7 +35,7 @@ function validProviders (providers: Provider[]): boolean {
     name: prev.name || curr.name === undefined,
     provider: prev.provider || curr.provider === undefined,
     network: prev.network || curr.network === undefined,
-    rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined,
+    rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined
   }), { name: false, provider: false, network: false, rpcUrl: false })
 
   return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
@@ -82,7 +84,7 @@ async function getAppSettings (locals: Locals): Promise<MainContext> {
   locals.settings = settings
 
   const ctx = initContext<MainContext>({
-    appPath: path.resolve(__dirname, '../')
+    appPath: path.resolve(__dirname, '../../')
   })
 
   return ctx
@@ -121,6 +123,19 @@ async function initUI (ctx: MainContext, locals: Locals): Promise<void> {
       locals.windowManager.openMainWindow()
     }
   })
+}
+
+async function initVersionManager (ctx: MainContext, locals: Locals): Promise<void> {
+  const versionManager = new VersionManager(locals)
+  await versionManager.initialize()
+  locals.versionManager = versionManager
+
+  if (await versionManager.needsUpdate()) {
+    locals.toast.show({
+      message: `Your current version (${versionManager.currentVersion}) is outdated. Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'`,
+      type: 'warning'
+    })
+  }
 }
 
 async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
@@ -164,11 +179,12 @@ async function initWalletFactory (
  * Desktop Wallet startup function
  */
 async function onReady (): Promise<void> {
-  const locals: Locals = {} as any
+  const locals: Locals = { packageJson } as any
   const ctx = await getAppSettings(locals)
 
   await initActions(ctx, locals)
   await initUI(ctx, locals)
+  await initVersionManager(ctx, locals)
   await initFeatureManager(ctx, locals)
   await initApi(ctx, locals)
 

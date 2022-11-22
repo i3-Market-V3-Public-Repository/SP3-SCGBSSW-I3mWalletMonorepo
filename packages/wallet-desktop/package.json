@@ -2,7 +2,7 @@
   "name": "wallet-desktop",
   "version": "2.2.2",
   "description": "A cross-platform wallet app",
-  "main": "dist/main/index.js",
+  "main": "dist/src/main",
   "scripts": {
     "start:dev": "ts-node -r dotenv/config build/start.ts",
     "build": "ts-node build/build.ts",
@@ -16,7 +16,7 @@
     "pack:mac": "npm run clean:rel && electron-builder --mac -p never",
     "pack:win": "npm run clean:rel && electron-builder --win --x64 --arm64 --ia32 -p never",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
-    "start": "electron ./dist/main",
+    "start": "electron .",
     "test": "echo \"Warning: You must specify tests for this package\"",
     "preversion": "npm run build"
   },
