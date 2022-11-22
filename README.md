@@ -21,12 +21,14 @@ npm i
 # for development of all packages
 npm run install:dev
 
-# for development of wallet:desktop
-npm run install:desktop
-
 # for development of libraries
 npm run install:libs
 
+# for development of wallet:desktop
+npm run install:desktop
 # Starts the i3M wallet desktop application
 npm start
+# Starts the i3M wallet desktop application in watch mode.
+# The running app will be auto updated while changing the code.
+npm start:watch
 ```

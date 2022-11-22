@@ -4,7 +4,7 @@
   "description": "A cross-platform wallet app",
   "main": "dist/src/main",
   "scripts": {
-    "start:dev": "ts-node -r dotenv/config build/start.ts",
+    "start:watch": "ts-node -r dotenv/config build/start.ts",
     "build": "ts-node build/build.ts",
     "build:main": "tsc -p ./src/main",
     "build:renderer": "rollup -c build/rollup.renderer.js",
