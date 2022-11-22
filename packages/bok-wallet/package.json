@@ -1,6 +1,6 @@
 {
   "name": "@i3m/bok-wallet",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "An implementation of the base wallet using a bag of keys (keys are independently created at random).",
   "keywords": [
     "wallet",
@@ -169,7 +169,7 @@
   },
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
-    "@i3m/base-wallet": "^2.2.2",
+    "@i3m/base-wallet": "^2.3.0",
     "debug": "^4.3.1",
     "did-jwt": "^5.2.0",
     "ethers": "^5.3.0",
