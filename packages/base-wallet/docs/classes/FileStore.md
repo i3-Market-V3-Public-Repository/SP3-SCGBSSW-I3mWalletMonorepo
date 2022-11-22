@@ -44,7 +44,7 @@ The wallet's storage-file can be encrypted for added security by passing an opti
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L23)
+[base-wallet/src/ts/impl/stores/file-store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L23)
 
 ## Properties
 
@@ -54,7 +54,7 @@ The wallet's storage-file can be encrypted for added security by passing an opti
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L15)
+[base-wallet/src/ts/impl/stores/file-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L15)
 
 ___
 
@@ -64,7 +64,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L16)
+[base-wallet/src/ts/impl/stores/file-store.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L16)
 
 ## Methods
 
@@ -84,7 +84,7 @@ Store.clear
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:152](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L152)
+[base-wallet/src/ts/impl/stores/file-store.ts:152](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L152)
 
 ___
 
@@ -116,7 +116,7 @@ Delete an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L145)
+[base-wallet/src/ts/impl/stores/file-store.ts:145](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L145)
 
 ___
 
@@ -143,7 +143,7 @@ Get an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L125)
+[base-wallet/src/ts/impl/stores/file-store.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L125)
 
 ___
 
@@ -175,7 +175,7 @@ Check if an item exists.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L139)
+[base-wallet/src/ts/impl/stores/file-store.ts:139](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L139)
 
 ___
 
@@ -202,4 +202,4 @@ Set an item.
 
 #### Defined in
 
-[base-wallet/src/ts/impl/stores/file-store.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fb538ee/packages/base-wallet/src/ts/impl/stores/file-store.ts#L131)
+[base-wallet/src/ts/impl/stores/file-store.ts:131](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/33db32f/packages/base-wallet/src/ts/impl/stores/file-store.ts#L131)

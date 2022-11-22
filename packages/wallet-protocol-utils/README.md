@@ -45,12 +45,6 @@ The appropriate version for browser or node is automatically exported.
 
 You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/wallet-protocol-utils` in your project, just get the bundles from `node_modules/@i3m/wallet-protocol-utils/dist/bundles/`.
 
-An example of usage could be:
-
-```typescript
-YOUR TYPESCRIPT EXAMPLE CODE HERE
-```
-
 ## API reference documentation
 
 [Check the API](docs/API.md)

@@ -2,12 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Main Process",
+      "name": "Debug i3M-Wallet desktop",
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
+      "env": { "DEBUG": "*" },
       "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-      "args" : ["./dist/main"],
+      "args" : ["--no-sandbox", "."],
       "outputCapture": "std"
     }
   ]

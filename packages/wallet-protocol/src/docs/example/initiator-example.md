@@ -34,36 +34,38 @@ Once we have a `transport` (and so the PIN is shared between the i3M-Wallet and 
 import { WalletProtocol, HttpInitiatorTransport } from '@i3m/wallet-protocol'
 import { pinDialog, SessionManager } from '@i3m/wallet-protocol-utils'
 
+async () => {
+  const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
 
-const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
+  const protocol = new WalletProtocol(transport)
 
-const protocol = new WalletProtocol(transport)
+  const sessionManager = new SessionManager({ protocol })
 
-const sessionManager = new SessionManager({protocol})
+  sessionManager
+    .$session
+    // We can subscribe to events when the session is deleted/end and when a new one is created
+    .subscribe((session) => {
+      if (session !== undefined) {
+        console.log('New session loaded')
+      } else {
+        console.log('Session deleted')
+      }
+    })
 
-sessionManager
-  .$session
-  // We can subscribe to events when the session is deleted/end and when a new one is created
-  .subscribe(async (session) => {
-    if (session !== undefined) {
-      console.log('New session loaded')
-    } else {
-      console.log('Session deleted')
-    }
-  })
+  // Loads the current stored session (if any). Use it to recover a previously created session
+  await sessionManager.loadSession()
 
-// Loads the current stored session (if any). Use it to recover a previously created session
-sessionManager.loadSession()
+  // creates a secure session (if it does not exist yet)
+  await sessionManager.createIfNotExists()
+}
 
-// creates a secure session (if it does not exist yet)
-sessionManager.createIfNotExists()
 
 ```
 
 Obviously the session manager can also be used to remove a session:
 
 ```typescript
-sessionManager.removeSession()
+await sessionManager.removeSession()
 ```
 
 ## Interacting with the wallet
@@ -76,10 +78,10 @@ import { WalletApi } from '@i3m/wallet-protocol-api'
 ...
 
 // We have already initialized a sessionManager and created a secure sessiot
-const api = new WalletApi(sessionManager.session)
+const walletApi = new WalletApi(sessionManager.session)
 
-// Let us query the identities in the wallet
-const identities = await api.identities.list()
+// Let us query the identities in the wallet. Assuming we are in a async function
+const identities = await walletApi.identities.list()
 
 console.log('List of all the identity DIDs', identities) 
 ```
