@@ -12,7 +12,7 @@ import { ServerWallet, serverWalletBuilder } from '#pkg'
 const debug = Debug('@i3m/server-wallet:test')
 
 describe('@i3m/server-wallet', function () {
-  this.timeout(10000)
+  this.timeout(60000)
 
   const identities: { [k: string]: string } = {}
   let wallet: ServerWallet

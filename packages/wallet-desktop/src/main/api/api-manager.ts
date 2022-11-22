@@ -21,7 +21,7 @@ export class ApiManager {
 
     // Network settings
     this.port = locals.connectManager.walletProtocolTransport.port
-    this.host = 'localhost'
+    this.host = '::1'
   }
 
   async initialize (): Promise<void> {

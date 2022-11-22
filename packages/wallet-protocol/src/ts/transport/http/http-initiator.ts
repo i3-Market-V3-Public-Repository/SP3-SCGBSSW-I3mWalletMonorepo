@@ -36,6 +36,7 @@ export class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, Http
         const postData = httpReq.body as string
         const req = http.request({
           path: `/${constants.RPC_URL_PATH}`,
+          host: this.opts.host,
           port,
           method: httpReq.method ?? 'POST',
           headers: {

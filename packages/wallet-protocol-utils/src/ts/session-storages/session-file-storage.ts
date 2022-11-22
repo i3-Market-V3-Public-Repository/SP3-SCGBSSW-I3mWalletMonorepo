@@ -24,7 +24,7 @@ export class SessionFileStorage implements SessionStorage {
   }
 
   private async init (): Promise<void> {
-    await mkdir(dirname(this.filepath), { recursive: true }).catch()
+    await mkdir(dirname(this.filepath), { recursive: true })
   }
 
   private kdf (password: string, salt: crypto.BinaryLike): Buffer {
@@ -88,19 +88,15 @@ export class SessionFileStorage implements SessionStorage {
   async getSessionData (): Promise<any> {
     await this.initialized
 
-    try {
-      let item: any
-      const fileBuf = await readFile(this.filepath)
-      if (this.password === undefined) {
-        item = fileBuf.toString('utf8')
-      } else {
-        item = await this.decryptToJson(fileBuf)
-      }
-      if (item === '') throw new Error('invalid storage file or invalid format')
-      return item
-    } catch (error) {
-      throw new Error('invalid storage file or invalid format')
+    let item: any
+    const fileBuf = await readFile(this.filepath)
+    if (this.password === undefined) {
+      item = fileBuf.toString('utf8')
+    } else {
+      item = await this.decryptToJson(fileBuf)
     }
+    if (item === '') throw new Error('invalid storage file or invalid format')
+    return item
   }
 
   async setSessionData (json: any): Promise<void> {
@@ -115,6 +111,6 @@ export class SessionFileStorage implements SessionStorage {
 
   async clear (): Promise<void> {
     await this.initialized
-    await rm(this.filepath)
+    await rm(this.filepath, { force: true })
   }
 }

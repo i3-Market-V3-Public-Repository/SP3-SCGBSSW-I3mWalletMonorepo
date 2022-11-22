@@ -72,7 +72,7 @@ export class SessionManager<T extends Transport = Transport> {
     await this.initialized
 
     this.session = session
-    if (session === undefined) {
+    if (session === undefined || session === null) {
       await this.storage.clear()
     } else {
       const sessionJson = session.toJSON()
@@ -85,10 +85,13 @@ export class SessionManager<T extends Transport = Transport> {
     await this.initialized
 
     let session: Session<T> | undefined
-    const sessionJson = this.storage.getSessionData()
-    if (sessionJson !== null) {
-      session = await Session.fromJSON(this.protocol.transport, sessionJson)
-    }
+    try {
+      const sessionJson = await this.storage.getSessionData()
+      if (sessionJson !== null) {
+        session = await Session.fromJSON(this.protocol.transport, sessionJson)
+      }
+    } catch (error) {}
+
     await this.setSession(session)
   }
 }

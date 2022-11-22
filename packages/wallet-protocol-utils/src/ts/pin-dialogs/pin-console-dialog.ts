@@ -14,7 +14,7 @@ export const pinConsoleDialog = async (options?: PinConsoleDialogOptions): Promi
   })
 
   const pin = await rl.question(query)
-
+  console.log(pin)
   rl.close()
 
   return pin

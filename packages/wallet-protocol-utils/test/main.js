@@ -8,7 +8,6 @@
 // phase3: secret verification
 // ultimo kdf pocas iteraciones
 
-/// <reference path="../typings/global.d.ts" />
 const MAP = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
 const base58 = {
   encode: function(B,A){var d=[],s="",i,j,c,n;for(i in B){j=0,c=B[i];s+=c||s.length^i?"":1;while(j in d||c){n=d[j];n=n?n*256+c:c;c=n/58|0;d[j]=n%58;j++}}while(j--)s+=A[d[j]];return s},

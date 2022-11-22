@@ -42,5 +42,5 @@
       "#pkg": ["."]
     }
   },
-  "include": ["src/ts/**/*", "build/typings/**/*.d.ts", "test/**/*", "test-vectors/**/*.ts", "benchmark/**/*.ts"]
+  "include": ["src/ts/**/*", "build/typings/**/*.d.ts", "test/**/*.ts", "test-vectors/**/*.ts", "benchmark/**/*.ts"]
 }

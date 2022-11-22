@@ -39,7 +39,7 @@ const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
 
 const protocol = new WalletProtocol(transport)
 
-sessionManager = new SessionManager(protocol)
+const sessionManager = new SessionManager({protocol})
 
 sessionManager
   .$session
