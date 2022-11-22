@@ -44,19 +44,15 @@ Users can also manage their identities. They are identifiers (DIDs) where users 
 
 #### Pairing
 
-Several browser applications from i3-market may require the use of your wallet. To securely use it, you should execute the pairing process. Typically, i3market application will show a formulary like this:
+Several applications from i3-market may require the use of your wallet. To securely use it, you should ´pair' them to your wallet using the [wallet protocol](../wallet-protocol/README.md).
 
-![Pairing pop up](./docs/img/pairing-pop-up.png).
-
-##### Wallet protocol
-
-To proceed with the pairing, you should put your wallet in pairing mode. To do so, open the wallet protocol app and click the pairing button. In pairing mode, the wallet protocol shows a PIN in the screen:
+To proceed with the pairing, you should put your wallet in pairing mode. Just open the wallet protocol app and click the pairing button, the wallet will temporarily show a PIN in the screen:
 
 ![Pairing](./docs/img/pairing.png)
 
-To finish the pairing, you should manually type this PIN inside the browser application.
+To finish the pairing, you should manually type this PIN in the JS application. Follow the [`@i3m/wallet-protocol` documentation](../wallet-protocol/README.md) and/or the [pairing example documentation](../wallet-protocol/src/docs/example/initiator-example.md) to learn how to easily pair you JS application (either browser or node.js) to your wallet.
 
-To test the pairing as a developer you can use the pairing application built in the developer API. For more information got to [Settings](#settings). If you want to implement the pairing process in your application, refer to the [`@i3m/wallet-protocol` documentation](../wallet-protocol/README.md).
+> [ONLY FOR DEVELOPERS] You can generate a session token using the test pairing application built in the developer API. For more information got to [Settings](#settings). 
 
 #### Settings
 
@@ -65,7 +61,7 @@ The **Settings** application lets users configure the application settings. The 
 ![Settings](./docs/img/settings.png)
 
 - **Developer**
-  - **Developer Functions**: shows wallet developer functions. To access to these functions go to the explorer app and select a wallet. In the details view, you will have now a new set of functions called developer functions.
+  - **Developer Functions**: shows wallet developer functions. To access these functions go to the explorer app and select a wallet. In the details view, you will have now a new set of functions called developer functions.
   - **Developer API**: enables the developer API. There are two applications.
     - OpenAPI browsable spec at <http://localhost:29170/api-spec/ui>
     - Pairing form at <http://localhost:29170/pairing>

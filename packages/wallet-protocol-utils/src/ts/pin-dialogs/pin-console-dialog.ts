@@ -6,7 +6,7 @@ import { PinConsoleDialogOptions } from '../types'
  * @returns a promise that resolves to the PIN
  */
 export const pinConsoleDialog = async (options?: PinConsoleDialogOptions): Promise<string> => {
-  const query = options?.message ?? 'Introduce the PIN:'
+  const query = options?.message ?? 'Introduce the PIN: '
   // Creates a readline interface and retrieves a string.
   const rl = readline.createInterface({
     input: process.stdin,

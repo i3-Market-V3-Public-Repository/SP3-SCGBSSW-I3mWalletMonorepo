@@ -22,30 +22,7 @@ You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDL
 
 ## Usage
 
-For connecting to the i3M-Wallet application, you need to pair with the wallet in order to obtain a session token:
-
-- Set your wallet in pairing mode. A PIN appears in the screen
-- Connect a browser to http://localhost:29170/pairing
-  - If session is ON (PIN is not requested), click "Remove session" and then "Start protocol"
-  - Fill in the PIN
-  - After successful pairing, click "Session to clipboard"
-
-Your clipboard now holds a JSON with a valid token agreed with the token.
-
-Now you can initiate a connection to the wallet as:
-  
-```typescript
-import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
-import { WalletApi } from '@i3m/wallet-protocol-api'
-
-const sessionObj = JSON.parse('<PASTE HERE>')
-
-const transport = new HttpInitiatorTransport()
-const session = await Session.fromJSON(transport, sessionObj)
-const wallet = new WalletApi(session)
-```
-
-> It is not recommended to hardcode the token in code, so do NOT use this example in production. Your JSON token should be securely stored/accessed.
+Read the documentation of the [`@i3m/wallet-protocol` package](../../../wallet-protocol/README.md) or go directly to the pairing example in [Wallet pairing and use from a JS application](../../../wallet-protocol/src/docs/example/initiator-example.md).
 
 ## API reference documentation
 

@@ -10,7 +10,7 @@ Several packages are provided in this repo, but you are likely only needing:
 
 - [**i3M Server Wallet**](./packages/server-wallet/). It is an interactionless wallet implementation not requiring any user interaction. It has been designed to be operated by a 'machine' or service. Current implementation is in TypeScript/JavaScript and ca be easily imported to your project with NPM/Yarn.
 - [**i3M-Wallet Desktop App**](https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/releases/latest). It is a desktop application (Windows, MacOS, and Linux) thought to be operated by end users. The app ca be securely paired to any application, allowing the application to interact with the wallet through an HTTP API. Wallet actions requested by any application will require explicit confirmation of the end-user through the app interface (window).
-- [**i3M Wallet Protocol API**](./packages/wallet-protocol-api/). A TypeScript/JavaScript library that can be used to easily connect to an i3M Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers.
+- [**i3M Wallet Protocol API**](./packages/wallet-protocol-api/). A TypeScript/JavaScript library that can be used to easily connect to an i3M Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers. Follow [the pairing example](packages/wallet-protocol/src/docs/example/initiator-example.md) to properly pair your JS application to the wallet and start using the Wallet API.
 
 ## i3M-Wallet DEVELOPERS ONLY
 

@@ -45,12 +45,6 @@ The appropriate version for browser or node is automatically exported.
 
 You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDLE}} and manually add it to your project, or, if you have already installed `{{PKG_NAME}}` in your project, just get the bundles from `node_modules/{{PKG_NAME}}/dist/bundles/`.
 
-An example of usage could be:
-
-```typescript
-YOUR TYPESCRIPT EXAMPLE CODE HERE
-```
-
 ## API reference documentation
 
 [Check the API](../../docs/API.md)
