@@ -67,4 +67,4 @@ The **Settings** application lets users configure the application settings. The 
     - Pairing form at <http://localhost:29170/pairing>
 - **Wallet Protocol**
   - **Enable token expiration**: for security reasons, the sessions for the wallet protocol have a limited time to life. By unselecting this option, session will last forever. This is useful for developing purposes and should never be enabled in a real environment.
-  - **Wallet protocol session TTL**: seconds that a wallet protocol session last. If the token expiration is not enabled this option is ignored.
+  - **Wallet protocol session TTL**: seconds that a wallet protocol session last. If the token expiration is not enabled, this option is ignored.
