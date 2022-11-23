@@ -1,15 +1,19 @@
 import { faAddressCard, faCode, faFileSignature, faQuestionCircle, faReceipt, faRightLeft, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3m/base-wallet'
 
-import { createIdentityAction, deleteIdentityAction, deleteResourceAction, exportResourceAction, importResourceAction, selectWalletAction, SharedMemory } from '@wallet/lib'
+import { createIdentityAction, deleteIdentityAction, deleteResourceAction, deleteWalletAction, exportResourceAction, importResourceAction, selectWalletAction, SharedMemory } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 import { InterfaceObject, Menu, TreeListItem } from '@wallet/renderer/components'
 import { ContextMenuItem } from '@wallet/renderer/components/context-menu/context-menu-item'
 
+type ItemEventHandler = (item: InterfaceObject) => void
+type DeleteEventHandler = () => void
+
 interface TreeListProps {
   wallets: string[]
   sharedMemory: SharedMemory
-  onSelect: (item: InterfaceObject) => void
+  onDelete: DeleteEventHandler
+  onSelect: ItemEventHandler
   dispatch: ActionDispatcher
 }
 
@@ -27,7 +31,7 @@ function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<a
     icon: faQuestionCircle,
     parent,
     children: resourceChildren,
-    ...getResourceProperties(resource, dispatch),
+    ...getResourceProperties(props, resource, dispatch),
     onSelect
   }
 
@@ -41,7 +45,7 @@ function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<a
   return resourceItem
 }
 
-function getResourceProperties (resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
+function getResourceProperties (props: TreeListProps, resource: Resource, dispatch: ActionDispatcher): Partial<TreeListItem> {
   const menuCopyItems: ContextMenuItem[] = [
     {
       type: 'button',
@@ -69,6 +73,7 @@ function getResourceProperties (resource: Resource, dispatch: ActionDispatcher):
     type: 'button',
     text: 'Delete',
     async onClick () {
+      props.onDelete()
       dispatch(deleteResourceAction.create(resource.id))
     }
   }]
@@ -110,7 +115,7 @@ function getResourceProperties (resource: Resource, dispatch: ActionDispatcher):
         icon: faRightLeft,
         menu
       }
-      
+
     case 'NonRepudiationProof':
       return {
         icon: faReceipt,
@@ -195,8 +200,11 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
         }, { type: 'separator' }, {
           type: 'button',
           text: 'Delete',
-          disabled: true,
-          async onClick () { }
+          // disabled: true,
+          async onClick () {
+            props.onDelete()
+            dispatch(deleteWalletAction.create(wallet))
+          }
         }]
       },
       onSelect,
@@ -250,6 +258,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
               type: 'button',
               text: 'Delete',
               async onClick () {
+                props.onDelete()
                 dispatch(deleteIdentityAction.create(identity.did))
               }
             }]

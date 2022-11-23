@@ -1,5 +1,6 @@
 import { Subject } from 'rxjs'
 import { Request, Response } from 'express'
+import Debug from 'debug'
 import { Action, ActionBuilder, GetAction, GetResponse } from '@wallet/lib'
 
 import { Locals, logger } from '../internal'
@@ -9,6 +10,8 @@ import { walletModule } from './wallet'
 import { connectModule } from './connect'
 import { systemModule } from './system'
 import { ActionResult } from './action-result'
+
+const debug = Debug('wallet-desktop:ActionReducer')
 
 export class ActionReducer {
   protected readonly action$: Subject<Action>
@@ -56,6 +59,7 @@ export class ActionReducer {
     const handler = this.handlers.get(action.type)
     let result: ActionResult | undefined
     if (handler !== undefined) {
+      debug(`Reducing action with type ${action.type as string}`)
       result = await handler.handle(action)
     }
 

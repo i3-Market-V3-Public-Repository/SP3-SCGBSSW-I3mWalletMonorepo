@@ -89,11 +89,11 @@ export class WalletFactory {
   async buildWallet (walletName: string): Promise<Wallet> {
     const { settings, featureContext, featureManager, dialog, toast } = this.locals
     const { wallets } = settings.get('wallet')
-    const providersData = settings.get('providers').reduce(
+    const providersData = settings.get('providers').reduce<Record<string, ProviderData>>(
       (prev, curr) => {
         prev[curr.provider] = curr
         return prev
-      }, {} as Record<string, ProviderData>)
+      }, {})
 
     const walletInfo = wallets[walletName]
     if (walletInfo === undefined) {
@@ -103,14 +103,14 @@ export class WalletFactory {
     try {
       // Init wallet features
       // Initialize all the features
-      await featureManager.clearFeatures(this.locals)
+      await featureManager.clearFeatures()
       const features = this.featuresByWallet[walletInfo.package]
       if (features !== undefined) {
         for (const feature of features) {
           featureManager.addFeature(feature)
         }
       }
-      await featureManager.start(this.locals)
+      await featureManager.start()
 
       // Initialize wallet
       const walletMain: WalletBuilder<any> = (await import(walletInfo.package)).default
@@ -137,6 +137,44 @@ export class WalletFactory {
 
       throw new InvalidWalletError(`Cannot load the wallet '${walletName}'`)
     }
+  }
+
+  async deleteWallet (walletName: string): Promise<void> {
+    const { settings } = this.locals
+    const { wallets, current } = settings.get('wallet')
+
+    const { [walletName]: walletInfo, ...newWallets } = wallets
+    if (walletInfo === undefined) {
+      throw new Error('Inconsistent data!')
+    }
+
+    // Create a floating feature manager
+    const featureManager = new FeatureManager(this.locals)
+    const features = this.featuresByWallet[walletInfo.package]
+    if (features !== undefined) {
+      for (const feature of features) {
+        featureManager.addFeature(feature)
+      }
+    }
+    await featureManager.delete(walletName)
+
+    console.log(newWallets)
+    let currentWallet = current
+    if (currentWallet === walletName) {
+      currentWallet = undefined
+    }
+
+    this.locals.sharedMemoryManager.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        wallet: {
+          ...mem.settings.wallet,
+          wallets: newWallets,
+          current: currentWallet
+        }
+      }
+    }))
   }
 
   async changeWallet (walletName: string): Promise<void> {

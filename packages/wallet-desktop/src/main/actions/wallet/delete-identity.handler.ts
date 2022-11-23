@@ -23,7 +23,7 @@ export const deleteIdentity: ActionHandlerBuilder<typeof deleteIdentityAction> =
       if (!walletFactory.hasWalletSelected) {
         locals.toast.show({
           message: 'Wallet not selected',
-          details: 'You must select a wallet before creating identities',
+          details: 'You must select a wallet before deleteing identities',
           type: 'warning'
         })
         return { response: undefined, status: 500 }

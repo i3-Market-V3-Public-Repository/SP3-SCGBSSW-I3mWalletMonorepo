@@ -56,14 +56,37 @@ const recoverStore = async (storeOptions: StoreOptions, locals: Locals): Promise
   return initStore(storeOptions)
 }
 
+interface FileInfo {
+  name: string
+  cwd: string
+  fileExtension: string
+}
+
+const buildStoreOptions = (walletName: string, opts: StoreFeatureOptions, locals: Locals): FileInfo => {
+  const { settings } = locals
+
+  const name = _.get(opts, 'name', 'wallet')
+  const storePath = _.get(opts, 'storePath', path.resolve(app.getPath('userData')))
+  const encryptionEnabled: boolean = _.get(opts, 'encryption.enabled', false)
+
+  const walletSettings = settings.get('wallet')
+  const walletArgs = walletSettings.wallets[walletName]
+  const storeId = walletArgs.store
+
+  return {
+    name: `${name}.${storeId}`,
+    cwd: storePath,
+    fileExtension: encryptionEnabled ? 'enc.json' : 'json'
+  }
+}
+
 export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
   name: 'store',
-  async start (opts, locals) {
+
+  async start (walletName, opts, locals) {
     const { settings, auth } = locals
     let store: Store | undefined
 
-    const name = _.get(opts, 'name', 'wallet')
-    const storePath = _.get(opts, 'storePath', path.resolve(app.getPath('userData')))
     const encryptionEnabled: boolean = _.get(opts, 'encryption.enabled', false)
 
     const walletSettings = settings.get('wallet')
@@ -73,11 +96,7 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
     const walletArgs = walletSettings.wallets[walletSettings.current]
     const storeId = walletArgs.store
 
-    const storeOptions: StoreOptions = {
-      name: `${name}.${storeId}`,
-      cwd: storePath,
-      fileExtension: encryptionEnabled ? 'enc.json' : 'json'
-    }
+    const storeOptions: StoreOptions = buildStoreOptions(walletName, opts, locals)
 
     if (encryptionEnabled) {
       storeOptions.encryptionKey = await auth.computeWalletKey(storeId)
@@ -100,7 +119,16 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
     locals.sharedMemoryManager.update((mem) => ({ ...mem, hasStore: true }))
   },
 
-  async stop (opts, locals) {
+  async delete (walletName, opts, locals) {
+    const storeOptions = buildStoreOptions(walletName, opts, locals)
+    const storeFullPath = `${storeOptions.cwd}/${storeOptions.name}.${storeOptions.fileExtension}`
+
+    if (fs.existsSync(storeFullPath)) {
+      fs.rmSync(storeFullPath)
+    }
+  },
+
+  async stop (walletName, opts, locals) {
     delete locals.featureContext.store
     locals.sharedMemoryManager.update((mem) => ({ ...mem, hasStore: false }))
   }
