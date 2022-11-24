@@ -11,19 +11,79 @@
     flex: 3;
     font-size: 16px;
 
-    .settings-item {
+    .settings-items {
       padding: 5px 20px;
 
-      &.settings-checkbox {
-        label {
-          cursor: pointer;
+      .settings-item {
+        display: flex;
+        flex-direction: column;
+        padding: 5px 5px;
+        width: 100%;
+
+        .settings-checkbox {
+          label {
+            cursor: pointer;
+          }
+        }
+
+        .settings-number, .settings-input {
+          display: flex;
+
+          > label {
+            margin-right: 10px;
+          }
+          > input {
+            flex: 1;
+            font-size: 16px;
+          }
         }
       }
 
-      &.settings-number {
-        label {    
-          margin-right: 10px;
+      .settings-array {
+        > :not(:first-child) {
+          margin-left: 10px;
         }
+
+        > label {
+          font-weight: bold;
+          font-size: 18px;
+          margin-bottom: 15px;
+        }
+
+        .settings-array-button {
+          height: 20px;
+          width: 20px;
+          padding: 5px;
+          border-radius: 10px;
+          background-color: #00000034;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #00000017;
+          }
+        }
+
+        .settings-array-item {
+          display: flex;
+        }
+      }
+
+      .settings-object {
+        > label {
+          font-weight: bold;
+        }
+
+        > .settings-object-properties {
+          margin-top: 10px;
+        }
+      }
+
+      .settings-description {
+        margin: 10px 0;
+        padding: 5px;
+        border: 1px solid black;
+        border-radius: 5px;
+        background: #FFFFFFAA;
       }
     }
   }

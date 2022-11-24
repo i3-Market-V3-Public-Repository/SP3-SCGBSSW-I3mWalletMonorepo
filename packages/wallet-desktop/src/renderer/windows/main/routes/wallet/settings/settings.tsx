@@ -1,4 +1,5 @@
 import { HorizontalAccordion, Extendible, Section, ListSelector, Resizeable } from '@wallet/renderer/components'
+import { developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
 import { SettingsItem } from './settings-item'
 import { SettingsMetadata } from './settings-metadata'
 
@@ -6,32 +7,13 @@ import './settings.scss'
 
 export function Settings (): JSX.Element {
   const settingsMetadatas: Record<string, SettingsMetadata[]> = {
-    Developer: [
-      {
-        label: 'Developer Functions',
-        type: 'checkbox',
-        key: 'developer.enableDeveloperFunctions'
-      },
-      {
-        label: 'Developer API (localhost:29170)',
-        type: 'checkbox',
-        key: 'developer.enableDeveloperApi'
-      }
-    ],
-    'Wallet Protocol': [
-      {
-        label: 'Enable Token expiration',
-        type: 'checkbox',
-        key: 'connect.enableTokenExpiration'
-      },
-      {
-        label: 'Wallet protocol session TTL',
-        type: 'number',
-        key: 'connect.tokenTTL'
-      }
-    ]
+    ...developerMetadata,
+    ...walletProtocolMetadata,
+    ...walletMetadata
   }
   const groups = Object.keys(settingsMetadatas)
+    // Sort setting groups alphabetically
+    .sort((a, b) => a > b ? 1 : a < b ? -1 : 0)
   const [settingsGroup, setSettingsGroup] = React.useState<string>(groups[0])
 
   return (
@@ -44,9 +26,11 @@ export function Settings (): JSX.Element {
       <Extendible className='settings-group'>
         {settingsGroup !== undefined ? (
           <Section title={settingsGroup}>
-            {settingsMetadatas[settingsGroup].map((metadata, i) => (
-              <SettingsItem key={i} metadata={metadata} />
-            ))}
+            <div className='settings-items'>
+              {settingsMetadatas[settingsGroup].map((metadata, i) => (
+                <SettingsItem key={i} metadata={metadata} />
+              ))}
+            </div>
           </Section>
         ) : null}
       </Extendible>
