@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[base-wallet/src/ts/wallet/wallet-options.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9f0c02f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L9)
+[base-wallet/src/ts/wallet/wallet-options.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/wallet/wallet-options.ts#L9)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/wallet/wallet-options.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9f0c02f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L12)
+[base-wallet/src/ts/wallet/wallet-options.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/wallet/wallet-options.ts#L12)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/wallet/wallet-options.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9f0c02f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L13)
+[base-wallet/src/ts/wallet/wallet-options.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/wallet/wallet-options.ts#L13)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/wallet/wallet-options.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9f0c02f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L10)
+[base-wallet/src/ts/wallet/wallet-options.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/wallet/wallet-options.ts#L10)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/wallet/wallet-options.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9f0c02f/packages/base-wallet/src/ts/wallet/wallet-options.ts#L11)
+[base-wallet/src/ts/wallet/wallet-options.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/wallet/wallet-options.ts#L11)
