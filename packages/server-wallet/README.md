@@ -26,6 +26,17 @@ or import (JavaScript ES module):
 import * as serverWallet from '@i3m/server-wallet'
 ```
 
+> The appropriate version (either cjs or esm) should be automatically chosen when importing. However, if your bundler does not import the appropriate module version, you can force it to use a specific one by just importing one of the followings:
+>
+> - `@i3m/server-wallet/dist/cjs/index.node`: for Node.js CJS module
+> - `@i3m/server-wallet/dist/esm/index.node`: for Node.js ESM module
+>
+> If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating a `@i3m/server-wallet.d.ts` file with just the line:
+>
+> ```typescript
+> declare module '@i3m/server-wallet/dist/cjs/index.node' // use the specific file you were importing
+> ```
+
 The server wallet uses a file as storage. Optional `filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
 
 The wallet's storage-file can be encrypted for added security by passing an optional `password`.

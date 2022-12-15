@@ -30,6 +30,8 @@
       },
       "default": "./dist/esm/index.node.js"
     },
+    "./dist/cjs/index.node": "./dist/cjs/index.node.cjs",
+    "./dist/esm/index.node": "./dist/esm/index.node.js",
     "./types": "./types/index.d.ts"
   },
   "imports": {

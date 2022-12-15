@@ -16,7 +16,17 @@ In order to use `{{PKG_NAME}}`, you should as well install [`@i3m/wallet-protoco
 npm install {{PKG_NAME}} @i3m/wallet-protocol
 ```
 
-The appropriate version for browser or node is automatically exported depending on where it is imported/required (set `browser` to `true` or `false` in your bundler).
+> The appropriate version for browser or node should be automatically chosen when importing. However, if your bundler does not import the appropriate module version (node esm, node cjs or browser esm), you can force it to use a specific one by just importing one of the followings:
+>
+> - `{{PKG_NAME}}/dist/cjs/index.node`: for Node.js CJS module
+> - `{{PKG_NAME}}/dist/esm/index.node`: for Node.js ESM module
+> - `{{PKG_NAME}}/dist/esm/index.browser`: for browser ESM module
+>
+> If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating a `{{PKG_NAME}}.d.ts` file with just the line:
+>
+> ```typescript
+> declare module '{{PKG_NAME}}/dist/esm/index.browser' // use the specific file you were importing
+> ```
 
 You can also download the {{IIFE_BUNDLE}}, the {{ESM_BUNDLE}} or the {{UMD_BUNDLE}} and manually add it to your project, or, if you have already installed `{{PKG_NAME}}` in your project, just get the bundles from `node_modules/{{PKG_NAME}}/dist/bundles/`.
 

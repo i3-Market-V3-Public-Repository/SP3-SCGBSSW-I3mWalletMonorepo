@@ -3,6 +3,14 @@ import data from './data'
 export default function (): void {
   let from: string = ''
 
+  it('should create identities', async function () {
+    const { api } = data
+    const identity = await api.identities.create({
+      alias: 'Testing'
+    })
+    chai.expect(identity).to.have.key('did')
+  })
+
   it('should list identities', async function () {
     const { api } = data
     const identities = await api.identities.list()
@@ -12,18 +20,10 @@ export default function (): void {
   it('should select identities', async function () {
     const { api } = data
     const identity = await api.identities.select({
-      reason: 'For a test'
+      reason: 'Select one identity for the test'
     })
     chai.expect(identity).to.have.key('did')
     data.user = identity
-  })
-
-  it('should create identities', async function () {
-    const { api } = data
-    const identity = await api.identities.create({
-      alias: 'Testing'
-    })
-    chai.expect(identity).to.have.key('did')
   })
 
   it('should get more information about identities', async function () {
