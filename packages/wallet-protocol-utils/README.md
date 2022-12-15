@@ -41,7 +41,17 @@ or import (JavaScript ES module):
 import * as walletProtocolUtils from '@i3m/wallet-protocol-utils'
 ```
 
-The appropriate version for browser or node is automatically exported.
+> The appropriate version for browser or node should be automatically chosen when importing. However, if your bundler does not import the appropriate module version (node esm, node cjs or browser esm), you can force it to use a specific one by just importing one of the followings:
+>
+> - `@i3m/wallet-protocol-utils/dist/cjs/index.node`: for Node.js CJS module
+> - `@i3m/wallet-protocol-utils/dist/esm/index.node`: for Node.js ESM module
+> - `@i3m/wallet-protocol-utils/dist/esm/index.browser`: for browser ESM module
+>
+> If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating a `@i3m/wallet-protocol-utils.d.ts` file with just the line:
+>
+> ```typescript
+> declare module '@i3m/wallet-protocol-utils/dist/esm/index.browser' // use the specific file you were importing
+> ```
 
 You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/public/packages/wallet-protocol-utils/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/wallet-protocol-utils` in your project, just get the bundles from `node_modules/@i3m/wallet-protocol-utils/dist/bundles/`.
 
