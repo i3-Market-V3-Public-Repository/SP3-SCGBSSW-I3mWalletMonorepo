@@ -26,16 +26,15 @@ or import (JavaScript ES module):
 import * as {{PKG_CAMELCASE}} from '{{PKG_NAME}}'
 ```
 
-> The appropriate version for browser or node should be automatically chosen when importing. However, if your bundler does not import the appropriate module version (node esm, node cjs or browser esm), you can force it to use a specific one by just importing one of the followings:
+> The appropriate version (either cjs or esm) should be automatically chosen when importing. However, if your bundler does not import the appropriate module version, you can force it to use a specific one by just importing one of the followings:
 >
 > - `{{PKG_NAME}}/dist/cjs/index.node`: for Node.js CJS module
 > - `{{PKG_NAME}}/dist/esm/index.node`: for Node.js ESM module
-> - `{{PKG_NAME}}/dist/esm/index.browser`: for browser ESM module
 >
 > If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating a `{{PKG_NAME}}.d.ts` file with just the line:
 >
 > ```typescript
-> declare module '{{PKG_NAME}}/dist/esm/index.browser' // use the specific file you were importing
+> declare module '{{PKG_NAME}}/dist/cjs/index.node' // use the specific file you were importing
 > ```
 
 ## API reference documentation
