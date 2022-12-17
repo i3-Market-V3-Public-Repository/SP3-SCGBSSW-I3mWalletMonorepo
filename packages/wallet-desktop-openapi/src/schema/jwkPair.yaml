@@ -1,0 +1,30 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    JwkPair:
+      type: object
+      properties:
+        privateJwk:
+          type: string
+          description: |
+            A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+          example: '{"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}'
+        publicJwk:
+          type: string
+          description: |
+            A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+          example: '{"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}'
+      required:
+        - privateJwk
+        - publicJwk
