@@ -1,11 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
-import { Contract } from '@i3m/base-wallet'
+import { Contract, KeyPair } from '@i3m/base-wallet'
 import { parseJwk, JWK } from '@i3m/non-repudiation-library'
 import data from './data'
 
 export default function (): void {
-  let dataSharingAgreementId: string
+  let keyPairId: string
+
+  it('should store a key pair', async function () {
+    const deaExample = await import('./dataSharingAgreementExample')
+    const keyPair: KeyPair = {
+      keyPair: {
+        privateJwk: await parseJwk(deaExample.example.providerJwks.privateJwk as JWK, true),
+        publicJwk: await parseJwk(deaExample.example.providerJwks.publicJwk as JWK, true)
+      }
+    }
+    const response = await data.api.resources.create({ resource: keyPair, type: 'KeyPair' })
+    if (response.id !== undefined) keyPairId = response.id
+    chai.expect(keyPairId).to.not.be.undefined
+  })
 
   it('should store a data sharing agreement template', async function () {
     const deaExample = await import('./dataSharingAgreementExample')
@@ -17,8 +30,8 @@ export default function (): void {
       }
     }
     const response = await data.api.resources.create({ resource: contract, type: 'Contract' })
-    if (response.id !== undefined) dataSharingAgreementId = response.id
-    chai.expect(dataSharingAgreementId).to.not.be.undefined
+    if (response.id !== undefined) keyPairId = response.id
+    chai.expect(keyPairId).to.not.be.undefined
   })
 
   it('should list all resources', async function () {

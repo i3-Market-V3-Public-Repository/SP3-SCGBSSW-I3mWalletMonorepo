@@ -31,10 +31,10 @@ import * as bokWallet from '@i3m/bok-wallet'
 > - `@i3m/bok-wallet/dist/cjs/index.node`: for Node.js CJS module
 > - `@i3m/bok-wallet/dist/esm/index.node`: for Node.js ESM module
 >
-> If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating a `@i3m/bok-wallet.d.ts` file with just the line:
+> If you are coding TypeScript, types will not be automatically detected when using the specific versions. You can easily get the types in by creating adding to a types declaration file (`.d.ts`) the following line:
 >
 > ```typescript
-> declare module '@i3m/bok-wallet/dist/cjs/index.node' // use the specific file you were importing
+> declare module '@i3m/bok-wallet/dist/esm/index.browser' // use the specific file you were importing
 > ```
 
 ## API reference documentation

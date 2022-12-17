@@ -187,7 +187,7 @@ export namespace WalletComponents {
                      */
           privateJwk: string
           /**
-                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
                      *
                      * example:
                      * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
@@ -678,6 +678,61 @@ export namespace WalletComponents {
              */
       did: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
     }
+    export interface JwkPair {
+      /**
+             * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+             *
+             * example:
+             * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+             */
+      privateJwk: string
+      /**
+             * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+             *
+             * example:
+             * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+             */
+      publicJwk: string
+    }
+    /**
+         * JWK pair
+         */
+    export interface KeyPair {
+      /**
+             * example:
+             * KeyPair
+             */
+      type: 'KeyPair'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      /**
+             * a DID using the ethr resolver
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+      resource: {
+        keyPair: {
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          privateJwk: string
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          publicJwk: string
+        }
+      }
+    }
     /**
          * NonRepudiationProof
          */
@@ -833,6 +888,41 @@ export namespace WalletComponents {
       identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       resource: {
         [name: string]: any
+      }
+    } | {
+      /**
+             * example:
+             * KeyPair
+             */
+      type: 'KeyPair'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      /**
+             * a DID using the ethr resolver
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+      resource: {
+        keyPair: {
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          privateJwk: string
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          publicJwk: string
+        }
       }
     } | {
       /**
@@ -1006,7 +1096,7 @@ export namespace WalletComponents {
                      */
           privateJwk: string
           /**
-                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
                      *
                      * example:
                      * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
@@ -1207,6 +1297,41 @@ export namespace WalletComponents {
     } | {
       /**
              * example:
+             * KeyPair
+             */
+      type: 'KeyPair'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      /**
+             * a DID using the ethr resolver
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+      resource: {
+        keyPair: {
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          privateJwk: string
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          publicJwk: string
+        }
+      }
+    } | {
+      /**
+             * example:
              * Contract
              */
       type: 'Contract'
@@ -1376,7 +1501,7 @@ export namespace WalletComponents {
                      */
           privateJwk: string
           /**
-                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
                      *
                      * example:
                      * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
@@ -1486,7 +1611,7 @@ export namespace WalletComponents {
         secretCommitment: string // ^[a-zA-Z0-9_-]+$
       }
     }>
-    export type ResourceType = 'VerifiableCredential' | 'Object' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
+    export type ResourceType = 'VerifiableCredential' | 'Object' | 'KeyPair' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
     /**
          * SignInput
          */
@@ -2105,6 +2230,41 @@ export namespace WalletPaths {
     } | {
       /**
              * example:
+             * KeyPair
+             */
+      type: 'KeyPair'
+      /**
+             * example:
+             * Resource name
+             */
+      name?: string
+      /**
+             * a DID using the ethr resolver
+             * example:
+             * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+             */
+      identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+      resource: {
+        keyPair: {
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          privateJwk: string
+          /**
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+                     *
+                     * example:
+                     * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                     */
+          publicJwk: string
+        }
+      }
+    } | {
+      /**
+             * example:
              * Contract
              */
       type: 'Contract'
@@ -2274,7 +2434,7 @@ export namespace WalletPaths {
                      */
           privateJwk: string
           /**
-                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                     * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
                      *
                      * example:
                      * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
@@ -2406,7 +2566,7 @@ export namespace WalletPaths {
              */
       export type Identity = string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       export type ParentResource = string
-      export type Type = 'VerifiableCredential' | 'Object' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
+      export type Type = 'VerifiableCredential' | 'Object' | 'KeyPair' | 'Contract' | 'DataExchange' | 'NonRepudiationProof'
     }
     export interface QueryParameters {
       type?: Parameters.Type
@@ -2503,6 +2663,41 @@ export namespace WalletPaths {
         identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
         resource: {
           [name: string]: any
+        }
+      } | {
+        /**
+                 * example:
+                 * KeyPair
+                 */
+        type: 'KeyPair'
+        /**
+                 * example:
+                 * Resource name
+                 */
+        name?: string
+        /**
+                 * a DID using the ethr resolver
+                 * example:
+                 * did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863
+                 */
+        identity?: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
+        resource: {
+          keyPair: {
+            /**
+                         * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
+                         *
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                         */
+            privateJwk: string
+            /**
+                         * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
+                         *
+                         * example:
+                         * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                         */
+            publicJwk: string
+          }
         }
       } | {
         /**
@@ -2676,7 +2871,7 @@ export namespace WalletPaths {
                          */
             privateJwk: string
             /**
-                         * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`
+                         * A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).
                          *
                          * example:
                          * {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}

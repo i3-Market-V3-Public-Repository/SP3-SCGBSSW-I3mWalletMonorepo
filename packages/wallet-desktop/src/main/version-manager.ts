@@ -5,18 +5,32 @@ import { Locals } from './internal'
 export class VersionManager {
   latestVersion: string
   currentVersion: string
+  initialized: Promise<void>
 
   constructor (protected locals: Locals) {
     this.currentVersion = `v${locals.packageJson.version}`
     this.latestVersion = ''
+    this.initialized = new Promise((resolve, reject) => {
+      this.initialize().then(() => {
+        resolve()
+      }).catch((reason) => {
+        reject(reason)
+      })
+    })
   }
 
   async initialize (): Promise<void> {
     const lastestVersionInfoUrl = 'https://api.github.com/repos/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/releases/latest'
-    this.latestVersion = (await this.getRemoteJson(lastestVersionInfoUrl)).tag_name
+    try {
+      this.latestVersion = (await this.getRemoteJson(lastestVersionInfoUrl)).tag_name 
+    } catch (error) {
+      this.latestVersion = this.currentVersion
+      throw new Error('Could not retrieve latest published i3M-Wallet app version. Please check your internet connection')
+    }
   }
 
   async getRemoteJson (url: string): Promise<any> {
+    await this.initialized
     return await new Promise((resolve, reject) => {
       const urlObject = new URL(url)
       const opts: RequestOptions = {
@@ -58,6 +72,8 @@ export class VersionManager {
             reject(e)
           }
         })
+      }).on('error', (e) => {
+        reject(e)
       })
     })
   }
@@ -70,6 +86,7 @@ export class VersionManager {
   }
 
   async needsUpdate (): Promise<boolean> {
+    await this.initialized
     const currentVersion = this.parseVersion(this.currentVersion)
     const latestVersion = this.parseVersion(this.latestVersion)
 

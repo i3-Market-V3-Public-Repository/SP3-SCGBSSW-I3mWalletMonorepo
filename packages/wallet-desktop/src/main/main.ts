@@ -71,18 +71,27 @@ async function initUI (ctx: MainContext, locals: Locals): Promise<void> {
 
 async function initVersionManager (ctx: MainContext, locals: Locals): Promise<void> {
   const versionManager = new VersionManager(locals)
-  await versionManager.initialize()
-  locals.versionManager = versionManager
-
-  if (await versionManager.needsUpdate()) {
-    locals.toast.show({
-      message: 'Update pending...',
-      details: `Your current version (${versionManager.currentVersion}) is outdated. \n Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'.`,
-
-      type: 'warning',
-      timeout: 0 // never close this alert!
+  versionManager.initialized.then(() => {
+    versionManager.needsUpdate().then(update => {
+      if (update) {
+        locals.toast.show({
+          message: 'Update pending...',
+          details: `Your current version (${versionManager.currentVersion}) is outdated. \n Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'.`,
+    
+          type: 'warning',
+          timeout: 0 // never close this alert!
+        })
+      }
     })
-  }
+  }).catch((error) => {
+    locals.toast.show({
+      message: 'Checking for updates...',
+      details: (typeof error === 'string') ? error : 'Error checking for updates. Are you connected to the Internet?',
+      type: 'warning',
+      timeout: 0
+    })
+  })
+  locals.versionManager = versionManager
 }
 
 async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
@@ -139,7 +148,7 @@ async function onReady (): Promise<void> {
   await initApplication(ctx, locals)
   await initActions(ctx, locals)
   await initUI(ctx, locals)
-  await initVersionManager(ctx, locals)
+  initVersionManager(ctx, locals)
   await initFeatureManager(ctx, locals)
 
   // Authentication

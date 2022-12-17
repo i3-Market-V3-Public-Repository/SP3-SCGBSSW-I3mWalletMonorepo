@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L8)
+[base-wallet/src/ts/test/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L8)
 
 ## Properties
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L7)
+[base-wallet/src/ts/test/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L7)
 
 ## Methods
 
@@ -60,7 +60,7 @@ Store.clear
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L36)
+[base-wallet/src/ts/test/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L36)
 
 ___
 
@@ -92,7 +92,7 @@ Delete an item.
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L32)
+[base-wallet/src/ts/test/store.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L32)
 
 ___
 
@@ -119,7 +119,7 @@ Get an item.
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L19)
+[base-wallet/src/ts/test/store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L19)
 
 ___
 
@@ -151,7 +151,7 @@ Check if an item exists.
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L28)
+[base-wallet/src/ts/test/store.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L28)
 
 ___
 
@@ -178,4 +178,4 @@ Set an item.
 
 #### Defined in
 
-[base-wallet/src/ts/test/store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/86b0ba0/packages/base-wallet/src/ts/test/store.ts#L23)
+[base-wallet/src/ts/test/store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4baccf/packages/base-wallet/src/ts/test/store.ts#L23)

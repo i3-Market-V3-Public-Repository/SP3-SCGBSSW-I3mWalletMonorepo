@@ -6,7 +6,7 @@ import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
 import { decodeJWS, jwsSignInput } from '../utils/jws'
 
-import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, Identity, Resource, Store, Toast } from '../app'
+import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, Identity, KeyPairResource, Resource, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
@@ -760,6 +760,15 @@ export class BaseWallet<
         }
         break
       }
+      case 'KeyPair': {
+        const confirmation = await this.dialog.confirmation({
+          message: `Do you want to add the following keys to your wallet?\n\t${JSON.stringify(resource.resource.keyPair, undefined, 2)}`
+        })
+        if (confirmation !== true) {
+          throw new WalletError('User cannceled the operation', { status: 403 })
+        }
+        break
+      }
       case 'Contract': {
         const confirmation = await this.dialog.confirmation({
           message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${resource.resource.dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${resource.resource.dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${resource.resource.dataSharingAgreement.parties.consumerDid}`
@@ -767,6 +776,23 @@ export class BaseWallet<
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })
         }
+        // A contract parent resource is a keyPair
+        const keyPairId = await digest(resource.resource.keyPair.publicJwk)
+        resource.parentResource = keyPairId
+        // If the keyPair was not yet created, we create it
+        if (!await this.store.has(`resources.${resource.parentResource}`)) {
+          const keyPairResource: KeyPairResource = {
+            id: keyPairId,
+            type: 'KeyPair',
+            resource: { keyPair: resource.resource.keyPair }
+          }
+          try {
+            await this.setResource(keyPairResource)
+          } catch (error) {
+            throw new WalletError('Failed to add resource', { status: 500 })
+          }
+        }
+
         break
       }
       case 'NonRepudiationProof': {

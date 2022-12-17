@@ -12,6 +12,9 @@ export declare type VerifiableCredentialResource = Resource & {
 export declare type ObjectResource = Resource & {
     type: 'Object';
 };
+export declare type KeyPairResource = Resource & {
+    type: 'KeyPair';
+};
 export declare type ContractResource = Resource & {
     type: 'Contract';
 };
@@ -22,6 +25,7 @@ export declare type DataExchangeResource = Resource & {
     type: 'DataExchange';
 };
 export declare type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource'];
+export declare type KeyPair = WalletComponents.Schemas.KeyPair['resource'];
 export declare type Contract = WalletComponents.Schemas.Contract['resource'];
 export declare type Object = WalletComponents.Schemas.ObjectResource['resource'];
 export declare type Identity = IIdentifier;

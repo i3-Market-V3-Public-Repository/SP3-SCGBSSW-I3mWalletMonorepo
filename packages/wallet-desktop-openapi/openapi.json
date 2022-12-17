@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "version": "2.3.1",
+    "version": "2.4.0",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",
@@ -553,6 +553,7 @@
               "enum": [
                 "VerifiableCredential",
                 "Object",
+                "KeyPair",
                 "Contract",
                 "DataExchange",
                 "NonRepudiationProof"
@@ -728,6 +729,59 @@
                           "resource": {
                             "type": "object",
                             "additionalProperties": true
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "resource"
+                        ]
+                      },
+                      {
+                        "title": "JWK pair",
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "example": "KeyPair",
+                            "enum": [
+                              "KeyPair"
+                            ]
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Resource name"
+                          },
+                          "identity": {
+                            "description": "a DID using the ethr resolver",
+                            "type": "string",
+                            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                          },
+                          "resource": {
+                            "type": "object",
+                            "properties": {
+                              "keyPair": {
+                                "type": "object",
+                                "properties": {
+                                  "privateJwk": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                                  },
+                                  "publicJwk": {
+                                    "type": "string",
+                                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+                                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                                  }
+                                },
+                                "required": [
+                                  "privateJwk",
+                                  "publicJwk"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "keyPair"
+                            ]
                           }
                         },
                         "required": [
@@ -1114,7 +1168,7 @@
                                   },
                                   "publicJwk": {
                                     "type": "string",
-                                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
                                     "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                                   }
                                 },
@@ -1472,6 +1526,59 @@
                       "resource": {
                         "type": "object",
                         "additionalProperties": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "resource"
+                    ]
+                  },
+                  {
+                    "title": "JWK pair",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "example": "KeyPair",
+                        "enum": [
+                          "KeyPair"
+                        ]
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Resource name"
+                      },
+                      "identity": {
+                        "description": "a DID using the ethr resolver",
+                        "type": "string",
+                        "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                        "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                      },
+                      "resource": {
+                        "type": "object",
+                        "properties": {
+                          "keyPair": {
+                            "type": "object",
+                            "properties": {
+                              "privateJwk": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                              },
+                              "publicJwk": {
+                                "type": "string",
+                                "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+                                "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                              }
+                            },
+                            "required": [
+                              "privateJwk",
+                              "publicJwk"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "keyPair"
+                        ]
                       }
                     },
                     "required": [
@@ -1858,7 +1965,7 @@
                               },
                               "publicJwk": {
                                 "type": "string",
-                                "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                                "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
                                 "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                               }
                             },
@@ -2815,6 +2922,59 @@
               ]
             },
             {
+              "title": "JWK pair",
+              "type": "object",
+              "properties": {
+                "type": {
+                  "example": "KeyPair",
+                  "enum": [
+                    "KeyPair"
+                  ]
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Resource name"
+                },
+                "identity": {
+                  "description": "a DID using the ethr resolver",
+                  "type": "string",
+                  "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                  "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+                },
+                "resource": {
+                  "type": "object",
+                  "properties": {
+                    "keyPair": {
+                      "type": "object",
+                      "properties": {
+                        "privateJwk": {
+                          "type": "string",
+                          "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                        },
+                        "publicJwk": {
+                          "type": "string",
+                          "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+                          "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                        }
+                      },
+                      "required": [
+                        "privateJwk",
+                        "publicJwk"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "keyPair"
+                  ]
+                }
+              },
+              "required": [
+                "type",
+                "resource"
+              ]
+            },
+            {
               "title": "Contract",
               "type": "object",
               "properties": {
@@ -3193,7 +3353,7 @@
                         },
                         "publicJwk": {
                           "type": "string",
-                          "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                          "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
                           "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                         }
                       },
@@ -3511,6 +3671,59 @@
               "resource": {
                 "type": "object",
                 "additionalProperties": true
+              }
+            },
+            "required": [
+              "type",
+              "resource"
+            ]
+          },
+          {
+            "title": "JWK pair",
+            "type": "object",
+            "properties": {
+              "type": {
+                "example": "KeyPair",
+                "enum": [
+                  "KeyPair"
+                ]
+              },
+              "name": {
+                "type": "string",
+                "example": "Resource name"
+              },
+              "identity": {
+                "description": "a DID using the ethr resolver",
+                "type": "string",
+                "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+                "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+              },
+              "resource": {
+                "type": "object",
+                "properties": {
+                  "keyPair": {
+                    "type": "object",
+                    "properties": {
+                      "privateJwk": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                      },
+                      "publicJwk": {
+                        "type": "string",
+                        "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+                        "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                      }
+                    },
+                    "required": [
+                      "privateJwk",
+                      "publicJwk"
+                    ]
+                  }
+                },
+                "required": [
+                  "keyPair"
+                ]
               }
             },
             "required": [
@@ -3897,7 +4110,7 @@
                       },
                       "publicJwk": {
                         "type": "string",
-                        "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                        "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
                         "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                       }
                     },
@@ -4211,6 +4424,59 @@
           "resource": {
             "type": "object",
             "additionalProperties": true
+          }
+        },
+        "required": [
+          "type",
+          "resource"
+        ]
+      },
+      "KeyPair": {
+        "title": "JWK pair",
+        "type": "object",
+        "properties": {
+          "type": {
+            "example": "KeyPair",
+            "enum": [
+              "KeyPair"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "example": "Resource name"
+          },
+          "identity": {
+            "description": "a DID using the ethr resolver",
+            "type": "string",
+            "pattern": "^did:ethr:(\\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$",
+            "example": "did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863"
+          },
+          "resource": {
+            "type": "object",
+            "properties": {
+              "keyPair": {
+                "type": "object",
+                "properties": {
+                  "privateJwk": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                  },
+                  "publicJwk": {
+                    "type": "string",
+                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+                    "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+                  }
+                },
+                "required": [
+                  "privateJwk",
+                  "publicJwk"
+                ]
+              }
+            },
+            "required": [
+              "keyPair"
+            ]
           }
         },
         "required": [
@@ -4597,7 +4863,7 @@
                   },
                   "publicJwk": {
                     "type": "string",
-                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`). It MUST match either `dataSharingAgreement.dataExchangeAgreement.orig` or `dataSharingAgreement.dataExchangeAgreement.dest`\n",
+                    "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
                     "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
                   }
                 },
@@ -4793,6 +5059,7 @@
         "enum": [
           "VerifiableCredential",
           "Object",
+          "KeyPair",
           "Contract",
           "DataExchange",
           "NonRepudiationProof"
@@ -4970,6 +5237,25 @@
             "type": "string"
           }
         }
+      },
+      "JwkPair": {
+        "type": "object",
+        "properties": {
+          "privateJwk": {
+            "type": "string",
+            "description": "A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)\n",
+            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"d\":\"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+          },
+          "publicJwk": {
+            "type": "string",
+            "description": "A stringified JWK with alphabetically sorted claims that represents the public key (complementary to `privateJwk`).\n",
+            "example": "{\"alg\":\"ES256\",\"crv\":\"P-256\",\"kty\":\"EC\",\"x\":\"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8\",\"y\":\"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE\"}"
+          }
+        },
+        "required": [
+          "privateJwk",
+          "publicJwk"
+        ]
       },
       "CompactJWS": {
         "title": "CompactJWS",

@@ -5,11 +5,13 @@ import { CanBePromise } from '../utils'
 export type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & { identity?: WalletComponents.Schemas.ObjectResource['identity']} & {parentResource?: WalletComponents.Schemas.ObjectResource['parentResource']}
 export type VerifiableCredentialResource = Resource & { type: 'VerifiableCredential' }
 export type ObjectResource = Resource & { type: 'Object' }
+export type KeyPairResource = Resource & { type: 'KeyPair' }
 export type ContractResource = Resource & { type: 'Contract' }
 export type NonRepudiationProofResource = Resource & { type: 'NonRepudiationProof' }
 export type DataExchangeResource = Resource & { type: 'DataExchange' }
 
 export type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource']
+export type KeyPair = WalletComponents.Schemas.KeyPair['resource']
 export type Contract = WalletComponents.Schemas.Contract['resource']
 export type Object = WalletComponents.Schemas.ObjectResource['resource']
 export type Identity = IIdentifier

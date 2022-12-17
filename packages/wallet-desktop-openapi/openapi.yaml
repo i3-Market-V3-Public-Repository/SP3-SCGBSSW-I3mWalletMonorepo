@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.3.1
+  version: 2.4.0
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -49,7 +49,7 @@ paths:
           description: An array of identities
           content:
             application/json:
-              schema: &ref_14
+              schema: &ref_15
                 title: IdentityListInput
                 description: A list of DIDs
                 type: array
@@ -91,7 +91,7 @@ paths:
         required: false
         content:
           application/json:
-            schema: &ref_15
+            schema: &ref_16
               title: IdentityCreateInput
               description: >
                 Besides the here defined options, provider specific properties
@@ -108,7 +108,7 @@ paths:
           description: the ID and type of the created account
           content:
             application/json:
-              schema: &ref_16
+              schema: &ref_17
                 title: IdentityCreateOutput
                 description: |
                   It returns the account id and type
@@ -141,7 +141,7 @@ paths:
           description: Selected identity
           content:
             application/json:
-              schema: &ref_7
+              schema: &ref_8
                 title: IdentitySelectOutput
                 type: object
                 properties:
@@ -165,10 +165,10 @@ paths:
         required: true
         content:
           application/json:
-            schema: &ref_8
+            schema: &ref_9
               title: SignInput
               oneOf:
-                - &ref_10
+                - &ref_11
                   title: SignTransaction
                   type: object
                   properties:
@@ -189,7 +189,7 @@ paths:
                   required:
                     - type
                     - data
-                - &ref_9
+                - &ref_10
                   title: SignRaw
                   type: object
                   properties:
@@ -208,7 +208,7 @@ paths:
                   required:
                     - type
                     - data
-                - &ref_11
+                - &ref_12
                   title: SignJWT
                   type: object
                   properties:
@@ -244,7 +244,7 @@ paths:
           description: Signed data
           content:
             application/json:
-              schema: &ref_12
+              schema: &ref_13
                 title: SignOutput
                 type: object
                 properties:
@@ -269,7 +269,7 @@ paths:
           description: Identity data
           content:
             application/json:
-              schema: &ref_28
+              schema: &ref_30
                 title: Identity Data
                 type: object
                 properties:
@@ -322,7 +322,7 @@ paths:
           description: Selected identity
           content:
             application/json:
-              schema: &ref_13
+              schema: &ref_14
                 title: Receipt
                 type: object
                 properties:
@@ -344,11 +344,12 @@ paths:
           name: type
           example: Contract
           required: false
-          schema: &ref_24
+          schema: &ref_26
             type: string
             enum:
               - VerifiableCredential
               - Object
+              - KeyPair
               - Contract
               - DataExchange
               - NonRepudiationProof
@@ -377,14 +378,14 @@ paths:
             returned.
           content:
             application/json:
-              schema: &ref_17
+              schema: &ref_18
                 title: ResourceListOutput
                 description: A list of resources
                 type: array
-                items: &ref_6
+                items: &ref_7
                   title: Resource
                   anyOf:
-                    - &ref_18
+                    - &ref_19
                       title: VerifiableCredential
                       type: object
                       properties:
@@ -452,7 +453,7 @@ paths:
                       required:
                         - type
                         - resource
-                    - &ref_19
+                    - &ref_20
                       title: ObjectResource
                       type: object
                       properties:
@@ -472,7 +473,49 @@ paths:
                       required:
                         - type
                         - resource
-                    - &ref_20
+                    - &ref_21
+                      title: JWK pair
+                      type: object
+                      properties:
+                        type:
+                          example: KeyPair
+                          enum:
+                            - KeyPair
+                        name:
+                          type: string
+                          example: Resource name
+                        identity: *ref_0
+                        resource:
+                          type: object
+                          properties:
+                            keyPair: &ref_5
+                              type: object
+                              properties:
+                                privateJwk:
+                                  type: string
+                                  description: >
+                                    A stringified JWK with alphabetically sorted
+                                    claims that represents a private key
+                                    (complementary to `publicJwk`)
+                                  example: >-
+                                    {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                                publicJwk:
+                                  type: string
+                                  description: >
+                                    A stringified JWK with alphabetically sorted
+                                    claims that represents the public key
+                                    (complementary to `privateJwk`).
+                                  example: >-
+                                    {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
+                              required:
+                                - privateJwk
+                                - publicJwk
+                          required:
+                            - keyPair
+                      required:
+                        - type
+                        - resource
+                    - &ref_22
                       title: Contract
                       type: object
                       properties:
@@ -487,7 +530,7 @@ paths:
                         resource:
                           type: object
                           properties:
-                            dataSharingAgreement: &ref_29
+                            dataSharingAgreement: &ref_31
                               type: object
                               required:
                                 - dataOfferingDescription
@@ -650,7 +693,7 @@ paths:
                                       properties:
                                         hasPriceFree:
                                           type: boolean
-                                dataExchangeAgreement: &ref_5
+                                dataExchangeAgreement: &ref_6
                                   type: object
                                   required:
                                     - orig
@@ -738,39 +781,14 @@ paths:
                                       pattern: >-
                                         ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
                                     consumerSignature: *ref_4
-                            keyPair:
-                              type: object
-                              properties:
-                                privateJwk:
-                                  type: string
-                                  description: >
-                                    A stringified JWK with alphabetically sorted
-                                    claims that represents a private key
-                                    (complementary to `publicJwk`)
-                                  example: >-
-                                    {"alg":"ES256","crv":"P-256","d":"rQp_3eZzvXwt1sK7WWsRhVYipqNGblzYDKKaYirlqs0","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
-                                publicJwk:
-                                  type: string
-                                  description: >
-                                    A stringified JWK with alphabetically sorted
-                                    claims that represents the public key
-                                    (complementary to `privateJwk`). It MUST
-                                    match either
-                                    `dataSharingAgreement.dataExchangeAgreement.orig`
-                                    or
-                                    `dataSharingAgreement.dataExchangeAgreement.dest`
-                                  example: >-
-                                    {"alg":"ES256","crv":"P-256","kty":"EC","x":"sMGSjfIlRJRseMpx3iHhCx4uh-6N4-AUKX18lmoeSD8","y":"Hu8EcpyH2XrCd-oKqm9keEhnMx2v2QaPs6P4Vs8OkpE"}
-                              required:
-                                - privateJwk
-                                - publicJwk
+                            keyPair: *ref_5
                           required:
                             - dataSharingAgreement
                             - keyPair
                       required:
                         - type
                         - resource
-                    - &ref_22
+                    - &ref_24
                       title: NonRepudiationProof
                       type: object
                       properties:
@@ -788,7 +806,7 @@ paths:
                       required:
                         - type
                         - resource
-                    - &ref_21
+                    - &ref_23
                       title: DataExchangeResource
                       type: object
                       properties:
@@ -799,9 +817,9 @@ paths:
                         name:
                           type: string
                           example: Resource name
-                        resource: &ref_30
+                        resource: &ref_32
                           allOf:
-                            - *ref_5
+                            - *ref_6
                             - type: object
                               properties:
                                 cipherblockDgst:
@@ -847,13 +865,13 @@ paths:
           credentials.
         content:
           application/json:
-            schema: *ref_6
+            schema: *ref_7
       responses:
         '201':
           description: the ID and type of the created resource
           content:
             application/json:
-              schema: &ref_23
+              schema: &ref_25
                 type: object
                 properties:
                   id:
@@ -906,7 +924,7 @@ paths:
         description: Create a resource.
         content:
           application/json:
-            schema: &ref_25
+            schema: &ref_27
               title: SignedTransaction
               description: A list of resources
               type: object
@@ -1017,7 +1035,7 @@ paths:
             ```
           content:
             application/json:
-              schema: &ref_26
+              schema: &ref_28
                 title: VerificationOutput
                 type: object
                 properties:
@@ -1051,7 +1069,7 @@ paths:
           description: A JSON object with information of the DLT provider currently in use.
           content:
             application/json:
-              schema: &ref_27
+              schema: &ref_29
                 title: ProviderData
                 description: >-
                   A JSON object with information of the DLT provider currently
@@ -1075,14 +1093,14 @@ paths:
               schema: *ref_1
 components:
   schemas:
-    IdentitySelectOutput: *ref_7
-    SignInput: *ref_8
-    SignRaw: *ref_9
-    SignTransaction: *ref_10
-    SignJWT: *ref_11
+    IdentitySelectOutput: *ref_8
+    SignInput: *ref_9
+    SignRaw: *ref_10
+    SignTransaction: *ref_11
+    SignJWT: *ref_12
     Transaction: *ref_2
-    SignOutput: *ref_12
-    Receipt: *ref_13
+    SignOutput: *ref_13
+    Receipt: *ref_14
     SignTypes:
       title: SignTypes
       type: string
@@ -1090,19 +1108,20 @@ components:
         - Transaction
         - Raw
         - JWT
-    IdentityListInput: *ref_14
-    IdentityCreateInput: *ref_15
-    IdentityCreateOutput: *ref_16
-    ResourceListOutput: *ref_17
-    Resource: *ref_6
-    VerifiableCredential: *ref_18
-    ObjectResource: *ref_19
-    Contract: *ref_20
-    DataExchangeResource: *ref_21
-    NonRepudiationProof: *ref_22
-    ResourceId: *ref_23
-    ResourceType: *ref_24
-    SignedTransaction: *ref_25
+    IdentityListInput: *ref_15
+    IdentityCreateInput: *ref_16
+    IdentityCreateOutput: *ref_17
+    ResourceListOutput: *ref_18
+    Resource: *ref_7
+    VerifiableCredential: *ref_19
+    ObjectResource: *ref_20
+    KeyPair: *ref_21
+    Contract: *ref_22
+    DataExchangeResource: *ref_23
+    NonRepudiationProof: *ref_24
+    ResourceId: *ref_25
+    ResourceType: *ref_26
+    SignedTransaction: *ref_27
     DecodedJwt:
       title: JwtPayload
       type: object
@@ -1139,13 +1158,14 @@ components:
       required:
         - signature
         - data
-    VerificationOutput: *ref_26
-    ProviderData: *ref_27
+    VerificationOutput: *ref_28
+    ProviderData: *ref_29
     EthereumAddress: *ref_3
     did: *ref_0
-    IdentityData: *ref_28
+    IdentityData: *ref_30
     ApiError: *ref_1
+    JwkPair: *ref_5
     CompactJWS: *ref_4
-    DataExchangeAgreement: *ref_5
-    DataSharingAgreement: *ref_29
-    DataExchange: *ref_30
+    DataExchangeAgreement: *ref_6
+    DataSharingAgreement: *ref_31
+    DataExchange: *ref_32

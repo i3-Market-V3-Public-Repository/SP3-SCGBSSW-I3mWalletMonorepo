@@ -1,4 +1,4 @@
-import { faAddressCard, faCode, faFileSignature, faQuestionCircle, faReceipt, faRightLeft, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
+import { faAddressCard, faCode, faFileSignature, faKey, faQuestionCircle, faReceipt, faRightLeft, faUser, faWallet } from '@fortawesome/free-solid-svg-icons'
 import { Identity, Resource } from '@i3m/base-wallet'
 
 import { createIdentityAction, deleteIdentityAction, deleteResourceAction, deleteWalletAction, exportResourceAction, importResourceAction, selectWalletAction, SharedMemory } from '@wallet/lib'
@@ -105,6 +105,12 @@ function getResourceProperties (props: TreeListProps, resource: Resource, dispat
         menu
       }
 
+    case 'KeyPair':
+      return {
+        icon: faKey,
+        menu
+      }
+      
     case 'Contract':
       return {
         icon: faFileSignature,
