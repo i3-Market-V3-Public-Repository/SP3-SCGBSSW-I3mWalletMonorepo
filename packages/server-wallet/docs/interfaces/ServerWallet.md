@@ -59,7 +59,7 @@ BokWallet.dialog
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/server-wallet/src/ts/index.ts#L10)
+[server-wallet/src/ts/index.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/server-wallet/src/ts/index.ts#L10)
 
 ___
 
@@ -73,7 +73,7 @@ BokWallet.keyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
+[base-wallet/types/wallet/base-wallet.d.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L23)
 
 ___
 
@@ -87,7 +87,7 @@ BokWallet.provider
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
+[base-wallet/types/wallet/base-wallet.d.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L25)
 
 ___
 
@@ -101,7 +101,7 @@ BokWallet.providersData
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
+[base-wallet/types/wallet/base-wallet.d.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L26)
 
 ___
 
@@ -115,7 +115,7 @@ BokWallet.resourceValidator
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
+[base-wallet/types/wallet/base-wallet.d.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L24)
 
 ___
 
@@ -129,7 +129,7 @@ BokWallet.store
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/server-wallet/src/ts/index.ts#L11)
+[server-wallet/src/ts/index.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/server-wallet/src/ts/index.ts#L11)
 
 ___
 
@@ -143,7 +143,7 @@ BokWallet.toast
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/server-wallet/src/ts/index.ts#L12)
+[server-wallet/src/ts/index.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/server-wallet/src/ts/index.ts#L12)
 
 ___
 
@@ -157,7 +157,7 @@ BokWallet.veramo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
+[base-wallet/types/wallet/base-wallet.d.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L22)
 
 ## Methods
 
@@ -181,7 +181,7 @@ BokWallet.call
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
+[base-wallet/types/wallet/base-wallet.d.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L35)
 
 ___
 
@@ -199,7 +199,7 @@ BokWallet.createTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
+[base-wallet/types/wallet/base-wallet.d.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L30)
 
 ___
 
@@ -225,7 +225,7 @@ BokWallet.deleteIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L91)
+[base-wallet/types/wallet/base-wallet.d.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L91)
 
 ___
 
@@ -252,7 +252,7 @@ BokWallet.deleteResource
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:86](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L86)
+[base-wallet/types/wallet/base-wallet.d.ts:86](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L86)
 
 ___
 
@@ -282,7 +282,7 @@ BokWallet.didJwtVerify
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L120)
+[base-wallet/types/wallet/base-wallet.d.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L120)
 
 ___
 
@@ -306,7 +306,7 @@ BokWallet.executeTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
+[base-wallet/types/wallet/base-wallet.d.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L28)
 
 ___
 
@@ -326,7 +326,7 @@ BokWallet.getIdentities
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
+[base-wallet/types/wallet/base-wallet.d.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L40)
 
 ___
 
@@ -350,7 +350,7 @@ BokWallet.getKeyWallet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
+[base-wallet/types/wallet/base-wallet.d.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L34)
 
 ___
 
@@ -370,7 +370,7 @@ BokWallet.getResources
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
+[base-wallet/types/wallet/base-wallet.d.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L74)
 
 ___
 
@@ -398,7 +398,7 @@ BokWallet.identityCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
+[base-wallet/types/wallet/base-wallet.d.ts:53](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L53)
 
 ___
 
@@ -423,7 +423,7 @@ BokWallet.identityDeployTransaction
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
+[base-wallet/types/wallet/base-wallet.d.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L69)
 
 ___
 
@@ -449,7 +449,7 @@ BokWallet.identityInfo
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
+[base-wallet/types/wallet/base-wallet.d.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L68)
 
 ___
 
@@ -475,7 +475,7 @@ BokWallet.identityList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
+[base-wallet/types/wallet/base-wallet.d.ts:47](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L47)
 
 ___
 
@@ -499,7 +499,7 @@ BokWallet.identitySelect
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
+[base-wallet/types/wallet/base-wallet.d.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L54)
 
 ___
 
@@ -526,7 +526,7 @@ BokWallet.identitySign
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
+[base-wallet/types/wallet/base-wallet.d.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L61)
 
 ___
 
@@ -550,7 +550,7 @@ BokWallet.importDid
 
 #### Defined in
 
-[bok-wallet/types/bok-wallet.d.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/bok-wallet/types/bok-wallet.d.ts#L8)
+[bok-wallet/types/bok-wallet.d.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/bok-wallet/types/bok-wallet.d.ts#L8)
 
 ___
 
@@ -570,7 +570,7 @@ BokWallet.providerinfoGet
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L125)
+[base-wallet/types/wallet/base-wallet.d.ts:125](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L125)
 
 ___
 
@@ -588,7 +588,7 @@ BokWallet.queryBalance
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
+[base-wallet/types/wallet/base-wallet.d.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L29)
 
 ___
 
@@ -616,7 +616,7 @@ BokWallet.resourceCreate
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L98)
+[base-wallet/types/wallet/base-wallet.d.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L98)
 
 ___
 
@@ -642,7 +642,7 @@ BokWallet.resourceList
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:81](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L81)
+[base-wallet/types/wallet/base-wallet.d.ts:81](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L81)
 
 ___
 
@@ -666,7 +666,7 @@ BokWallet.selectCredentialsForSdr
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
+[base-wallet/types/wallet/base-wallet.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L33)
 
 ___
 
@@ -690,7 +690,7 @@ BokWallet.selectIdentity
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
+[base-wallet/types/wallet/base-wallet.d.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L32)
 
 ___
 
@@ -716,7 +716,7 @@ BokWallet.selectiveDisclosure
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L104)
+[base-wallet/types/wallet/base-wallet.d.ts:104](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L104)
 
 ___
 
@@ -742,7 +742,7 @@ BokWallet.transactionDeploy
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:110](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L110)
+[base-wallet/types/wallet/base-wallet.d.ts:110](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L110)
 
 ___
 
@@ -760,4 +760,4 @@ BokWallet.wipe
 
 #### Defined in
 
-[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/80397ef/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)
+[base-wallet/types/wallet/base-wallet.d.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/types/wallet/base-wallet.d.ts#L31)

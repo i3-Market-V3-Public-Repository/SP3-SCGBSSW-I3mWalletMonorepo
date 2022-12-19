@@ -1932,6 +1932,13 @@ export namespace WalletPaths {
       export interface $200 {
         receipt: string
       }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentityInfo {
@@ -2042,6 +2049,13 @@ export namespace WalletPaths {
                  */
         did: string // ^did:ethr:(\w+:)?0x[0-9a-fA-F]{40}([0-9a-fA-F]{26})?$
       }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
+      }
     }
   }
   export namespace IdentitySign {
@@ -2106,6 +2120,13 @@ export namespace WalletPaths {
              */
       export interface $200 {
         signature: string
+      }
+      /**
+             * Error
+             */
+      export interface Default {
+        code: number // int32
+        message: string
       }
     }
   }

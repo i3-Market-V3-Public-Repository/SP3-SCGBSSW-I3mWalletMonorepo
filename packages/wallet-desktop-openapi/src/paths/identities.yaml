@@ -32,6 +32,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SignOutput"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
 
   /identities/{did}/deploy-tx:
     post:
@@ -60,6 +66,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Receipt"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
 
   /identities/{did}/info:
     get:
@@ -109,6 +121,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/IdentitySelectOutput"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "../schema/error.yaml#/components/schemas/ApiError"
 
   /identities:
     get:

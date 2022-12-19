@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  version: 2.4.0
+  version: 2.5.0
   title: i3M Wallet API
   contact:
     name: Juan Hernández Serrano
@@ -148,6 +148,11 @@ paths:
                   did: *ref_0
                 required:
                   - did
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema: *ref_1
   /identities/{did}/sign:
     post:
       summary: Signs a message
@@ -252,6 +257,11 @@ paths:
                     type: string
                 required:
                   - signature
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema: *ref_1
   /identities/{did}/info:
     get:
       summary: Gets extra information of an identity.
@@ -330,6 +340,11 @@ paths:
                     type: string
                 required:
                   - receipt
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema: *ref_1
   /resources:
     get:
       summary: >-
