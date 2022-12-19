@@ -37,7 +37,7 @@ export default function (): void {
 
   it('should fail when trying to get more information about a non-existing identity', async function () {
     try {
-      const identityInfo = await data.api.identities.info({ did: 'did:ethr:i3m:0x022c6936a221d9ccc2ccebde59a1a899fd170fe01234bfb8d8efd4e62911d12b5f' })
+      await data.api.identities.info({ did: 'did:ethr:i3m:0x022c6936a221d9ccc2ccebde59a1a899fd170fe01234bfb8d8efd4e62911d12b5f' })
       chai.expect(false)
     } catch (error) {
       console.log((error as Error).message)

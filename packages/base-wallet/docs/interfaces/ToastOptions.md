@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[base-wallet/src/ts/app/toast.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/src/ts/app/toast.ts#L7)
+[base-wallet/src/ts/app/toast.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/app/toast.ts#L7)
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/toast.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/src/ts/app/toast.ts#L5)
+[base-wallet/src/ts/app/toast.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/app/toast.ts#L5)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/toast.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/src/ts/app/toast.ts#L8)
+[base-wallet/src/ts/app/toast.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/app/toast.ts#L8)
 
 ___
 
@@ -47,4 +47,4 @@ ___
 
 #### Defined in
 
-[base-wallet/src/ts/app/toast.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/6ed91a6/packages/base-wallet/src/ts/app/toast.ts#L6)
+[base-wallet/src/ts/app/toast.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/app/toast.ts#L6)

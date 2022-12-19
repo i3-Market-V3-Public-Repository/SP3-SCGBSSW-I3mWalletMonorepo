@@ -779,19 +779,20 @@ export class BaseWallet<
         // A contract parent resource is a keyPair
         const keyPairId = await digest(resource.resource.keyPair.publicJwk)
         resource.parentResource = keyPairId
-        // If the keyPair was not yet created, we create it
-        if (!await this.store.has(`resources.${resource.parentResource}`)) {
-          const keyPairResource: KeyPairResource = {
-            id: keyPairId,
-            type: 'KeyPair',
-            resource: { keyPair: resource.resource.keyPair }
-          }
-          try {
-            await this.setResource(keyPairResource)
-          } catch (error) {
-            throw new WalletError('Failed to add resource', { status: 500 })
-          }
+        // If the keyPair was already created, we overwrite it
+        const keyPairResource: KeyPairResource = {
+          id: keyPairId,
+          identity: resource.identity, // If the contract sets an identity, the keypair will be assigned to that identity
+          type: 'KeyPair',
+          resource: { keyPair: resource.resource.keyPair }
         }
+        try {
+          await this.setResource(keyPairResource)
+        } catch (error) {
+          throw new WalletError('Failed to add resource', { status: 500 })
+        }
+        // If the contract had identity, it is already in the parent keyPair so we remove it
+        resource.identity = undefined
 
         break
       }
