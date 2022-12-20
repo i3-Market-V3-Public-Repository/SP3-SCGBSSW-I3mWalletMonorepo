@@ -31,19 +31,19 @@ Steps for creating a token:
       throw new Error('You need to pass a RPC_PROVIDER_URL as env variable.\nIf you are not using a wallet, you have to provide a valid RPC for connecting to the DLT.')
     }
 
-    const parsedPrivateKey = process.env.PRIVATE_KEY
-    if (parsedPrivateKey === undefined) {
-      throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
-    }
-    const privateKey = _pkg.parseHex(parsedPrivateKey, true)
-    const publicKey = ethers.utils.computePublicKey(privateKey)
-    const address = ethers.utils.computeAddress(publicKey)
+    // const parsedPrivateKey = process.env.PRIVATE_KEY
+    // if (parsedPrivateKey === undefined) {
+    //   throw new Error('You need to pass a PRIVATE_KEY as env variable. The associated address should also hold balance enough to interact with the DLT')
+    // }
+    // const privateKey = _pkg.parseHex(parsedPrivateKey, true)
+    // const publicKey = ethers.utils.computePublicKey(privateKey)
+    // const address = ethers.utils.computeAddress(publicKey)
 
-    const ethersWalletSetup = {
-      address,
-      privateKey,
-      rpcProviderUrl
-    }
+    // const ethersWalletSetup = {
+    //   address,
+    //   privateKey,
+    //   rpcProviderUrl
+    // }
 
     let consumerDltAgent: _pkg.EthersIoAgentDest
     let providerWallet: WalletApi
@@ -68,21 +68,7 @@ Steps for creating a token:
       const session = await Session.fromJSON(transport, sessionObj)
       providerWallet = new WalletApi(session)
 
-      consumerDltAgent = new _pkg.EthersIoAgentDest({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl })
-
-      dataExchangeAgreement = {
-        orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
-        dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
-        encAlg: 'A256GCM',
-        signingAlg: SIGNING_ALG,
-        hashAlg: 'SHA-256',
-        ledgerContractAddress: '0x8d407A1722633bDD1dcf221474be7a44C05d7c2F',
-        ledgerSignerAddress: ethersWalletSetup.address,
-        pooToPorDelay: 10000,
-        pooToPopDelay: 30000,
-        pooToSecretDelay: 180000 // 3 minutes
-      }
-      console.log(dataExchangeAgreement)
+      consumerDltAgent = new _pkg.EthersIoAgentDest({ rpcProviderUrl })
 
       // Import provider identity (it has funds to operate with the DLT)
       const privateKey = process.env.PRIVATE_KEY
@@ -92,22 +78,42 @@ Steps for creating a token:
       const privateKeyHex = _pkg.parseHex(privateKey, true)
       const publicKeyHex = ethers.utils.computePublicKey(privateKeyHex)
       const compressedPublicKey = ethers.utils.computePublicKey(publicKeyHex, true)
+      const address = ethers.utils.computeAddress(publicKeyHex)
       const did = `did:ethr:i3m:${compressedPublicKey}`
 
-      const resp = await providerWallet.identities.info({ did })
-      if (resp.addresses !== undefined && resp.addresses.length === 0) {
-        throw new Error('You have to import your PRIVATE_KEY to your wallet. Currently, the only way is to setup the wallet as a BOK (bag of keys) one')
+      try {
+        await providerWallet.identities.info({ did })
+      } catch (error) {
+        console.log((error as Error).message)
+        chai.expect(false)
       }
       console.log(`Provider identity found: ${did}`)
 
       // Prepare provider agent
       const providerWalletAgent = new _pkg.I3mWalletAgentOrig(providerWallet, did)
 
+      // Let us create the data exchange agreement
+      dataExchangeAgreement = {
+        orig: await _pkg.parseJwk(providerJwks.publicJwk, true),
+        dest: await _pkg.parseJwk(consumerJwks.publicJwk, true),
+        encAlg: 'A256GCM',
+        signingAlg: SIGNING_ALG,
+        hashAlg: 'SHA-256',
+        ledgerContractAddress: '0x8d407A1722633bDD1dcf221474be7a44C05d7c2F',
+        ledgerSignerAddress: address,
+        pooToPorDelay: 10000,
+        pooToPopDelay: 30000,
+        pooToSecretDelay: 180000 // 3 minutes
+      }
+      console.log(dataExchangeAgreement)
+
+      // Initiate NRP
       nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerWalletAgent)
       nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerDltAgent)
 
+      // Initiate CRS
       const jwkPair = await _pkg.generateKeys(SIGNING_ALG)
-      crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair, new _pkg.EthersIoAgentDest({ rpcProviderUrl: ethersWalletSetup.rpcProviderUrl })
+      crs = new _pkg.ConflictResolution.ConflictResolver(jwkPair, new _pkg.EthersIoAgentDest({ rpcProviderUrl })
       )
     })
 

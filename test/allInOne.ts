@@ -5,7 +5,7 @@ import { VerificationResolutionPayload } from '../src/ts'
 import { ethers } from 'ethers'
 import * as _pkg from '#pkg'
 
-describe('Non-repudiation protocol', function () {
+describe('Non-repudiation protocol - All in one', function () {
   this.bail() // stop after a test fails
   this.timeout(2000000)
 

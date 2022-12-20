@@ -120,7 +120,7 @@ Steps for creating a token:
 
       let dataExchangeAgreement: _pkg.DataExchangeAgreement
 
-      let block: Uint8Array
+      const blocksLength: number = 3
 
       before('should prepare agents and check that the provider one has funds to interact with the DLT', async function () {
         // Prepare consumer agent
@@ -139,9 +139,6 @@ Steps for creating a token:
       })
 
       it('should prepare a valid data sharing agreeemt', async function () {
-        // Create a random block of data for the data exchange
-        block = new Uint8Array(await randBytes(256))
-
         // Create random fresh keys for the data exchange
         consumerJwks = await _pkg.generateKeys('ES256')
         providerJwks = await _pkg.generateKeys('ES256')
@@ -198,6 +195,7 @@ Steps for creating a token:
         const resource2 = await consumerWallet.resources.create({
           type: 'Contract',
           identity: dids.consumer,
+          name: 'A-B',
           resource: {
             dataSharingAgreement,
             keyPair: {
@@ -210,106 +208,112 @@ Steps for creating a token:
         chai.expect(resource2.id).to.not.be.undefined
 
         expect(resource.id).to.be.equal(resource2.id)
-
-        // Ready for starting the NRP
-        nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerWalletAgent)
-        nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerWalletAgent)
       })
 
-      describe('create/verify proof of origin (PoO)', function () {
-        let poo: _pkg.StoredProof<_pkg.PoOPayload>
-        this.beforeAll(async function () {
-          poo = await nrpProvider.generatePoO()
-        })
-        it('provider should create a valid signed PoO that is properly verified by the consumer', async function () {
-          const verification = await nrpConsumer.verifyPoO(poo.jws, nrpProvider.block.jwe)
-          chai.expect(verification).to.not.equal(undefined)
-        })
-        it('consumer stores PoO in wallet', async function () {
-          const resource = await consumerWallet.resources.create({
-            type: 'NonRepudiationProof',
-            resource: poo.jws
+      for (let i = 0; i < blocksLength; i++) {
+        describe(`Secure data exchange of block ${i}`, function () {
+          let block: Uint8Array
+          before('initializing NRP agents', async function () {
+            block = new Uint8Array(await randBytes(256))
+            nrpProvider = new _pkg.NonRepudiationProtocol.NonRepudiationOrig(dataExchangeAgreement, providerJwks.privateJwk, block, providerWalletAgent)
+            nrpConsumer = new _pkg.NonRepudiationProtocol.NonRepudiationDest(dataExchangeAgreement, consumerJwks.privateJwk, consumerWalletAgent)
           })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-        it('provider stores PoO in wallet', async function () {
-          const resource = await providerWallet.resourceCreate({
-            type: 'NonRepudiationProof',
-            resource: poo.jws
+          describe('create/verify proof of origin (PoO)', function () {
+            let poo: _pkg.StoredProof<_pkg.PoOPayload>
+            this.beforeAll(async function () {
+              poo = await nrpProvider.generatePoO()
+            })
+            it('provider should create a valid signed PoO that is properly verified by the consumer', async function () {
+              const verification = await nrpConsumer.verifyPoO(poo.jws, nrpProvider.block.jwe)
+              chai.expect(verification).to.not.equal(undefined)
+            })
+            it('consumer stores PoO in wallet', async function () {
+              const resource = await consumerWallet.resources.create({
+                type: 'NonRepudiationProof',
+                resource: poo.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
+            it('provider stores PoO in wallet', async function () {
+              const resource = await providerWallet.resourceCreate({
+                type: 'NonRepudiationProof',
+                resource: poo.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
           })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-      })
 
-      describe('create/verify proof of reception (PoR)', function () {
-        let por: _pkg.StoredProof<_pkg.PoRPayload>
-        this.beforeAll(async function () {
-          por = await nrpConsumer.generatePoR()
-        })
-        it('consumer should create a valid signed PoR that is properly verified by the provider', async function () {
-          const verification = await nrpProvider.verifyPoR(por.jws)
-          chai.expect(verification).to.not.equal(undefined)
-        })
-        it('consumer stores PoR in wallet', async function () {
-          const resource = await consumerWallet.resources.create({
-            type: 'NonRepudiationProof',
-            resource: por.jws
+          describe('create/verify proof of reception (PoR)', function () {
+            let por: _pkg.StoredProof<_pkg.PoRPayload>
+            this.beforeAll(async function () {
+              por = await nrpConsumer.generatePoR()
+            })
+            it('consumer should create a valid signed PoR that is properly verified by the provider', async function () {
+              const verification = await nrpProvider.verifyPoR(por.jws)
+              chai.expect(verification).to.not.equal(undefined)
+            })
+            it('consumer stores PoR in wallet', async function () {
+              const resource = await consumerWallet.resources.create({
+                type: 'NonRepudiationProof',
+                resource: por.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
+            it('provider stores PoR in wallet', async function () {
+              const resource = await providerWallet.resourceCreate({
+                type: 'NonRepudiationProof',
+                resource: por.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
           })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-        it('provider stores PoR in wallet', async function () {
-          const resource = await providerWallet.resourceCreate({
-            type: 'NonRepudiationProof',
-            resource: por.jws
-          })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-      })
 
-      describe('create/verify proof of publication (PoP)', function () {
-        this.timeout(120000)
-        let pop: _pkg.StoredProof<_pkg.PoPPayload>
-        before(async function () {
-          pop = await nrpProvider.generatePoP()
-        })
-        it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
-          const verified = await nrpConsumer.verifyPoP(pop.jws)
-          console.log(JSON.stringify(verified.payload, undefined, 2))
-          chai.expect(verified).to.not.equal(undefined)
-        })
-        it('consumer stores PoP in wallet', async function () {
-          const resource = await consumerWallet.resources.create({
-            type: 'NonRepudiationProof',
-            resource: pop.jws
+          describe('create/verify proof of publication (PoP)', function () {
+            this.timeout(120000)
+            let pop: _pkg.StoredProof<_pkg.PoPPayload>
+            before(async function () {
+              pop = await nrpProvider.generatePoP()
+            })
+            it('provider should create a valid signed PoP that is properly verified by the consumer', async function () {
+              const verified = await nrpConsumer.verifyPoP(pop.jws)
+              console.log(JSON.stringify(verified.payload, undefined, 2))
+              chai.expect(verified).to.not.equal(undefined)
+            })
+            it('consumer stores PoP in wallet', async function () {
+              const resource = await consumerWallet.resources.create({
+                type: 'NonRepudiationProof',
+                resource: pop.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
+            it('provider stores PoP in wallet', async function () {
+              const resource = await providerWallet.resourceCreate({
+                type: 'NonRepudiationProof',
+                resource: pop.jws
+              })
+              chai.expect(resource.id).to.not.be.undefined
+            })
           })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-        it('provider stores PoP in wallet', async function () {
-          const resource = await providerWallet.resourceCreate({
-            type: 'NonRepudiationProof',
-            resource: pop.jws
+
+          describe('decrypt and verify decrypted cipherblock', function () {
+            it('consumer should be able to decrypt and hash(decrypted block) should be equal to the dataExchange.blockCommitment', async function () {
+              const decryptedBlock = await nrpConsumer.decrypt()
+              chai.expect(hashable(nrpProvider.block.raw)).to.equal((decryptedBlock !== undefined) ? hashable(decryptedBlock) : '')
+            })
           })
-          chai.expect(resource.id).to.not.be.undefined
-        })
-      })
 
-      describe('decrypt and verify decrypted cipherblock', function () {
-        it('consumer should be able to decrypt and hash(decrypted block) should be equal to the dataExchange.blockCommitment', async function () {
-          const decryptedBlock = await nrpConsumer.decrypt()
-          chai.expect(hashable(nrpProvider.block.raw)).to.equal((decryptedBlock !== undefined) ? hashable(decryptedBlock) : '')
+          describe('get secret from ledger', function () {
+            const timeout = 180000 // 3 minutes (we currently have one block every 2 minutes)
+            this.timeout(timeout)
+            it('should be the same secret as the one obtained in the PoP', async function () {
+              const secret = { ...nrpConsumer.block.secret }
+              const secretFromLedger = await nrpConsumer.getSecretFromLedger()
+              chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
+              nrpConsumer.block.secret = secret as _pkg.Block['secret']
+            })
+          })
         })
-      })
-
-      describe('get secret from ledger', function () {
-        const timeout = 180000 // 3 minutes (we currently have one block every 2 minutes)
-        this.timeout(timeout)
-        it('should be the same secret as the one obtained in the PoP', async function () {
-          const secret = { ...nrpConsumer.block.secret }
-          const secretFromLedger = await nrpConsumer.getSecretFromLedger()
-          chai.expect(hashable(secret)).to.equal(hashable(secretFromLedger))
-          nrpConsumer.block.secret = secret as _pkg.Block['secret']
-        })
-      })
+      }
     })
   })
 }

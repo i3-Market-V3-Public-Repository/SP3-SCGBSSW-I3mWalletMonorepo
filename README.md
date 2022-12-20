@@ -53,6 +53,19 @@ Before starting the agreement you need:
   >```typescript
   >const providerJwks = await nonRepudiationLibrary.generateKeys('ES256')
   >```
+  >
+  > The key pair can be stored in the provider operator's wallet as:
+  >
+  >```typescript
+  >const keyPair = {
+  >  privateJwk: await parseJwk(providerJwks.privateJwk, true),
+  >  publicJwk: await parseJwk(providerJwks.publicJwk, true)
+  >}
+  >
+  >const response = await providerOperatorWallet.resources.create({ resource: keyPair, type: 'KeyPair' })
+  >```
+  >
+  > For an example of connecting to an I3M-Wallet desktop app, please refer to the consumer example
 
 - **Import a DLT account to the (service) provider wallet with funds to execute the NRP** In this example we assume that the provider runs a `@i3m/server-wallet`.
   
