@@ -275,7 +275,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
 
         const identityChildren: Array<TreeListItem<any>> = identityItem.children
         resources
-          .filter(resource => resource.identity === did)
+          .filter(resource => resource.identity === did && resource.parentResource === undefined)
           .map((resource) => buildResourceTreeListItem(props, identityItem, resource, resources))
           .forEach((resource) => identityChildren.push(resource))
 

@@ -36,7 +36,7 @@ a promise that resolves to the key id.
 
 #### Defined in
 
-[base-wallet/src/ts/keywallet/key-wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L9)
+[base-wallet/src/ts/keywallet/key-wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L9)
 
 ___
 
@@ -64,7 +64,7 @@ Error - Any error
 
 #### Defined in
 
-[base-wallet/src/ts/keywallet/key-wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L26)
+[base-wallet/src/ts/keywallet/key-wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L26)
 
 ___
 
@@ -92,7 +92,7 @@ a promise that resolves to a public key
 
 #### Defined in
 
-[base-wallet/src/ts/keywallet/key-wallet.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L16)
+[base-wallet/src/ts/keywallet/key-wallet.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L16)
 
 ___
 
@@ -119,7 +119,7 @@ Signs input message and returns DER encoded typed array
 
 #### Defined in
 
-[base-wallet/src/ts/keywallet/key-wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L21)
+[base-wallet/src/ts/keywallet/key-wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L21)
 
 ___
 
@@ -141,4 +141,4 @@ Error - Any error
 
 #### Defined in
 
-[base-wallet/src/ts/keywallet/key-wallet.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L31)
+[base-wallet/src/ts/keywallet/key-wallet.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L31)

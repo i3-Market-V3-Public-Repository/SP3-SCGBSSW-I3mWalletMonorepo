@@ -1251,8 +1251,7 @@
                               }
                             },
                             "required": [
-                              "dataSharingAgreement",
-                              "keyPair"
+                              "dataSharingAgreement"
                             ]
                           }
                         },
@@ -2048,8 +2047,7 @@
                           }
                         },
                         "required": [
-                          "dataSharingAgreement",
-                          "keyPair"
+                          "dataSharingAgreement"
                         ]
                       }
                     },
@@ -3436,8 +3434,7 @@
                     }
                   },
                   "required": [
-                    "dataSharingAgreement",
-                    "keyPair"
+                    "dataSharingAgreement"
                   ]
                 }
               },
@@ -4193,8 +4190,7 @@
                   }
                 },
                 "required": [
-                  "dataSharingAgreement",
-                  "keyPair"
+                  "dataSharingAgreement"
                 ]
               }
             },
@@ -4946,8 +4942,7 @@
               }
             },
             "required": [
-              "dataSharingAgreement",
-              "keyPair"
+              "dataSharingAgreement"
             ]
           }
         },

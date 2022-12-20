@@ -178,7 +178,7 @@ export namespace WalletComponents {
             consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        keyPair: {
+        keyPair?: {
           /**
                      * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
                      *
@@ -1087,7 +1087,7 @@ export namespace WalletComponents {
             consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        keyPair: {
+        keyPair?: {
           /**
                      * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
                      *
@@ -1492,7 +1492,7 @@ export namespace WalletComponents {
             consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        keyPair: {
+        keyPair?: {
           /**
                      * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
                      *
@@ -2446,7 +2446,7 @@ export namespace WalletPaths {
             consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
           }
         }
-        keyPair: {
+        keyPair?: {
           /**
                      * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
                      *
@@ -2883,7 +2883,7 @@ export namespace WalletPaths {
               consumerSignature: string // ^[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+$
             }
           }
-          keyPair: {
+          keyPair?: {
             /**
                          * A stringified JWK with alphabetically sorted claims that represents a private key (complementary to `publicJwk`)
                          *

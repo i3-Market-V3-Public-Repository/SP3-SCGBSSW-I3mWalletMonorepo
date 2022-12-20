@@ -29,7 +29,7 @@ ResponderOptions.codeGenerator
 
 #### Defined in
 
-[transport/responder-transport.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L25)
+[transport/responder-transport.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L25)
 
 ___
 
@@ -43,7 +43,7 @@ ResponderOptions.id
 
 #### Defined in
 
-[transport/responder-transport.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L23)
+[transport/responder-transport.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L23)
 
 ___
 
@@ -57,7 +57,7 @@ ResponderOptions.l
 
 #### Defined in
 
-[transport/responder-transport.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L24)
+[transport/responder-transport.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L24)
 
 ___
 
@@ -71,7 +71,7 @@ ResponderOptions.port
 
 #### Defined in
 
-[transport/responder-transport.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L21)
+[transport/responder-transport.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L21)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[transport/http/http-responder.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/http/http-responder.ts#L9)
+[transport/http/http-responder.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/http/http-responder.ts#L9)
 
 ___
 
@@ -95,4 +95,4 @@ ResponderOptions.timeout
 
 #### Defined in
 
-[transport/responder-transport.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/cc22f64/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L22)
+[transport/responder-transport.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/wallet-protocol/src/ts/transport/responder-transport.ts#L22)

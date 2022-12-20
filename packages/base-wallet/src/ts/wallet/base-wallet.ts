@@ -592,18 +592,33 @@ export class BaseWallet<
 
   private async setResource (resource: Resource): Promise<void> {
     // If a parentResource is provided, do not allow to store the resource if it does not exist
+    let parentResource: Resource | undefined
     if (resource.parentResource !== undefined) {
-      if (!await this.store.has(`resources.${resource.parentResource}`)) {
+      try {
+        parentResource = await this.getResource(resource.parentResource)
+      } catch (error) {
         debug('Failed to add resource since parent resource does not exist:\n' + JSON.stringify(resource, undefined, 2))
         throw new Error('Parent resource for provided resource does not exist')
       }
     }
 
-    // If an identity is provided, do not allow to store the resource if it does not exist
+    // If an identity is provided, do not allow to store the resource if it does not exist.
     if (resource.identity !== undefined) {
       if (!await this.store.has(`identities.${resource.identity}`)) {
         debug('Failed to add resource since the identity is associated to does not exist:\n' + JSON.stringify(resource, undefined, 2))
         throw new Error('Identity for this resource does not exist')
+      }
+    }
+
+    if (parentResource !== undefined) {
+      // Do not allow as well a children resource with a different identity than its father
+      if (resource.identity !== undefined && parentResource.identity !== resource.identity) {
+        debug('Failed to add resource since it has a different identity than its parent resource')
+        throw new Error('Identity mismatch between parent and child resources')
+      }
+      // If child identity is not provided, it inherits its parent's
+      if (resource.identity === undefined) {
+        resource.identity = parentResource.identity
       }
     }
 
@@ -770,29 +785,48 @@ export class BaseWallet<
         break
       }
       case 'Contract': {
+        const { dataSharingAgreement, keyPair } = resource.resource
         const confirmation = await this.dialog.confirmation({
-          message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${resource.resource.dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${resource.resource.dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${resource.resource.dataSharingAgreement.parties.consumerDid}`
+          message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${dataSharingAgreement.parties.consumerDid}`
         })
         if (confirmation !== true) {
           throw new WalletError('User cannceled the operation', { status: 403 })
         }
+
         // A contract parent resource is a keyPair
-        const keyPairId = await digest(resource.resource.keyPair.publicJwk)
-        resource.parentResource = keyPairId
-        // If the keyPair was already created, we overwrite it
-        const keyPairResource: KeyPairResource = {
-          id: keyPairId,
-          identity: resource.identity, // If the contract sets an identity, the keypair will be assigned to that identity
-          type: 'KeyPair',
-          resource: { keyPair: resource.resource.keyPair }
+        let parentId: string | undefined
+        let keyPairResource: KeyPairResource
+        if (keyPair !== undefined) {
+          parentId = await digest(keyPair.publicJwk)
+          // If the keyPair was already created, we overwrite it
+          keyPairResource = {
+            id: parentId,
+            identity: resource.identity, // If the contract sets an identity, the keypair will be assigned to that identity as well
+            type: 'KeyPair',
+            resource: { keyPair }
+          }
+        } else {
+          try {
+            parentId = await digest(dataSharingAgreement.dataExchangeAgreement.orig)
+            keyPairResource = (await this.getResource(parentId)).resource as KeyPairResource
+          } catch (error) {
+            try {
+              parentId = await digest(dataSharingAgreement.dataExchangeAgreement.dest)
+              keyPairResource = (await this.getResource(parentId)).resource as KeyPairResource
+            } catch (error2) {
+              throw new WalletError('No associated keyPair found for this contract', { status: 500 })
+            }
+          }
         }
+
+        keyPairResource.identity = resource.identity // If the contract sets an identity, the keypair will be assigned to that identity as well
+        resource.parentResource = parentId
+
         try {
           await this.setResource(keyPairResource)
         } catch (error) {
           throw new WalletError('Failed to add resource', { status: 500 })
         }
-        // If the contract had identity, it is already in the parent keyPair so we remove it
-        resource.identity = undefined
 
         break
       }

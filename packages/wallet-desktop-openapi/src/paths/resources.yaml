@@ -241,7 +241,6 @@ components:
               $ref: "../schema/jwkPair.yaml#/components/schemas/JwkPair"
           required:
             - dataSharingAgreement
-            - keyPair
       required:
         - type
         - resource

@@ -799,7 +799,6 @@ paths:
                             keyPair: *ref_5
                           required:
                             - dataSharingAgreement
-                            - keyPair
                       required:
                         - type
                         - resource
