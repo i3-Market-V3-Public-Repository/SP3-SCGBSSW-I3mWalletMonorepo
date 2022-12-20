@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-cli",
-  "version": "2.5.0",
+  "version": "2.5.1",
   "description": "A terminal application that can connect to the wallet-service and manage the stored keys. This package is currently under development.",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
-    "@i3m/wallet-protocol": "^2.5.0",
+    "@i3m/wallet-protocol": "^2.5.1",
     "base58-js": "^1.0.0"
   }
 }

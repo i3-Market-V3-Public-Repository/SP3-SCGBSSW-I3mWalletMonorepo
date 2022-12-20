@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "version": "2.5.0",
+    "version": "2.5.1",
     "title": "i3M Wallet API",
     "contact": {
       "name": "Juan Hernández Serrano",

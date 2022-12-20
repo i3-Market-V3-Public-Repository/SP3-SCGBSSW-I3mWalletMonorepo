@@ -817,6 +817,7 @@ export class BaseWallet<
               throw new WalletError('No associated keyPair found for this contract', { status: 500 })
             }
           }
+          resource.resource.keyPair = keyPairResource.resource.keyPair
         }
 
         keyPairResource.identity = resource.identity // If the contract sets an identity, the keypair will be assigned to that identity as well
