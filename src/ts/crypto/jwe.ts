@@ -7,7 +7,7 @@ import { importJwk } from './importJwk'
 /**
  * Encrypts a block of data to JWE
  *
- * @param block - a block of data to encrypt
+ * @param block - a block of data to encrypt. Notice that maximum string length is 536870888 bytes. Safe typical upper bound to avoid problems is 320MBytes
  * @param secretOrPublicKey - a one-time secret for encrypting this block or publicKey to encrypt a content encryption key to encrypt the block
  * @param encAlg - the algorithm for content encryption. Only necessary if a public key is provided; otherwise it will be used instead of secretOrPublicKey.alg
  * @returns a Compact JWE

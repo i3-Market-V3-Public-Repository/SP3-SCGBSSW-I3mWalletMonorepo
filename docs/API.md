@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L13)
+[src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L13)
 
 ___
 
@@ -125,7 +125,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L11)
+[src/ts/types.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L11)
 
 ___
 
@@ -135,7 +135,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L9)
+[src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L9)
 
 ___
 
@@ -258,7 +258,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:177](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L177)
+[src/ts/types.ts:177](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L177)
 
 ___
 
@@ -268,7 +268,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L10)
+[src/ts/types.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L10)
 
 ___
 
@@ -299,7 +299,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:175](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/types.ts#L175)
+[src/ts/types.ts:175](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L175)
 
 ## Variables
 
@@ -309,7 +309,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/constants.ts#L3)
+[src/ts/constants.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/constants.ts#L3)
 
 ___
 
@@ -319,7 +319,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/constants.ts#L1)
+[src/ts/constants.ts:1](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/constants.ts#L1)
 
 ___
 
@@ -329,7 +329,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/constants.ts#L4)
+[src/ts/constants.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/constants.ts#L4)
 
 ___
 
@@ -339,7 +339,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/constants.ts#L2)
+[src/ts/constants.ts:2](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/constants.ts#L2)
 
 ___
 
@@ -349,7 +349,7 @@ ___
 
 #### Defined in
 
-[src/ts/dlt/defaultDltConfig.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/dlt/defaultDltConfig.ts#L4)
+[src/ts/dlt/defaultDltConfig.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/dlt/defaultDltConfig.ts#L4)
 
 ## Functions
 
@@ -372,7 +372,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/timestamps.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/timestamps.ts#L3)
+[src/ts/utils/timestamps.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/timestamps.ts#L3)
 
 ___
 
@@ -392,7 +392,7 @@ Creates a non-repudiable proof for a given data exchange
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `payload` | `Omit`<`T`, ``"iat"``\> | the payload to be added to the proof.                  `payload.iss` must be either the origin 'orig' or the destination 'dest' of the data exchange                  `payload.iat` shall be ommitted since it will be automatically added when signing (`Date.now()`) |
+| `payload` | `Omit`<`T`, ``"iat"``\> | the payload to be added to the proof. `payload.iss` must be either the origin 'orig' or the destination 'dest' of the data exchange `payload.iat` shall be ommitted since it will be automatically added when signing (`Date.now()`) |
 | `privateJwk` | [`JWK`](interfaces/JWK.md) | The private key in JWK that will sign the proof |
 
 #### Returns
@@ -403,7 +403,7 @@ a proof as a compact JWS formatted JWT string
 
 #### Defined in
 
-[src/ts/proofs/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/proofs/createProof.ts#L14)
+[src/ts/proofs/createProof.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/proofs/createProof.ts#L14)
 
 ___
 
@@ -429,7 +429,7 @@ the exchange id in hexadecimal
 
 #### Defined in
 
-[src/ts/exchange/exchangeId.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/exchange/exchangeId.ts#L13)
+[src/ts/exchange/exchangeId.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/exchange/exchangeId.ts#L13)
 
 ___
 
@@ -453,7 +453,7 @@ Generates a pair of JWK signing/verification keys
 
 #### Defined in
 
-[src/ts/crypto/generateKeys.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/generateKeys.ts#L18)
+[src/ts/crypto/generateKeys.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/generateKeys.ts#L18)
 
 ___
 
@@ -473,7 +473,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/getDltAddress.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/getDltAddress.ts#L4)
+[src/ts/utils/getDltAddress.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/getDltAddress.ts#L4)
 
 ___
 
@@ -494,7 +494,7 @@ ___
 
 #### Defined in
 
-[src/ts/crypto/importJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/importJwk.ts#L6)
+[src/ts/crypto/importJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/importJwk.ts#L6)
 
 ___
 
@@ -514,7 +514,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/jsonSort.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/jsonSort.ts#L5)
+[src/ts/utils/jsonSort.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/jsonSort.ts#L5)
 
 ___
 
@@ -539,7 +539,7 @@ the plaintext
 
 #### Defined in
 
-[src/ts/crypto/jwe.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/jwe.ts#L56)
+[src/ts/crypto/jwe.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/jwe.ts#L56)
 
 ___
 
@@ -553,7 +553,7 @@ Encrypts a block of data to JWE
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `block` | `Uint8Array` | a block of data to encrypt |
+| `block` | `Uint8Array` | a block of data to encrypt. Notice that maximum string length is 536870888 bytes. Safe typical upper bound to avoid problems is 320MBytes |
 | `secretOrPublicKey` | [`JWK`](interfaces/JWK.md) | a one-time secret for encrypting this block or publicKey to encrypt a content encryption key to encrypt the block |
 | `encAlg?` | ``"A128GCM"`` \| ``"A256GCM"`` | the algorithm for content encryption. Only necessary if a public key is provided; otherwise it will be used instead of secretOrPublicKey.alg |
 
@@ -565,7 +565,7 @@ a Compact JWE
 
 #### Defined in
 
-[src/ts/crypto/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/jwe.ts#L15)
+[src/ts/crypto/jwe.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/jwe.ts#L15)
 
 ___
 
@@ -594,7 +594,7 @@ Decodes and optionally verifies a JWS, and returns the decoded header, payload.
 
 #### Defined in
 
-[src/ts/crypto/jwsDecode.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/jwsDecode.ts#L12)
+[src/ts/crypto/jwsDecode.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/jwsDecode.ts#L12)
 
 ___
 
@@ -620,7 +620,7 @@ a promise that resolves to the secret in JWK and raw hex string
 
 #### Defined in
 
-[src/ts/crypto/oneTimeSecret.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/oneTimeSecret.ts#L19)
+[src/ts/crypto/oneTimeSecret.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/oneTimeSecret.ts#L19)
 
 ___
 
@@ -642,7 +642,7 @@ Verifies and returns the ethereum address in EIP-55 format
 
 #### Defined in
 
-[src/ts/utils/parseAddress.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/parseAddress.ts#L9)
+[src/ts/utils/parseAddress.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/parseAddress.ts#L9)
 
 ___
 
@@ -664,7 +664,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseHex.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/parseHex.ts#L4)
+[src/ts/utils/parseHex.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/parseHex.ts#L4)
 
 ___
 
@@ -685,7 +685,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/parseJwk.ts#L6)
+[src/ts/utils/parseJwk.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/parseJwk.ts#L6)
 
 ▸ **parseJwk**(`jwk`, `stringify`): `Promise`<[`JWK`](interfaces/JWK.md)\>
 
@@ -702,7 +702,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/parseJwk.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/parseJwk.ts#L7)
+[src/ts/utils/parseJwk.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/parseJwk.ts#L7)
 
 ___
 
@@ -723,7 +723,7 @@ ___
 
 #### Defined in
 
-[src/ts/utils/sha.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/utils/sha.ts#L5)
+[src/ts/utils/sha.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/utils/sha.ts#L5)
 
 ___
 
@@ -743,7 +743,7 @@ ___
 
 #### Defined in
 
-[src/ts/exchange/checkAgreement.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/exchange/checkAgreement.ts#L52)
+[src/ts/exchange/checkAgreement.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/exchange/checkAgreement.ts#L52)
 
 ___
 
@@ -763,7 +763,7 @@ ___
 
 #### Defined in
 
-[src/ts/exchange/checkAgreement.ts:73](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/exchange/checkAgreement.ts#L73)
+[src/ts/exchange/checkAgreement.ts:73](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/exchange/checkAgreement.ts#L73)
 
 ___
 
@@ -783,7 +783,7 @@ ___
 
 #### Defined in
 
-[src/ts/exchange/checkAgreement.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/exchange/checkAgreement.ts#L20)
+[src/ts/exchange/checkAgreement.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/exchange/checkAgreement.ts#L20)
 
 ___
 
@@ -804,7 +804,7 @@ ___
 
 #### Defined in
 
-[src/ts/crypto/verifyKeyPair.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/crypto/verifyKeyPair.ts#L7)
+[src/ts/crypto/verifyKeyPair.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/crypto/verifyKeyPair.ts#L7)
 
 ___
 
@@ -825,7 +825,7 @@ Verify a proof
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `proof` | `string` | a non-repudiable proof in Compact JWS formatted JWT string |
-| `expectedPayloadClaims` | `Partial`<`T`\> & { `exchange`: [`Dict`](API.md#dict)<`T`[``"exchange"``]\> ; `iss`: `T`[``"iss"``] ; `proofType`: `T`[``"proofType"``]  } | The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be: {   proofType: 'PoO',   iss: 'orig',   exchange: {     id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d',     orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender)     dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver)     hash_alg: 'SHA-256',     cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding     block_commitment: '', // hash of the plaintext block in base64url with no padding     secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding   } } |
+| `expectedPayloadClaims` | `Partial`<`T`\> & { `exchange`: [`Dict`](API.md#dict)<`T`[``"exchange"``]\> ; `iss`: `T`[``"iss"``] ; `proofType`: `T`[``"proofType"``]  } | The expected values of the proof's payload claims. An expected value of '' can be use to just check that the claim is in the payload. An example could be: { proofType: 'PoO', iss: 'orig', exchange: { id: '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d', orig: '{"kty":"EC","x":"rPMP39e-o8cU6m4WL8_qd2wxo-nBTjWXZtPGBiiGCTY","y":"0uvxGEebFDxKOHYUlHREzq4mRULuZvQ6LB2I11yE1E0","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block origin (sender) dest: '{"kty":"EC","x":"qf_mNdy57ia1vAq5QLpTPxJUCRhS2003-gL0nLcbXoA","y":"H_8YwSCKJhDbZv17YEgDfAiKTaQ8x0jpLYCC2myxAeY","crv":"P-256"}', // Public key in JSON.stringify(JWK) of the block destination (receiver) hash_alg: 'SHA-256', cipherblock_dgst: 'IBUIstf98_afbiuh7UaifkasytNih7as-Jah61ls9UI', // hash of the cipherblock in base64url with no padding block_commitment: '', // hash of the plaintext block in base64url with no padding secret_commitment: '' // hash of the secret that can be used to decrypt the block in base64url with no padding } } |
 | `options?` | [`TimestampVerifyOptions`](interfaces/TimestampVerifyOptions.md) | specifies a time window to accept the proof |
 
 #### Returns
@@ -836,4 +836,4 @@ The JWT protected header and payload if the proof is validated
 
 #### Defined in
 
-[src/ts/proofs/verifyProof.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/proofs/verifyProof.ts#L29)
+[src/ts/proofs/verifyProof.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/proofs/verifyProof.ts#L29)

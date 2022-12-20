@@ -2,6 +2,8 @@ import * as _pkg from '#pkg'
 import { randBytes } from 'bigint-crypto-utils'
 
 describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean)', function () {
+  this.timeout(30000)
+
   it('should work with AES-128-GCM', async function () {
     const otp = await _pkg.oneTimeSecret('A128GCM')
     chai.expect(otp).to.not.equal(undefined)
@@ -42,12 +44,26 @@ describe('oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base
     }
     chai.expect(err).to.not.equal(undefined)
   })
-  it('should be able to encrypt and decrypt using a one-time secret', async function () {
-    const plaintext = await randBytes(1024)
+  it('should be able to encrypt and decrypt different block lengths using a one-time secret', async function () {
     const secret = await _pkg.oneTimeSecret('A128GCM')
     console.log(JSON.stringify(secret.jwk, undefined, 2))
-    const jwe = await _pkg.jweEncrypt(plaintext, secret.jwk)
-    const decrypted = await _pkg.jweDecrypt(jwe, secret.jwk)
-    chai.expect(decrypted.plaintext).to.eql(plaintext)
+
+    const plaintexts: Uint8Array[] = []
+
+    plaintexts.push(await randBytes(256))
+    plaintexts.push(await randBytes(1024))
+    // plaintexts.push(await randBytes(1048576)) // 1MB
+    // plaintexts.push(await randBytes(8388608)) // 8MB
+    // plaintexts.push(await randBytes(67108864)) // 64MB
+    // plaintexts.push(await randBytes(134217728)) // 128MB
+    // plaintexts.push(await randBytes(268435456)) // 256MB
+    plaintexts.push(await randBytes(335544320)) // 320MB
+    // plaintexts.push(await randBytes(402653184)) // 384MB
+
+    for (const plaintext of plaintexts) {
+      const jwe = await _pkg.jweEncrypt(plaintext, secret.jwk)
+      const decrypted = await _pkg.jweDecrypt(jwe, secret.jwk)
+      chai.expect(decrypted.plaintext).to.eql(plaintext)
+    }
   })
 })

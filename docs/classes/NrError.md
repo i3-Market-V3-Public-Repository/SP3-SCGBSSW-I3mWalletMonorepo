@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/errors/NrError.ts#L6)
+[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/errors/NrError.ts#L6)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1041
+node_modules/typescript/lib/lib.es5.d.ts:1054
 
 ___
 
@@ -73,7 +73,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1040
+node_modules/typescript/lib/lib.es5.d.ts:1053
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/errors/NrError.ts#L4)
+[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/errors/NrError.ts#L4)
 
 ___
 
@@ -97,7 +97,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1042
+node_modules/typescript/lib/lib.es5.d.ts:1055
 
 ___
 
@@ -132,7 +132,7 @@ Error.prepareStackTrace
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:11
+node_modules/@types/node/globals.d.ts:11
 
 ___
 
@@ -146,13 +146,13 @@ Error.stackTraceLimit
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:13
+node_modules/@types/node/globals.d.ts:13
 
 ## Methods
 
 ### add
 
-▸ **add**(...`nrErrors`): `void`
+▸ **add**(`...nrErrors`): `void`
 
 #### Parameters
 
@@ -166,7 +166,7 @@ node_modules/@types/node/ts4.8/globals.d.ts:13
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/a06a579/src/ts/errors/NrError.ts#L16)
+[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/errors/NrError.ts#L16)
 
 ___
 
@@ -193,4 +193,4 @@ Error.captureStackTrace
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/globals.d.ts:4
+node_modules/@types/node/globals.d.ts:4

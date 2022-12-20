@@ -4,10 +4,10 @@ import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants';
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
 export { KeyLike } from 'jose';
 export { ContractInterface };
-export declare type HashAlg = typeof HASH_ALGS[number];
-export declare type SigningAlg = typeof SIGNING_ALGS[number];
-export declare type EncryptionAlg = typeof ENC_ALGS[number];
-export declare type Dict<T> = T & {
+export type HashAlg = typeof HASH_ALGS[number];
+export type SigningAlg = typeof SIGNING_ALGS[number];
+export type EncryptionAlg = typeof ENC_ALGS[number];
+export type Dict<T> = T & {
     [key: string | symbol | number]: any | undefined;
 };
 export interface Algs {
@@ -128,6 +128,6 @@ export interface DecodedProof<T extends ProofPayload> {
     payload: T;
     signer?: JWK;
 }
-export declare type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
-export declare type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid EIP-55 address' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid timestamp' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
+export type getFromJws<T> = (header: JWEHeaderParameters, payload: T) => Promise<JWK>;
+export type NrErrorName = 'not a compact jws' | 'invalid key' | 'encryption failed' | 'decryption failed' | 'jws verification failed' | 'invalid algorithm' | 'invalid EIP-55 address' | 'invalid poo' | 'invalid por' | 'invalid pop' | 'invalid dispute request' | 'invalid verification request' | 'invalid dispute request' | 'data exchange not as expected' | 'dataExchange integrity violated' | 'secret not published' | 'secret not published in time' | 'received too late' | 'unexpected error' | 'invalid timestamp' | 'invalid format' | 'cannot contact the ledger' | 'cannot verify';
 //# sourceMappingURL=types.d.ts.map
