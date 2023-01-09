@@ -30,7 +30,7 @@ export abstract class InitiatorTransport<Req, Res> extends BaseTransport<Req, Re
   constructor (opts: Partial<InitiatorOptions> = {}) {
     super()
     this.opts = {
-      host: opts.host ?? 'localhost',
+      host: opts.host ?? '::1',
       id: opts.id ?? { name: 'Initiator' },
       l: opts.l ?? constants.DEFAULT_RANDOM_LENGTH,
       getConnectionString: opts.getConnectionString ?? (async (): Promise<string> => {

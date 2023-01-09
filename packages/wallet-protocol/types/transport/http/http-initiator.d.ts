@@ -10,7 +10,6 @@ export interface HttpResponse {
     body: string;
 }
 export declare class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, HttpResponse> {
-    buildRpcUrl(port: number): string;
     baseSend(port: number, httpReq: RequestInit): Promise<HttpResponse>;
     sendRequest<T extends Request>(request: Request): Promise<T>;
     send(masterKey: MasterKey, code: Uint8Array, req: HttpRequest): Promise<HttpResponse>;
