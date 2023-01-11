@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
+[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
 
 ## Properties
 
@@ -56,7 +56,7 @@
 
 #### Defined in
 
-[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
+[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
+[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
+[protocol/session.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L5)
 
 ## Methods
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L7)
+[protocol/session.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L7)
 
 ___
 
@@ -110,7 +110,7 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L11)
+[protocol/session.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L11)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L18)
+[protocol/session.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L18)
 
 ▸ `Static` **fromJSON**<`T`\>(`transportConstructor`, `json`): `Promise`<[`Session`](Session.md)<`T`\>\>
 
@@ -160,4 +160,4 @@ ___
 
 #### Defined in
 
-[protocol/session.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4ec1f56/packages/wallet-protocol/src/ts/protocol/session.ts#L19)
+[protocol/session.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2f8f88/packages/wallet-protocol/src/ts/protocol/session.ts#L19)

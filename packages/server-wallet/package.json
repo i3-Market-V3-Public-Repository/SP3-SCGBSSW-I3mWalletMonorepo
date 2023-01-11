@@ -1,6 +1,6 @@
 {
   "name": "@i3m/server-wallet",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "Get a ready-to-go Wallet requiring no user interaction and using a simple file to store wallet data. It should be used only when no human interaction is possible.",
   "keywords": [
     "wallet",
@@ -127,6 +127,6 @@
   },
   "dependencies": {
     "@i3m/base-wallet": "^2.5.1",
-    "@i3m/bok-wallet": "^2.5.2"
+    "@i3m/bok-wallet": "^2.5.3"
   }
 }
