@@ -2,6 +2,7 @@ import data from './data'
 
 export default function (): void {
   let from: string = ''
+  let jwt: string = ''
 
   it('should create identities', async function () {
     const { api } = data
@@ -52,5 +53,49 @@ export default function (): void {
       data: { from }
     })
     chai.expect(response).to.have.key('signature')
+  })
+
+  it('should generate a signed JWT', async function () {
+    const header = { headerField1: 'hello' }
+    const payload = { payloadField1: 'yellow', payloadField2: 'brown' }
+    jwt = (await data.api.identities.sign(data.user, { type: 'JWT', data: { header, payload } })).signature
+    chai.expect(jwt).to.not.be.undefined
+    console.log('generated JWT: ' + jwt)
+  })
+
+  it('a JWT with a DID (that is resolved in the connected DLT) as issuer can be verified by the wallet', async function () {
+    const verification = await data.api.didJwt.verify({ jwt })
+    console.log('verification: ' + JSON.stringify(verification, undefined, 2))
+    chai.expect(verification.verification).to.equal('success')
+  })
+
+  it('verification of the JWT will also succeed if a expected claim is found in the payload', async function () {
+    const verification = await data.api.didJwt.verify({
+      jwt,
+      expectedPayloadClaims: {
+        payloadField1: 'yellow'
+      }
+    })
+    console.log('verification: ' + JSON.stringify(verification, undefined, 2))
+    chai.expect(verification.verification).to.equal('success')
+  })
+
+  it('verification of the JWT will fail if a expected claim is not in the payload', async function () {
+    const verification = await data.api.didJwt.verify({
+      jwt,
+      expectedPayloadClaims: {
+        noneExistingField: ''
+      }
+    })
+    console.log('verification: ' + JSON.stringify(verification, undefined, 2))
+    chai.expect(verification.verification).to.equal('failed')
+  })
+
+  it('verification of the JWT will fail if the signature is invalid', async function () {
+    const verification = await data.api.didJwt.verify({
+      jwt: jwt.slice(0, -10) + 'aAbBcCdDeE'
+    })
+    console.log('verification: ' + JSON.stringify(verification, undefined, 2))
+    chai.expect(verification.verification).to.equal('failed')
   })
 }

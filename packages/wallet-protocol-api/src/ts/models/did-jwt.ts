@@ -8,7 +8,8 @@ export class DidJwtApi {
   async verify (body: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200> {
     const response = (await this.api.executeQuery({
       path: '/did-jwt/verify',
-      method: 'POST'
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }
     }, undefined, undefined, body))
     if ((response as WalletComponents.Schemas.ApiError).code !== undefined) {
       throw new Error(`${(response as WalletComponents.Schemas.ApiError).code}: ${(response as WalletComponents.Schemas.ApiError).message}`)
