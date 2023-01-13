@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { WalletComponents, WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { IIdentifier, IMessage, VerifiableCredential, VerifiablePresentation } from '@veramo/core'
 import { ethers } from 'ethers'
@@ -739,10 +741,30 @@ export class BaseWallet<
   async resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201> {
     const resource: Resource = { ...requestBody, id: uuid() }
 
+    // Very hacky but it is the only place. If the resource is a contract without a keypair, we look for an existing one and we add it
+    if (resource.type === 'Contract' && resource.resource.keyPair === undefined) {
+      // A contract parent resource is a keyPair
+      let parentId: string | undefined
+      let keyPairResource: KeyPairResource
+      try {
+        parentId = await digest(resource.resource.dataSharingAgreement.dataExchangeAgreement.orig)
+        keyPairResource = (await this.getResource(parentId)) as KeyPairResource
+      } catch (error) {
+        try {
+          parentId = await digest(resource.resource.dataSharingAgreement.dataExchangeAgreement.dest)
+          keyPairResource = (await this.getResource(parentId)) as KeyPairResource
+        } catch (error2) {
+          throw new WalletError('No associated keyPair found for this contract, please provide one', { status: 400 })
+        }
+      }
+      resource.resource.keyPair = keyPairResource.resource.keyPair
+      resource.parentResource = parentId
+    }
+
     // Validate resource
     const validation = await this.resourceValidator.validate(resource, this.veramo)
     if (!validation.validated) {
-      throw new Error(`Resource type ${resource.type} not supported`)
+      throw new WalletError(`Resource validation failed: type ${resource.type} not supported`, { status: 400 })
     }
 
     if (validation.errors.length > 0) {
@@ -785,7 +807,7 @@ export class BaseWallet<
         break
       }
       case 'Contract': {
-        const { dataSharingAgreement, keyPair } = resource.resource
+        const { dataSharingAgreement, keyPair } = resource.resource // They keyPair is assigned before validation, so it cannot be undefined
         const confirmation = await this.dialog.confirmation({
           message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${dataSharingAgreement.parties.consumerDid}`
         })
@@ -793,34 +815,15 @@ export class BaseWallet<
           throw new WalletError('User cannceled the operation', { status: 403 })
         }
 
-        // A contract parent resource is a keyPair
-        let parentId: string | undefined
-        let keyPairResource: KeyPairResource
-        if (keyPair !== undefined) {
-          parentId = await digest(keyPair.publicJwk)
-          // If the keyPair was already created, we overwrite it
-          keyPairResource = {
-            id: parentId,
-            identity: resource.identity, // If the contract sets an identity, the keypair will be assigned to that identity as well
-            type: 'KeyPair',
-            resource: { keyPair }
-          }
-        } else {
-          try {
-            parentId = await digest(dataSharingAgreement.dataExchangeAgreement.orig)
-            keyPairResource = (await this.getResource(parentId)).resource as KeyPairResource
-          } catch (error) {
-            try {
-              parentId = await digest(dataSharingAgreement.dataExchangeAgreement.dest)
-              keyPairResource = (await this.getResource(parentId)).resource as KeyPairResource
-            } catch (error2) {
-              throw new WalletError('No associated keyPair found for this contract', { status: 500 })
-            }
-          }
-          resource.resource.keyPair = keyPairResource.resource.keyPair
+        const parentId = await digest(keyPair!.publicJwk)
+        // If the keyPair was already created, we overwrite it
+        const keyPairResource: KeyPairResource = {
+          id: parentId,
+          identity: resource.identity, // If the contract sets an identity, the keypair will be assigned to that identity as well
+          type: 'KeyPair',
+          resource: { keyPair: keyPair! }
         }
-
-        keyPairResource.identity = resource.identity // If the contract sets an identity, the keypair will be assigned to that identity as well
+        // A contract parent resource is a keyPair
         resource.parentResource = parentId
 
         try {

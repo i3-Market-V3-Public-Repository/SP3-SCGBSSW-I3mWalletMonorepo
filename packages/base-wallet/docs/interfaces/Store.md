@@ -43,7 +43,7 @@ Delete all items.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L64)
+[base-wallet/src/ts/app/store.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L64)
 
 ## Methods
 
@@ -71,7 +71,7 @@ Delete an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L58)
+[base-wallet/src/ts/app/store.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L58)
 
 ▸ **delete**(`key`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
@@ -87,7 +87,7 @@ Delete an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L59)
+[base-wallet/src/ts/app/store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L59)
 
 ___
 
@@ -115,7 +115,7 @@ Get an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L35)
+[base-wallet/src/ts/app/store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L35)
 
 ▸ **get**<`Key`\>(`key`, `defaultValue`): [`CanBePromise`](../API.md#canbepromise)<`Required`<`T`\>[`Key`]\>
 
@@ -138,7 +138,7 @@ Get an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L36)
+[base-wallet/src/ts/app/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L36)
 
 ___
 
@@ -166,7 +166,7 @@ Check if an item exists.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L51)
+[base-wallet/src/ts/app/store.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L51)
 
 ▸ **has**(`key`): [`CanBePromise`](../API.md#canbepromise)<`boolean`\>
 
@@ -182,7 +182,7 @@ Check if an item exists.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L52)
+[base-wallet/src/ts/app/store.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L52)
 
 ___
 
@@ -211,7 +211,7 @@ Set an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L43)
+[base-wallet/src/ts/app/store.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L43)
 
 ▸ **set**(`key`, `value`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
@@ -228,4 +228,4 @@ Set an item.
 
 #### Defined in
 
-[base-wallet/src/ts/app/store.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e316827/packages/base-wallet/src/ts/app/store.ts#L44)
+[base-wallet/src/ts/app/store.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/840d283/packages/base-wallet/src/ts/app/store.ts#L44)

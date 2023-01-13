@@ -23,11 +23,7 @@ export default function (): void {
   it('should store a data sharing agreement template', async function () {
     const deaExample = await import('./dataSharingAgreementExample')
     const contract: Contract = {
-      dataSharingAgreement: deaExample.example.dataSharingAgreement as Contract['dataSharingAgreement'],
-      keyPair: {
-        privateJwk: await parseJwk(deaExample.example.providerJwks.privateJwk as JWK, true),
-        publicJwk: await parseJwk(deaExample.example.providerJwks.publicJwk as JWK, true)
-      }
+      dataSharingAgreement: deaExample.example.dataSharingAgreement as Contract['dataSharingAgreement']
     }
     const response = await data.api.resources.create({ resource: contract, type: 'Contract' })
     if (response.id !== undefined) keyPairId = response.id

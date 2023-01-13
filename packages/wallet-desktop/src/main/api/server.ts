@@ -83,18 +83,7 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
   app.use('/pairing', express.static(getResourcePath('pairing')))
   app.use('/pairing/@i3m', express.static(getModulesPath('@i3m')))
 
-  // Add routes using openapi validator middleware
-  const openApiMiddleware = openapiValidator({
-    apiSpec: openapiSpec as any,
-    validateResponses: true, // <-- to validate responses
-    validateRequests: true, // false by default
-    operationHandlers: path.join(__dirname, 'routes')
-    // unknownFormats: ['my-format'] // <-- to provide custom formats
-    // ignorePaths: /^(?!\/?rp).*$/
-  })
-  app.use(openApiMiddleware)
-
-  // Add error middleware
+  // Add error middleware. I add it before the openapi so that the openapi properly validates the error responses
   const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
     if (err instanceof HttpError || err instanceof WalletError || err instanceof ActionError) {
       const status = Number(err.status ?? 400)
@@ -107,4 +96,15 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
     }
   }
   app.use(errorMiddleware)
+
+  // Add routes using openapi validator middleware
+  const openApiMiddleware = openapiValidator({
+    apiSpec: openapiSpec as any,
+    validateResponses: true, // <-- to validate responses
+    validateRequests: true, // false by default
+    operationHandlers: path.join(__dirname, 'routes')
+    // unknownFormats: ['my-format'] // <-- to provide custom formats
+    // ignorePaths: /^(?!\/?rp).*$/
+  })
+  app.use(openApiMiddleware)
 }

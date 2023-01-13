@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+
 import { ContractResource } from '../app'
 import { verifyDataSharingAgreementSignature } from '../utils'
 import { Validator } from './resource-validator'
@@ -28,16 +30,16 @@ export const contractValidator: Validator<ContractResource> = async (resource, v
 
     // Check role
     let role: 'provider' | 'consumer'
-    if (keyPair.publicJwk === dataSharingAgreement.dataExchangeAgreement.orig) {
+    if (keyPair!.publicJwk === dataSharingAgreement.dataExchangeAgreement.orig) {
       role = 'provider'
-    } else if (keyPair.publicJwk === dataSharingAgreement.dataExchangeAgreement.dest) {
+    } else if (keyPair!.publicJwk === dataSharingAgreement.dataExchangeAgreement.dest) {
       role = 'consumer'
     } else {
-      throw new Error(`${keyPair.publicJwk} is not either dataExchangeAgreement.orig or dataExchangeAgreement.dest`)
+      throw new Error(`${keyPair!.publicJwk} is not either dataExchangeAgreement.orig or dataExchangeAgreement.dest`)
     }
 
     // Verify keyPair
-    await verifyKeyPair(JSON.parse(keyPair.publicJwk), JSON.parse(keyPair.privateJwk))
+    await verifyKeyPair(JSON.parse(keyPair!.publicJwk), JSON.parse(keyPair!.privateJwk))
 
     // If an identity is provided, check that is either the provider or the consumer
     if (resource.identity !== undefined) {

@@ -8,6 +8,31 @@ import _ from 'lodash'
 //   [key: string]: any | undefined
 // }
 
+/*
+ * Compare two objects by reducing an array of keys in obj1, having the
+ * keys in obj2 as the intial value of the result. Key points:
+ *
+ * - All keys of obj2 are initially in the result.
+ *
+ * - If the loop finds a key (from obj1, remember) not in obj2, it adds
+ *   it to the result.
+ *
+ * - If the loop finds a key that are both in obj1 and obj2, it compares
+ *   the value. If it's the same value, the key is removed from the result.
+ */
+function getObjectDiff (obj1: any, obj2: any): string[] {
+  const diff = Object.keys(obj1).reduce((result, key) => {
+    if (!Object.prototype.hasOwnProperty.call(obj2, key)) {
+      result.push(key)
+    } else if (_.isEqual(obj1[key], obj2[key])) {
+      const resultKeyIndex = result.indexOf(key)
+      result.splice(resultKeyIndex, 1)
+    }
+    return result
+  }, Object.keys(obj2))
+  return diff
+}
+
 /**
    * Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
    *
@@ -34,15 +59,23 @@ export async function didJwtVerify (jwt: string, veramo: Veramo, expectedPayload
     const expectedPayloadMerged = _.cloneDeep(expectedPayloadClaims)
     _.defaultsDeep(expectedPayloadMerged, payload)
 
-    const isExpectedPayload = _.isEqual(expectedPayloadMerged, payload)
-
-    if (!isExpectedPayload) {
+    const diffs = getObjectDiff(payload, expectedPayloadMerged)
+    if (diffs.length > 0) {
       return {
         verification: 'failed',
-        error: 'some or all the expected payload claims are not in the payload',
+        error: 'The following top-level properties are missing or different: ' + diffs.join(', '),
         decodedJwt
       }
     }
+    // const isExpectedPayload = _.isEqual(expectedPayloadMerged, payload)
+
+    // if (!isExpectedPayload) {
+    //   return {
+    //     verification: 'failed',
+    //     error: 'some or all the expected payload claims are not as expected',
+    //     decodedJwt
+    //   }
+    // }
   }
   const resolver = { resolve: async (didUrl: string) => await veramo.agent.resolveDid({ didUrl }) }
   try {

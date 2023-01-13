@@ -5,6 +5,8 @@ import data from './data'
 export default function (): void {
   let from: string = ''
   let jwt: string = ''
+  let jwtPayload: any = {}
+  let jwtHeader: any = {}
 
   it('should create identities', async function () {
     const { api } = data
@@ -58,15 +60,15 @@ export default function (): void {
   })
 
   it('should generate a signed JWT', async function () {
-    const header = { headerField1: 'hello' }
-    const payload = { payloadField1: 'yellow', payloadField2: 'brown' }
-    jwt = (await data.api.identities.sign(data.user, { type: 'JWT', data: { header, payload } })).signature
+    jwtHeader = { headerField1: 'hello' }
+    jwtPayload = { payloadField1: 'yellow', payloadField2: 'brown' }
+    jwt = (await data.api.identities.sign(data.user, { type: 'JWT', data: { header: jwtHeader, payload: jwtPayload } })).signature
     chai.expect(jwt).to.not.be.undefined
     console.log('generated JWT: ' + jwt)
   })
 
   it('a JWT with a DID (that is resolved in the connected DLT) as issuer can be verified by the wallet', async function () {
-    const verification = await data.api.didJwt.verify({ jwt })
+    const verification = await data.api.didJwt.verify({ jwt, expectedPayloadClaims: jwtPayload })
     console.log('verification: ' + JSON.stringify(verification, undefined, 2))
     chai.expect(verification.verification).to.equal('success')
   })
