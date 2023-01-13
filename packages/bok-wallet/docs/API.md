@@ -1,4 +1,4 @@
-# @i3m/bok-wallet - v2.5.4
+# @i3m/bok-wallet - v2.5.5
 
 ## Table of contents
 

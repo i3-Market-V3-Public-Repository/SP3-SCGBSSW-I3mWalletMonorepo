@@ -570,7 +570,7 @@ ___
 
 #### Defined in
 
-[src/ts/bok-wallet.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/510be6b/packages/bok-wallet/src/ts/bok-wallet.ts#L12)
+[src/ts/bok-wallet.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/bok-wallet/src/ts/bok-wallet.ts#L12)
 
 ___
 

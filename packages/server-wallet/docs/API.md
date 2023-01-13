@@ -1,4 +1,4 @@
-# @i3m/server-wallet - v2.5.4
+# @i3m/server-wallet - v2.5.5
 
 ## Table of contents
 
@@ -29,4 +29,4 @@
 
 #### Defined in
 
-[src/ts/index.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/510be6b/packages/server-wallet/src/ts/index.ts#L22)
+[src/ts/index.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/server-wallet/src/ts/index.ts#L22)

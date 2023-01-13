@@ -1,4 +1,4 @@
-# @i3m/wallet-protocol-utils - v2.5.4
+# @i3m/wallet-protocol-utils - v2.5.5
 
 ## Table of contents
 
@@ -38,7 +38,7 @@ a promise that resolves to the PIN
 
 #### Defined in
 
-[src/ts/pin-dialog.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/510be6b/packages/wallet-protocol-utils/src/ts/pin-dialog.ts#L8)
+[src/ts/pin-dialog.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/wallet-protocol-utils/src/ts/pin-dialog.ts#L8)
 
 ___
 
@@ -62,4 +62,4 @@ a promise that resolves to the PIN
 
 #### Defined in
 
-[src/ts/pin-dialog.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/510be6b/packages/wallet-protocol-utils/src/ts/pin-dialog.ts#L8)
+[src/ts/pin-dialog.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/wallet-protocol-utils/src/ts/pin-dialog.ts#L8)
