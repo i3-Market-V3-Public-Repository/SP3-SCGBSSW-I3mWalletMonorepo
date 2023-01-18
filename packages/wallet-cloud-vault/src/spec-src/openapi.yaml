@@ -1,0 +1,44 @@
+openapi: '3.0.2'
+info:
+  title: i3M-Wallet Cloud-Vault API
+  version: '1.0'
+paths:
+  /publicJwk:
+    get:
+      description: >
+        Get the current wallet cloud-vault's public key as a JWK
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Jwk"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+
+components:
+  schemas:
+    ApiError:
+      type: object
+      title: Error
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+    
+    Jwk:
+      type: object
+      title: Jwk
+      properties:
+        publicJwk:
+          type: string
