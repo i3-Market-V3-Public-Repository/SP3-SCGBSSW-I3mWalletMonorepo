@@ -1,11 +1,8 @@
-import { existsSync } from 'fs'
-import { config as loadEnvFile } from 'dotenv'
 import { parseProccessEnvVar } from './parseProcessEnvVar'
 
-if (existsSync('./.env')) loadEnvFile()
-
-const nodeEnv = parseProccessEnvVar('NODE_ENV', { defaultValue: 'production', allowedValues: ['production', 'development'] })
-
+const nodeEnv = parseProccessEnvVar('NODE_ENV', { defaultValue: 'production', allowedValues: ['production', 'development'] }) as string
+const version = parseProccessEnvVar('npm_package_version', { defaultValue: '0.0.1' }) as string
 export const general = {
-  nodeEnv
+  nodeEnv,
+  version
 }

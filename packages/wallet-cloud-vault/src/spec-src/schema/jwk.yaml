@@ -1,0 +1,94 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    JwkEcPublicKey:
+      type: object
+      title: JWK Elliptic-Curve Publick Key Object
+      description: |
+         A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
+      required:
+        - alg
+        - crv
+        - x
+        - y
+      properties:
+        alg:
+          type: string
+          description: |
+            The alg member identifies the cryptographic algorithm family used with the key.
+          enum:
+            - ES256
+            - ES384
+            - ES512
+          example: ES256
+        
+        use:
+          type: string
+          description: |
+            OPTIONAL. The "use" (public key use) parameter identifies the intended use of the public key.  The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
+
+            Values defined by this specification are:
+            - "sig" (signature)
+            - "enc" (encryption)
+
+            Other values MAY be used.  The "use" value is a case-sensitive string.  Use of the "use" member is OPTIONAL, unless the application requires its presence.
+          example: sig
+
+        kid:
+          type: string
+          description: |
+            The "kid" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the "kid" value is unspecified.  When "kid" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct "kid" values.  (One example in which different keys might use the same "kid" value is if they have different "kty" (key type) values but are considered to be equivalent alternatives by the application using them.) The "kid" value is a case-sensitive string. When used with JWS or JWE, the "kid" value is used to match a JWS or JWE "kid" Header Parameter value.
+          
+        crv:
+          type: string
+          description: |
+           The cryptographic curve used with the key. Values defined by this specification are P-256, P-384 and P-521. Additional "crv" values MAY be used, provided they are understood by implementations using that Elliptic Curve key. The "crv" value is case sensitive.
+          enum:
+            - P-256
+            - P-384
+            - P-521
+          example: P-256
+        
+        x:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            The "x" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation. 
+          example: 2Rwrw2sbff-EnjbRi5sSJ09FRKhBPO7SsCxRwfBCpx4
+        
+        y:
+          type: string
+          pattern: ^[A-Za-z0-9_-]+$
+          description: |
+            The "y" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.
+          example: r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0
+    
+    JwkEcPrivateKey:
+      type: object
+      title: JWK Elliptic-Curve Publick Key Object
+      description: |
+         A JWK Key Object representing a private key generated with Elliptic-Curve cryptography.
+      allOf:
+        - $ref: '#/components/schemas/JwkEcPublicKey'
+        - type: object
+          required:
+            - d
+          properties:
+            d:
+              type: string
+              pattern: ^[A-Za-z0-9_-]+$
+              description: |
+                The private key. It is represented as the base64url encoding of the coordinate's big endian representation.
+              example: bbU2QoQC3eGKvBUjhAkfx_ZzsCzhkPTICItA0wgX1uM
+    

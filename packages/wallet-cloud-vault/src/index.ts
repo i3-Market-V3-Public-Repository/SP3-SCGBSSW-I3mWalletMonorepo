@@ -1,16 +1,11 @@
 #!/usr/bin/env node
-import express from 'express'
-import { Express } from 'express-serve-static-core'
+import express, { Express } from 'express'
 import http from 'http'
 import morgan from 'morgan'
-import { server as serverConfig } from './config'
-import routesPromise from './routes'
-
-function checkIfIPv6 (str: string): boolean {
-  const regexExp = /(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))/gi
-
-  return regexExp.test(str)
-}
+import { server as serverConfig, general } from './config'
+import apiRoutesPromise from './routes/api'
+import oasRoutesPromise from './routes/oas'
+import { checkIfIPv6 } from './utils/check-if-ipv6'
 
 async function startApp (): Promise<Express> {
   const app = express()
@@ -20,11 +15,14 @@ async function startApp (): Promise<Express> {
   // Load CORS for the routes
   app.use((await import('./middlewares/cors')).corsMiddleware)
 
-  // Install the OpenApiValidator for the routes
-  app.use((await import('./middlewares/openapi')).openApiValidatorMiddleware)
+  // OAS routes for downloading OAS json and visulaizing it
+  app.use('/', await oasRoutesPromise())
 
-  // Load routes
-  app.use('/', await routesPromise())
+  // Install the OpenApiValidator for the routes
+  const apiVersion = 'v' + general.version.split('.')[0]
+  app.use('/api/' + apiVersion, (await import('./middlewares/openapi')).openApiValidatorMiddleware)
+  // Load API routes
+  app.use('/api/' + apiVersion, await apiRoutesPromise())
 
   // Handle errors
   app.use((await import('./middlewares/error')).errorMiddleware)

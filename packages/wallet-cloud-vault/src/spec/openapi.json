@@ -1,8 +1,8 @@
 {
-  "openapi": "3.0.2",
+  "openapi": "3.0.3",
   "info": {
     "title": "i3M-Wallet Cloud-Vault API",
-    "version": "1.0",
+    "version": "2.5.5",
     "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
     "license": {
       "name": "EUPL-1.2",
@@ -15,17 +15,16 @@
     }
   },
   "paths": {
-    "/publicJwk": {
+    "/api/v2/publicJwk": {
       "get": {
         "description": "Get the current wallet cloud-vault's public key as a JWK\n",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Jwk"
+                  "$ref": "#/components/schemas/JwkEcPublicKey"
                 }
               }
             }
@@ -46,6 +45,84 @@
   },
   "components": {
     "schemas": {
+      "JwkEcPublicKey": {
+        "type": "object",
+        "title": "JWK Elliptic-Curve Publick Key Object",
+        "description": "A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.\n",
+        "required": [
+          "alg",
+          "crv",
+          "x",
+          "y"
+        ],
+        "properties": {
+          "alg": {
+            "type": "string",
+            "description": "The alg member identifies the cryptographic algorithm family used with the key.\n",
+            "enum": [
+              "ES256",
+              "ES384",
+              "ES512"
+            ],
+            "example": "ES256"
+          },
+          "use": {
+            "type": "string",
+            "description": "OPTIONAL. The \"use\" (public key use) parameter identifies the intended use of the public key.  The \"use\" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.\n\nValues defined by this specification are:\n- \"sig\" (signature)\n- \"enc\" (encryption)\n\nOther values MAY be used.  The \"use\" value is a case-sensitive string.  Use of the \"use\" member is OPTIONAL, unless the application requires its presence.\n",
+            "example": "sig"
+          },
+          "kid": {
+            "type": "string",
+            "description": "The \"kid\" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the \"kid\" value is unspecified.  When \"kid\" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct \"kid\" values.  (One example in which different keys might use the same \"kid\" value is if they have different \"kty\" (key type) values but are considered to be equivalent alternatives by the application using them.) The \"kid\" value is a case-sensitive string. When used with JWS or JWE, the \"kid\" value is used to match a JWS or JWE \"kid\" Header Parameter value.\n"
+          },
+          "crv": {
+            "type": "string",
+            "description": "The cryptographic curve used with the key. Values defined by this specification are P-256, P-384 and P-521. Additional \"crv\" values MAY be used, provided they are understood by implementations using that Elliptic Curve key. The \"crv\" value is case sensitive.\n",
+            "enum": [
+              "P-256",
+              "P-384",
+              "P-521"
+            ],
+            "example": "P-256"
+          },
+          "x": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "The \"x\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation. \n",
+            "example": "2Rwrw2sbff-EnjbRi5sSJ09FRKhBPO7SsCxRwfBCpx4"
+          },
+          "y": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "The \"y\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.\n",
+            "example": "r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0"
+          }
+        }
+      },
+      "JwkEcPrivateKey": {
+        "type": "object",
+        "title": "JWK Elliptic-Curve Publick Key Object",
+        "description": "A JWK Key Object representing a private key generated with Elliptic-Curve cryptography.\n",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/JwkEcPublicKey"
+          },
+          {
+            "type": "object",
+            "required": [
+              "d"
+            ],
+            "properties": {
+              "d": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "description": "The private key. It is represented as the base64url encoding of the coordinate's big endian representation.\n",
+                "example": "bbU2QoQC3eGKvBUjhAkfx_ZzsCzhkPTICItA0wgX1uM"
+              }
+            }
+          }
+        ]
+      },
       "ApiError": {
         "type": "object",
         "title": "Error",
@@ -58,15 +135,6 @@
             "type": "string"
           },
           "description": {
-            "type": "string"
-          }
-        }
-      },
-      "Jwk": {
-        "type": "object",
-        "title": "Jwk",
-        "properties": {
-          "publicJwk": {
             "type": "string"
           }
         }

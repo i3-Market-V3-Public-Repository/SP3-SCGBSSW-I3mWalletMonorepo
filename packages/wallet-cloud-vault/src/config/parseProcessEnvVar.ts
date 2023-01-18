@@ -1,3 +1,7 @@
+import { config as loadEnvFile } from 'dotenv'
+
+loadEnvFile()
+
 function parseEnvValue (a: string | undefined): string {
   return (a === undefined) ? '' : a
 }

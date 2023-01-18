@@ -99,7 +99,7 @@ const bundle = async (): Promise<void> => {
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundlePath}`)
 
   dereferencedApi.info.version = pkgJson.version
-  fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(api, null, 2))
+  fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(dereferencedApi, null, 2))
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
 
   fs.writeFileSync(yamlBundlePath, jsYaml.dump(api))

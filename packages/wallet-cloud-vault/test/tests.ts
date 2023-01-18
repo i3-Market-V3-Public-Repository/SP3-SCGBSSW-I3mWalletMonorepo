@@ -6,6 +6,7 @@ import { Server } from 'http'
 import serverPromise from '../src'
 import { server as serverConfig } from '../src/config'
 import { OpenApiPaths } from '../types/openapi'
+import { checkIfIPv6 } from '../src/utils/check-if-ipv6'
 
 use(chaiHttp)
 
@@ -14,7 +15,7 @@ describe('Conflict-Resolver Service', function () {
 
   let server: Server
 
-  const url = `http://localhost:${serverConfig.port}`
+  const url = `http://${checkIfIPv6(serverConfig.addr) ? '[' + serverConfig.addr + ']' : serverConfig.addr}:${serverConfig.port}`
 
   before(async () => {
     server = await serverPromise
