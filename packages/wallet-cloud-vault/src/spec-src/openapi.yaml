@@ -3,21 +3,157 @@ info:
   title: i3M-Wallet Cloud-Vault API
   version: '1.0'
 paths:
-  /api/API_VERSION/publicJwk:
+  /api/API_VERSION/registration/publicJwk:
     get:
-      description: >
-        Get the current wallet cloud-vault's public key as a JWK
+      summary: Get the current wallet cloud-vault's public key as a JWK
+      tags:
+        - "Registration"
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: "./schema/jwk.yaml#/components/schemas/JwkEcPublicKey"
+                type: object
+                required:
+                 - jwk
+                properties:
+                  jwk:
+                    $ref: "./schema/jwk.yaml#/components/schemas/JwkEcPublicKey"
         default:
           description: unexpected error
           content:
             application/json:
               schema:
                 $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
-    
+  
+  /api/API_VERSION/registration/{data}:
+    get:
+      summary: Endpoint where any non-previously registered user can register to enable the cloud vault for the i3M-Wallet.
+      tags:
+        - "Registration"
+      parameters:
+        - name: data
+          in: path
+          required: true
+          schema:
+            $ref: "./schema/registration.yaml#/components/schemas/RegistrationData"
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/registration.yaml#/components/schemas/RegistrationResponse"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+
+  /api/API_VERSION/vault/timestamp:
+    get:
+      summary: |
+        Get the timestamp when latest storage was uploaded to the cloud vault
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/vault.yaml#/components/schemas/Timestamp"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+
+  /api/API_VERSION/vault/events:
+    get:
+      summary: |
+        A notification channel using Server-Sent Events for vault changes. Everytime there is a change the timestamp of the change is broadcasted to all clients authenticated with the same user that updated it.
+        This is here just for documenting the Server-Sent Events (SSE) endpoint. It cannot be tested nor connected with automated tooling since it is NOT SUPPORTED in OpenAPI 3.0
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: |
+            Every time the encrypted storage is updated all subscribed clients receive a notification such as the following:
+            `data: {"timestamp":1674119447057}`
+            with `timestamp` (in milliseconds elapsed since the epoch) referring to the exact time the latest storage was registered in the cloud vault.
+          x-produces: ["text/event-stream"]
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                enum:
+                  - "text/event-stream"
+  
+  /api/API_VERSION/vault:
+    get:
+      summary: |
+        Get the latest storage in vault
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/vault.yaml#/components/schemas/EncryptedStorage"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+    delete:
+      summary: |
+        Delete all data stored in the cloud vault
+      tags:
+        - Cloud Vault
+      responses:
+        '204':
+          description: data deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+    post:
+      summary: |
+        Sets/updates encrypted storage in cloud vault
+      tags:
+        - Cloud Vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/vault.yaml#/components/schemas/EncryptedStorage"
+      responses:
+        '201':
+          description: returns the timestamp when the new encrypted storage has been registered in the cloud vault
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/vault.yaml#/components/schemas/Timestamp"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+
+components:
+  securitySchemes:
+    jwt:
+      type: apiKey
+      in: header
+      name: id_token

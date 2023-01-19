@@ -1,0 +1,59 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    RegistrationData:
+      type: string
+      title: RegistrationData
+      description: |
+        This is as the base64url encoding of the encryption of a compact JWE encrypted with this server's public key with the following payload:
+
+        ```json
+        {
+          username: string
+          authkey: string
+        }
+        ```
+
+        `username` is a unique username proposed by the client (it should be able to memorize it)
+        `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+      pattern: ^[A-Za-z0-9_-]+$
+    
+    RegistrationResponse:
+      type: object
+      title: Registration Response
+      description: |
+        The registration response object.
+      required:
+        - status
+        - username
+        - auth_endpoint
+      properties:
+        status:
+          type: string
+          description: whether the proposed username has been registered or not (because another one was previously registered)
+          enum:
+            - created
+            - already registered
+        username:
+          type: string
+          description: |
+            - `status === 'created'`: the registered username
+            - `status === 'already registered'`: the username that was previously registered fot the same DID.
+        auth_endpoint:
+          type: string
+          description: |
+            The endpoint where to authenticate with `username` and its corresponding `authkey` (which is derived from the user's password) in order to get a valid API token for the Cloud Vault.
+
+
+

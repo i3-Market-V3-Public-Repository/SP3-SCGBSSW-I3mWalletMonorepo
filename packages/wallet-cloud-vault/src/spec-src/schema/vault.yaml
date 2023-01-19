@@ -1,0 +1,43 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    Timestamp:
+      type: object
+      title: Timestamp
+      description: |
+        A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          type: number
+          description: A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+          example: 1674060143749
+    
+    EncryptedStorage:
+      type: object
+      title: Encrypted Storage
+      description: |
+        EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          required:
+            - jwe
+          properties:
+            jwe:
+              type: string
+              pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+              description: |
+                A JWE containing the encrypted storage

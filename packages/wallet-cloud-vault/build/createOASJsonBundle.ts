@@ -6,9 +6,27 @@ import jsYaml from 'js-yaml'
 import _ from 'lodash'
 import { OpenAPIV3 } from 'openapi-types'
 
+import { general, server } from '../src/config'
 import pkgJson from '../package.json'
 
 const rootDir = path.join(__dirname, '..')
+
+function addLocalhostServerIfInDevelopment (spec: OpenAPIV3.Document): void {
+  if (general.nodeEnv !== 'development') return
+
+  const localhostServer: OpenAPIV3.ServerObject = {
+    url: server.url
+  }
+  if (spec.servers !== undefined) {
+    if (spec.servers.find(specServer => {
+      return specServer.url === server.url
+    }) === undefined) {
+      spec.servers.push(localhostServer)
+    }
+  } else {
+    spec.servers = [localhostServer]
+  }
+}
 
 function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
   spec.info.description = pkgJson.description
@@ -77,6 +95,7 @@ const bundleSpec = async function (): Promise<SpecBundles> {
   removeIgnoredPaths(bundledSpec)
   fixRefs(bundledSpec)
   fillWithPkgJsonData(bundledSpec)
+  addLocalhostServerIfInDevelopment(bundledSpec)
 
   const dereferencedBundledSpec = await parser.dereference(_.cloneDeep(bundledSpec)) as OpenAPIV3.Document
 

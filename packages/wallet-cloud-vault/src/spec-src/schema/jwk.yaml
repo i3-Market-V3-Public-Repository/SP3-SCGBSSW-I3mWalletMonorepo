@@ -14,7 +14,7 @@ components:
   schemas:
     JwkEcPublicKey:
       type: object
-      title: JWK Elliptic-Curve Publick Key Object
+      title: JWK Elliptic-Curve Public Key Object
       description: |
          A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
       required:
@@ -73,22 +73,3 @@ components:
           description: |
             The "y" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.
           example: r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0
-    
-    JwkEcPrivateKey:
-      type: object
-      title: JWK Elliptic-Curve Publick Key Object
-      description: |
-         A JWK Key Object representing a private key generated with Elliptic-Curve cryptography.
-      allOf:
-        - $ref: '#/components/schemas/JwkEcPublicKey'
-        - type: object
-          required:
-            - d
-          properties:
-            d:
-              type: string
-              pattern: ^[A-Za-z0-9_-]+$
-              description: |
-                The private key. It is represented as the base64url encoding of the coordinate's big endian representation.
-              example: bbU2QoQC3eGKvBUjhAkfx_ZzsCzhkPTICItA0wgX1uM
-    

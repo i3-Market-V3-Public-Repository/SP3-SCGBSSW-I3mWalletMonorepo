@@ -12,17 +12,158 @@ info:
     email: j.hernandez@upc.edu
     url: https://github.com/juanelas
 paths:
-  /api/v2/publicJwk:
+  /api/v2/registration/publicJwk:
     get:
-      description: |
-        Get the current wallet cloud-vault's public key as a JWK
+      summary: Get the current wallet cloud-vault's public key as a JWK
+      tags:
+        - Registration
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/JwkEcPublicKey'
+                type: object
+                required:
+                  - jwk
+                properties:
+                  jwk:
+                    $ref: '#/components/schemas/JwkEcPublicKey'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/registration/{data}:
+    get:
+      summary: >-
+        Endpoint where any non-previously registered user can register to enable
+        the cloud vault for the i3M-Wallet.
+      tags:
+        - Registration
+      parameters:
+        - name: data
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/RegistrationData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/vault/timestamp:
+    get:
+      summary: |
+        Get the timestamp when latest storage was uploaded to the cloud vault
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timestamp'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/vault/events:
+    get:
+      summary: >
+        A notification channel using Server-Sent Events for vault changes.
+        Everytime there is a change the timestamp of the change is broadcasted
+        to all clients authenticated with the same user that updated it.
+
+        This is here just for documenting the Server-Sent Events (SSE) endpoint.
+        It cannot be tested nor connected with automated tooling since it is NOT
+        SUPPORTED in OpenAPI 3.0
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: >
+            Every time the encrypted storage is updated all subscribed clients
+            receive a notification such as the following:
+
+            `data: {"timestamp":1674119447057}`
+
+            with `timestamp` (in milliseconds elapsed since the epoch) referring
+            to the exact time the latest storage was registered in the cloud
+            vault.
+          x-produces:
+            - text/event-stream
+          headers:
+            Content-Type:
+              schema:
+                type: string
+                enum:
+                  - text/event-stream
+  /api/v2/vault:
+    get:
+      summary: |
+        Get the latest storage in vault
+      tags:
+        - Cloud Vault
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EncryptedStorage'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    delete:
+      summary: |
+        Delete all data stored in the cloud vault
+      tags:
+        - Cloud Vault
+      responses:
+        '204':
+          description: data deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+    post:
+      summary: |
+        Sets/updates encrypted storage in cloud vault
+      tags:
+        - Cloud Vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EncryptedStorage'
+      responses:
+        '201':
+          description: >-
+            returns the timestamp when the new encrypted storage has been
+            registered in the cloud vault
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timestamp'
         default:
           description: unexpected error
           content:
@@ -30,10 +171,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiError'
 components:
+  securitySchemes:
+    jwt:
+      type: apiKey
+      in: header
+      name: id_token
   schemas:
     JwkEcPublicKey:
       type: object
-      title: JWK Elliptic-Curve Publick Key Object
+      title: JWK Elliptic-Curve Public Key Object
       description: >
         A JWK Key Object representing a public key generated with Elliptic-Curve
         cryptography.
@@ -115,25 +261,6 @@ components:
             as the base64url encoding of the coordinate's big endian
             representation.
           example: r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0
-    JwkEcPrivateKey:
-      type: object
-      title: JWK Elliptic-Curve Publick Key Object
-      description: >
-        A JWK Key Object representing a private key generated with
-        Elliptic-Curve cryptography.
-      allOf:
-        - $ref: '#/components/schemas/JwkEcPublicKey'
-        - type: object
-          required:
-            - d
-          properties:
-            d:
-              type: string
-              pattern: ^[A-Za-z0-9_-]+$
-              description: >
-                The private key. It is represented as the base64url encoding of
-                the coordinate's big endian representation.
-              example: bbU2QoQC3eGKvBUjhAkfx_ZzsCzhkPTICItA0wgX1uM
     ApiError:
       type: object
       title: Error
@@ -145,3 +272,95 @@ components:
           type: string
         description:
           type: string
+    RegistrationData:
+      type: string
+      title: RegistrationData
+      description: >
+        This is as the base64url encoding of the encryption of a compact JWE
+        encrypted with this server's public key with the following payload:
+
+
+        ```json
+
+        {
+          username: string
+          authkey: string
+        }
+
+        ```
+
+
+        `username` is a unique username proposed by the client (it should be
+        able to memorize it)
+
+        `authkey` is a secret securely derived from the user's password, so can
+        be recovered if the user remembers the password. `authkey` will work as
+        a standard password server side.
+      pattern: ^[A-Za-z0-9_-]+$
+    RegistrationResponse:
+      type: object
+      title: Registration Response
+      description: |
+        The registration response object.
+      required:
+        - status
+        - username
+        - auth_endpoint
+      properties:
+        status:
+          type: string
+          description: >-
+            whether the proposed username has been registered or not (because
+            another one was previously registered)
+          enum:
+            - created
+            - already registered
+        username:
+          type: string
+          description: >
+            - `status === 'created'`: the registered username
+
+            - `status === 'already registered'`: the username that was
+            previously registered fot the same DID.
+        auth_endpoint:
+          type: string
+          description: >
+            The endpoint where to authenticate with `username` and its
+            corresponding `authkey` (which is derived from the user's password)
+            in order to get a valid API token for the Cloud Vault.
+    Timestamp:
+      type: object
+      title: Timestamp
+      description: >
+        A timestamp expressed in milliseconds elapsed since the epoch. The
+        timestamp refers to the exact time the latest storage was registered in
+        the cloud vault.
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          type: number
+          description: >-
+            A timestamp expressed in milliseconds elapsed since the epoch. The
+            timestamp refers to the exact time the latest storage was registered
+            in the cloud vault.
+          example: 1674060143749
+    EncryptedStorage:
+      type: object
+      title: Encrypted Storage
+      description: >
+        EncryptedStorage is the JSON obejct representing the storage of
+        registered users in the cloud vault
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          required:
+            - jwe
+          properties:
+            jwe:
+              type: string
+              pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+              description: |
+                A JWE containing the encrypted storage
+servers:
+  - url: http://[::1]:3000

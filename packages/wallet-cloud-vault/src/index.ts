@@ -5,7 +5,6 @@ import morgan from 'morgan'
 import { server as serverConfig, general } from './config'
 import apiRoutesPromise from './routes/api'
 import oasRoutesPromise from './routes/oas'
-import { checkIfIPv6 } from './utils/check-if-ipv6'
 
 async function startApp (): Promise<Express> {
   const app = express()
@@ -36,14 +35,14 @@ const serverPromise = new Promise<http.Server>((resolve, reject) => {
    * Listen on .env SERVER_PORT or 3000/tcp, on all network interfaces.
    */
     const server = http.createServer(app)
-    const { port, addr } = serverConfig
+    const { port, addr, url } = serverConfig
     server.listen(port, addr)
 
     /**
     * Event listener for HTTP server "listening" event.
     */
     server.on('listening', function (): void {
-      console.log(`⚡️[server]: Server is running at http://${checkIfIPv6(addr) ? '[' + addr + ']' : addr}:${port}`)
+      console.log(`⚡️[server]: Server is running at ${url}`)
       // console.log(`OpenAPI JSON spec at ${publicUri}/openapi.json`)
       // console.log(`OpenAPI browsable spec at ${publicUri}/spec`)
       resolve(server)
