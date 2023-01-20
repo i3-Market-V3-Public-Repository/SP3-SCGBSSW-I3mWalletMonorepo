@@ -93,8 +93,7 @@ class VaultEventManager {
       throw new Error("Can't send a message to a user that is not connected")
     }
     this.clients[to].connections.forEach(({ response }) => {
-      const msg = `data: ${JSON.stringify(event)}\n\n`
-      response.write(msg)
+      response.write(`data: ${JSON.stringify(event)}\n\n`)
     })
   }
 }
