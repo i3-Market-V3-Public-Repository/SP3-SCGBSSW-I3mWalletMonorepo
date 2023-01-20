@@ -2,29 +2,15 @@
 
 import { expect, request, use } from 'chai'
 import chaiHttp from 'chai-http'
-import { Server } from 'http'
-import serverPromise from '../src'
-import { server as serverConfig, apiVersion } from '../src/config'
-import { OpenApiPaths } from '../types/openapi'
-import { UPDATE_MSG } from '../src/vault'
 import EventSource from 'eventsource'
+import { apiVersion, server as serverConfig } from '../src/config'
+import { UPDATE_MSG } from '../src/vault'
+import { OpenApiPaths } from '../types/openapi'
 
 use(chaiHttp)
 
 describe('Wallet Cloud-Vault: Vault Events', function () {
   this.timeout(20000) // ms
-
-  let server: Server
-
-  before(async () => {
-    server = await serverPromise
-  })
-
-  after(done => {
-    server.close((err) => {
-      done(err)
-    })
-  })
 
   describe(`Testing /api/${apiVersion}/vault/events`, function () {
     it('it should send and receive events', async function () {

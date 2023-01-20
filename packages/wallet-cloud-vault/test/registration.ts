@@ -3,27 +3,13 @@
 import { importJwk, JWK } from '@i3m/non-repudiation-library'
 import { expect, request, use } from 'chai'
 import chaiHttp from 'chai-http'
-import { Server } from 'http'
-import serverPromise from '../src'
-import { server as serverConfig, apiVersion } from '../src/config'
+import { apiVersion, server as serverConfig } from '../src/config'
 import { OpenApiPaths } from '../types/openapi'
 
 use(chaiHttp)
 
 describe('Wallet Cloud-Vault: Registration', function () {
   this.timeout(20000) // ms
-
-  let server: Server
-
-  before(async () => {
-    server = await serverPromise
-  })
-
-  after((done) => {
-    server.close((err) => {
-      done(err)
-    })
-  })
 
   describe(`Testing /api/${apiVersion}/registration/publicJwk`, function () {
     it('it should receive a string', async function () {

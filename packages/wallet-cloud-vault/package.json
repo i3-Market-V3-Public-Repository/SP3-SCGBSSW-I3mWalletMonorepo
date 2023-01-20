@@ -63,8 +63,8 @@
     "openapi:json": "ts-node build/createOASJsonBundle.ts",
     "openapi:types": "ts-node build/openApiTypes.ts",
     "start": "node dist/index.js",
-    "test": "mocha -r ts-node/register 'test/**/*.ts'",
-    "mocha-ts": "mocha -r ts-node/register -- ",
+    "test": "mocha -r ts-node/register 'test/**/*.ts' test-fixtures/server.ts",
+    "mocha-ts": "mocha -r ts-node/register test-fixtures/server.ts -- ",
     "tsc": "tsc -p tsconfig.build.json",
     "version": "run-s build test git:add",
     "postversion": "git push --follow-tags"
