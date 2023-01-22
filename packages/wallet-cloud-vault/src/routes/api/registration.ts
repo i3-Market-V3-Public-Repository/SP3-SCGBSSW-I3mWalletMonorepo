@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { OpenApiPaths } from '../../../types/openapi'
 import { jwksPromise } from '../../config'
+import { db } from '../../db'
 
 export default function (router: Router): void {
   router.get('/publicJwk',
@@ -20,6 +21,7 @@ export default function (router: Router): void {
       try {
         // TO-DO
         console.log(req.params.data)
+        await db.registerUser('did:safd:sdagd', 'username', 'password')
         res.status(201).json({
           status: 'created',
           username: 'username',

@@ -89,12 +89,11 @@ class VaultEventManager {
   }
 
   sendEvent (to: string, event: WELLCOME_MSG | UPDATE_MSG | DELETE_MSG): void {
-    if (!(to in this.clients)) {
-      throw new Error("Can't send a message to a user that is not connected")
+    if ((to in this.clients)) {
+      this.clients[to].connections.forEach(({ response }) => {
+        response.write(`data: ${JSON.stringify(event)}\n\n`)
+      })
     }
-    this.clients[to].connections.forEach(({ response }) => {
-      response.write(`data: ${JSON.stringify(event)}\n\n`)
-    })
   }
 }
 

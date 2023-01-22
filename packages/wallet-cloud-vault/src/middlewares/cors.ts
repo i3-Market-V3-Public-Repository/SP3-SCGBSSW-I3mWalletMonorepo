@@ -10,7 +10,7 @@ export const corsMiddleware: RequestHandler = (req, res, next) => {
   // intercepts OPTIONS method
   if (req.method === 'OPTIONS') {
     // respond with 200
-    res.send(200)
+    res.sendStatus(200)
   } else {
   // move on
     next()
