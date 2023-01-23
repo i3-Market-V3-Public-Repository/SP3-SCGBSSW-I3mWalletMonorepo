@@ -61,12 +61,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /api/v2/vault/auth:
+    post:
+      summary: >
+        The endpoint to get a valid bearer token to access the vault. Valid
+        credentials (`username`, `authkey`) must be provided.
+      tags:
+        - Cloud Vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthorizationRequest'
+      responses:
+        '200':
+          description: returns a bearer token that can be used to access this user's vault
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /api/v2/vault/timestamp:
     get:
       summary: |
         Get the timestamp when latest storage was uploaded to the cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -92,6 +120,8 @@ paths:
         SUPPORTED in OpenAPI 3.0
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: >
@@ -117,6 +147,8 @@ paths:
         Get the latest storage in vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -135,6 +167,8 @@ paths:
         Delete all data stored in the cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '204':
           description: data deleted
@@ -149,6 +183,8 @@ paths:
         Sets/updates encrypted storage in cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -176,6 +212,10 @@ components:
       type: apiKey
       in: header
       name: id_token
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     JwkEcPublicKey:
       type: object
@@ -276,13 +316,14 @@ components:
       type: string
       title: RegistrationData
       description: >
-        This is as the base64url encoding of the encryption of a compact JWE
-        encrypted with this server's public key with the following payload:
+        A compact JWE encrypted with this server's public key with the following
+        payload:
 
 
         ```json
 
         {
+          did: string
           username: string
           authkey: string
         }
@@ -290,13 +331,16 @@ components:
         ```
 
 
-        `username` is a unique username proposed by the client (it should be
+        - `did` is the did of the user. The required authorization forces the
+        user to prove that is the owner of this `did`
+
+        - `username` is a unique username proposed by the client (it should be
         able to memorize it)
 
-        `authkey` is a secret securely derived from the user's password, so can
-        be recovered if the user remembers the password. `authkey` will work as
-        a standard password server side.
-      pattern: ^[A-Za-z0-9_-]+$
+        - `authkey` is a secret securely derived from the user's password, so
+        can be recovered if the user remembers the password. `authkey` will work
+        as a standard password server side.
+      pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
     RegistrationResponse:
       type: object
       title: Registration Response
@@ -328,6 +372,45 @@ components:
             The endpoint where to authenticate with `username` and its
             corresponding `authkey` (which is derived from the user's password)
             in order to get a valid API token for the Cloud Vault.
+    AuthorizationRequest:
+      type: object
+      title: AuthorizationRequest
+      description: >
+        A set of registered username and authkey in order to get the server's
+        token. `authkey` is a secret securely derived from the user's password,
+        so can be recovered if the user remembers the password. `authkey` will
+        work as a standard password server side.
+      required:
+        - username
+        - authkey
+      properties:
+        username:
+          type: string
+          description: >
+            is a unique identifier for this client (the end user should be able
+            to memorize it)
+          example: username
+        authkey:
+          type: string
+          pattern: ^[a-zA-Z0-9_-]{43,86}$
+          description: >
+            is a secret securely derived from the user's password with base64url
+            no padding, so it can be recovered if the user remembers the
+            password. Key length is between 256 and 512 bits. `authkey` will
+            work as a standard password server side.
+          example: uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ
+    AuthToken:
+      type: object
+      title: AuthToken
+      description: |
+        A bearer token a client can use to access its vault
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: |
+            A bearer token a client can use to access its vault
     Timestamp:
       type: object
       title: Timestamp
@@ -351,16 +434,21 @@ components:
       description: >
         EncryptedStorage is the JSON obejct representing the storage of
         registered users in the cloud vault
-      allOf:
-        - $ref: '#/components/schemas/Timestamp'
-        - type: object
-          required:
-            - jwe
-          properties:
-            jwe:
-              type: string
-              pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
-              description: |
-                A JWE containing the encrypted storage
+      required:
+        - jwe
+      properties:
+        jwe:
+          type: string
+          pattern: ^$|^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+          description: >
+            A JWE containing the encrypted storage or '' if the storage is not
+            yet uploaded
+        timestamp:
+          type: number
+          description: >-
+            A timestamp expressed in milliseconds elapsed since the epoch. The
+            timestamp refers to the exact time the latest storage was registered
+            in the cloud vault.
+          example: 1674060143749
 servers:
   - url: http://[::1]:3000

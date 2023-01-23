@@ -1,19 +1,24 @@
 import { Request, Response, Router } from 'express'
+import { sign as jwtSign } from 'jsonwebtoken'
 import { OpenApiPaths } from '../../../types/openapi'
-import { vaultEvents } from '../../vault'
+import { general, jwt } from '../../config'
 import { db } from '../../db'
+import { vaultEvents } from '../../vault'
+import { passport, User } from '../../middlewares/passport'
 
 export default function (router: Router): void {
+  router.use(passport.initialize())
   router.get('/events',
+    passport.authenticate('jwtBearer', { session: false }),
     async (req: Request, res: Response, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = 'username' // TO-DO get unique username from token
+        const username = (req.user as User).username
 
         const connId = vaultEvents.addConnection(username, res)
 
         vaultEvents.sendEvent(username, {
           code: 0,
-          timestamp: (await db.getTimestamp(username)).valueOf()
+          timestamp: (await db.getTimestamp(username)) ?? undefined
         })
 
         req.on('close', () => {
@@ -25,11 +30,16 @@ export default function (router: Router): void {
     }
   )
   router.get('/timestamp',
+    passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = 'username' // TO-DO get unique username from token
+        const username = (req.user as User).username
+        const timestamp = await db.getTimestamp(username)
+        if (timestamp === null) {
+          throw new Error("you haven't upload storage yet")
+        }
         res.json({
-          timestamp: (await db.getTimestamp(username)).valueOf()
+          timestamp
         })
       } catch (error) {
         return next(error)
@@ -37,13 +47,14 @@ export default function (router: Router): void {
     }
   )
   router.get('/',
+    passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Get.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = 'username' // TO-DO get unique username from token
+        const username = (req.user as User).username
         const storage = await db.getStorage(username)
         res.status(200).json({
-          jwe: storage.storage ?? '',
-          timestamp: storage.timestamp.valueOf()
+          jwe: storage != null ? storage.storage : '',
+          timestamp: storage != null ? storage.timestamp : undefined
         })
       } catch (error) {
         return next(error)
@@ -51,9 +62,10 @@ export default function (router: Router): void {
     }
   )
   router.delete('/',
+    passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = 'username' // TO-DO get unique username from token
+        const username = (req.user as User).username
         await db.deleteStorage(username)
         vaultEvents.sendEvent(username, {
           code: 2 // Delete message
@@ -65,21 +77,41 @@ export default function (router: Router): void {
     }
   )
   router.post('/',
+    passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, OpenApiPaths.ApiV2Vault.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2Vault.Post.Responses.$201>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = 'username' // TO-DO get unique username from token
-        console.log(req.body)
-        let timestamp = (await db.getTimestamp(username)).valueOf()
-        if (req.body.timestamp === timestamp) {
-          timestamp = req.body.timestamp
-          await db.setStorage(username, req.body.jwe)
-          vaultEvents.sendEvent(username, {
-            code: 1, // STORAGE UPDATED MESSAGE
-            timestamp
-          })
+        const username = (req.user as User).username
+        if (general.nodeEnv === 'development') {
+          console.log(username, req.body)
         }
-        res.status(201).json({
-          timestamp
+        const newTimestamp: number = await db.setStorage(username, req.body.jwe, req.body.timestamp)
+        vaultEvents.sendEvent(username, {
+          code: 1, // STORAGE UPDATED MESSAGE
+          timestamp: newTimestamp
+        })
+        res.json({
+          timestamp: newTimestamp
+        })
+      } catch (error) {
+        return next(error)
+      }
+    }
+  )
+  router.post('/auth',
+    async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultAuth.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultAuth.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+      try {
+        console.log(req.body)
+        const username = req.body.username
+        const password = req.body.authkey
+        await db.verifyCredentials(username, password)
+        const token = jwtSign({
+          username,
+          password
+        }, jwt.secret, {
+          algorithm: jwt.alg
+        })
+        res.status(200).json({
+          token
         })
       } catch (error) {
         return next(error)

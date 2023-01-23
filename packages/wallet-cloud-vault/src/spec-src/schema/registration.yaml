@@ -16,18 +16,20 @@ components:
       type: string
       title: RegistrationData
       description: |
-        This is as the base64url encoding of the encryption of a compact JWE encrypted with this server's public key with the following payload:
+        A compact JWE encrypted with this server's public key with the following payload:
 
         ```json
         {
+          did: string
           username: string
           authkey: string
         }
         ```
-
-        `username` is a unique username proposed by the client (it should be able to memorize it)
-        `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
-      pattern: ^[A-Za-z0-9_-]+$
+        
+        - `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`
+        - `username` is a unique username proposed by the client (it should be able to memorize it)
+        - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+      pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
     
     RegistrationResponse:
       type: object

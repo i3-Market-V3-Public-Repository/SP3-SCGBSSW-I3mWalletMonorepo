@@ -27,7 +27,7 @@ export const VAULT_MANAGER_MSG_CODES = {
 
 export interface WELLCOME_MSG {
   code: 0
-  timestamp: OpenApiComponents.Schemas.Timestamp['timestamp']
+  timestamp?: OpenApiComponents.Schemas.Timestamp['timestamp']
 }
 
 export interface UPDATE_MSG {

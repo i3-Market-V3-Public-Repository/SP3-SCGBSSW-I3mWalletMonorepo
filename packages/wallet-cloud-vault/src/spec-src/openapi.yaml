@@ -52,12 +52,40 @@ paths:
               schema:
                 $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
 
+  /api/API_VERSION/vault/auth:
+    post:
+      summary: |
+        The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.
+      tags:
+        - Cloud Vault
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schema/vault.yaml#/components/schemas/AuthorizationRequest"
+      responses:
+        '200':
+          description: returns a bearer token that can be used to access this user's vault
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/vault.yaml#/components/schemas/AuthToken"
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+      
   /api/API_VERSION/vault/timestamp:
     get:
       summary: |
         Get the timestamp when latest storage was uploaded to the cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -79,6 +107,8 @@ paths:
         This is here just for documenting the Server-Sent Events (SSE) endpoint. It cannot be tested nor connected with automated tooling since it is NOT SUPPORTED in OpenAPI 3.0
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: |
@@ -99,6 +129,8 @@ paths:
         Get the latest storage in vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -117,6 +149,8 @@ paths:
         Delete all data stored in the cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       responses:
         '204':
           description: data deleted
@@ -131,6 +165,8 @@ paths:
         Sets/updates encrypted storage in cloud vault
       tags:
         - Cloud Vault
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -153,7 +189,12 @@ paths:
 
 components:
   securitySchemes:
-    jwt:
+    jwt:  # the i3-market SSI authentication
       type: apiKey
       in: header
       name: id_token
+    
+    bearerAuth:  # This server's HTTP bearer authentication (using JWT)
+      type: http
+      scheme: bearer
+      bearerFormat: JWT  # [optional] only for documentation purposes

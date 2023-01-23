@@ -1,4 +1,4 @@
-import { Pool, QueryConfig, QueryResult, QueryResultRow } from 'pg'
+import { Pool, QueryArrayConfig, QueryArrayResult, QueryConfig, QueryResult, QueryResultRow } from 'pg'
 import { dbConfig, general } from '../config'
 
 const checkDbExistsQuery = 'SELECT version FROM config;'
@@ -20,7 +20,7 @@ CREATE TABLE credentials (
 
 CREATE TABLE vault (
   username VARCHAR (100) PRIMARY KEY REFERENCES users(username),
-  last_uploaded TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT current_timestamp,
+  last_uploaded TIMESTAMP WITH TIME ZONE,
   storage VARCHAR (6990600) -- ~5 MBytes of storage
 );
 
@@ -104,13 +104,20 @@ export class Db {
     })
   }
 
-  async query<R extends QueryResultRow = any, I extends any[] = any[]> (text: string | QueryConfig<I>, params?: I): Promise<QueryResult<R>> {
+  async query<R extends any[] = any[], I extends any[] = any[]>(
+    queryConfig: QueryArrayConfig<I>
+  ): Promise<QueryArrayResult<R>>
+  async query<R extends QueryResultRow = any, I extends any[] = any[]>(
+    queryTextOrConfig: string | QueryConfig<I>,
+    values?: I,
+  ): Promise<QueryResult<R>>
+  async query<R extends QueryResultRow = any, I extends any[] = any[]> (text: string | QueryConfig<I>, values?: I): Promise<QueryResult<R>> {
     await this.initialized
     let start: number
     if (general.nodeEnv === 'development') {
       start = Date.now()
     }
-    const res = await this.pool.query(text, params)
+    const res = await this.pool.query(text, values)
     if (general.nodeEnv === 'development') {
       const duration = Date.now() - start! // eslint-disable-line @typescript-eslint/no-non-null-assertion
       console.log('executed query', { text, duration, rows: res.rowCount })

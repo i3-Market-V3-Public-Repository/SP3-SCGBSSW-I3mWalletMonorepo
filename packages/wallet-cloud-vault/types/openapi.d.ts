@@ -9,22 +9,55 @@ export namespace OpenApiComponents {
             description: string;
         }
         /**
+         * AuthToken
+         * A bearer token a client can use to access its vault
+         *
+         */
+        export interface AuthToken {
+            /**
+             * A bearer token a client can use to access its vault
+             *
+             */
+            token: string;
+        }
+        /**
+         * AuthorizationRequest
+         * A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+         *
+         */
+        export interface AuthorizationRequest {
+            /**
+             * is a unique identifier for this client (the end user should be able to memorize it)
+             *
+             * example:
+             * username
+             */
+            username: string;
+            /**
+             * is a secret securely derived from the user's password with base64url no padding, so it can be recovered if the user remembers the password. Key length is between 256 and 512 bits. `authkey` will work as a standard password server side.
+             *
+             * example:
+             * uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ
+             */
+            authkey: string // ^[a-zA-Z0-9_-]{43,86}$
+        }
+        /**
          * Encrypted Storage
          * EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault
          *
          */
         export interface EncryptedStorage {
             /**
+             * A JWE containing the encrypted storage or '' if the storage is not yet uploaded
+             *
+             */
+            jwe: string // ^$|^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+            /**
              * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
              * example:
              * 1674060143749
              */
-            timestamp: number;
-            /**
-             * A JWE containing the encrypted storage
-             *
-             */
-            jwe: string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+            timestamp?: number;
         }
         /**
          * JWK Elliptic-Curve Public Key Object
@@ -81,20 +114,22 @@ export namespace OpenApiComponents {
         }
         /**
          * RegistrationData
-         * This is as the base64url encoding of the encryption of a compact JWE encrypted with this server's public key with the following payload:
+         * A compact JWE encrypted with this server's public key with the following payload:
          *
          * ```json
          * {
+         *   did: string
          *   username: string
          *   authkey: string
          * }
          * ```
          *
-         * `username` is a unique username proposed by the client (it should be able to memorize it)
-         * `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+         * - `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`
+         * - `username` is a unique username proposed by the client (it should be able to memorize it)
+         * - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
          *
          */
-        export type RegistrationData = string // ^[A-Za-z0-9_-]+$
+        export type RegistrationData = string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
         /**
          * Registration Response
          * The registration response object.
@@ -138,20 +173,22 @@ export namespace OpenApiPaths {
             export namespace Parameters {
                 export type Data = /**
                  * RegistrationData
-                 * This is as the base64url encoding of the encryption of a compact JWE encrypted with this server's public key with the following payload:
+                 * A compact JWE encrypted with this server's public key with the following payload:
                  *
                  * ```json
                  * {
+                 *   did: string
                  *   username: string
                  *   authkey: string
                  * }
                  * ```
                  *
-                 * `username` is a unique username proposed by the client (it should be able to memorize it)
-                 * `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+                 * - `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`
+                 * - `username` is a unique username proposed by the client (it should be able to memorize it)
+                 * - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
                  *
                  */
-                OpenApiComponents.Schemas.RegistrationData /* ^[A-Za-z0-9_-]+$ */;
+                OpenApiComponents.Schemas.RegistrationData /* ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$ */;
             }
             export interface PathParameters {
                 data: Parameters.Data;
@@ -215,6 +252,25 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.Timestamp;
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2VaultAuth {
+        export namespace Post {
+            export type RequestBody = /**
+             * AuthorizationRequest
+             * A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+             *
+             */
+            OpenApiComponents.Schemas.AuthorizationRequest;
+            export namespace Responses {
+                export type $200 = /**
+                 * AuthToken
+                 * A bearer token a client can use to access its vault
+                 *
+                 */
+                OpenApiComponents.Schemas.AuthToken;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }

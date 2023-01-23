@@ -93,11 +93,56 @@
         }
       }
     },
+    "/api/v2/vault/auth": {
+      "post": {
+        "summary": "The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "returns a bearer token that can be used to access this user's vault",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/vault/timestamp": {
       "get": {
         "summary": "Get the timestamp when latest storage was uploaded to the cloud vault\n",
         "tags": [
           "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -129,6 +174,11 @@
         "tags": [
           "Cloud Vault"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Every time the encrypted storage is updated all subscribed clients receive a notification such as the following:\n`data: {\"timestamp\":1674119447057}`\nwith `timestamp` (in milliseconds elapsed since the epoch) referring to the exact time the latest storage was registered in the cloud vault.\n",
@@ -154,6 +204,11 @@
         "summary": "Get the latest storage in vault\n",
         "tags": [
           "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
           "200": {
@@ -183,6 +238,11 @@
         "tags": [
           "Cloud Vault"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "204": {
             "description": "data deleted"
@@ -203,6 +263,11 @@
         "summary": "Sets/updates encrypted storage in cloud vault\n",
         "tags": [
           "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "requestBody": {
           "required": true,
@@ -245,6 +310,11 @@
         "type": "apiKey",
         "in": "header",
         "name": "id_token"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     },
     "schemas": {
@@ -321,8 +391,8 @@
       "RegistrationData": {
         "type": "string",
         "title": "RegistrationData",
-        "description": "This is as the base64url encoding of the encryption of a compact JWE encrypted with this server's public key with the following payload:\n\n```json\n{\n  username: string\n  authkey: string\n}\n```\n\n`username` is a unique username proposed by the client (it should be able to memorize it)\n`authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n",
-        "pattern": "^[A-Za-z0-9_-]+$"
+        "description": "A compact JWE encrypted with this server's public key with the following payload:\n\n```json\n{\n  did: string\n  username: string\n  authkey: string\n}\n```\n\n- `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`\n- `username` is a unique username proposed by the client (it should be able to memorize it)\n- `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n",
+        "pattern": "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$"
       },
       "RegistrationResponse": {
         "type": "object",
@@ -352,6 +422,42 @@
           }
         }
       },
+      "AuthorizationRequest": {
+        "type": "object",
+        "title": "AuthorizationRequest",
+        "description": "A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n",
+        "required": [
+          "username",
+          "authkey"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "is a unique identifier for this client (the end user should be able to memorize it)\n",
+            "example": "username"
+          },
+          "authkey": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{43,86}$",
+            "description": "is a secret securely derived from the user's password with base64url no padding, so it can be recovered if the user remembers the password. Key length is between 256 and 512 bits. `authkey` will work as a standard password server side.\n",
+            "example": "uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ"
+          }
+        }
+      },
+      "AuthToken": {
+        "type": "object",
+        "title": "AuthToken",
+        "description": "A bearer token a client can use to access its vault\n",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "A bearer token a client can use to access its vault\n"
+          }
+        }
+      },
       "Timestamp": {
         "type": "object",
         "title": "Timestamp",
@@ -371,24 +477,21 @@
         "type": "object",
         "title": "Encrypted Storage",
         "description": "EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault\n",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Timestamp"
+        "required": [
+          "jwe"
+        ],
+        "properties": {
+          "jwe": {
+            "type": "string",
+            "pattern": "^$|^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$",
+            "description": "A JWE containing the encrypted storage or '' if the storage is not yet uploaded\n"
           },
-          {
-            "type": "object",
-            "required": [
-              "jwe"
-            ],
-            "properties": {
-              "jwe": {
-                "type": "string",
-                "pattern": "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$",
-                "description": "A JWE containing the encrypted storage\n"
-              }
-            }
+          "timestamp": {
+            "type": "number",
+            "description": "A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.",
+            "example": 1674060143749
           }
-        ]
+        }
       }
     }
   },

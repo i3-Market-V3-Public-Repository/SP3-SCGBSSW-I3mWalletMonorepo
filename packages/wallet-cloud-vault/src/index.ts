@@ -9,7 +9,7 @@ import oasRoutesPromise from './routes/oas'
 async function startApp (): Promise<Express> {
   const app = express()
   app.use(express.json())
-  app.use(morgan('dev'))
+  app.use(morgan(general.nodeEnv === 'development' ? 'dev' : 'tiny'))
 
   // Load CORS for the routes
   app.use((await import('./middlewares/cors')).corsMiddleware)
