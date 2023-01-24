@@ -9,8 +9,6 @@ export default function (router: Router): void {
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         const jwkPair = await jwksPromise
-        // const publicJwk = { ...jwkPair.publicJwk, x: 'hello&/%·' }
-        // res.json(publicJwk as OpenApiComponents.Schemas.JwkEcPublicKey)
         res.json({ jwk: jwkPair.publicJwk })
       } catch (error) {
         return next(error)

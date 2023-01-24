@@ -44,6 +44,14 @@ BEGIN
   INSERT INTO vault (username) VALUES (username);
 END;
 $$ language 'plpgsql';
+
+CREATE FUNCTION delete_user(user_name varchar) RETURNs void AS $$
+BEGIN
+  DELETE FROM vault WHERE username=user_name;
+  DELETE FROM credentials WHERE username=user_name;
+  DELETE FROM users WHERE username=user_name;
+END;
+$$ language 'plpgsql';
 `
 
 const resetDbQuery = `
@@ -53,6 +61,8 @@ DROP TABLE IF EXISTS credentials CASCADE;
 DROP TABLE IF EXISTS vault CASCADE;
 DROP FUNCTION IF EXISTS fn_update_last_uploaded CASCADE;
 DROP FUNCTION IF EXISTS register_user CASCADE;
+DROP FUNCTION IF EXISTS delete_user CASCADE;
+
 `
 
 export class Db {
@@ -67,41 +77,22 @@ export class Db {
       password: dbConfig.password,
       database: dbConfig.database
     })
-    this.initialized = new Promise((resolve, reject) => {
-      if (dbConfig.reset) {
-        this.pool.query(resetDbQuery).then(() => {
-          this.pool.query(tablesSql).then(() => {
-            this.pool.query('INSERT INTO config (version) VALUES ($1)', [general.version]).then(() => {
-              resolve()
-            }).catch((reason) => {
-              reject(reason)
-            })
-          }).catch((reason) => {
-            reject(reason)
-          })
-        }).catch((reason) => {
-          reject(reason)
-        })
-      } else {
-        this.pool.query(checkDbExistsQuery).then((result) => {
-          if (result.rows.length === 0) { // If db is not initialized
-            this.pool.query(tablesSql).then(() => {
-              this.pool.query('INSERT INTO config (version) VALUES $1', [general.version]).then(() => {
-                resolve()
-              }).catch((reason) => {
-                reject(reason)
-              })
-            }).catch((reason) => {
-              reject(reason)
-            })
-          } else {
-            resolve()
-          }
-        }).catch((reason) => {
-          reject(reason)
-        })
-      }
-    })
+    this.initialized = this.init()
+  }
+
+  private async init (): Promise<void> {
+    if (dbConfig.reset) {
+      await this.pool.query(resetDbQuery)
+    }
+    let initialized: boolean = false
+    try {
+      await this.pool.query(checkDbExistsQuery)
+      initialized = true
+    } catch (error) {}
+    if (!initialized) { // db not initialized
+      await this.pool.query(tablesSql)
+      await this.pool.query('INSERT INTO config (version) VALUES ($1)', [general.version])
+    }
   }
 
   async query<R extends any[] = any[], I extends any[] = any[]>(

@@ -66,6 +66,12 @@ class Client {
     this.timestamp = (res.body as OpenApiPaths.ApiV2Vault.Post.Responses.$201).timestamp
     return this.timestamp !== oldTimestamp
   }
+
+  async deleteStorage (): Promise<ChaiHttp.Response> {
+    return await request(serverConfig.url)
+      .delete(vaultPath)
+      .set('Authorization', 'Bearer ' + this.token)
+  }
 }
 
 describe('Wallet Cloud-Vault: Vault Events', function () {
@@ -86,11 +92,14 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
   })
 
   describe(`Testing /api/${apiVersion}/vault/events`, function () {
+    let client1: Client
+    let client2: Client
+
     it('it should send and receive events', async function () {
       const msgLimit = 6
 
-      const client1 = new Client(vaultUrl, token, msgLimit, '1')
-      const client2 = new Client(vaultUrl, token, msgLimit, '2')
+      client1 = new Client(vaultUrl, token, msgLimit, '1')
+      client2 = new Client(vaultUrl, token, msgLimit, '2')
 
       for (let i = 0; i < msgLimit; i++) {
         await setTimeout(1000)
@@ -103,6 +112,10 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
       }
 
       await Promise.all([client1.closed, client2.closed])
+    })
+    it('should delete all data from user if requested', async function () {
+      const res = await client1.deleteStorage()
+      expect(res).to.have.status(204)
     })
   })
 })

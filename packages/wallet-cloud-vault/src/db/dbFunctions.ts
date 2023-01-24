@@ -84,10 +84,10 @@ export async function setStorage (username: string, storage: string, timestamp?:
 }
 
 /**
- * Deletes storage for the specified username
+ * Deletes storage (and user) data for the specified username
  * @param username
  */
 export async function deleteStorage (username: string): Promise<void> {
-  const query = 'UPDATE vault SET storage=NULL WHERE username=$1'
+  const query = 'SELECT delete_user($1)'
   await db.query(query, [username])
 }
