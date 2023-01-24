@@ -107,7 +107,6 @@
     "chai-http": "^4.3.0",
     "dtsgenerator": "^3.16.2",
     "eventsource": "^2.0.2",
-    "i": "^0.3.7",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "mocha": "^10.2.0",

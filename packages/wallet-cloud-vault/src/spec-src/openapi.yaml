@@ -137,9 +137,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "./schema/vault.yaml#/components/schemas/EncryptedStorage"
+                allOf:
+                  - $ref: "./schema/vault.yaml#/components/schemas/EncryptedStorage"
+                  - required:
+                    - storage
+                    - timestamp
         default:
-          description: unexpected error
+          description: error
           content:
             application/json:
               schema:

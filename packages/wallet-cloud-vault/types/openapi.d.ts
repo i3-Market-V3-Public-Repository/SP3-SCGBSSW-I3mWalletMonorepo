@@ -48,10 +48,10 @@ export namespace OpenApiComponents {
          */
         export interface EncryptedStorage {
             /**
-             * A JWE containing the encrypted storage or '' if the storage is not yet uploaded
+             * A JWE containing the encrypted storage
              *
              */
-            jwe: string // ^$|^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+            jwe: string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
             /**
              * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
              * example:
@@ -229,12 +229,24 @@ export namespace OpenApiPaths {
         }
         export namespace Get {
             export namespace Responses {
-                export type $200 = /**
+                /**
                  * Encrypted Storage
                  * EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault
                  *
                  */
-                OpenApiComponents.Schemas.EncryptedStorage;
+                export interface $200 {
+                    /**
+                     * A JWE containing the encrypted storage
+                     *
+                     */
+                    jwe: string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+                    /**
+                     * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+                     * example:
+                     * 1674060143749
+                     */
+                    timestamp: number;
+                }
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }

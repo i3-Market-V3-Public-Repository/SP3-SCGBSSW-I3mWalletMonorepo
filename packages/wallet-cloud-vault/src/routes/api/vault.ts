@@ -38,7 +38,7 @@ export default function (router: Router): void {
         if (timestamp === null) {
           throw new Error("you haven't upload storage yet")
         }
-        res.json({
+        res.status(200).json({
           timestamp
         })
       } catch (error) {
@@ -52,9 +52,12 @@ export default function (router: Router): void {
       try {
         const username = (req.user as User).username
         const storage = await db.getStorage(username)
+        if (storage === null) {
+          throw new Error(`User ${username} has not uploaded sotrage yet`)
+        }
         res.status(200).json({
-          jwe: storage != null ? storage.storage : '',
-          timestamp: storage != null ? storage.timestamp : undefined
+          jwe: storage.storage,
+          timestamp: storage.timestamp
         })
       } catch (error) {
         return next(error)
@@ -89,7 +92,7 @@ export default function (router: Router): void {
           code: 1, // STORAGE UPDATED MESSAGE
           timestamp: newTimestamp
         })
-        res.json({
+        res.status(201).json({
           timestamp: newTimestamp
         })
       } catch (error) {

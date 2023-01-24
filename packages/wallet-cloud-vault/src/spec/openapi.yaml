@@ -155,9 +155,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EncryptedStorage'
+                allOf:
+                  - $ref: '#/components/schemas/EncryptedStorage'
+                  - required:
+                      - storage
+                      - timestamp
         default:
-          description: unexpected error
+          description: error
           content:
             application/json:
               schema:
@@ -439,10 +443,9 @@ components:
       properties:
         jwe:
           type: string
-          pattern: ^$|^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
-          description: >
-            A JWE containing the encrypted storage or '' if the storage is not
-            yet uploaded
+          pattern: ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+          description: |
+            A JWE containing the encrypted storage
         timestamp:
           type: number
           description: >-

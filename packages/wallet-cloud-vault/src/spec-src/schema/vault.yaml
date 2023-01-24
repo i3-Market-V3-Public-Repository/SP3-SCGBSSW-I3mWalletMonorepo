@@ -69,9 +69,9 @@ components:
       properties:
         jwe:
           type: string
-          pattern: ^$|^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+          pattern: '^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$'
           description: |
-            A JWE containing the encrypted storage or '' if the storage is not yet uploaded
+            A JWE containing the encrypted storage
         timestamp:
           type: number
           description: A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.

@@ -2,11 +2,12 @@
 
 import { expect, request, use } from 'chai'
 import chaiHttp from 'chai-http'
+import { randomBytes } from 'crypto'
 import EventSource from 'eventsource'
+import { setTimeout } from 'timers/promises'
 import { apiVersion, server as serverConfig } from '../src/config'
 import { UPDATE_MSG } from '../src/vault'
 import { OpenApiComponents, OpenApiPaths } from '../types/openapi'
-import { setTimeout } from 'timers/promises'
 
 use(chaiHttp)
 
@@ -18,36 +19,40 @@ class Client {
   token: string
   msgCount: number
   name: string
-  closed: Promise<void>
+  private readonly es: EventSource
+  private readonly closeEvent: Event
 
-  constructor (vaultUrl: string, token: string, msgLimit: number, name?: string) {
-    this.name = name ?? 'no name'
+  constructor (vaultUrl: string, token: string, name?: string) {
+    this.name = name ?? randomBytes(16).toString('hex')
     this.msgCount = 0
     this.token = token
 
+    this.closeEvent = new Event('close')
+
     const sseEndpoint = vaultUrl + '/events'
 
-    const es = new EventSource(sseEndpoint, {
+    this.es = new EventSource(sseEndpoint, {
       headers: {
         Authorization: 'Bearer ' + token
       }
     })
-    this.closed = new Promise((resolve, reject) => {
-      es.onmessage = (e) => {
-        const msg = JSON.parse(e.data) as UPDATE_MSG
-        if (msg.timestamp !== undefined) this.timestamp = msg.timestamp
-        this.msgCount++
-        console.log(`client ${this.name} - msg ${this.msgCount}: `, msg)
-        if (this.msgCount === msgLimit) {
-          es.close()
-          resolve()
-        }
-      }
-      es.onerror = (err) => {
-        console.log(`[ERROR]: client ${this.name}: `, err)
-        reject(err)
-      }
+    this.es.onmessage = (e) => {
+      const msg = JSON.parse(e.data) as UPDATE_MSG
+      if (msg.timestamp !== undefined) this.timestamp = msg.timestamp
+      this.msgCount++
+      console.log(`client ${this.name} - msg ${this.msgCount}: `, msg)
+    }
+    this.es.onerror = (err) => {
+      console.log(`[ERROR]: client ${this.name}: `, err)
+    }
+    this.es.addEventListener('close', (e) => {
+      console.log(`client ${this.name}: closing`)
+      this.es.close()
     })
+  }
+
+  close (): void {
+    this.es.dispatchEvent(this.closeEvent)
   }
 
   async updateStorage (): Promise<boolean> {
@@ -63,6 +68,7 @@ class Client {
       .set('Authorization', 'Bearer ' + this.token)
       .send(updatedStorage)
 
+    if (res.status !== 201) return false
     this.timestamp = (res.body as OpenApiPaths.ApiV2Vault.Post.Responses.$201).timestamp
     return this.timestamp !== oldTimestamp
   }
@@ -98,20 +104,23 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
     it('it should send and receive events', async function () {
       const msgLimit = 6
 
-      client1 = new Client(vaultUrl, token, msgLimit, '1')
-      client2 = new Client(vaultUrl, token, msgLimit, '2')
+      client1 = new Client(vaultUrl, token, '1')
+      client2 = new Client(vaultUrl, token, '2')
 
+      let updated: boolean = false
       for (let i = 0; i < msgLimit; i++) {
         await setTimeout(1000)
         try {
-          const updated = await client1.updateStorage()
+          updated = await client1.updateStorage()
           console.log(`Client ${client1.name} storage updated: ${updated.toString()}`)
         } catch (error) {
           console.log(error)
         }
+        expect(updated).to.be.true
       }
 
-      await Promise.all([client1.closed, client2.closed])
+      client1.close()
+      client2.close()
     })
     it('should delete all data from user if requested', async function () {
       const res = await client1.deleteStorage()
