@@ -371,13 +371,13 @@
           "x": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]+$",
-            "description": "The \"x\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation. \n",
+            "description": "The \"x\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate. \n",
             "example": "2Rwrw2sbff-EnjbRi5sSJ09FRKhBPO7SsCxRwfBCpx4"
           },
           "y": {
             "type": "string",
             "pattern": "^[A-Za-z0-9_-]+$",
-            "description": "The \"y\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.\n",
+            "description": "The \"y\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate\n",
             "example": "r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0"
           }
         }

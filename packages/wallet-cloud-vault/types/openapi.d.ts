@@ -98,14 +98,14 @@ export namespace OpenApiComponents {
              */
             crv: "P-256" | "P-384" | "P-521";
             /**
-             * The "x" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.
+             * The "x" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate.
              *
              * example:
              * 2Rwrw2sbff-EnjbRi5sSJ09FRKhBPO7SsCxRwfBCpx4
              */
             x: string // ^[A-Za-z0-9_-]+$
             /**
-             * The "y" coordinate for the elliptic curve point. It is represented as the base64url encoding of the coordinate's big endian representation.
+             * The "y" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate
              *
              * example:
              * r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0
