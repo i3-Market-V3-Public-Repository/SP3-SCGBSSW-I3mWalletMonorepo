@@ -7,7 +7,7 @@ function algByteLength (alg: EncryptionAlg | HashAlg | SigningAlg): number {
   return Number((alg.match(/\d{3}/) as RegExpMatchArray)[0]) / 8
 }
 
-describe('Non-repudiation protocol', function () {
+describe('Testing deploting secrets', function () {
   this.bail() // stop after a test fails
   this.timeout(2000000)
 

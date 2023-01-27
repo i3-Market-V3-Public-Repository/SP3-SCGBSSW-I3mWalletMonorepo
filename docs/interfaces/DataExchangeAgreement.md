@@ -38,7 +38,7 @@ WalletComponents.Schemas.DataExchangeAgreement.dest
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:286
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:127
 
 ___
 
@@ -55,7 +55,7 @@ WalletComponents.Schemas.DataExchangeAgreement.encAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:291
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:132
 
 ___
 
@@ -72,7 +72,7 @@ WalletComponents.Schemas.DataExchangeAgreement.hashAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:301
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:142
 
 ___
 
@@ -80,17 +80,13 @@ ___
 
 • **ledgerContractAddress**: `string`
 
-Ethereum Address in EIP-55 format (with checksum)
-example:
-0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-
 #### Inherited from
 
 WalletComponents.Schemas.DataExchangeAgreement.ledgerContractAddress
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:307
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:143
 
 ___
 
@@ -98,17 +94,13 @@ ___
 
 • **ledgerSignerAddress**: `string`
 
-Ethereum Address in EIP-55 format (with checksum)
-example:
-0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-
 #### Inherited from
 
 WalletComponents.Schemas.DataExchangeAgreement.ledgerSignerAddress
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:313
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:149
 
 ___
 
@@ -126,7 +118,7 @@ WalletComponents.Schemas.DataExchangeAgreement.orig
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:280
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:121
 
 ___
 
@@ -144,7 +136,7 @@ WalletComponents.Schemas.DataExchangeAgreement.pooToPopDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:325
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:166
 
 ___
 
@@ -162,7 +154,7 @@ WalletComponents.Schemas.DataExchangeAgreement.pooToPorDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:319
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:160
 
 ___
 
@@ -180,7 +172,7 @@ WalletComponents.Schemas.DataExchangeAgreement.pooToSecretDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:331
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:172
 
 ___
 
@@ -196,7 +188,7 @@ WalletComponents.Schemas.DataExchangeAgreement.schema
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:335
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:176
 
 ___
 
@@ -213,4 +205,4 @@ WalletComponents.Schemas.DataExchangeAgreement.signingAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:296
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:137

@@ -26,23 +26,7 @@
 
 ### dataExchangeAgreement
 
-• **dataExchangeAgreement**: `Object`
-
-#### Type declaration
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `dest` | `string` | A stringified JWK with alphabetically sorted claims example: {"alg":"ES256","crv":"P-256","kty":"EC","x":"sI5lkRCGpfeViQzAnu-gLnZnIGdbtfPiY7dGk4yVn-k","y":"4iFXDnEzPEb7Ce_18RSV22jW6VaVCpwH3FgTAKj3Cf4"} |
-| `encAlg` | ``"A128GCM"`` \| ``"A256GCM"`` | example: A256GCM |
-| `hashAlg` | ``"SHA-256"`` \| ``"SHA-384"`` \| ``"SHA-512"`` | example: SHA-256 |
-| `ledgerContractAddress` | `string` | Ethereum Address in EIP-55 format (with checksum) example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
-| `ledgerSignerAddress` | `string` | Ethereum Address in EIP-55 format (with checksum) example: 0x71C7656EC7ab88b098defB751B7401B5f6d8976F |
-| `orig` | `string` | A stringified JWK with alphabetically sorted claims example: {"alg":"ES256","crv":"P-256","kty":"EC","x":"t0ueMqN9j8lWYa2FXZjSw3cycpwSgxjl26qlV6zkFEo","y":"rMqWC9jGfXXLEh_1cku4-f0PfbFa1igbNWLPzos_gb0"} |
-| `pooToPopDelay` | `number` | Maximum acceptable time in milliseconds between issued PoO and issued PoP example: 20000 |
-| `pooToPorDelay` | `number` | Maximum acceptable time in milliseconds between issued PoO and verified PoR example: 10000 |
-| `pooToSecretDelay` | `number` | Maximum acceptable time between issued PoO and secret published on the ledger example: 180000 |
-| `schema?` | `string` | A stringified JSON-LD schema describing the data format |
-| `signingAlg` | ``"ES256"`` \| ``"ES384"`` \| ``"ES512"`` | example: ES256 |
+• **dataExchangeAgreement**: `DataExchangeAgreement`
 
 #### Inherited from
 
@@ -50,7 +34,7 @@ WalletComponents.Schemas.DataSharingAgreement.dataExchangeAgreement
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:498
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:265
 
 ___
 
@@ -74,7 +58,7 @@ WalletComponents.Schemas.DataSharingAgreement.dataOfferingDescription
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:428
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:195
 
 ___
 
@@ -88,7 +72,7 @@ WalletComponents.Schemas.DataSharingAgreement.dataStream
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:478
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:245
 
 ___
 
@@ -110,7 +94,7 @@ WalletComponents.Schemas.DataSharingAgreement.duration
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:450
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:217
 
 ___
 
@@ -132,7 +116,7 @@ WalletComponents.Schemas.DataSharingAgreement.intendedUse
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:455
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:222
 
 ___
 
@@ -167,7 +151,7 @@ WalletComponents.Schemas.DataSharingAgreement.licenseGrant
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:460
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:227
 
 ___
 
@@ -177,10 +161,10 @@ ___
 
 #### Type declaration
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `consumerDid` | `string` | a DID using the ethr resolver example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
-| `providerDid` | `string` | a DID using the ethr resolver example: did:ethr:i3m:0x031bee96cfae8bad99ea0dd3d08d1a3296084f894e9ddfe1ffe141133e81ac5863 |
+| Name | Type |
+| :------ | :------ |
+| `consumerDid` | `string` |
+| `providerDid` | `string` |
 
 #### Inherited from
 
@@ -188,7 +172,7 @@ WalletComponents.Schemas.DataSharingAgreement.parties
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:435
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:202
 
 ___
 
@@ -202,7 +186,7 @@ WalletComponents.Schemas.DataSharingAgreement.personalData
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:479
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:246
 
 ___
 
@@ -235,7 +219,7 @@ WalletComponents.Schemas.DataSharingAgreement.pricingModel
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:480
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:247
 
 ___
 
@@ -249,7 +233,7 @@ WalletComponents.Schemas.DataSharingAgreement.purpose
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:449
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:216
 
 ___
 
@@ -259,10 +243,10 @@ ___
 
 #### Type declaration
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `consumerSignature` | `string` | CompactJWS |
-| `providerSignature` | `string` | CompactJWS |
+| Name | Type |
+| :------ | :------ |
+| `consumerSignature` | `string` |
+| `providerSignature` | `string` |
 
 #### Inherited from
 
@@ -270,4 +254,4 @@ WalletComponents.Schemas.DataSharingAgreement.signatures
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:561
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:266

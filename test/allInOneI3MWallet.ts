@@ -20,7 +20,7 @@ Steps for creating a token:
    - After succesful pairing, click "Session to clipboard"
  - Edit your .env file or add a new environment variable in you CI provider with key I3M_WALLET_SESSION_TOKEN and value the pasted contents`)
 } else {
-  describe('Non-repudiation protocol', function () {
+  describe('Non-repudiation protocol - All in one with i3M-Wallet', function () {
     this.bail() // stop after a test fails
     this.timeout(2000000)
 

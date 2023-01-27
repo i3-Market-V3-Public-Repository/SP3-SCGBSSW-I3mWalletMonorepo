@@ -40,7 +40,7 @@ WalletComponents.Schemas.DataExchange.blockCommitment
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:268
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:109
 
 ___
 
@@ -56,7 +56,7 @@ WalletComponents.Schemas.DataExchange.cipherblockDgst
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:264
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:105
 
 ___
 
@@ -74,7 +74,7 @@ WalletComponents.Schemas.DataExchange.dest
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:211
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:52
 
 ___
 
@@ -91,7 +91,7 @@ WalletComponents.Schemas.DataExchange.encAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:216
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:57
 
 ___
 
@@ -108,7 +108,7 @@ WalletComponents.Schemas.DataExchange.hashAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:226
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:67
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/caa105f/src/ts/types.ts#L89)
+[src/ts/types.ts:89](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/31fe7d0/src/ts/types.ts#L89)
 
 ___
 
@@ -126,17 +126,13 @@ ___
 
 • **ledgerContractAddress**: `string`
 
-Ethereum Address in EIP-55 format (with checksum)
-example:
-0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-
 #### Inherited from
 
 WalletComponents.Schemas.DataExchange.ledgerContractAddress
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:232
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:68
 
 ___
 
@@ -144,17 +140,13 @@ ___
 
 • **ledgerSignerAddress**: `string`
 
-Ethereum Address in EIP-55 format (with checksum)
-example:
-0x71C7656EC7ab88b098defB751B7401B5f6d8976F
-
 #### Inherited from
 
 WalletComponents.Schemas.DataExchange.ledgerSignerAddress
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:238
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:74
 
 ___
 
@@ -172,7 +164,7 @@ WalletComponents.Schemas.DataExchange.orig
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:205
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:46
 
 ___
 
@@ -190,7 +182,7 @@ WalletComponents.Schemas.DataExchange.pooToPopDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:250
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:91
 
 ___
 
@@ -208,7 +200,7 @@ WalletComponents.Schemas.DataExchange.pooToPorDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:244
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:85
 
 ___
 
@@ -226,7 +218,7 @@ WalletComponents.Schemas.DataExchange.pooToSecretDelay
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:256
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:97
 
 ___
 
@@ -242,7 +234,7 @@ WalletComponents.Schemas.DataExchange.schema
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:260
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:101
 
 ___
 
@@ -258,7 +250,7 @@ WalletComponents.Schemas.DataExchange.secretCommitment
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:272
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:113
 
 ___
 
@@ -275,4 +267,4 @@ WalletComponents.Schemas.DataExchange.signingAlg
 
 #### Defined in
 
-node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:221
+node_modules/@i3m/wallet-desktop-openapi/types/openapi.d.ts:62
