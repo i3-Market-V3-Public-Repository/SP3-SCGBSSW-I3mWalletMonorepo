@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-cloud-vault",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
   "keywords": [
     "vault",
@@ -50,8 +50,8 @@
     "./oas-ts-types": "./types/openapi.d.ts"
   },
   "scripts": {
-    "build": "run-s clean:dist lint openapi tsc",
-    "clean": "run-s clean:dist clean:openapi",
+    "build": "npm run clean:dist && npm run lint && npm run openapi && npm run tsc",
+    "clean": "npm run clean:dist && npm run clean:openapi",
     "clean:dist": "rimraf dist",
     "clean:openapi": "rimraf src/spec/openapi.json src/spec/openapi.yaml dist/spec",
     "predev": "npm run openapi",
@@ -59,14 +59,14 @@
     "git:add": "git add -A",
     "lint": "ts-standard --fix",
     "preopenapi": "npm run clean:openapi",
-    "openapi": "run-s openapi:json openapi:types",
+    "openapi": "npm run openapi:json && npm run openapi:types",
     "openapi:json": "ts-node build/createOASJsonBundle.ts",
     "openapi:types": "ts-node build/openApiTypes.ts",
     "start": "node dist/index.js",
     "test": "mocha -r ts-node/register 'test/**/*.ts' test-fixtures/server.ts",
     "mocha-ts": "mocha -r ts-node/register test-fixtures/server.ts -- ",
     "tsc": "tsc -p tsconfig.build.json",
-    "version": "run-s build test git:add",
+    "version": "npm run build && npm run test && npm run git:add",
     "postversion": "git push --follow-tags"
   },
   "ts-standard": {
@@ -112,7 +112,6 @@
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "npm": "^9.3.1",
-    "npm-run-all": "^4.1.5",
     "openapi-types": "^12.1.0",
     "rimraf": "^4.1.0",
     "ts-node": "^10.9.1",
