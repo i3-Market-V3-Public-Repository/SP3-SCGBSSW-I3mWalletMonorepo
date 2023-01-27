@@ -15,7 +15,7 @@
 
 #### Defined in
 
-[src/ts/types.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/31fe7d0/src/ts/types.ts#L29)
+[src/ts/types.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e8bd0b6/src/ts/types.ts#L29)
 
 ___
 
@@ -25,4 +25,4 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/31fe7d0/src/ts/types.ts#L28)
+[src/ts/types.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e8bd0b6/src/ts/types.ts#L28)
