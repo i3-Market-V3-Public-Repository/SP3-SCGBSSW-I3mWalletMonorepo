@@ -2,7 +2,7 @@ import { Request, Response, Router } from 'express'
 import { sign as jwtSign } from 'jsonwebtoken'
 import { OpenApiPaths } from '../../../types/openapi'
 import { general, jwt } from '../../config'
-import { db } from '../../db'
+import { dbFunctions as db } from '../../db'
 import { vaultEvents } from '../../vault'
 import { passport, User } from '../../middlewares/passport'
 

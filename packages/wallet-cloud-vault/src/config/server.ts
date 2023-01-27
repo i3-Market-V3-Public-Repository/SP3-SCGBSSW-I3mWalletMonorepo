@@ -1,6 +1,6 @@
 import { parseProccessEnvVar } from './parseProcessEnvVar'
 
-interface ServerConfig {
+export interface ServerConfig {
   addr: string
   port: number
   url: string

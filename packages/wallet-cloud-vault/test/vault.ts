@@ -5,24 +5,30 @@ import chaiHttp from 'chai-http'
 import { randomBytes } from 'crypto'
 import EventSource from 'eventsource'
 import { setTimeout } from 'timers/promises'
-import { apiVersion, server as serverConfig } from '../src/config'
+import { apiVersion } from '../src/config/openApi'
+import { server as serverConfig } from '../src/config/server'
 import { UPDATE_MSG } from '../src/vault'
-import { OpenApiComponents, OpenApiPaths } from '../types/openapi'
+import type { OpenApiComponents, OpenApiPaths } from '../types/openapi'
 
 use(chaiHttp)
 
 const vaultPath = `/api/${apiVersion}/vault`
-const vaultUrl = serverConfig.url + vaultPath
 
 class Client {
   timestamp?: number
   token: string
   msgCount: number
   name: string
+  serverUrl: string
+
   private readonly es: EventSource
   private readonly closeEvent: Event
 
-  constructor (vaultUrl: string, token: string, name?: string) {
+  constructor (serverUrl: string, token: string, name?: string) {
+    this.serverUrl = serverUrl
+
+    const vaultUrl = serverUrl + vaultPath
+
     this.name = name ?? randomBytes(16).toString('hex')
     this.msgCount = 0
     this.token = token
@@ -62,7 +68,7 @@ class Client {
     }
 
     const oldTimestamp = this.timestamp
-    const res = await request(serverConfig.url)
+    const res = await request(this.serverUrl)
       .post(vaultPath)
       .set('content-type', 'application/json')
       .set('Authorization', 'Bearer ' + this.token)
@@ -74,7 +80,7 @@ class Client {
   }
 
   async deleteStorage (): Promise<ChaiHttp.Response> {
-    return await request(serverConfig.url)
+    return await request(this.serverUrl)
       .delete(vaultPath)
       .set('Authorization', 'Bearer ' + this.token)
   }
@@ -93,6 +99,7 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
       .post(`${vaultPath}/auth`)
       .set('content-type', 'application/json')
       .send(credentials)
+    expect(res).to.have.status(200)
     expect(res.body.token).to.not.be.undefined
     token = res.body.token
   })
@@ -104,8 +111,8 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
     it('it should send and receive events', async function () {
       const msgLimit = 6
 
-      client1 = new Client(vaultUrl, token, '1')
-      client2 = new Client(vaultUrl, token, '2')
+      client1 = new Client(serverConfig.url, token, '1')
+      client2 = new Client(serverConfig.url, token, '2')
 
       let updated: boolean = false
       for (let i = 0; i < msgLimit; i++) {

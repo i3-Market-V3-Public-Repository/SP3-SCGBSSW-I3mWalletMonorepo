@@ -4,10 +4,11 @@ import path from 'path'
 import SwaggerParser from '@apidevtools/swagger-parser'
 import jsYaml from 'js-yaml'
 import _ from 'lodash'
-import { OpenAPIV3 } from 'openapi-types'
+import type { OpenAPIV3 } from 'openapi-types'
 
-import { general, server } from '../src/config'
 import pkgJson from '../package.json'
+import { general } from '../src/config/general'
+import { server } from '../src/config/server'
 
 const rootDir = path.join(__dirname, '..')
 

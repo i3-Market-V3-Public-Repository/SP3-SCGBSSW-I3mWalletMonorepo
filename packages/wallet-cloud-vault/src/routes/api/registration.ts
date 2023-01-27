@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express'
 import { OpenApiPaths } from '../../../types/openapi'
 import { jwksPromise } from '../../config'
-import { db } from '../../db'
+import { dbFunctions as db } from '../../db'
 import { jweDecrypt, JWK } from '@i3m/non-repudiation-library'
 
 export default function (router: Router): void {

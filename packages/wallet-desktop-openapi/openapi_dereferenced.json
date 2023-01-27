@@ -1108,7 +1108,7 @@
                                             "type": "string"
                                           },
                                           "hasSubscriptionPrice": {
-                                            "type": "integer"
+                                            "type": "number"
                                           }
                                         }
                                       },
@@ -1904,7 +1904,7 @@
                                         "type": "string"
                                       },
                                       "hasSubscriptionPrice": {
-                                        "type": "integer"
+                                        "type": "number"
                                       }
                                     }
                                   },
@@ -3291,7 +3291,7 @@
                                   "type": "string"
                                 },
                                 "hasSubscriptionPrice": {
-                                  "type": "integer"
+                                  "type": "number"
                                 }
                               }
                             },
@@ -4047,7 +4047,7 @@
                                 "type": "string"
                               },
                               "hasSubscriptionPrice": {
-                                "type": "integer"
+                                "type": "number"
                               }
                             }
                           },
@@ -4799,7 +4799,7 @@
                             "type": "string"
                           },
                           "hasSubscriptionPrice": {
-                            "type": "integer"
+                            "type": "number"
                           }
                         }
                       },
@@ -5640,7 +5640,7 @@
                     "type": "string"
                   },
                   "hasSubscriptionPrice": {
-                    "type": "integer"
+                    "type": "number"
                   }
                 }
               },

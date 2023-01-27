@@ -18,7 +18,7 @@
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/server-wallet/src/ts/index.ts#L15)
+[src/ts/index.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/server-wallet/src/ts/index.ts#L15)
 
 ___
 
@@ -28,7 +28,7 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/server-wallet/src/ts/index.ts#L16)
+[src/ts/index.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/server-wallet/src/ts/index.ts#L16)
 
 ___
 
@@ -38,7 +38,7 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/server-wallet/src/ts/index.ts#L17)
+[src/ts/index.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/server-wallet/src/ts/index.ts#L17)
 
 ___
 
@@ -48,7 +48,7 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/server-wallet/src/ts/index.ts#L18)
+[src/ts/index.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/server-wallet/src/ts/index.ts#L18)
 
 ___
 
@@ -58,4 +58,4 @@ ___
 
 #### Defined in
 
-[server-wallet/src/ts/index.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/server-wallet/src/ts/index.ts#L19)
+[src/ts/index.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/server-wallet/src/ts/index.ts#L19)

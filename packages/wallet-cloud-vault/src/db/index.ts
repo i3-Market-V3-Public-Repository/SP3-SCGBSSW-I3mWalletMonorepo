@@ -1,1 +1,2 @@
-export * as db from './dbFunctions'
+export * as dbFunctions from './dbFunctions'
+export { db } from './Db'

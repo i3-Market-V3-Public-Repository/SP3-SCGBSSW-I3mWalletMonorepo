@@ -115,6 +115,10 @@ export class Db {
     }
     return res
   }
+
+  async close (): Promise<void> {
+    return await this.pool.end()
+  }
 }
 
 export const db = new Db()

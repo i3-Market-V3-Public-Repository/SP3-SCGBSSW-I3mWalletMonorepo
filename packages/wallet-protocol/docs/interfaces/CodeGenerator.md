@@ -29,7 +29,7 @@
 
 #### Defined in
 
-[protocol/code-generator.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L5)
+[protocol/code-generator.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L5)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[protocol/code-generator.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/373b344/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L6)
+[protocol/code-generator.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a7da93d/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L6)

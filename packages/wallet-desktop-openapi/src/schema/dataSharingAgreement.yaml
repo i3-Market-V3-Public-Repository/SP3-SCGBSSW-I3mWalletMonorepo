@@ -233,7 +233,7 @@ components:
                 repeat:
                   type: string
                 hasSubscriptionPrice:
-                  type: integer
+                  type: number
             hasFreePrice:
               type: object
               properties:
