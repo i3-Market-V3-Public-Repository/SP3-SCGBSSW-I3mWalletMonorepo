@@ -62,7 +62,7 @@ Transport.authentication
 
 #### Defined in
 
-[transport/transport.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L19)
+[transport/transport.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L19)
 
 ___
 
@@ -86,7 +86,7 @@ Transport.finish
 
 #### Defined in
 
-[transport/transport.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L26)
+[transport/transport.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L26)
 
 ___
 
@@ -111,7 +111,7 @@ Transport.prepare
 
 #### Defined in
 
-[transport/transport.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L16)
+[transport/transport.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L16)
 
 ___
 
@@ -136,7 +136,7 @@ Transport.publicKeyExchange
 
 #### Defined in
 
-[transport/transport.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L18)
+[transport/transport.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L18)
 
 ___
 
@@ -162,7 +162,7 @@ Transport.send
 
 #### Defined in
 
-[transport/transport.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L22)
+[transport/transport.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L22)
 
 ___
 
@@ -187,4 +187,4 @@ Transport.verification
 
 #### Defined in
 
-[transport/transport.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/wallet-protocol/src/ts/transport/transport.ts#L20)
+[transport/transport.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/wallet-protocol/src/ts/transport/transport.ts#L20)
