@@ -1,15 +1,8 @@
 openapi: '3.0.3'
 
 info:
-  version: "{{VERSION}}"
-  title: i3M Wallet API
-  contact:
-    name: Juan Hernández Serrano
-    email: j.hernandez@upc.edu
-  license:
-    name: MIT
-  description: |
-    i3M-Wallet API that can be used to interact with the i3M-Wallet. Most of the functionalities will also require end-user interaction with the wallet app.
+  version: ''
+  title: i3M-Wallet Developers API
 
 tags:
   - name: identities

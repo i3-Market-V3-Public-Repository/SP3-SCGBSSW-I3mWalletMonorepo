@@ -1,7 +1,7 @@
 {
   "name": "@i3m/wallet-desktop-openapi",
   "version": "2.5.5",
-  "description": "The API of the i3m-wallet desktop application",
+  "description": "i3M-Wallet Developers API that can be used to interact with the i3M-Wallet. In production it is encapsulated inside a secure connection. Please use the @i3m/wallet-protocol-api to interact with the wallet.",
   "main": "openapi.json",
   "exports": {
     ".": "./openapi.json",
@@ -30,7 +30,11 @@
     "Fernando Román García <fernando.roman@upc.edu>",
     "Juan Hernández Serrno <j.hernandez@upc.edu>"
   ],
-  "author": "Juan Hernández Serrno <j.hernandez@upc.edu>",
+  "author": {
+    "name": "Juan Hernández Serrano",
+    "email": "j.hernandez@upc.edu",
+    "url": "https://github.com/juanelas"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",

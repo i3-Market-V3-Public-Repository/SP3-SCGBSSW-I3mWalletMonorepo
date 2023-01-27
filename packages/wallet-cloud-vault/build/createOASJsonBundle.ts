@@ -9,6 +9,7 @@ import type { OpenAPIV3 } from 'openapi-types'
 import pkgJson from '../package.json'
 import { general } from '../src/config/general'
 import { server } from '../src/config/server'
+import { apiVersion } from '../src/config/openApi'
 
 const rootDir = path.join(__dirname, '..')
 
@@ -31,7 +32,7 @@ function addLocalhostServerIfInDevelopment (spec: OpenAPIV3.Document): void {
 
 function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
   spec.info.description = pkgJson.description
-  spec.info.version = pkgJson.version
+  spec.info.version = apiVersion
   let licenseUrl = ''
   switch (pkgJson.license) {
     case 'EUPL':
@@ -50,7 +51,7 @@ function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
   }
   const paths: { [key: string]: any } = {}
   for (const path of Object.keys(spec.paths)) {
-    const key: string = path.replace('API_VERSION', 'v' + pkgJson.version.split('.')[0])
+    const key: string = path.replace('API_VERSION', apiVersion)
     paths[key] = spec.paths[path]
   }
   spec.paths = paths

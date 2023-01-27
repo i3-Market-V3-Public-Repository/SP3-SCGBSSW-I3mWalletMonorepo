@@ -4,13 +4,40 @@ import path from 'path'
 import SwaggerParser from '@apidevtools/swagger-parser'
 import jsYaml from 'js-yaml'
 import _ from 'lodash'
-import { OpenAPIV3 } from 'openapi-types'
+import type { OpenAPIV3 } from 'openapi-types'
 
 import pkgJson from '../package.json'
 
-// import yamlToJson from './yaml-to-json'
-
 const rootDir = path.join(__dirname, '..')
+
+const apiVersion = `v${pkgJson.version.split('.')[0]}`
+
+function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
+  spec.info.description = pkgJson.description
+  spec.info.version = apiVersion
+  let licenseUrl = ''
+  switch (pkgJson.license) {
+    case 'EUPL':
+    case 'EUPL-1':
+    case 'EUPL-1.2':
+      licenseUrl = 'https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt'
+      break
+    default:
+      break
+  }
+  spec.info.license = { name: pkgJson.license, url: licenseUrl }
+  spec.info.contact = {
+    name: pkgJson.author.name,
+    email: pkgJson.author.email,
+    url: pkgJson.author.url
+  }
+  const paths: { [key: string]: any } = {}
+  for (const path of Object.keys(spec.paths)) {
+    const key: string = path.replace('API_VERSION', apiVersion)
+    paths[key] = spec.paths[path]
+  }
+  spec.paths = paths
+}
 
 function fixRefs (obj: {}): void {
   for (const value of Object.values(obj)) {
@@ -31,33 +58,12 @@ function removeIgnoredPaths (spec: OpenAPIV3.Document): void {
   delete spec.paths['/_IGNORE_PATH']
 }
 
-// const prepareBundle = async function (): Promise<OpenAPIV3.Document> {
-//   yamlToJson(path.join(rootDir, 'src'), path.join(rootDir, 'openapi'))
-
-//   const openApiJsonPath = path.join(rootDir, 'openapi', 'openapi.json')
-//   const rootApi: OpenAPIV3.Document = JSON.parse(fs.readFileSync(openApiJsonPath, 'utf-8'))
-
-//   const parser = new SwaggerParser()
-//   const refs = (await parser.resolve(openApiJsonPath)).values()
-
-//   const specs = []
-//   for (const [ref, spec] of Object.entries(refs)) {
-//     if (ref !== openApiJsonPath) {
-//       specs.push(spec)
-//     }
-//   }
-//   const bundleSpec: OpenAPIV3.Document = _.defaultsDeep(rootApi, ...specs)
-//   fixRefs(bundleSpec)
-//   removeIgnoredPaths(bundleSpec)
-//   return bundleSpec
-// }
-
 interface SpecBundles {
   api: OpenAPIV3.Document
   dereferencedApi: OpenAPIV3.Document
 }
 const bundleSpec = async function (): Promise<SpecBundles> {
-  const openApiPath = path.join(rootDir, 'src', 'openapi.yaml')
+  const openApiPath = path.join(rootDir, pkgJson.directories.src, 'openapi.yaml')
 
   const parser = new SwaggerParser()
   const rootApi = await parser.parse(openApiPath)
@@ -70,12 +76,13 @@ const bundleSpec = async function (): Promise<SpecBundles> {
     }
   }
   const bundledSpec: OpenAPIV3.Document = _.defaultsDeep(rootApi, ...specs)
-  fixRefs(bundledSpec)
   removeIgnoredPaths(bundledSpec)
+  fixRefs(bundledSpec)
+  fillWithPkgJsonData(bundledSpec)
 
-  const dereferencedBundledSpec = await parser.dereference(bundledSpec) as OpenAPIV3.Document
+  const dereferencedBundledSpec = await parser.dereference(_.cloneDeep(bundledSpec)) as OpenAPIV3.Document
 
-  await SwaggerParser.validate(dereferencedBundledSpec)
+  await parser.validate(dereferencedBundledSpec)
 
   return {
     api: bundledSpec,
@@ -84,25 +91,28 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 }
 
 const bundle = async (): Promise<void> => {
-  const jsonBundlePath = path.join(rootDir, pkgJson.main)
+  const jsonBundlePath = path.join(rootDir, pkgJson.exports['./openapi.json'])
   const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
   const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
 
   fs.rmSync(jsonBundlePath, { force: true })
+  fs.mkdirSync(path.dirname(jsonBundlePath), { recursive: true })
   fs.rmSync(jsonDereferencedBundlePath, { force: true })
+  fs.mkdirSync(path.dirname(jsonDereferencedBundlePath), { recursive: true })
   fs.rmSync(yamlBundlePath, { force: true })
+  fs.mkdirSync(path.dirname(yamlBundlePath), { recursive: true })
 
   const { api, dereferencedApi } = await bundleSpec()
 
-  api.info.version = pkgJson.version
   fs.writeFileSync(jsonBundlePath, JSON.stringify(api, null, 2))
+
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundlePath}`)
 
-  dereferencedApi.info.version = pkgJson.version
   fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(dereferencedApi, null, 2))
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
 
   fs.writeFileSync(yamlBundlePath, jsYaml.dump(api))
+
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec YAML bundle written to -> ${yamlBundlePath}`)
 }
 

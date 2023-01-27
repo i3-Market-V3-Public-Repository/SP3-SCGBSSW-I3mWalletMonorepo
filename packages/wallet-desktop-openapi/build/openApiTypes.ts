@@ -8,7 +8,7 @@ import pkgJson from '../package.json'
 
 const rootDir = path.join(__dirname, '..')
 
-const openApiJsonPath = path.join(rootDir, pkgJson.main)
+const openApiJsonPath = path.join(rootDir, pkgJson.exports['./openapi.json'])
 
 const typesFilePath = path.join(rootDir, pkgJson.directories.types, 'openapi.d.ts')
 const dstDir = path.dirname(typesFilePath)

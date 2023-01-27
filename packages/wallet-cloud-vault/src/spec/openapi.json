@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "i3M-Wallet Cloud-Vault API",
-    "version": "2.5.5",
+    "version": "v2",
     "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
     "license": {
       "name": "EUPL-1.2",
