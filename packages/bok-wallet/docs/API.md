@@ -1,4 +1,4 @@
-# @i3m/bok-wallet - v2.5.5
+# @i3m/bok-wallet - v2.5.6
 
 ## Table of contents
 
@@ -28,4 +28,4 @@
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-builder.d.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f97c6ca/packages/base-wallet/types/wallet/wallet-builder.d.ts#L3)
+[base-wallet/types/wallet/wallet-builder.d.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e68892d/packages/base-wallet/types/wallet/wallet-builder.d.ts#L3)
