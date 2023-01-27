@@ -1,11 +1,5 @@
 # `@i3m/wallet-cloud-vault`
 
-> TODO: description
+An implementation of the i3M wallet cloud-vault server.
 
-## Usage
-
-```
-const walletCloudVault = require('@i3m/wallet-cloud-vault');
-
-// TODO: DEMONSTRATE API
-```
+**NOT YET PRODUCTION READY!**
