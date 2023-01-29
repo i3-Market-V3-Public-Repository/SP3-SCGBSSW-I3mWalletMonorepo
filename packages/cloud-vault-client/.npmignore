@@ -1,0 +1,58 @@
+# Build scripts
+build
+
+# Test files
+test
+__tests__
+**/*.spec.ts
+test-vectors
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Output of 'npm pack'
+*.tgz
+
+# Visual Studio Code
+.vscode
+
+# IntelliJ
+.idea
+
+# Coverage
+coverage
+
+# GitHub
+.github
+
+# GitLab
+.gitlab-ci.yml
+.gitlab-ci.yaml
+
+# tsconfig
+tsconfig.json
+
+# SRC docs
+src/docs
+
+# Environment files
+*.env
+*.env.*
+
+# Test temporal files
+.mocha-ts
+.tsconfig.json
+
+# docs temporal files
+.nojekyll
+
+# code of conduct
+CODE_OF_CONDUCT.md
+
+# TODO
+TO-DO.txt
+
+# benchmark
+benchmark

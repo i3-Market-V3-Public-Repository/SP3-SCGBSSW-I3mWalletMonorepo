@@ -40,11 +40,11 @@ const serverPromise = new Promise<Server>((resolve, reject) => {
     dbConnection = module
     dbConnection.db.initialized.then(() => {
       console.log('⚡️[server]: DB connection ready')
-    }).catch((err) => {
-      throw new Error(err)
+    }).catch((error) => {
+      throw new Error('DB connection failed\n' + JSON.stringify(error, undefined, 2))
     })
   }).catch((err) => {
-    throw new Error(err)
+    reject(err)
   })
 
   startApp().then((app) => {
@@ -67,7 +67,7 @@ const serverPromise = new Promise<Server>((resolve, reject) => {
 
     server.on('close', () => {
       dbConnection.db.close().catch((err) => {
-        throw new Error(err)
+        reject(err)
       })
     })
   }).catch((e) => {
@@ -77,3 +77,4 @@ const serverPromise = new Promise<Server>((resolve, reject) => {
 })
 
 export default serverPromise
+export * from './vault'

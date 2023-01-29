@@ -1,5 +1,5 @@
 {
-  "name": "@i3m/wallet-cloud-vault",
+  "name": "@i3m/cloud-vault-server",
   "version": "2.5.6",
   "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
   "keywords": [
@@ -21,17 +21,18 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
-    "directory": "packages/server-wallet"
+    "directory": "packages/cloud-vault-server"
   },
   "bugs": {
     "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/issues"
   },
-  "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/tree/public/packages/wallet-cloud-vault#readme",
+  "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/tree/public/packages/cloud-vault-server#readme",
   "license": "EUPL-1.2",
   "engines": {
     "node": ">=16.x"
   },
   "main": "dist/index.js",
+  "types": "./types/index.d.ts",
   "bin": {
     "wcv": "./dist/index.js"
   },
@@ -50,10 +51,10 @@
     "./oas-ts-types": "./types/openapi.d.ts"
   },
   "scripts": {
-    "build": "npm run clean:dist && npm run lint && npm run openapi && npm run tsc",
-    "clean": "npm run clean:dist && npm run clean:openapi",
-    "clean:dist": "rimraf dist",
-    "clean:openapi": "rimraf src/spec/openapi.json src/spec/openapi.yaml dist/spec",
+    "build": "npm run clean:ts && npm run lint && npm run openapi && npm run tsc",
+    "clean": "npm run clean:ts && npm run clean:openapi",
+    "clean:ts": "rimraf dist types",
+    "clean:openapi": "rimraf src/spec/openapi.json src/spec/openapi.yaml dist/spec types/openapi.d.ts",
     "predev": "npm run openapi",
     "dev": "nodemon src/index.ts",
     "git:add": "git add -A",
