@@ -17,8 +17,10 @@ export default function (router: Router): void {
         const connId = vaultEvents.addConnection(username, res)
 
         vaultEvents.sendEvent(username, {
-          code: 0,
-          timestamp: (await db.getTimestamp(username)) ?? undefined
+          type: 'connected',
+          data: {
+            timestamp: (await db.getTimestamp(username)) ?? undefined
+          }
         })
 
         req.on('close', () => {
@@ -71,7 +73,8 @@ export default function (router: Router): void {
         const username = (req.user as User).username
         await db.deleteStorage(username)
         vaultEvents.sendEvent(username, {
-          code: 2 // Delete message
+          type: 'storage-deleted',
+          data: {}
         })
         res.status(204).end()
       } catch (error) {
@@ -89,8 +92,10 @@ export default function (router: Router): void {
         }
         const newTimestamp: number = await db.setStorage(username, req.body.jwe, req.body.timestamp)
         vaultEvents.sendEvent(username, {
-          code: 1, // STORAGE UPDATED MESSAGE
-          timestamp: newTimestamp
+          type: 'storage-updated',
+          data: {
+            timestamp: newTimestamp
+          }
         })
         res.status(201).json({
           timestamp: newTimestamp

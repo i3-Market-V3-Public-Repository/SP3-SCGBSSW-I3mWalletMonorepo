@@ -7,7 +7,7 @@ import EventSource from 'eventsource'
 import { setTimeout } from 'timers/promises'
 import { apiVersion } from '../src/config/openApi'
 import { server as serverConfig } from '../src/config/server'
-import { UPDATE_MSG } from '../src/vault'
+import { STORAGE_UPDATED_EVENT } from '../src/vault'
 import type { OpenApiComponents, OpenApiPaths } from '../types/openapi'
 
 use(chaiHttp)
@@ -42,12 +42,14 @@ class Client {
         Authorization: 'Bearer ' + token
       }
     })
-    this.es.onmessage = (e) => {
-      const msg = JSON.parse(e.data) as UPDATE_MSG
+
+    this.es.addEventListener('storage-updated', (e) => {
+      const msg = JSON.parse(e.data) as STORAGE_UPDATED_EVENT['data']
       if (msg.timestamp !== undefined) this.timestamp = msg.timestamp
       this.msgCount++
       console.log(`client ${this.name} - msg ${this.msgCount}: `, msg)
-    }
+    })
+
     this.es.onerror = (err) => {
       console.log(`[ERROR]: client ${this.name}: `, err)
     }

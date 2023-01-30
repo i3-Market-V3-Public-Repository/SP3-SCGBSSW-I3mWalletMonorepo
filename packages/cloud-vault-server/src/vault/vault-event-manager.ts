@@ -20,23 +20,23 @@ interface VaultClients {
   [username: string]: VaultClient
 }
 
-export const VAULT_MANAGER_MSG_CODES = {
-  STORAGE_UPDATED: 0,
-  STORAGE_DELETED: 1
+export interface CONNECTED_EVENT {
+  type: 'connected'
+  data: {
+    timestamp?: OpenApiComponents.Schemas.Timestamp['timestamp']
+  }
 }
 
-export interface WELLCOME_MSG {
-  code: 0
-  timestamp?: OpenApiComponents.Schemas.Timestamp['timestamp']
+export interface STORAGE_UPDATED_EVENT {
+  type: 'storage-updated'
+  data: {
+    timestamp: OpenApiComponents.Schemas.Timestamp['timestamp']
+  }
 }
 
-export interface UPDATE_MSG {
-  code: 1
-  timestamp: OpenApiComponents.Schemas.Timestamp['timestamp']
-}
-
-export interface DELETE_MSG {
-  code: 2
+export interface STORAGE_DELETED_EVENT {
+  type: 'storage-deleted'
+  data: {}
 }
 
 const headers = {
@@ -88,10 +88,11 @@ class VaultEventManager {
     console.log(`[${username}]: connection closed (${connId})`)
   }
 
-  sendEvent (to: string, event: WELLCOME_MSG | UPDATE_MSG | DELETE_MSG): void {
+  sendEvent (to: string, event: CONNECTED_EVENT | STORAGE_UPDATED_EVENT | STORAGE_DELETED_EVENT): void {
     if ((to in this.clients)) {
       this.clients[to].connections.forEach(({ response }) => {
-        response.write(`data: ${JSON.stringify(event)}\n\n`)
+        response.write(`type: ${event.type}\n`)
+        response.write(`data: ${JSON.stringify(event.data)}\n\n`)
       })
     }
   }

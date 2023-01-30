@@ -1,4 +1,4 @@
-import type { UPDATE_MSG } from '@i3m/cloud-vault-server'
+import type { CONNECTED_EVENT, STORAGE_UPDATED_EVENT } from '@i3m/cloud-vault-server'
 import type { OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
 import axios from 'axios'
 import EventSource from 'eventsource'
@@ -35,16 +35,26 @@ export class VaultClient extends EventEmitter {
         Authorization: 'Bearer ' + this.token
       }
     })
-    this.es.onmessage = (e) => {
-      const msg = JSON.parse(e.data) as UPDATE_MSG
-      if (msg.timestamp !== undefined) {
+
+    this.es.addEventListener('connected', (e) => {
+      const msg = JSON.parse(e.data) as CONNECTED_EVENT['data']
+      this.emit('connected', msg.timestamp)
+    })
+
+    this.es.addEventListener('storage-updated', (e) => {
+      const msg = JSON.parse(e.data) as STORAGE_UPDATED_EVENT['data']
+      if (msg.timestamp !== this.timestamp) {
         this.timestamp = msg.timestamp
-        this.emit('storageUpdated', this.timestamp)
+        this.emit('storage-updated', this.timestamp)
       }
-    }
+    })
+
+    this.es.addEventListener('storage-deleted', (e) => {
+      this.emit('storage-updated')
+    })
+
     this.es.onerror = (e) => {
       this.emit('error', e)
-      return e
     }
   }
 
@@ -69,7 +79,7 @@ export class VaultClient extends EventEmitter {
       this.token = body.token
 
       await this.initEventSourceClient()
-      this.emit('loggedIn')
+      this.emit('logged-in')
       return true
     } catch (error) {
       this.emit('error', error)
@@ -84,7 +94,7 @@ export class VaultClient extends EventEmitter {
 
   async updateStorage (storage: OpenApiPaths.ApiV2Vault.Post.RequestBody, force: boolean = false): Promise<boolean> {
     if (this.token === undefined) {
-      this.emit('loginRequired')
+      this.emit('login-required')
       return false
     }
     const res = await axios.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(
@@ -100,7 +110,7 @@ export class VaultClient extends EventEmitter {
       const error = res.data as unknown as OpenApiPaths.ApiV2Vault.Post.Responses.Default
       if (error.name === 'Unauthorized') {
         this.logout()
-        this.emit('loginRequired')
+        this.emit('login-required')
       } else {
         this.emit('error', res.data)
       }
@@ -114,7 +124,7 @@ export class VaultClient extends EventEmitter {
   async deleteStorage (): Promise<boolean> {
     if (this.token === undefined) {
       this.logout()
-      this.emit('loginRequired')
+      this.emit('login-required')
       return false
     }
     const res = await axios.get<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
@@ -129,14 +139,14 @@ export class VaultClient extends EventEmitter {
       const error = res.data as unknown as OpenApiPaths.ApiV2Vault.Post.Responses.Default
       if (error.name === 'Unauthorized') {
         this.logout()
-        this.emit('loginRequired')
+        this.emit('login-required')
       } else {
         this.emit('error', res.data)
       }
       return false
     }
 
-    this.emit('storageDeleted')
+    this.emit('storage-deleted')
     return true
   }
 }
