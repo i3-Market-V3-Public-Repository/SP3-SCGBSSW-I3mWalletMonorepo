@@ -21,7 +21,7 @@ export async function registerUser (did: string, username: string, password: str
 export async function verifyCredentials (username: string, password: string): Promise<boolean> {
   const query = 'SELECT passwd FROM credentials WHERE username=$1'
   const { rows } = await db.query(query, [username])
-  if (rows.length !== 1) throw new Error('Invalid username or password')
+  if (rows.length !== 1) return false
   const mcfString = rows[0].passwd
   const verified = await verify(password, mcfString)
   return verified

@@ -5,12 +5,12 @@ import { dbFunctions as db } from '../../db'
 import { jweDecrypt, JWK } from '@i3m/non-repudiation-library'
 
 export default function (router: Router): void {
-  router.get('/publicJwk',
+  router.get('/public-jwk',
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         const jwkPair = await jwksPromise
         res.json({ jwk: jwkPair.publicJwk })
-      } catch (error) {
+      } catch (error: any) {
         return next(error)
       }
     }

@@ -1,7 +1,7 @@
-import { randomUUID } from 'crypto'
 import { Response } from 'express'
-import { OpenApiComponents } from '../../types/openapi'
 import _ from 'lodash'
+import { randomUUID } from 'node:crypto'
+import { OpenApiComponents } from '../../types/openapi'
 
 interface ConnectionToUsernameMap {
   [connId: string]: string // The connection ID maps to the username
@@ -20,22 +20,22 @@ interface VaultClients {
   [username: string]: VaultClient
 }
 
-export interface CONNECTED_EVENT {
-  type: 'connected'
+export interface ConnectedEvent {
+  event: 'connected'
   data: {
     timestamp?: OpenApiComponents.Schemas.Timestamp['timestamp']
   }
 }
 
-export interface STORAGE_UPDATED_EVENT {
-  type: 'storage-updated'
+export interface StorageUpdatedEvent {
+  event: 'storage-updated'
   data: {
     timestamp: OpenApiComponents.Schemas.Timestamp['timestamp']
   }
 }
 
-export interface STORAGE_DELETED_EVENT {
-  type: 'storage-deleted'
+export interface StorageDeletedEvent {
+  event: 'storage-deleted'
   data: {}
 }
 
@@ -88,10 +88,10 @@ class VaultEventManager {
     console.log(`[${username}]: connection closed (${connId})`)
   }
 
-  sendEvent (to: string, event: CONNECTED_EVENT | STORAGE_UPDATED_EVENT | STORAGE_DELETED_EVENT): void {
-    if ((to in this.clients)) {
-      this.clients[to].connections.forEach(({ response }) => {
-        response.write(`type: ${event.type}\n`)
+  sendEvent (username: string, event: ConnectedEvent | StorageUpdatedEvent | StorageDeletedEvent): void {
+    if ((username in this.clients)) {
+      this.clients[username].connections.forEach(({ response }) => {
+        response.write(`event: ${event.event}\n`)
         response.write(`data: ${JSON.stringify(event.data)}\n\n`)
       })
     }

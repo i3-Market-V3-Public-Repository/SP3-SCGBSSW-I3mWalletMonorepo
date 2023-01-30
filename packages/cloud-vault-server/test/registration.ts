@@ -26,10 +26,10 @@ describe('Wallet Cloud-Vault: Registration', function () {
     serverConfig = config.server
   })
 
-  describe(`Testing /api/${apiVersion}/registration/publicJwk`, function () {
+  describe(`Testing /api/${apiVersion}/registration/public-jwk`, function () {
     it('it should receive a valid public key', async function () {
       const res = await request(serverConfig.url)
-        .get(`/api/${apiVersion}/registration/publicJwk`)
+        .get(`/api/${apiVersion}/registration/public-jwk`)
       console.log(res.body)
       expect(res).to.have.status(200)
       try {

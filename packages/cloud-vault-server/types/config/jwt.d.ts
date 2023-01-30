@@ -1,5 +1,4 @@
-import { Algorithm } from 'jsonwebtoken';
 export declare const jwt: {
-    alg: Algorithm;
+    alg: "HS256" | "HS384" | "HS512";
     secret: "string";
 };

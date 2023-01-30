@@ -3,7 +3,7 @@ info:
   title: i3M-Wallet Cloud-Vault API
   version: '1.0'
 paths:
-  /api/API_VERSION/registration/publicJwk:
+  /api/API_VERSION/registration/public-jwk:
     get:
       summary: Get the current wallet cloud-vault's public key as a JWK
       tags:

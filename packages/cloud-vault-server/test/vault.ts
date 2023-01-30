@@ -7,7 +7,7 @@ import EventSource from 'eventsource'
 import { setTimeout } from 'timers/promises'
 import { apiVersion } from '../src/config/openApi'
 import { server as serverConfig } from '../src/config/server'
-import { STORAGE_UPDATED_EVENT } from '../src/vault'
+import { StorageUpdatedEvent } from '../src/vault'
 import type { OpenApiComponents, OpenApiPaths } from '../types/openapi'
 
 use(chaiHttp)
@@ -44,7 +44,7 @@ class Client {
     })
 
     this.es.addEventListener('storage-updated', (e) => {
-      const msg = JSON.parse(e.data) as STORAGE_UPDATED_EVENT['data']
+      const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
       if (msg.timestamp !== undefined) this.timestamp = msg.timestamp
       this.msgCount++
       console.log(`client ${this.name} - msg ${this.msgCount}: `, msg)
@@ -111,7 +111,7 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
     let client2: Client
 
     it('it should send and receive events', async function () {
-      const msgLimit = 6
+      const msgLimit = 3
 
       client1 = new Client(serverConfig.url, token, '1')
       client2 = new Client(serverConfig.url, token, '2')

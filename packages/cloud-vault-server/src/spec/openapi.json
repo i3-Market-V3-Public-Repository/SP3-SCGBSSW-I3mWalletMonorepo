@@ -15,7 +15,7 @@
     }
   },
   "paths": {
-    "/api/v2/registration/publicJwk": {
+    "/api/v2/registration/public-jwk": {
       "get": {
         "summary": "Get the current wallet cloud-vault's public key as a JWK",
         "tags": [

@@ -1,19 +1,19 @@
 import { Response } from 'express';
 import { OpenApiComponents } from '../../types/openapi';
-export interface CONNECTED_EVENT {
-    type: 'connected';
+export interface ConnectedEvent {
+    event: 'connected';
     data: {
         timestamp?: OpenApiComponents.Schemas.Timestamp['timestamp'];
     };
 }
-export interface STORAGE_UPDATED_EVENT {
-    type: 'storage-updated';
+export interface StorageUpdatedEvent {
+    event: 'storage-updated';
     data: {
         timestamp: OpenApiComponents.Schemas.Timestamp['timestamp'];
     };
 }
-export interface STORAGE_DELETED_EVENT {
-    type: 'storage-deleted';
+export interface StorageDeletedEvent {
+    event: 'storage-deleted';
     data: {};
 }
 declare class VaultEventManager {
@@ -22,7 +22,7 @@ declare class VaultEventManager {
     constructor();
     addConnection(username: string, response: Response): string;
     closeConnection(connId: string): void;
-    sendEvent(to: string, event: CONNECTED_EVENT | STORAGE_UPDATED_EVENT | STORAGE_DELETED_EVENT): void;
+    sendEvent(username: string, event: ConnectedEvent | StorageUpdatedEvent | StorageDeletedEvent): void;
 }
 export declare const vaultEvents: VaultEventManager;
 export {};

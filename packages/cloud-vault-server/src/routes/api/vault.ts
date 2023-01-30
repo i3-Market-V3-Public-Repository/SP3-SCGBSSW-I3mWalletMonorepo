@@ -1,10 +1,11 @@
 import { Request, Response, Router } from 'express'
+import { HttpError } from 'express-openapi-validator/dist/framework/types'
 import { sign as jwtSign } from 'jsonwebtoken'
 import { OpenApiPaths } from '../../../types/openapi'
 import { general, jwt } from '../../config'
 import { dbFunctions as db } from '../../db'
-import { vaultEvents } from '../../vault'
 import { passport, User } from '../../middlewares/passport'
+import { vaultEvents } from '../../vault'
 
 export default function (router: Router): void {
   router.use(passport.initialize())
@@ -12,12 +13,12 @@ export default function (router: Router): void {
     passport.authenticate('jwtBearer', { session: false }),
     async (req: Request, res: Response, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = (req.user as User).username
+        const { username } = req.user as User
 
         const connId = vaultEvents.addConnection(username, res)
 
         vaultEvents.sendEvent(username, {
-          type: 'connected',
+          event: 'connected',
           data: {
             timestamp: (await db.getTimestamp(username)) ?? undefined
           }
@@ -38,7 +39,13 @@ export default function (router: Router): void {
         const username = (req.user as User).username
         const timestamp = await db.getTimestamp(username)
         if (timestamp === null) {
-          throw new Error("you haven't upload storage yet")
+          const error = new HttpError({
+            name: 'no storage',
+            message: "you haven't upload storage yet",
+            path: req.path,
+            status: 404
+          })
+          throw error
         }
         res.status(200).json({
           timestamp
@@ -55,7 +62,13 @@ export default function (router: Router): void {
         const username = (req.user as User).username
         const storage = await db.getStorage(username)
         if (storage === null) {
-          throw new Error(`User ${username} has not uploaded sotrage yet`)
+          const error = new HttpError({
+            name: 'no storage',
+            message: "you haven't upload storage yet",
+            path: req.path,
+            status: 404
+          })
+          throw error
         }
         res.status(200).json({
           jwe: storage.storage,
@@ -70,10 +83,10 @@ export default function (router: Router): void {
     passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = (req.user as User).username
+        const { username } = req.user as User
         await db.deleteStorage(username)
         vaultEvents.sendEvent(username, {
-          type: 'storage-deleted',
+          event: 'storage-deleted',
           data: {}
         })
         res.status(204).end()
@@ -86,13 +99,13 @@ export default function (router: Router): void {
     passport.authenticate('jwtBearer', { session: false }),
     async (req: Request<{}, {}, OpenApiPaths.ApiV2Vault.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2Vault.Post.Responses.$201>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        const username = (req.user as User).username
+        const { username } = req.user as User
         if (general.nodeEnv === 'development') {
           console.log(username, req.body)
         }
         const newTimestamp: number = await db.setStorage(username, req.body.jwe, req.body.timestamp)
         vaultEvents.sendEvent(username, {
-          type: 'storage-updated',
+          event: 'storage-updated',
           data: {
             timestamp: newTimestamp
           }
@@ -111,7 +124,16 @@ export default function (router: Router): void {
         console.log(req.body)
         const username = req.body.username
         const password = req.body.authkey
-        await db.verifyCredentials(username, password)
+        const verified = await db.verifyCredentials(username, password)
+        if (!verified) {
+          const error = new HttpError({
+            name: 'invalid credentials',
+            message: 'invalid username and/or authkey',
+            path: req.path,
+            status: 404
+          })
+          throw error
+        }
         const token = jwtSign({
           username,
           password

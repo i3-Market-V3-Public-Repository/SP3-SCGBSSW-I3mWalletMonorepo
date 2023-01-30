@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import type { OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi';
+import type { OpenApiPaths, OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { EventEmitter } from 'node:events';
 export declare class VaultClient extends EventEmitter {
     timestamp?: number;
@@ -7,13 +7,16 @@ export declare class VaultClient extends EventEmitter {
     name: string;
     serverUrl: string;
     vaultPath: string;
-    private es;
+    publicKeyPath: string;
+    private es?;
     constructor(serverUrl: string, name?: string);
     private initEventSourceClient;
     close(): void;
     login(username: string, authkey: string): Promise<boolean>;
     logout(): void;
+    getRemoteStorageTimestamp(): Promise<number | null>;
     updateStorage(storage: OpenApiPaths.ApiV2Vault.Post.RequestBody, force?: boolean): Promise<boolean>;
     deleteStorage(): Promise<boolean>;
+    getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey | null>;
 }
 //# sourceMappingURL=vault-client.d.ts.map
