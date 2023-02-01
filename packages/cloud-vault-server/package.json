@@ -1,0 +1,135 @@
+{
+  "name": "@i3m/cloud-vault-server",
+  "version": "2.5.6",
+  "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
+  "keywords": [
+    "vault",
+    "wallet",
+    "i3M-Wallet",
+    "i3-MARKET",
+    "cloud"
+  ],
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": {
+    "name": "Juan Hernández Serrano",
+    "email": "j.hernandez@upc.edu",
+    "url": "https://github.com/juanelas"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/cloud-vault-server"
+  },
+  "bugs": {
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/issues"
+  },
+  "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/tree/public/packages/cloud-vault-server#readme",
+  "license": "EUPL-1.2",
+  "engines": {
+    "node": ">=16.x"
+  },
+  "main": "dist/index.js",
+  "types": "./types/index.d.ts",
+  "bin": {
+    "wcv": "./dist/index.js"
+  },
+  "directories": {
+    "build": "./build",
+    "dist": "./dist",
+    "types": "./types",
+    "spec": "./dist/spec",
+    "spec-src": "./src/spec-src"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./openapi.yaml": "./dist/spec/openapi.yaml",
+    "./openapi.json": "./dist/spec/openapi.json",
+    "./openapi.dereferenced.json": "./dist/spec/openapi_dereferenced.json",
+    "./oas-ts-types": "./types/openapi.d.ts"
+  },
+  "scripts": {
+    "build": "npm run clean:ts && npm run lint && npm run openapi && npm run tsc",
+    "clean": "npm run clean:ts && npm run clean:openapi",
+    "clean:ts": "rimraf dist types",
+    "clean:openapi": "rimraf src/spec/openapi.json src/spec/openapi.yaml dist/spec types/openapi.d.ts",
+    "predev": "npm run openapi",
+    "dev": "nodemon src/index.ts",
+    "git:add": "git add -A",
+    "lint": "ts-standard --fix",
+    "preopenapi": "npm run clean:openapi",
+    "openapi": "npm run openapi:json && npm run openapi:types",
+    "openapi:json": "ts-node build/createOASJsonBundle.ts",
+    "openapi:types": "ts-node build/openApiTypes.ts",
+    "start": "node dist/index.js",
+    "test": "mocha -r ts-node/register 'test/**/*.ts' test-fixtures/server.ts",
+    "mocha-ts": "mocha -r ts-node/register test-fixtures/server.ts -- ",
+    "tsc": "tsc -p tsconfig.build.json",
+    "version": "npm run build && npm run test && npm run git:add",
+    "postversion": "git push --follow-tags"
+  },
+  "ts-standard": {
+    "project": "tsconfig.json",
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "IS_BROWSER",
+      "browser",
+      "page",
+      "chai"
+    ],
+    "ignore": [
+      "dist/**/*",
+      "examples/**/*",
+      "types/**/*",
+      "benchmark/**/*",
+      "build/testing/mocha/mocha-init.js"
+    ]
+  },
+  "devDependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "@dtsgenerator/replace-namespace": "^1.5.4",
+    "@types/eventsource": "^1.1.10",
+    "@types/express": "^4.17.15",
+    "@types/js-yaml": "^4.0.5",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/lodash": "^4.14.191",
+    "@types/mocha": "^10.0.1",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^18.11.18",
+    "@types/passport": "^1.0.11",
+    "@types/passport-jwt": "^3.0.8",
+    "@types/pg": "^8.6.6",
+    "@types/swagger-ui-express": "^4.1.3",
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "dtsgenerator": "^3.16.2",
+    "eventsource": "^2.0.2",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21",
+    "mocha": "^10.2.0",
+    "nodemon": "^2.0.20",
+    "npm": "^9.3.1",
+    "openapi-types": "^12.1.0",
+    "rimraf": "^4.1.0",
+    "ts-node": "^10.9.1",
+    "ts-standard": "^12.0.2",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "@i3m/non-repudiation-library": "^2.5.6",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-openapi-validator": "^5.0.1",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.8.0",
+    "scrypt-mcf": "^1.0.0",
+    "swagger-ui-express": "^4.6.0"
+  }
+}

@@ -52,7 +52,7 @@
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L7)
+[src/ts/wallet/wallet.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L7)
 
 ___
 
@@ -76,7 +76,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L13)
+[src/ts/wallet/wallet.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L13)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L12)
+[src/ts/wallet/wallet.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L12)
 
 ___
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L10)
+[src/ts/wallet/wallet.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L10)
 
 ___
 
@@ -136,7 +136,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L9)
+[src/ts/wallet/wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L9)
 
 ___
 
@@ -154,13 +154,13 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L15)
+[src/ts/wallet/wallet.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L15)
 
 ## Methods
 
 ### didJwtVerify
 
-▸ **didJwtVerify**(`requestBody`): `Promise`<`$200`\>
+▸ **didJwtVerify**(`requestBody`): `Promise`<`VerificationOutput`\>
 
 #### Parameters
 
@@ -170,58 +170,58 @@ ___
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`VerificationOutput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L27)
+[src/ts/wallet/wallet.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L27)
 
 ___
 
 ### identityCreate
 
-▸ **identityCreate**(`requestBody`): `Promise`<`$201`\>
+▸ **identityCreate**(`requestBody`): `Promise`<`IdentityCreateOutput`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `RequestBody` |
+| `requestBody` | `IdentityCreateInput` |
 
 #### Returns
 
-`Promise`<`$201`\>
+`Promise`<`IdentityCreateOutput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L18)
+[src/ts/wallet/wallet.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L18)
 
 ___
 
 ### identityDeployTransaction
 
-▸ **identityDeployTransaction**(`pathParameters`, `requestBody`): `Promise`<`$200`\>
+▸ **identityDeployTransaction**(`pathParameters`, `requestBody`): `Promise`<`Receipt`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `pathParameters` | `PathParameters` |
-| `requestBody` | `RequestBody` |
+| `requestBody` | `Transaction` |
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`Receipt`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L22)
+[src/ts/wallet/wallet.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L22)
 
 ___
 
 ### identityInfo
 
-▸ **identityInfo**(`pathParameters`): `Promise`<`$200`\>
+▸ **identityInfo**(`pathParameters`): `Promise`<`IdentityData`\>
 
 #### Parameters
 
@@ -231,17 +231,17 @@ ___
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`IdentityData`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L21)
+[src/ts/wallet/wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L21)
 
 ___
 
 ### identityList
 
-▸ **identityList**(`queryParameters`): `Promise`<`$200`\>
+▸ **identityList**(`queryParameters`): `Promise`<`IdentityListInput`\>
 
 #### Parameters
 
@@ -251,17 +251,17 @@ ___
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`IdentityListInput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L17)
+[src/ts/wallet/wallet.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L17)
 
 ___
 
 ### identitySelect
 
-▸ **identitySelect**(`queryParameters`): `Promise`<`$200`\>
+▸ **identitySelect**(`queryParameters`): `Promise`<`IdentitySelectOutput`\>
 
 #### Parameters
 
@@ -271,72 +271,72 @@ ___
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`IdentitySelectOutput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L19)
+[src/ts/wallet/wallet.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L19)
 
 ___
 
 ### identitySign
 
-▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`$200`\>
+▸ **identitySign**(`pathParameters`, `requestBody`): `Promise`<`SignOutput`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `pathParameters` | `PathParameters` |
-| `requestBody` | `RequestBody` |
+| `requestBody` | `SignInput` |
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`SignOutput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L20)
+[src/ts/wallet/wallet.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L20)
 
 ___
 
 ### providerinfoGet
 
-▸ **providerinfoGet**(): `Promise`<`$200`\>
+▸ **providerinfoGet**(): `Promise`<`ProviderData`\>
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`ProviderData`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L28)
+[src/ts/wallet/wallet.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L28)
 
 ___
 
 ### resourceCreate
 
-▸ **resourceCreate**(`requestBody`): `Promise`<`$201`\>
+▸ **resourceCreate**(`requestBody`): `Promise`<`ResourceId`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `RequestBody` |
+| `requestBody` | `Resource` |
 
 #### Returns
 
-`Promise`<`$201`\>
+`Promise`<`ResourceId`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L24)
+[src/ts/wallet/wallet.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L24)
 
 ___
 
 ### resourceList
 
-▸ **resourceList**(`queryParameters`): `Promise`<`$200`\>
+▸ **resourceList**(`queryParameters`): `Promise`<`ResourceListOutput`\>
 
 #### Parameters
 
@@ -346,11 +346,11 @@ ___
 
 #### Returns
 
-`Promise`<`$200`\>
+`Promise`<`ResourceListOutput`\>
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L23)
+[src/ts/wallet/wallet.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L23)
 
 ___
 
@@ -370,7 +370,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L25)
+[src/ts/wallet/wallet.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L25)
 
 ___
 
@@ -382,7 +382,7 @@ ___
 
 | Name | Type |
 | :------ | :------ |
-| `requestBody` | `RequestBody` |
+| `requestBody` | `SignedTransaction` |
 
 #### Returns
 
@@ -390,4 +390,4 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ef8e1d2/packages/base-wallet/src/ts/wallet/wallet.ts#L26)
+[src/ts/wallet/wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/wallet/wallet.ts#L26)

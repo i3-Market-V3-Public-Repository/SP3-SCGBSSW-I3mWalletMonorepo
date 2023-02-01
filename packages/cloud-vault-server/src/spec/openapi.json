@@ -1,0 +1,513 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "i3M-Wallet Cloud-Vault API",
+    "version": "v2",
+    "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
+    "license": {
+      "name": "EUPL-1.2",
+      "url": "https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt"
+    },
+    "contact": {
+      "name": "Juan Hernández Serrano",
+      "email": "j.hernandez@upc.edu",
+      "url": "https://github.com/juanelas"
+    }
+  },
+  "paths": {
+    "/api/v2/registration/public-jwk": {
+      "get": {
+        "summary": "Get the current wallet cloud-vault's public key as a JWK",
+        "tags": [
+          "Registration"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "jwk"
+                  ],
+                  "properties": {
+                    "jwk": {
+                      "$ref": "#/components/schemas/JwkEcPublicKey"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/registration/{data}": {
+      "get": {
+        "summary": "Endpoint where any non-previously registered user can register to enable the cloud vault for the i3M-Wallet.",
+        "tags": [
+          "Registration"
+        ],
+        "parameters": [
+          {
+            "name": "data",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/RegistrationData"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/vault/auth": {
+      "post": {
+        "summary": "The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "returns a bearer token that can be used to access this user's vault",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthToken"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/vault/timestamp": {
+      "get": {
+        "summary": "Get the timestamp when latest storage was uploaded to the cloud vault\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Timestamp"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/vault/events": {
+      "get": {
+        "summary": "A notification channel using Server-Sent Events for vault changes. Everytime there is a change the timestamp of the change is broadcasted to all clients authenticated with the same user that updated it.\nThis is here just for documenting the Server-Sent Events (SSE) endpoint. It cannot be tested nor connected with automated tooling since it is NOT SUPPORTED in OpenAPI 3.0\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Every time the encrypted storage is updated all subscribed clients receive a notification such as the following:\n`data: {\"timestamp\":1674119447057}`\nwith `timestamp` (in milliseconds elapsed since the epoch) referring to the exact time the latest storage was registered in the cloud vault.\n",
+            "x-produces": [
+              "text/event-stream"
+            ],
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "text/event-stream"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/vault": {
+      "get": {
+        "summary": "Get the latest storage in vault\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/EncryptedStorage"
+                    },
+                    {
+                      "required": [
+                        "storage",
+                        "timestamp"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all data stored in the cloud vault\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "data deleted"
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Sets/updates encrypted storage in cloud vault\n",
+        "tags": [
+          "Cloud Vault"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EncryptedStorage"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "returns the timestamp when the new encrypted storage has been registered in the cloud vault",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Timestamp"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "jwt": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "id_token"
+      },
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "JwkEcPublicKey": {
+        "type": "object",
+        "title": "JWK Elliptic-Curve Public Key Object",
+        "description": "A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.\n",
+        "required": [
+          "alg",
+          "crv",
+          "x",
+          "y"
+        ],
+        "properties": {
+          "alg": {
+            "type": "string",
+            "description": "The alg member identifies the cryptographic algorithm family used with the key.\n",
+            "enum": [
+              "ES256",
+              "ES384",
+              "ES512"
+            ],
+            "example": "ES256"
+          },
+          "use": {
+            "type": "string",
+            "description": "OPTIONAL. The \"use\" (public key use) parameter identifies the intended use of the public key.  The \"use\" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.\n\nValues defined by this specification are:\n- \"sig\" (signature)\n- \"enc\" (encryption)\n\nOther values MAY be used.  The \"use\" value is a case-sensitive string.  Use of the \"use\" member is OPTIONAL, unless the application requires its presence.\n",
+            "example": "sig"
+          },
+          "kid": {
+            "type": "string",
+            "description": "The \"kid\" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the \"kid\" value is unspecified.  When \"kid\" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct \"kid\" values.  (One example in which different keys might use the same \"kid\" value is if they have different \"kty\" (key type) values but are considered to be equivalent alternatives by the application using them.) The \"kid\" value is a case-sensitive string. When used with JWS or JWE, the \"kid\" value is used to match a JWS or JWE \"kid\" Header Parameter value.\n"
+          },
+          "crv": {
+            "type": "string",
+            "description": "The cryptographic curve used with the key. Values defined by this specification are P-256, P-384 and P-521. Additional \"crv\" values MAY be used, provided they are understood by implementations using that Elliptic Curve key. The \"crv\" value is case sensitive.\n",
+            "enum": [
+              "P-256",
+              "P-384",
+              "P-521"
+            ],
+            "example": "P-256"
+          },
+          "x": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "The \"x\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate. \n",
+            "example": "2Rwrw2sbff-EnjbRi5sSJ09FRKhBPO7SsCxRwfBCpx4"
+          },
+          "y": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "The \"y\" coordinate for the elliptic curve point. It is represented as the base64url encoding of the big endian representation of the coordinate\n",
+            "example": "r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0"
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "name",
+          "description"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "RegistrationData": {
+        "type": "string",
+        "title": "RegistrationData",
+        "description": "A compact JWE encrypted with this server's public key with the following payload:\n\n```json\n{\n  did: string\n  username: string\n  authkey: string\n}\n```\n\n- `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`\n- `username` is a unique username proposed by the client (it should be able to memorize it)\n- `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n",
+        "pattern": "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$"
+      },
+      "RegistrationResponse": {
+        "type": "object",
+        "title": "Registration Response",
+        "description": "The registration response object.\n",
+        "required": [
+          "status",
+          "username",
+          "auth_endpoint"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "whether the proposed username has been registered or not (because another one was previously registered)",
+            "enum": [
+              "created",
+              "already registered"
+            ]
+          },
+          "username": {
+            "type": "string",
+            "description": "- `status === 'created'`: the registered username\n- `status === 'already registered'`: the username that was previously registered fot the same DID.\n"
+          },
+          "auth_endpoint": {
+            "type": "string",
+            "description": "The endpoint where to authenticate with `username` and its corresponding `authkey` (which is derived from the user's password) in order to get a valid API token for the Cloud Vault.\n"
+          }
+        }
+      },
+      "AuthorizationRequest": {
+        "type": "object",
+        "title": "AuthorizationRequest",
+        "description": "A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n",
+        "required": [
+          "username",
+          "authkey"
+        ],
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "is a unique identifier for this client (the end user should be able to memorize it)\n",
+            "example": "username"
+          },
+          "authkey": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]{43,86}$",
+            "description": "is a secret securely derived from the user's password with base64url no padding, so it can be recovered if the user remembers the password. Key length is between 256 and 512 bits. `authkey` will work as a standard password server side.\n",
+            "example": "uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ"
+          }
+        }
+      },
+      "AuthToken": {
+        "type": "object",
+        "title": "AuthToken",
+        "description": "A bearer token a client can use to access its vault\n",
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "A bearer token a client can use to access its vault\n"
+          }
+        }
+      },
+      "Timestamp": {
+        "type": "object",
+        "title": "Timestamp",
+        "description": "A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.\n",
+        "required": [
+          "timestamp"
+        ],
+        "properties": {
+          "timestamp": {
+            "type": "number",
+            "description": "A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.",
+            "example": 1674060143749
+          }
+        }
+      },
+      "EncryptedStorage": {
+        "type": "object",
+        "title": "Encrypted Storage",
+        "description": "EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault\n",
+        "required": [
+          "jwe"
+        ],
+        "properties": {
+          "jwe": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$",
+            "description": "A JWE containing the encrypted storage\n"
+          },
+          "timestamp": {
+            "type": "number",
+            "description": "A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.",
+            "example": 1674060143749
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://[::1]:3000"
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+openapi: '3.0.3'
+info:
+  title: API Title
+  version: '1.0'
+
+paths:
+  /_IGNORE_PATH:
+    get:
+      responses:
+        '200':
+          description: OK
+
+components:
+  schemas:
+    AuthorizationRequest:
+      type: object
+      title: AuthorizationRequest
+      description: |
+        A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+      required:
+        - username
+        - authkey
+      properties:
+        username:
+          type: string
+          description: |
+            is a unique identifier for this client (the end user should be able to memorize it)
+          example: username
+        authkey:
+          type: string
+          pattern: ^[a-zA-Z0-9_-]{43,86}$
+          description: |
+            is a secret securely derived from the user's password with base64url no padding, so it can be recovered if the user remembers the password. Key length is between 256 and 512 bits. `authkey` will work as a standard password server side.
+          example: uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ
+    
+    AuthToken:
+      type: object
+      title: AuthToken
+      description: |
+        A bearer token a client can use to access its vault
+      required:
+        - token
+      properties:
+        token:
+          type: string
+          description: |
+            A bearer token a client can use to access its vault
+    
+    Timestamp:
+      type: object
+      title: Timestamp
+      description: |
+        A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+      required:
+        - timestamp
+      properties:
+        timestamp:
+          type: number
+          description: A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+          example: 1674060143749
+    
+    EncryptedStorage:
+      type: object
+      title: Encrypted Storage
+      description: |
+        EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault
+      required:
+        - jwe
+      properties:
+        jwe:
+          type: string
+          pattern: '^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$'
+          description: |
+            A JWE containing the encrypted storage
+        timestamp:
+          type: number
+          description: A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+          example: 1674060143749

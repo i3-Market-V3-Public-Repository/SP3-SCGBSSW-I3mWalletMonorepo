@@ -1,16 +1,18 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "version": "2.5.1",
-    "title": "i3M Wallet API",
+    "version": "v2",
+    "title": "i3M-Wallet Developers API",
+    "description": "i3M-Wallet Developers API that can be used to interact with the i3M-Wallet. In production it is encapsulated inside a secure connection. Please use the @i3m/wallet-protocol-api to interact with the wallet.",
+    "license": {
+      "name": "EUPL-1.2",
+      "url": "https://joinup.ec.europa.eu/sites/default/files/custom-page/attachment/2020-03/EUPL-1.2%20EN.txt"
+    },
     "contact": {
       "name": "Juan Hernández Serrano",
-      "email": "j.hernandez@upc.edu"
-    },
-    "license": {
-      "name": "MIT"
-    },
-    "description": "i3M-Wallet API that can be used to interact with the i3M-Wallet. Most of the functionalities will also require end-user interaction with the wallet app.\n"
+      "email": "j.hernandez@upc.edu",
+      "url": "https://github.com/juanelas"
+    }
   },
   "tags": [
     {
@@ -1108,7 +1110,7 @@
                                             "type": "string"
                                           },
                                           "hasSubscriptionPrice": {
-                                            "type": "integer"
+                                            "type": "number"
                                           }
                                         }
                                       },
@@ -1904,7 +1906,7 @@
                                         "type": "string"
                                       },
                                       "hasSubscriptionPrice": {
-                                        "type": "integer"
+                                        "type": "number"
                                       }
                                     }
                                   },
@@ -3291,7 +3293,7 @@
                                   "type": "string"
                                 },
                                 "hasSubscriptionPrice": {
-                                  "type": "integer"
+                                  "type": "number"
                                 }
                               }
                             },
@@ -4047,7 +4049,7 @@
                                 "type": "string"
                               },
                               "hasSubscriptionPrice": {
-                                "type": "integer"
+                                "type": "number"
                               }
                             }
                           },
@@ -4799,7 +4801,7 @@
                             "type": "string"
                           },
                           "hasSubscriptionPrice": {
-                            "type": "integer"
+                            "type": "number"
                           }
                         }
                       },
@@ -5640,7 +5642,7 @@
                     "type": "string"
                   },
                   "hasSubscriptionPrice": {
-                    "type": "integer"
+                    "type": "number"
                   }
                 }
               },

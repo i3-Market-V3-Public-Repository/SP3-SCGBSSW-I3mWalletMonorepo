@@ -1,0 +1,158 @@
+{
+  "name": "@i3m/cloud-vault-client",
+  "version": "2.5.6",
+  "description": "A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vault server",
+  "keywords": [
+    "vault",
+    "wallet",
+    "cloud",
+    "i3M-Wallet",
+    "i3-MARKET"
+  ],
+  "contributors": [
+    "Fernando Román García <fernando.roman@upc.edu>",
+    "Juan Hernández Serrno <j.hernandez@upc.edu>"
+  ],
+  "author": {
+    "name": "Juan Hernández Serrano",
+    "email": "j.hernandez@upc.edu",
+    "url": "https://github.com/juanelas"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo.git",
+    "directory": "packages/cloud-vault-client"
+  },
+  "bugs": {
+    "url": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/issues"
+  },
+  "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/tree/public/packages/cloud-vault-client#readme",
+  "license": "EUPL-1.2",
+  "engines": {
+    "node": ">=16.x"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "types": "./types/index.d.ts",
+  "main": "./dist/cjs/index.node.cjs",
+  "browser": "./dist/esm/index.browser.js",
+  "module": "./dist/esm/index.node.js",
+  "exports": {
+    ".": {
+      "node": {
+        "require": "./dist/cjs/index.node.cjs",
+        "import": "./dist/esm/index.node.js",
+        "module": "./dist/esm/index.node.js"
+      },
+      "default": "./dist/esm/index.browser.js"
+    },
+    "./dist/cjs/index.node": "./dist/cjs/index.node.cjs",
+    "./dist/esm/index.node": "./dist/esm/index.node.js",
+    "./dist/esm/index.browser": "./dist/esm/index.browser.js",
+    "./esm-browser-bundle": "./dist/bundles/esm.min.js",
+    "./iife-browser-bundle": "./dist/bundles/iife.js",
+    "./umd-browser-bundle": "./dist/bundles/umd.js",
+    "./types": "./types/index.d.ts"
+  },
+  "imports": {
+    "#pkg": {
+      "import": "./dist/esm/index.node.js",
+      "require": "./dist/cjs/index.node.cjs"
+    }
+  },
+  "directories": {
+    "build": "./build",
+    "dist": "./dist",
+    "docs": "./docs",
+    "src": "./src",
+    "test": "./test",
+    "benchmark": "./benchmark",
+    "mocha-ts": "./.mocha-ts"
+  },
+  "scripts": {
+    "build": "npm run lint:src && npm run build:js && npm run lint:test && npm run docs",
+    "build:js": "rollup -c build/rollup.config.js",
+    "clean": "rimraf .mocha-ts coverage dist types docs",
+    "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",
+    "docs": "node build/build.docs.cjs",
+    "git:add": "git add -A",
+    "lint": "ts-standard --fix",
+    "lint:src": "ts-standard --fix 'src/**/!(*.spec).ts'",
+    "lint:test": "ts-standard --fix '{test/**/*.ts,src/**/*.spec.ts}'",
+    "mocha-ts": "node --experimental-modules --experimental-json-modules --es-module-specifier-resolution=node ./build/bin/mocha-ts.cjs ",
+    "mocha-ts:cjs": "node ./build/bin/mocha-ts.cjs --commonjs ",
+    "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
+    "preversion": "npm run clean && npm run lint:src && npm run build:js && npm run lint:test && npm run coverage && npm run test:browser-headless",
+    "version": "npm run docs && npm run git:add",
+    "postversion": "git push --follow-tags",
+    "test": "npm run test:cjs && npm run test:esm",
+    "test:cjs": "npm run mocha-ts:cjs ",
+    "test:esm": "npm run mocha-ts ",
+    "watch": "npm run mocha-ts:watch "
+  },
+  "ts-standard": {
+    "project": "tsconfig.json",
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "IS_BROWSER",
+      "browser",
+      "page",
+      "chai"
+    ],
+    "ignore": [
+      "dist/**/*",
+      "examples/**/*",
+      "types/**/*",
+      "benchmark/**/*"
+    ]
+  },
+  "nodeBrowserSkel": {
+    "badges": {
+      "workflow": true,
+      "coveralls": true
+    },
+    "git": {
+      "branch": "public"
+    }
+  },
+  "devDependencies": {
+    "@i3m/cloud-vault-server": "^2.5.6",
+    "@i3m/non-repudiation-library": "^2.5.7",
+    "@rollup/plugin-commonjs": "^23.0.2",
+    "@rollup/plugin-inject": "^5.0.3",
+    "@rollup/plugin-json": "^5.0.1",
+    "@rollup/plugin-multi-entry": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-replace": "^5.0.1",
+    "@rollup/plugin-typescript": "^9.0.2",
+    "@types/chai": "^4.2.22",
+    "@types/eventsource": "^1.1.11",
+    "@types/mocha": "^10.0.0",
+    "c8": "^7.12.0",
+    "chai": "^4.3.3",
+    "dotenv": "^16.0.3",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.1",
+    "json5": "^2.2.0",
+    "minimatch": "^5.0.1",
+    "mocha": "^10.0.0",
+    "pirates": "^4.0.1",
+    "puppeteer": "^19.1.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.79.1",
+    "rollup-plugin-terser": "^7.0.2",
+    "ts-standard": "^12.0.2",
+    "tslib": "^2.3.1",
+    "typedoc": "^0.23.0",
+    "typedoc-plugin-markdown": "^3.11.0",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "axios": "^1.2.5",
+    "eventsource": "^2.0.2"
+  }
+}
