@@ -1,14 +1,17 @@
-import { Wallet, TestDialog, TestStore, TestToast, Veramo, VerifiableCredential } from '@i3m/base-wallet'
+import { Wallet, ConsoleToast, NullDialog, RamStore, Veramo, VerifiableCredential } from '@i3m/base-wallet'
 import Debug from 'debug'
 
-import swBuilder from '..'
+import swBuilder, { SwWalletModel } from '..'
 
 const debug = Debug('i3-market:sw-wallet:test')
 
 describe('@i3m/sw-wallet', () => {
-  const dialog = new TestDialog()
-  const store = new TestStore()
-  const toast = new TestToast()
+  const dialog = new NullDialog()
+  const store = new RamStore<SwWalletModel>({
+    identities: {},
+    resources: {}
+  })
+  const toast = new ConsoleToast()
   let wallet: Wallet
   let veramo: Veramo
 

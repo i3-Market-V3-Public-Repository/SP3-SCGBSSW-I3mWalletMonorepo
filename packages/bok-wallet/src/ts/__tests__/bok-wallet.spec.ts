@@ -3,13 +3,17 @@
 import { Wallet, NullDialog, RamStore, ConsoleToast, Veramo, VerifiableCredential } from '@i3m/base-wallet'
 import Debug from 'debug'
 
-import swBuilder from '#pkg'
+import swBuilder, { BokWalletModel } from '#pkg'
 
 const debug = Debug('i3-market:bok-wallet:test')
 
 describe('@i3m/sw-wallet', () => {
   const dialog = new NullDialog()
-  const store = new RamStore()
+  const store = new RamStore<BokWalletModel>({
+    resources: {},
+    identities: {},
+    keys: {}
+  })
   const toast = new ConsoleToast()
   let wallet: Wallet
   let veramo: Veramo

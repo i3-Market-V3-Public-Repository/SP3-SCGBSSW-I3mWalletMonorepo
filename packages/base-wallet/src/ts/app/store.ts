@@ -25,16 +25,21 @@ export interface BaseWalletModel {
   }
 }
 
-export interface Store<T extends BaseWalletModel> {
+export interface Store<T extends Record<string, any> = Record<string, unknown>> {
   /**
    * Get an item.
    *
    * @param key - The key of the item to get.
    * @param defaultValue - The default value if the item does not exist.
   */
-  get<Key extends keyof T>(key: Key): CanBePromise<Partial<T>[Key]> // eslint-disable-line @typescript-eslint/method-signature-style
+  get<Key extends keyof T>(key: Key): CanBePromise<T[Key]> // eslint-disable-line @typescript-eslint/method-signature-style
   get<Key extends keyof T>(key: Key, defaultValue: Required<T>[Key]): CanBePromise<Required<T>[Key]> // eslint-disable-line @typescript-eslint/method-signature-style
 
+  /**
+   * Set multiple keys at once.
+   * @param store
+   */
+  set(store: Partial<T>): CanBePromise<void> // eslint-disable-line @typescript-eslint/method-signature-style
   /**
    * Set an item.
    * @param key - The key of the item to set
@@ -62,4 +67,16 @@ export interface Store<T extends BaseWalletModel> {
    * Delete all items.
    */
   clear: () => CanBePromise<void>
+
+  /**
+   * Return a readonly version of the complete store
+   * @returns The entire store
+   */
+  getStore: () => CanBePromise<T>
+
+  /**
+   * Get the path of the store
+   * @returns The store path
+   */
+  getPath: () => string
 }

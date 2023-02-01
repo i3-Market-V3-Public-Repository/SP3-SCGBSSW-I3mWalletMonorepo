@@ -6,7 +6,7 @@ export interface HDData {
 }
 
 export interface SwWalletModel extends BaseWalletModel {
-  hdData: HDData
+  hdData?: HDData
 }
 
 export interface SwWalletOptions extends WalletOptionsSettings<SwWalletModel> {

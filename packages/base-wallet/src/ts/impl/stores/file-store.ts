@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { Store, BaseWalletModel } from '../../app'
+import { Store } from '../../app'
 import { readFile, writeFile, rm, mkdir } from 'fs/promises'
 import * as crypto from 'crypto'
 import { dirname } from 'path'
@@ -11,25 +11,26 @@ import { dirname } from 'path'
  *
  * The wallet's storage-file can be encrypted for added security by passing an optional `password`.
  */
-export class FileStore implements Store<BaseWalletModel> {
+export class FileStore<T extends Record<string, any> = Record<string, unknown>> implements Store<T> {
   filepath: string
   password?: string
+  initialized: Promise<void>
+  defaultModel: T
 
   /**
    *
    * @param filepath an absolute path to the file that will be used to store wallet data
    * @param password if provided a key will be derived from the password and the store file will be encrypted
    */
-  constructor (filepath: string, password?: string) {
+  constructor (filepath: string, password?: string, defaultModel?: T) {
     const isNode = typeof process !== 'undefined' && process.versions != null && process.versions.node != null
     if (!isNode) {
       throw new Error('FileStore can only be instantiated from Node.js')
     }
     this.filepath = filepath
     this.password = password
-    this.init().catch(error => {
-      throw error
-    })
+    this.defaultModel = defaultModel ?? {} as any
+    this.initialized = this.init()
   }
 
   private kdf (password: string, salt: crypto.BinaryLike): Buffer {
@@ -42,15 +43,8 @@ export class FileStore implements Store<BaseWalletModel> {
     await this.setModel(model)
   }
 
-  private defaultModel (): BaseWalletModel {
-    return {
-      resources: {},
-      identities: {}
-    }
-  }
-
-  private async getModel (): Promise<BaseWalletModel> {
-    let model = this.defaultModel()
+  private async getModel (): Promise<T> {
+    let model = _.cloneDeep(this.defaultModel)
     try {
       const fileBuf = await readFile(this.filepath)
       if (this.password === undefined) {
@@ -62,7 +56,7 @@ export class FileStore implements Store<BaseWalletModel> {
     return model
   }
 
-  private async setModel (model: BaseWalletModel): Promise<void> {
+  private async setModel (model: T): Promise<void> {
     if (this.password === undefined) {
       await writeFile(this.filepath, JSON.stringify(model), { encoding: 'utf8' })
     } else {
@@ -70,7 +64,7 @@ export class FileStore implements Store<BaseWalletModel> {
     }
   }
 
-  private async encryptModel (model: BaseWalletModel): Promise<Buffer> {
+  private async encryptModel (model: T): Promise<Buffer> {
     if (this.password === undefined) {
       throw new Error('For the store to be encrypted you must provide a password')
     }
@@ -97,17 +91,17 @@ export class FileStore implements Store<BaseWalletModel> {
     return Buffer.concat([salt, iv, tag, encrypted])
   }
 
-  private async decryptModel (encryptedModel: ArrayBufferLike): Promise<BaseWalletModel> {
+  private async decryptModel (encryptedModel: ArrayBufferLike): Promise<T> {
     if (this.password === undefined) {
       throw new Error('For the store to be encrypted you must provide a password')
     }
 
     // extract all parts
     const buf = Buffer.from(encryptedModel)
-    const salt = buf.slice(0, 64)
-    const iv = buf.slice(64, 80)
-    const tag = buf.slice(80, 96)
-    const ciphertext = buf.slice(96)
+    const salt = buf.subarray(0, 64)
+    const iv = buf.subarray(64, 80)
+    const tag = buf.subarray(80, 96)
+    const ciphertext = buf.subarray(96)
 
     // derive encryption key
     const key = this.kdf(this.password, salt)
@@ -123,34 +117,53 @@ export class FileStore implements Store<BaseWalletModel> {
   }
 
   async get (key: any, defaultValue?: any): Promise<any> {
-    await this.init()
+    await this.initialized
+
     const model = await this.getModel()
     return _.get(model, key, defaultValue)
   }
 
-  async set (key: string, value: unknown): Promise<void>
-  async set (key: any, value: any): Promise<void> {
-    await this.init()
+  async set (keyOrStore: any, value?: any): Promise<void> {
+    await this.initialized
+
     const model = await this.getModel()
-    _.set(model, key, value)
+    if (value === undefined) {
+      Object.assign(model, keyOrStore)
+    } else {
+      _.set(model, keyOrStore, value)
+    }
+
     await this.setModel(model)
   }
 
   async has<Key extends 'accounts'>(key: Key): Promise<boolean> {
-    await this.init()
+    await this.initialized
+
     const model = await this.getModel()
     return _.has(model, key)
   }
 
   async delete<Key extends 'accounts'>(key: Key): Promise<void> {
-    await this.init()
+    await this.initialized
+
     let model = await this.getModel()
     model = _.omit(model, key) as any
     await this.setModel(model)
   }
 
   async clear (): Promise<void> {
-    await this.init()
+    await this.initialized
+
     await rm(this.filepath)
+  }
+
+  public async getStore (): Promise<T> {
+    await this.initialized
+
+    return await this.getModel()
+  }
+
+  public getPath (): string {
+    return this.filepath
   }
 }

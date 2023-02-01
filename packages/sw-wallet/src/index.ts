@@ -13,4 +13,5 @@ const builder: WalletBuilder<SwWalletOptions> = async (opts) => {
   })
 }
 
+export * from './types'
 export default builder

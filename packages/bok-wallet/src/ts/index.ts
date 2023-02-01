@@ -10,4 +10,5 @@ const builder: WalletBuilder<BokWalletOptions> = async (opts) => {
   return new BokWallet({ ...opts, keyWallet })
 }
 
+export * from './types'
 export default builder

@@ -1,31 +1,27 @@
 import _ from 'lodash'
 
-import { Store, BaseWalletModel } from '../../app'
+import { Store } from '../../app'
 import { CanBePromise } from '../../utils'
 
 /**
  * A class that implements a storage in RAM to be used by a wallet
  */
-export class RamStore implements Store<BaseWalletModel> {
-  model: BaseWalletModel
-  constructor () {
-    this.model = this.defaultModel()
-  }
-
-  private defaultModel (): BaseWalletModel {
-    return {
-      resources: {},
-      identities: {}
-    }
+export class RamStore<T extends Record<string, any> = Record<string, unknown>> implements Store<T> {
+  model: T
+  constructor (protected defaultModel: T) {
+    this.model = _.cloneDeep(defaultModel)
   }
 
   get (key: any, defaultValue?: any): any {
     return _.get(this.model, key, defaultValue)
   }
 
-  set (key: string, value: unknown): CanBePromise<void>
-  set (key: any, value: any): CanBePromise<void> {
-    _.set(this.model, key, value)
+  set (keyOrStore?: any, value?: any): CanBePromise<void> {
+    if (value === undefined) {
+      Object.assign({}, this.model, keyOrStore)
+      return
+    }
+    _.set(this.model, keyOrStore, value)
   }
 
   has<Key extends 'accounts'>(key: Key): CanBePromise<boolean> {
@@ -37,6 +33,14 @@ export class RamStore implements Store<BaseWalletModel> {
   }
 
   clear (): CanBePromise<void> {
-    this.model = this.defaultModel()
+    this.model = _.cloneDeep(this.defaultModel)
+  }
+
+  getStore (): CanBePromise<T> {
+    return this.model
+  }
+
+  getPath (): string {
+    return 'RAM'
   }
 }
