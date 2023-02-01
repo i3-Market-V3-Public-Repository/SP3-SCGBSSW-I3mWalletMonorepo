@@ -30,7 +30,7 @@ BaseWalletModel.identities
 
 #### Defined in
 
-[base-wallet/types/app/store.d.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/types/app/store.d.ts#L36)
+[base-wallet/types/app/store.d.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/types/app/store.d.ts#L36)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/bok-wallet/src/ts/types.ts#L13)
+[bok-wallet/src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/bok-wallet/src/ts/types.ts#L13)
 
 ___
 
@@ -62,4 +62,4 @@ BaseWalletModel.resources
 
 #### Defined in
 
-[base-wallet/types/app/store.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/types/app/store.d.ts#L33)
+[base-wallet/types/app/store.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/types/app/store.d.ts#L33)

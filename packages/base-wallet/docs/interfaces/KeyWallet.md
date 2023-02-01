@@ -36,7 +36,7 @@ a promise that resolves to the key id.
 
 #### Defined in
 
-[src/ts/keywallet/key-wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L9)
+[src/ts/keywallet/key-wallet.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L9)
 
 ___
 
@@ -64,7 +64,7 @@ Error - Any error
 
 #### Defined in
 
-[src/ts/keywallet/key-wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L26)
+[src/ts/keywallet/key-wallet.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L26)
 
 ___
 
@@ -92,7 +92,7 @@ a promise that resolves to a public key
 
 #### Defined in
 
-[src/ts/keywallet/key-wallet.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L16)
+[src/ts/keywallet/key-wallet.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L16)
 
 ___
 
@@ -119,7 +119,7 @@ Signs input message and returns DER encoded typed array
 
 #### Defined in
 
-[src/ts/keywallet/key-wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L21)
+[src/ts/keywallet/key-wallet.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L21)
 
 ___
 
@@ -141,4 +141,4 @@ Error - Any error
 
 #### Defined in
 
-[src/ts/keywallet/key-wallet.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L31)
+[src/ts/keywallet/key-wallet.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/keywallet/key-wallet.ts#L31)

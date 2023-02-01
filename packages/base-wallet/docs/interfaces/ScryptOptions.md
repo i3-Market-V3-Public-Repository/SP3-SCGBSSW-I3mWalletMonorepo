@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:204](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/file-store.ts#L204)
+[src/ts/impl/stores/file-store.ts:204](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/impl/stores/file-store.ts#L204)
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:207](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/file-store.ts#L207)
+[src/ts/impl/stores/file-store.ts:207](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/impl/stores/file-store.ts#L207)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:206](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/file-store.ts#L206)
+[src/ts/impl/stores/file-store.ts:206](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/impl/stores/file-store.ts#L206)
 
 ___
 
@@ -47,4 +47,4 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/file-store.ts#L205)
+[src/ts/impl/stores/file-store.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/impl/stores/file-store.ts#L205)
