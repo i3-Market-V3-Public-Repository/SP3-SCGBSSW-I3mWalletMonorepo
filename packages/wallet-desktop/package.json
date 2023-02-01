@@ -5,6 +5,7 @@
   "main": "dist/src/main",
   "scripts": {
     "start:watch": "ts-node -r dotenv/config build/start.ts",
+    "prebuild": "rimraf ./dist",
     "build": "ts-node build/build.ts",
     "build:main": "tsc -p ./src/main",
     "build:renderer": "rollup -c build/rollup.renderer.js",
