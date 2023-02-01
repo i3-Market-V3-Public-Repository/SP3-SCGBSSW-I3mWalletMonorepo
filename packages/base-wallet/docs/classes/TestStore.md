@@ -53,7 +53,7 @@ A class that implements a storage in RAM to be used by a wallet
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
+[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
 
 ## Properties
 
@@ -63,7 +63,7 @@ A class that implements a storage in RAM to be used by a wallet
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
+[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
 
 ___
 
@@ -73,7 +73,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L10)
+[src/ts/impl/stores/ram-store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L10)
 
 ## Methods
 
@@ -93,7 +93,7 @@ Store.clear
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L35)
+[src/ts/impl/stores/ram-store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L35)
 
 ___
 
@@ -125,7 +125,7 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L31)
+[src/ts/impl/stores/ram-store.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L31)
 
 ___
 
@@ -152,7 +152,7 @@ Get an item.
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L15)
+[src/ts/impl/stores/ram-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L15)
 
 ___
 
@@ -174,7 +174,7 @@ Store.getPath
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L43)
+[src/ts/impl/stores/ram-store.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L43)
 
 ___
 
@@ -196,7 +196,7 @@ Store.getStore
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L39)
+[src/ts/impl/stores/ram-store.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L39)
 
 ___
 
@@ -228,7 +228,7 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L27)
+[src/ts/impl/stores/ram-store.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L27)
 
 ___
 
@@ -255,4 +255,4 @@ Set multiple keys at once.
 
 #### Defined in
 
-[src/ts/impl/stores/ram-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L19)
+[src/ts/impl/stores/ram-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/9fada86/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L19)
