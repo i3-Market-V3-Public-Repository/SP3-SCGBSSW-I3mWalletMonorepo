@@ -3,12 +3,12 @@ import { homedir } from 'os'
 import { join } from 'path'
 
 import walletBuilder, { BokWallet } from '@i3m/bok-wallet'
-import { BokWalletOptions } from '@i3m/bok-wallet/types/types'
+import { BokWalletModel, BokWalletOptions } from '@i3m/bok-wallet/types/types'
 import { mkdirSync, rmSync } from 'fs'
 
 export interface ServerWallet extends BokWallet {
   dialog: NullDialog
-  store: FileStore
+  store: FileStore<BokWalletModel>
   toast: ConsoleToast
 }
 export interface ServerWalletOptions {
@@ -36,7 +36,7 @@ export async function serverWalletBuilder (options?: ServerWalletOptions): Promi
     } catch (error) { }
   }
   const dialog = new NullDialog()
-  const store = new FileStore(filepath, options?.password)
+  const store = new FileStore<BokWalletModel>(filepath, options?.password)
   const toast = new ConsoleToast()
   return await (walletBuilder({
     dialog,
