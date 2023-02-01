@@ -25,6 +25,19 @@ export class VaultClient extends EventEmitter {
     this.publicKeyPath = `/api/${apiVersion}/registration/public-jwk`
   }
 
+  private emitError (error: any): void {
+    if (error instanceof AxiosError && error.response !== undefined) {
+      if ((error.response.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
+        this.logout()
+        this.emit('login-required')
+      } else {
+        this.emit('error', error.response)
+      }
+    } else {
+      this.emit('error', error)
+    }
+  }
+
   private async initEventSourceClient (): Promise<void> {
     if (this.token === undefined) {
       throw new Error('Cannot subscribe to events without login first')
@@ -77,6 +90,7 @@ export class VaultClient extends EventEmitter {
       const res = await axios.post<OpenApiPaths.ApiV2VaultAuth.Post.Responses.$200>(this.serverUrl + this.vaultPath + '/auth', reqBody)
 
       if (res.status !== 200) {
+        this.emitError(res)
         return false
       }
 
@@ -87,11 +101,7 @@ export class VaultClient extends EventEmitter {
       this.emit('logged-in')
       return true
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.emit('error', error.response?.data)
-      } else {
-        this.emit('error', error)
-      }
+      this.emitError(error)
       return false
     }
   }
@@ -117,22 +127,12 @@ export class VaultClient extends EventEmitter {
         }
       )
       if (res.status !== 200) {
-        const error = res.data as unknown as OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.Default
-        if (error.name === 'Unauthorized') {
-          this.logout()
-          this.emit('login-required')
-        } else {
-          this.emit('error', new Error(error.name, { cause: error.description }))
-        }
+        this.emitError(res)
         return null
       }
       return res.data.timestamp
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.emit('error', error.response?.data)
-      } else {
-        this.emit('error', error)
-      }
+      this.emitError(error)
       return null
     }
   }
@@ -157,24 +157,13 @@ export class VaultClient extends EventEmitter {
           }
         })
       if (res.status !== 201) {
-        const error = res.data as unknown as OpenApiPaths.ApiV2Vault.Post.Responses.Default
-        if (error.name === 'Unauthorized') {
-          this.logout()
-          this.emit('login-required')
-        } else {
-          this.emit('error', res.data)
-        }
+        this.emitError(res)
         return false
       }
       this.timestamp = res.data.timestamp
-      // this.emit('storage-updated', this.timestamp)
       return true
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.emit('error', error.response?.data)
-      } else {
-        this.emit('error', error)
-      }
+      this.emitError(error)
     }
     return false
   }
@@ -195,24 +184,13 @@ export class VaultClient extends EventEmitter {
         }
       )
       if (res.status !== 204) {
-        const error = res.data as unknown as OpenApiPaths.ApiV2Vault.Post.Responses.Default
-        if (error.name === 'Unauthorized') {
-          this.logout()
-          this.emit('login-required')
-        } else {
-          this.emit('error', res.data)
-        }
+        this.emitError(res)
         return false
       }
-
       this.emit('storage-deleted')
       return true
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.emit('error', error.response?.data)
-      } else {
-        this.emit('error', error)
-      }
+      this.emitError(error)
     }
     return false
   }
@@ -223,16 +201,12 @@ export class VaultClient extends EventEmitter {
         this.serverUrl + this.publicKeyPath
       )
       if (res.status !== 200) {
-        this.emit('error', res.statusText)
+        this.emitError(res)
         return null
       }
       return res.data.jwk
     } catch (error) {
-      if (error instanceof AxiosError) {
-        this.emit('error', error.response?.data)
-      } else {
-        this.emit('error', error)
-      }
+      this.emitError(error)
       return null
     }
   }

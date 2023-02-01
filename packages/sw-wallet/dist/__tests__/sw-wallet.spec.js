@@ -8,9 +8,12 @@ const debug_1 = __importDefault(require("debug"));
 const __1 = __importDefault(require(".."));
 const debug = (0, debug_1.default)('i3-market:sw-wallet:test');
 describe('@i3m/sw-wallet', () => {
-    const dialog = new base_wallet_1.TestDialog();
-    const store = new base_wallet_1.TestStore();
-    const toast = new base_wallet_1.TestToast();
+    const dialog = new base_wallet_1.NullDialog();
+    const store = new base_wallet_1.RamStore({
+        identities: {},
+        resources: {}
+    });
+    const toast = new base_wallet_1.ConsoleToast();
     let wallet;
     let veramo;
     const identities = {};

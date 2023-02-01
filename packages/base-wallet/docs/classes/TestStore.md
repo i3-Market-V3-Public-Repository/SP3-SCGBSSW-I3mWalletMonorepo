@@ -1,8 +1,16 @@
-# Class: TestStore
+# Class: TestStore<T\>
+
+A class that implements a storage in RAM to be used by a wallet
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Record`<`string`, `any`\> = `Record`<`string`, `unknown`\> |
 
 ## Implements
 
-- [`Store`](../interfaces/Store.md)<[`BaseWalletModel`](../interfaces/BaseWalletModel.md)\>
+- [`Store`](../interfaces/Store.md)<`T`\>
 
 ## Table of contents
 
@@ -12,6 +20,7 @@
 
 ### Properties
 
+- [defaultModel](TestStore.md#defaultmodel)
 - [model](TestStore.md#model)
 
 ### Methods
@@ -19,6 +28,8 @@
 - [clear](TestStore.md#clear)
 - [delete](TestStore.md#delete)
 - [get](TestStore.md#get)
+- [getPath](TestStore.md#getpath)
+- [getStore](TestStore.md#getstore)
 - [has](TestStore.md#has)
 - [set](TestStore.md#set)
 
@@ -26,21 +37,43 @@
 
 ### constructor
 
-• **new TestStore**()
+• **new TestStore**<`T`\>(`defaultModel`)
+
+#### Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | extends `Record`<`string`, `any`\> = `Record`<`string`, `unknown`\> |
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `defaultModel` | `T` |
 
 #### Defined in
 
-[src/ts/test/store.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L8)
+[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
 
 ## Properties
 
-### model
+### defaultModel
 
-• **model**: [`BaseWalletModel`](../interfaces/BaseWalletModel.md)
+• `Protected` **defaultModel**: `T`
 
 #### Defined in
 
-[src/ts/test/store.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L7)
+[src/ts/impl/stores/ram-store.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L11)
+
+___
+
+### model
+
+• **model**: `T`
+
+#### Defined in
+
+[src/ts/impl/stores/ram-store.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L10)
 
 ## Methods
 
@@ -60,7 +93,7 @@ Store.clear
 
 #### Defined in
 
-[src/ts/test/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L36)
+[src/ts/impl/stores/ram-store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L35)
 
 ___
 
@@ -92,7 +125,7 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/test/store.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L32)
+[src/ts/impl/stores/ram-store.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L31)
 
 ___
 
@@ -119,7 +152,51 @@ Get an item.
 
 #### Defined in
 
-[src/ts/test/store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L19)
+[src/ts/impl/stores/ram-store.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L15)
+
+___
+
+### getPath
+
+▸ **getPath**(): `string`
+
+Get the path of the store
+
+#### Returns
+
+`string`
+
+The store path
+
+#### Implementation of
+
+Store.getPath
+
+#### Defined in
+
+[src/ts/impl/stores/ram-store.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L43)
+
+___
+
+### getStore
+
+▸ **getStore**(): [`CanBePromise`](../API.md#canbepromise)<`T`\>
+
+Return a readonly version of the complete store
+
+#### Returns
+
+[`CanBePromise`](../API.md#canbepromise)<`T`\>
+
+The entire store
+
+#### Implementation of
+
+Store.getStore
+
+#### Defined in
+
+[src/ts/impl/stores/ram-store.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L39)
 
 ___
 
@@ -151,22 +228,22 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/test/store.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L28)
+[src/ts/impl/stores/ram-store.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L27)
 
 ___
 
 ### set
 
-▸ **set**(`key`, `value`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
+▸ **set**(`keyOrStore?`, `value?`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
-Set an item.
+Set multiple keys at once.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `key` | `string` | The key of the item to set |
-| `value` | `unknown` | The value to set |
+| Name | Type |
+| :------ | :------ |
+| `keyOrStore?` | `any` |
+| `value?` | `any` |
 
 #### Returns
 
@@ -178,4 +255,4 @@ Set an item.
 
 #### Defined in
 
-[src/ts/test/store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/src/ts/test/store.ts#L23)
+[src/ts/impl/stores/ram-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/src/ts/impl/stores/ram-store.ts#L19)

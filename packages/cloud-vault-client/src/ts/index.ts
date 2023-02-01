@@ -5,3 +5,4 @@
  */
 
 export * from './vault-client'
+export * from './key-manager'

@@ -6,9 +6,29 @@
 
 - [BokWallet](classes/BokWallet.md)
 
+### Interfaces
+
+- [BokWalletModel](interfaces/BokWalletModel.md)
+- [BokWalletOptions](interfaces/BokWalletOptions.md)
+- [Key](interfaces/Key.md)
+
+### Type Aliases
+
+- [KeyType](API.md#keytype)
+
 ### Functions
 
 - [default](API.md#default)
+
+## Type Aliases
+
+### KeyType
+
+Ƭ **KeyType**: ``"Secp256k1"``
+
+#### Defined in
+
+[bok-wallet/src/ts/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/bok-wallet/src/ts/types.ts#L3)
 
 ## Functions
 
@@ -20,7 +40,7 @@
 
 | Name | Type |
 | :------ | :------ |
-| `opts` | `BokWalletOptions` |
+| `opts` | [`BokWalletOptions`](interfaces/BokWalletOptions.md) |
 
 #### Returns
 
@@ -28,4 +48,4 @@
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-builder.d.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8876317/packages/base-wallet/types/wallet/wallet-builder.d.ts#L3)
+[base-wallet/types/wallet/wallet-builder.d.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b4b8c2a/packages/base-wallet/types/wallet/wallet-builder.d.ts#L3)

@@ -37,15 +37,20 @@ export interface BaseWalletModel {
         [did: string]: Identity;
     };
 }
-export interface Store<T extends BaseWalletModel> {
+export interface Store<T extends Record<string, any> = Record<string, unknown>> {
     /**
      * Get an item.
      *
      * @param key - The key of the item to get.
      * @param defaultValue - The default value if the item does not exist.
     */
-    get<Key extends keyof T>(key: Key): CanBePromise<Partial<T>[Key]>;
+    get<Key extends keyof T>(key: Key): CanBePromise<T[Key]>;
     get<Key extends keyof T>(key: Key, defaultValue: Required<T>[Key]): CanBePromise<Required<T>[Key]>;
+    /**
+     * Set multiple keys at once.
+     * @param store
+     */
+    set(store: Partial<T>): CanBePromise<void>;
     /**
      * Set an item.
      * @param key - The key of the item to set
@@ -70,5 +75,15 @@ export interface Store<T extends BaseWalletModel> {
      * Delete all items.
      */
     clear: () => CanBePromise<void>;
+    /**
+     * Return a readonly version of the complete store
+     * @returns The entire store
+     */
+    getStore: () => CanBePromise<T>;
+    /**
+     * Get the path of the store
+     * @returns The store path
+     */
+    getPath: () => string;
 }
 //# sourceMappingURL=store.d.ts.map

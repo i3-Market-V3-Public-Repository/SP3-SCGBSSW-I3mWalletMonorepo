@@ -10,6 +10,7 @@ export declare class VaultClient extends EventEmitter {
     publicKeyPath: string;
     private es?;
     constructor(serverUrl: string, name?: string);
+    private emitError;
     private initEventSourceClient;
     close(): void;
     login(username: string, authkey: string): Promise<boolean>;

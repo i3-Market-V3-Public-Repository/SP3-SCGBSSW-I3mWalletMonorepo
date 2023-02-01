@@ -29,7 +29,7 @@ describe('Wallet Cloud-Vault', function () {
   let client2: VaultClient
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
-  before('should connect two clients to the Cloud Vault Server', async function () {
+  before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
     client1 = new VaultClient(serverUrl, '1')
     client2 = new VaultClient(serverUrl, '2')
 
@@ -39,15 +39,7 @@ describe('Wallet Cloud-Vault', function () {
     client2.on('error', error => {
       console.log(client2.name, ': ', error)
     })
-  })
 
-  after('Close clients', function (done) {
-    client1.close()
-    client2.close()
-    done()
-  })
-
-  it('should receive a valid public key', async function () {
     const resPublicJwk = await client1.getServerPublicKey()
     chai.expect(publicJwk).to.not.be.null
     if (resPublicJwk !== null) publicJwk = resPublicJwk
@@ -58,6 +50,13 @@ describe('Wallet Cloud-Vault', function () {
       this.skip()
     }
   })
+
+  after('Close clients', function (done) {
+    client1.close()
+    client2.close()
+    done()
+  })
+
   it('it should register the test user', async function () {
     try {
       const data = await jweEncrypt(
