@@ -1,6 +1,6 @@
 /// <reference types="node" />
 /// <reference types="node" />
-import { BinaryLike, KeyObject } from 'node:crypto';
+import { BinaryLike, KeyObject } from 'crypto';
 import { Store } from '../../app';
 /**
  * A class that implements a storage for the wallet in a single file. The server wallet uses a file as storage.

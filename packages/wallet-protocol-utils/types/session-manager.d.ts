@@ -4,7 +4,7 @@ import { SessionStorage, SessionManagerOpts, SessionManagerOptions } from './typ
 export declare class SessionManager<T extends Transport = Transport> {
     session: Session<T> | undefined;
     $session: Subject<Session<T> | undefined>;
-    initialized: Promise<boolean>;
+    initialized: Promise<void>;
     protected storage: SessionStorage;
     protected protocol: WalletProtocol<T>;
     constructor(options: SessionManagerOpts<T>);

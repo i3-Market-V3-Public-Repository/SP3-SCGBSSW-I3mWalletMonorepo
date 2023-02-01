@@ -39,7 +39,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-src/ts/key-manager.ts:57
+[src/ts/key-manager.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/cloud-vault-client/src/ts/key-manager.ts#L57)
 
 ▸ **deriveKey**(`password`, `opts`, `returnBuffer`): `Promise`<`Buffer`\>
 
@@ -57,4 +57,4 @@ src/ts/key-manager.ts:57
 
 #### Defined in
 
-src/ts/key-manager.ts:58
+[src/ts/key-manager.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/53c581f/packages/cloud-vault-client/src/ts/key-manager.ts#L58)

@@ -1,9 +1,9 @@
 import { ConsoleToast, FileStore, NullDialog } from '@i3m/base-wallet';
 import { BokWallet } from '@i3m/bok-wallet';
-import { BokWalletOptions } from '@i3m/bok-wallet/types/types';
+import { BokWalletModel, BokWalletOptions } from '@i3m/bok-wallet/types/types';
 export interface ServerWallet extends BokWallet {
     dialog: NullDialog;
-    store: FileStore;
+    store: FileStore<BokWalletModel>;
     toast: ConsoleToast;
 }
 export interface ServerWalletOptions {

@@ -8,18 +8,14 @@ import { SessionStorage, SessionStorageOptions, SessionManagerOpts, SessionManag
 export class SessionManager<T extends Transport = Transport> {
   public session: Session<T> | undefined
   public $session: Subject<Session<T> | undefined>
-  public initialized: Promise<boolean>
+  public initialized: Promise<void>
   protected storage!: SessionStorage
   protected protocol: WalletProtocol<T>
 
   constructor (options: SessionManagerOpts<T>) {
     this.protocol = options.protocol
     this.$session = new BehaviorSubject<Session<T> | undefined>(undefined)
-    this.initialized = new Promise((resolve, reject) => {
-      this.init(options.storage).then(() => {
-        resolve(true)
-      }).catch(reason => { reject(reason) })
-    })
+    this.initialized = this.init()
   }
 
   private async init (storage?: SessionStorage, storageOptions?: SessionStorageOptions): Promise<void> {
@@ -76,7 +72,7 @@ export class SessionManager<T extends Transport = Transport> {
       await this.storage.clear()
     } else {
       const sessionJson = session.toJSON()
-      await this.storage.setSessionData(JSON.stringify(sessionJson))
+      await this.storage.setSessionData(sessionJson)
     }
     this.$session.next(session)
   }

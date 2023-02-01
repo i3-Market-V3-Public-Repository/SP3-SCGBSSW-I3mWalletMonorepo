@@ -1,6 +1,6 @@
 import { mkdir, readFile, rm, writeFile } from 'fs/promises'
 import _ from 'lodash'
-import { BinaryLike, createCipheriv, createDecipheriv, createSecretKey, KeyObject, randomBytes, scrypt } from 'node:crypto'
+import { BinaryLike, createCipheriv, createDecipheriv, createSecretKey, KeyObject, randomBytes, scrypt } from 'crypto'
 import { dirname } from 'path'
 import { Store } from '../../app'
 

@@ -1,21 +1,6 @@
-
-// @juanelas/base64
-// base64 sin padding y cambiando (0 O I l) por ($ # % &)
-// cifrador: aes-256-gcm
-// sha-256 y pbkdf2-hmac con salt a 0, iteraciones 1 y dklen (juanelas)
-// https://github.com/juanelas/pbkdf2-hmac
-// object-sha
-// phase3: secret verification
-// ultimo kdf pocas iteraciones
-
-const MAP = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-const base58 = {
-  encode: function(B,A){var d=[],s="",i,j,c,n;for(i in B){j=0,c=B[i];s+=c||s.length^i?"":1;while(j in d||c){n=d[j];n=n?n*256+c:c;c=n/58|0;d[j]=n%58;j++}}while(j--)s+=A[d[j]];return s},
-  decode: function(S,A){var d=[],b=[],i,j,c,n;for(i in S){j=0,c=A.indexOf(S[i]);if(c<0)return undefined;c||b.length^i?i:b.push(0);while(j in d||c){n=d[j];n=n?n*58+c:c;c=n>>8;d[j]=n%256;j++}}while(j--)b.push(d[j]);return new Uint8Array(b)}
-}
-
-const { WalletProtocol, HttpInitiatorTransport, Session } = walletProtocol
-const { openModal, LocalSessionManager } = walletProtocolUtils
+/* global walletProtocol, walletProtocolUtils, alert */
+const { WalletProtocol, HttpInitiatorTransport } = walletProtocol
+const { pinDialog, SessionManager } = walletProtocolUtils
 
 const main = async () => {
   const urlInput = document.getElementById('url-input')
@@ -28,22 +13,35 @@ const main = async () => {
   const removeButton = document.getElementById('remove-button')
   const queryButton = document.getElementById('query-button')
 
-  const transport = new HttpInitiatorTransport({ getConnectionString: openModal })
+  const transport = new HttpInitiatorTransport({ getConnectionString: pinDialog })
+
   const protocol = new WalletProtocol(transport)
-  const sessionManager = new LocalSessionManager(protocol)
+
+  const sessionManager = new SessionManager({ protocol })
 
   sessionManager
     .$session
+    // We can subscribe to events when the session is deleted/end and when a new one is created
     .subscribe((session) => {
-      sessionState.innerText = session !== undefined ? 'ON' : 'OFF'
+      if (session !== undefined) {
+        console.log('New session loaded')
+        sessionState.innerText = 'ON'
+      } else {
+        console.log('Session deleted')
+        sessionState.innerText = 'OFF'
+      }
     })
 
   const startProtocol = async () => {
+    // Loads the current stored session (if any). Use it to recover a previously created session
+    await sessionManager.loadSession()
+
+    // creates a secure session (if it does not exist yet)
     await sessionManager.createIfNotExists()
   }
 
   const sessionToClipboard = async () => {
-    await navigator.clipboard.writeText(JSON.stringify(sessionManager.session.toJSON(), null, 2))
+    await navigator.clipboard.writeText(JSON.stringify(sessionManager.session.toJSON()))
   }
 
   const sendQuery = async () => {
@@ -71,10 +69,9 @@ const main = async () => {
         responseInput.value = `ERROR: ${resp.status} ${resp.statusText}`
       }
     } catch (e) {
-      console.log("Assuming invalid token... Remove it")
+      console.log('Assuming invalid token... Remove it')
       sessionManager.removeSession()
       sessionManager.createIfNotExists()
-      return
     }
   }
 
@@ -84,8 +81,8 @@ const main = async () => {
   queryButton.addEventListener('click', sendQuery)
   removeButton.addEventListener('click', () => sessionManager.removeSession())
 
-  //
-  await sessionManager.loadSession()
-  await sessionManager.createIfNotExists()
+  startProtocol().catch((reason) => {
+    throw new Error(reason)
+  })
 }
 window.onload = main

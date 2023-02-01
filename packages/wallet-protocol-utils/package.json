@@ -74,7 +74,7 @@
     "preversion": "npm run build && npm test",
     "version": "npm run docs && git add -A",
     "test": "echo \"Warning: You must specify tests for this package\"",
-    "test:browser": "npm run mocha-ts:browser-headless ",
+    "test:browser": "npm run mocha-ts:browser ",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
     "watch": "npm run mocha-ts:watch "
