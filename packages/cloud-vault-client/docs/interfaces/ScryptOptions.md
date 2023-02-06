@@ -13,38 +13,38 @@
 
 ### N
 
-• `Optional` **N**: `number`
+• **N**: `number`
 
 #### Defined in
 
-[src/ts/key-manager.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L4)
+[cloud-vault-client/src/ts/key-manager.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L5)
 
 ___
 
 ### maxmem
 
-• `Optional` **maxmem**: `number`
+• **maxmem**: `number`
 
 #### Defined in
 
-[src/ts/key-manager.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L7)
+[cloud-vault-client/src/ts/key-manager.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L8)
 
 ___
 
 ### p
 
-• `Optional` **p**: `number`
+• **p**: `number`
 
 #### Defined in
 
-[src/ts/key-manager.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L6)
+[cloud-vault-client/src/ts/key-manager.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L7)
 
 ___
 
 ### r
 
-• `Optional` **r**: `number`
+• **r**: `number`
 
 #### Defined in
 
-[src/ts/key-manager.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L5)
+[cloud-vault-client/src/ts/key-manager.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L6)

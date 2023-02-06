@@ -39,7 +39,6 @@ components:
       required:
         - status
         - username
-        - auth_endpoint
       properties:
         status:
           type: string
@@ -52,10 +51,3 @@ components:
           description: |
             - `status === 'created'`: the registered username
             - `status === 'already registered'`: the username that was previously registered fot the same DID.
-        auth_endpoint:
-          type: string
-          description: |
-            The endpoint where to authenticate with `username` and its corresponding `authkey` (which is derived from the user's password) in order to get a valid API token for the Cloud Vault.
-
-
-

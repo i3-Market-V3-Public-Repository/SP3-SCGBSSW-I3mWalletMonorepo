@@ -12,9 +12,9 @@ export function checkIfIPv6 (str: string): boolean {
   return regexExp.test(str)
 }
 
-const addr = parseProccessEnvVar('SERVER_ADDRESS', { defaultValue: '::' }) as string
+const addr = parseProccessEnvVar('SERVER_ADDRESS', 'string', { defaultValue: '::' })
 
-const port = Number(parseProccessEnvVar('SERVER_PORT', { defaultValue: '3000' }))
+const port = Number(parseProccessEnvVar('SERVER_PORT', 'string', { defaultValue: '3000' }))
 
 const url = `http://${checkIfIPv6(addr) ? '[' + addr + ']' : addr}:${port}`
 

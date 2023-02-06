@@ -1,10 +1,10 @@
 import { parseProccessEnvVar } from './parseProcessEnvVar'
 
 export const dbConfig = {
-  host: parseProccessEnvVar('DB_HOST') as string,
-  port: Number(parseProccessEnvVar('DB_PORT')),
-  user: parseProccessEnvVar('DB_USER') as string,
-  password: parseProccessEnvVar('DB_PASSWORD') as string,
-  database: parseProccessEnvVar('DB_NAME') as string,
-  reset: parseProccessEnvVar('DB_RESET', { isBoolean: true }) as boolean
+  host: parseProccessEnvVar('DB_HOST', 'string'),
+  port: Number(parseProccessEnvVar('DB_PORT', 'string')),
+  user: parseProccessEnvVar('DB_USER', 'string'),
+  password: parseProccessEnvVar('DB_PASSWORD', 'string'),
+  database: parseProccessEnvVar('DB_NAME', 'string'),
+  reset: parseProccessEnvVar('DB_RESET', 'boolean', { defaultValue: false })
 }

@@ -1,7 +1,10 @@
-interface Options {
-    defaultValue?: string | boolean;
-    allowedValues?: string[];
-    isBoolean?: boolean;
+interface BooleanOptions {
+    defaultValue: boolean;
 }
-export declare function parseProccessEnvVar(varName: string, options?: Options): string | boolean;
+interface StringOptions {
+    defaultValue?: string;
+    allowedValues?: string[];
+}
+export declare function parseProccessEnvVar(varName: string, type: 'string', options?: StringOptions): string;
+export declare function parseProccessEnvVar(varName: string, type: 'boolean', options?: BooleanOptions): boolean;
 export {};

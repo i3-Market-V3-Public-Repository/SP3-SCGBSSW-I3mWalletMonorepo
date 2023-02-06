@@ -1,8 +1,27 @@
 openapi: '3.0.3'
 info:
-  title: i3M-Wallet Cloud-Vault API
+  title: i3M-Wallet Cloud-Vault Server API
   version: '1.0'
 paths:
+  /.well-known/cvs-configuration:
+    get:
+      summary: the well-known configuration of this Cloud Vault Server (CVS)
+      tags: 
+       - Cloud-Vault-Server Discovery
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './schema/well-known-cvs-configuration.yaml#/components/schemas/CvsConfiguration'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
+          
   /api/API_VERSION/registration/public-jwk:
     get:
       summary: Get the current wallet cloud-vault's public key as a JWK
@@ -52,7 +71,7 @@ paths:
               schema:
                 $ref: "./schema/api-error.yaml#/components/schemas/ApiError"
 
-  /api/API_VERSION/vault/auth:
+  /api/API_VERSION/vault/token:
     post:
       summary: |
         The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.

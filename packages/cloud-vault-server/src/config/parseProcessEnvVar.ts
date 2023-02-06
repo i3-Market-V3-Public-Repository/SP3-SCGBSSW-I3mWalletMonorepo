@@ -13,36 +13,53 @@ const invalidMsg = (varname: string, values?: string): string => {
 }
 const booleanFalseAllowedValues = ['0', 'false', 'FALSE']
 const booleanTrueAllowedValues = ['1', 'true', 'FALSE']
-const booleanAllowedValues = booleanFalseAllowedValues.concat(booleanTrueAllowedValues)
 
-interface Options {
-  defaultValue?: string | boolean
-  allowedValues?: string[]
-  isBoolean?: boolean
+interface BooleanOptions {
+  defaultValue: boolean
 }
 
-export function parseProccessEnvVar (varName: string, options?: Options): string | boolean {
-  const value: string = parseEnvValue(process.env[varName])
-  options = options ?? {}
-  const isBoolean = options?.isBoolean ?? false
-  if (isBoolean) {
-    options = {
-      ...options,
-      allowedValues: booleanAllowedValues
-    }
+interface StringOptions {
+  defaultValue?: string
+  allowedValues?: string[]
+}
+
+export function parseProccessEnvVar (varName: string, type: 'string', options?: StringOptions): string
+export function parseProccessEnvVar (varName: string, type: 'boolean', options?: BooleanOptions): boolean
+export function parseProccessEnvVar (varName: string, type: 'string' | 'boolean' = 'string', options?: StringOptions | BooleanOptions): string | boolean {
+  switch (type) {
+    case 'string':
+      return parseProccessEnvString(varName, options as StringOptions | undefined)
+    case 'boolean':
+      return parseProccessEnvBoolean(varName, options as BooleanOptions | undefined)
+    default:
+      throw new Error("type can only be 'boolean' or 'string'")
   }
+}
+
+function parseProccessEnvBoolean (varName: string, options?: BooleanOptions): boolean {
+  const value = parseEnvValue(process.env[varName])
   if (value === '') {
-    if (options.defaultValue === undefined) {
-      if (options.allowedValues !== undefined && !options.allowedValues.includes('')) {
-        throw new RangeError(invalidMsg(varName, options.allowedValues.join(', ')))
-      }
-    } else {
+    if (options?.defaultValue !== undefined) {
       return options.defaultValue
+    } else {
+      throw new Error(`Environment variable ${varName} missing and no default value provided`, { cause: 'you may need to create a .env file or pass the variables/secrets to your container' })
     }
+  } else {
+    if (booleanTrueAllowedValues.includes(value)) return true
+    if (booleanFalseAllowedValues.includes(value)) return false
+    throw new RangeError(invalidMsg(varName, booleanTrueAllowedValues.concat(booleanFalseAllowedValues).join(', ')))
   }
-  if (isBoolean && booleanTrueAllowedValues.includes(value)) return true
-  if (isBoolean && booleanFalseAllowedValues.includes(value)) return false
-  if (options.allowedValues !== undefined && !options.allowedValues.includes(value)) {
+}
+
+function parseProccessEnvString (varName: string, options?: StringOptions): string {
+  const value = parseEnvValue(process.env[varName])
+  if (value === '') {
+    if (options?.defaultValue !== undefined) {
+      return options.defaultValue
+    } else {
+      throw new Error(`Environment variable ${varName} missing and no default value provided`, { cause: 'you may need to create a .env file or pass the variables/secrets to your container' })
+    }
+  } else if (options?.allowedValues !== undefined && !options.allowedValues.includes(value)) {
     throw new RangeError(invalidMsg(varName, options.allowedValues.join(', ')))
   }
   return value

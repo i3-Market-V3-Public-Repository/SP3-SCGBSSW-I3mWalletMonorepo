@@ -5,6 +5,7 @@ import morgan from 'morgan'
 import { general, server as serverConfig } from './config'
 import apiRoutesPromise from './routes/api'
 import oasRoutesPromise from './routes/oas'
+import wellKnownCvsConfigurationRoutePromise from './routes/well-known-cvs-configuration'
 
 async function startApp (): Promise<Express> {
   const app = express()
@@ -13,6 +14,9 @@ async function startApp (): Promise<Express> {
 
   // Load CORS for the routes
   app.use((await import('./middlewares/cors')).corsMiddleware)
+
+  // Load the .well-known/cvs-configuration
+  app.use('/', await wellKnownCvsConfigurationRoutePromise())
 
   // OAS routes for downloading OAS json and visulaizing it
   app.use('/', await oasRoutesPromise())
@@ -60,8 +64,8 @@ const serverPromise = new Promise<Server>((resolve, reject) => {
       */
     server.on('listening', function (): void {
       console.log(`⚡️[server]: Server is running at ${url}`)
-      // console.log(`OpenAPI JSON spec at ${publicUri}/openapi.json`)
-      // console.log(`OpenAPI browsable spec at ${publicUri}/spec`)
+      console.log(`⚡️[server]: OpenAPI JSON spec at ${url}/spec`)
+      console.log(`⚡️[server]: OpenAPI browsable spec at ${url}/spec-ui`)
       resolve({ server, dbConnection })
     })
 

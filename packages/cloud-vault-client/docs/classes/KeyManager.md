@@ -10,6 +10,7 @@
 
 - [derivationOptions](KeyManager.md#derivationoptions)
 - [initialized](KeyManager.md#initialized)
+- [username](KeyManager.md#username)
 
 ### Methods
 
@@ -20,28 +21,40 @@
 
 ### constructor
 
-• **new KeyManager**(`password`, `opts`)
+• **new KeyManager**(`username`, `password`, `opts`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `password` | `BinaryLike` |
-| `opts` | [`DerivationOptions`](../interfaces/DerivationOptions.md) |
+| `username` | `string` |
+| `password` | `string` |
+| `opts` | `Object` |
+| `opts.auth` | `KeyDerivationOptions` |
+| `opts.enc` | `KeyDerivationOptions` |
+| `opts.master` | `KeyDerivationOptions` |
 
 #### Defined in
 
-[src/ts/key-manager.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L29)
+[cloud-vault-client/src/ts/key-manager.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L22)
 
 ## Properties
 
 ### derivationOptions
 
-• **derivationOptions**: [`DerivationOptions`](../interfaces/DerivationOptions.md)
+• **derivationOptions**: `Object`
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `auth` | `KeyDerivationOptions` |
+| `enc` | `KeyDerivationOptions` |
+| `master` | `KeyDerivationOptions` |
 
 #### Defined in
 
-[src/ts/key-manager.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L26)
+[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
 
 ___
 
@@ -51,7 +64,17 @@ ___
 
 #### Defined in
 
-[src/ts/key-manager.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L27)
+[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
+
+___
+
+### username
+
+• **username**: `string`
+
+#### Defined in
+
+[cloud-vault-client/src/ts/key-manager.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L18)
 
 ## Methods
 
@@ -65,7 +88,7 @@ ___
 
 #### Defined in
 
-[src/ts/key-manager.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L46)
+[cloud-vault-client/src/ts/key-manager.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L45)
 
 ___
 
@@ -79,4 +102,4 @@ ___
 
 #### Defined in
 
-[src/ts/key-manager.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L51)
+[cloud-vault-client/src/ts/key-manager.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L50)

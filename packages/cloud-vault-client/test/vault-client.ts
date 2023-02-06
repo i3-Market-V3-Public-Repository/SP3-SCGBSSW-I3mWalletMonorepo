@@ -11,12 +11,12 @@ loadEnvFile()
 
 const serverUrl = process.env.WCV_SERVER_URL ?? 'http://localhost:3000'
 const username = process.env.WCV_USERNAME ?? 'testUser'
-const authkey = process.env.WCV_AUTHKEY ?? 'uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ'
+const password = process.env.WCV_PASSWORD ?? 'mysupersuperpassword'
 
 const user = {
   did: 'did:ethr:i3m:0x02c1e51dbe7fa3c3e89df33495f241316d9554b5206fcef16d8108486285e38c27',
   username,
-  authkey
+  password
 }
 
 const storageJwe = 'RraFbEXzRKeb6-LVOS1ejNKKR7CS34_eGvQC9luVpvBUxvb5Ul7SMnS3_g-BIrTrhiK0AlMdCIuCJoMQd2SISHY.As9nW9zmGHUgwKikL8m-IfoyTWHmlAAUYfBom14g_GGH940vyxXiXulpSs8uSJNeP8-DquuqozZnGFSgsj9tnxS.1W1FkvVm6ZD0ZguaQHmoQ96zDODBgLMbqCPhFqGLNwf7c.l-F5VoevEez3AiTJDu7oUWnwYgK6Gs9QvrKbxzJOsRKToW2Ha2slS1Dze5OYINaa6rq44Y1tS7m8WDg1s-v.blFNOdNWXFu-xlw-ms_KAFd1WWE6UgGos9ZkHIeSZT8Cu98nU_pk48IC9J5P5y24S0ohU6BaArxl-_dHngPNABE9zA21l'
@@ -30,8 +30,8 @@ describe('Wallet Cloud-Vault', function () {
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
   before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
-    client1 = new VaultClient(serverUrl, '1')
-    client2 = new VaultClient(serverUrl, '2')
+    client1 = new VaultClient(serverUrl, user.username, user.password, '1')
+    client2 = new VaultClient(serverUrl, user.username, user.password, '2')
 
     client1.on('error', error => {
       console.log(client1.name, ': ', error)
@@ -60,7 +60,11 @@ describe('Wallet Cloud-Vault', function () {
   it('it should register the test user', async function () {
     try {
       const data = await jweEncrypt(
-        Buffer.from(JSON.stringify(user)),
+        Buffer.from(JSON.stringify({
+          did: user.did,
+          username: client1.username,
+          authkey: await client1.getAuthKey()
+        })),
         publicJwk as JWK,
         'A256GCM'
       )
@@ -79,8 +83,8 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   it('should be able to connect to server using registered credentials', async function () {
-    const client1Connected = await client1.login(username, authkey)
-    const client2Connected = await client2.login(username, authkey)
+    const client1Connected = await client1.login()
+    const client2Connected = await client2.login()
     chai.expect(client1Connected).to.be.true
     chai.expect(client2Connected).to.be.true
   })

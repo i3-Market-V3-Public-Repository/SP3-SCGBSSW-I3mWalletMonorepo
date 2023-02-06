@@ -29,8 +29,7 @@ export default function (router: Router): void {
         await db.registerUser(payload.did, payload.username, payload.authkey)
         res.status(201).json({
           status: 'created',
-          username: payload.username,
-          auth_endpoint: '/api/v2/vault/auth'
+          username: payload.username
         })
       } catch (error) {
         return next(error)

@@ -92,13 +92,13 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
   this.timeout(30000) // ms
   let token: string
 
-  before(`should get a token if posting valid credentials to ${vaultPath}/auth`, async function () {
+  before(`should get a token if posting valid credentials to ${vaultPath}/token`, async function () {
     const credentials: OpenApiComponents.Schemas.AuthorizationRequest = {
       username: 'testUser',
       authkey: 'uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ'
     }
     const res = await request(serverConfig.url)
-      .post(`${vaultPath}/auth`)
+      .post(`${vaultPath}/token`)
       .set('content-type', 'application/json')
       .send(credentials)
     expect(res).to.have.status(200)

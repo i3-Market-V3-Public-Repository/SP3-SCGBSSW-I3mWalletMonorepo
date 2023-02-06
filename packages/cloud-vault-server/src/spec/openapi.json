@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "i3M-Wallet Cloud-Vault API",
+    "title": "i3M-Wallet Cloud-Vault Server API",
     "version": "v2",
     "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
     "license": {
@@ -15,6 +15,36 @@
     }
   },
   "paths": {
+    "/.well-known/cvs-configuration": {
+      "get": {
+        "summary": "the well-known configuration of this Cloud Vault Server (CVS)",
+        "tags": [
+          "Cloud-Vault-Server Discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CvsConfiguration"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v2/registration/public-jwk": {
       "get": {
         "summary": "Get the current wallet cloud-vault's public key as a JWK",
@@ -93,7 +123,7 @@
         }
       }
     },
-    "/api/v2/vault/auth": {
+    "/api/v2/vault/token": {
       "post": {
         "summary": "The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.\n",
         "tags": [
@@ -328,17 +358,250 @@
       }
     },
     "schemas": {
+      "CvsConfiguration": {
+        "type": "object",
+        "title": "Cloud-Vault-Server Well-Known Configuration",
+        "required": [
+          "name",
+          "registration-configuration",
+          "vault-configuration"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "registration-configuration": {
+            "$ref": "#/components/schemas/RegistrationConfiguration"
+          },
+          "vault-configuration": {
+            "type": "object",
+            "required": [
+              "v2"
+            ],
+            "properties": {
+              "v2": {
+                "$ref": "#/components/schemas/VaultConfiguration"
+              }
+            },
+            "additionalProperties": {
+              "$ref": "#/components/schemas/VaultConfiguration"
+            }
+          }
+        }
+      },
+      "RegistrationConfiguration": {
+        "type": "object",
+        "title": "Registration Endpoints",
+        "required": [
+          "public-jwk_endpoint",
+          "registration_endpoint"
+        ],
+        "properties": {
+          "public-jwk_endpoint": {
+            "type": "string",
+            "example": "/api/v2/registration/public-jwk"
+          },
+          "registration_endpoint": {
+            "type": "string",
+            "example": "/api/v2/registration/{data}",
+            "description": "Endpoint for registering a new client. The endpoint requires authentication with valid i3-MARKET credentials.\n\n{data} refers to a compact JWE encrypted with this server's public key with the following payload:\n\n```json\n{\n  did: string\n  username: string\n  authkey: string\n}\n```\n\n- `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`\n- `username` is a unique username proposed by the client (it should be able to memorize it)\n- `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n"
+          }
+        }
+      },
+      "VaultConfiguration": {
+        "type": "object",
+        "title": "Vault Well-Known Configuration",
+        "required": [
+          "id",
+          "version",
+          "vault_endpoint",
+          "events_endpoint",
+          "timestamp_endpoint",
+          "token_endpoint",
+          "token_endpoint_auth_methods_supported",
+          "key-derivation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "a unique id for this server"
+          },
+          "version": {
+            "type": "string",
+            "description": "the version of the API this configuration applies to",
+            "example": "v2"
+          },
+          "vault_endpoint": {
+            "type": "string",
+            "description": "the vault endpoint where to GET, POST or DELETE the storage",
+            "example": "/api/v2/vault"
+          },
+          "events_endpoint": {
+            "type": "string",
+            "description": "endpoint where the server where to subscribe for storage-update Server-Sent Events (SSE)",
+            "example": "/api/v2/vault/events"
+          },
+          "timestamp_endpoint": {
+            "type": "string",
+            "description": "where to get the timestamp (in milliseconds elapsed since the epoch) of the latest uploaded storage",
+            "example": "/api/v2/vault/timsestamp"
+          },
+          "token_endpoint": {
+            "type": "string",
+            "description": "the path on this server where to get a valid bearer token for operating with the vault",
+            "example": "/api/v2/vault/token"
+          },
+          "token_endpoint_auth_methods_supported": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "client_secret_post",
+                "client_secret_basic",
+                "client_secret_jwt",
+                "private_key_jwt"
+              ]
+            },
+            "example": [
+              "client_secret_post"
+            ]
+          },
+          "key-derivation": {
+            "type": "object",
+            "required": [
+              "master",
+              "enc",
+              "auth"
+            ],
+            "properties": {
+              "master": {
+                "$ref": "#/components/schemas/KeyDerivationOptions"
+              },
+              "enc": {
+                "$ref": "#/components/schemas/KeyDerivationOptions"
+              },
+              "auth": {
+                "$ref": "#/components/schemas/KeyDerivationOptions"
+              }
+            }
+          }
+        }
+      },
+      "ScryptOptions": {
+        "type": "object",
+        "required": [
+          "N",
+          "r",
+          "p"
+        ],
+        "properties": {
+          "N": {
+            "type": "integer",
+            "description": "CPU/memory cost parameter – Must be a power of 2 (e.g. 1024)",
+            "example": 2097152
+          },
+          "r": {
+            "type": "integer",
+            "description": "blocksize parameter, which fine-tunes sequential memory read size and performance. (8 is commonly used)"
+          },
+          "p": {
+            "type": "integer",
+            "description": "Parallelization parameter. (1 .. 232-1 * hLen/MFlen)"
+          }
+        }
+      },
+      "KeyDerivationOptions": {
+        "type": "object",
+        "required": [
+          "alg",
+          "derivedKeyLength",
+          "input",
+          "saltPattern",
+          "saltHashingAlgorithm",
+          "algOptions"
+        ],
+        "properties": {
+          "alg": {
+            "type": "string",
+            "enum": [
+              "scrypt"
+            ],
+            "default": "scrypt"
+          },
+          "derivedKeyLength": {
+            "type": "integer",
+            "description": "Desired key length in bytes"
+          },
+          "input": {
+            "type": "string",
+            "enum": [
+              "password",
+              "master-key"
+            ],
+            "example": "password"
+          },
+          "saltPattern": {
+            "description": "Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.\n\nThe salt is a concatenation of key_name, server_id and username.\n\nThe length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm)\n",
+            "type": "string",
+            "example": "master9u8tHv8_s-QsG8CxuAefhg{username}"
+          },
+          "saltHashingAlgorithm": {
+            "description": "Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.\n",
+            "type": "string",
+            "enum": [
+              "sha3-256",
+              "sha3-384",
+              "sha3-512"
+            ],
+            "example": "sha3-512"
+          },
+          "algOptions": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ScryptOptions"
+              }
+            ]
+          }
+        }
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "name",
+          "description"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      },
       "JwkEcPublicKey": {
         "type": "object",
         "title": "JWK Elliptic-Curve Public Key Object",
         "description": "A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.\n",
         "required": [
+          "kty",
           "alg",
           "crv",
           "x",
           "y"
         ],
         "properties": {
+          "kty": {
+            "type": "string",
+            "enum": [
+              "EC"
+            ],
+            "example": "EC"
+          },
           "alg": {
             "type": "string",
             "description": "The alg member identifies the cryptographic algorithm family used with the key.\n",
@@ -348,11 +611,6 @@
               "ES512"
             ],
             "example": "ES256"
-          },
-          "use": {
-            "type": "string",
-            "description": "OPTIONAL. The \"use\" (public key use) parameter identifies the intended use of the public key.  The \"use\" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.\n\nValues defined by this specification are:\n- \"sig\" (signature)\n- \"enc\" (encryption)\n\nOther values MAY be used.  The \"use\" value is a case-sensitive string.  Use of the \"use\" member is OPTIONAL, unless the application requires its presence.\n",
-            "example": "sig"
           },
           "kid": {
             "type": "string",
@@ -382,22 +640,6 @@
           }
         }
       },
-      "ApiError": {
-        "type": "object",
-        "title": "Error",
-        "required": [
-          "name",
-          "description"
-        ],
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        }
-      },
       "RegistrationData": {
         "type": "string",
         "title": "RegistrationData",
@@ -410,8 +652,7 @@
         "description": "The registration response object.\n",
         "required": [
           "status",
-          "username",
-          "auth_endpoint"
+          "username"
         ],
         "properties": {
           "status": {
@@ -425,10 +666,6 @@
           "username": {
             "type": "string",
             "description": "- `status === 'created'`: the registered username\n- `status === 'already registered'`: the username that was previously registered fot the same DID.\n"
-          },
-          "auth_endpoint": {
-            "type": "string",
-            "description": "The endpoint where to authenticate with `username` and its corresponding `authkey` (which is derived from the user's password) in order to get a valid API token for the Cloud Vault.\n"
           }
         }
       },

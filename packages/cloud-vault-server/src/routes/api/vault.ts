@@ -118,13 +118,13 @@ export default function (router: Router): void {
       }
     }
   )
-  router.post('/auth',
-    async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultAuth.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultAuth.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+  router.post('/token',
+    async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultToken.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         console.log(req.body)
         const username = req.body.username
-        const password = req.body.authkey
-        const verified = await db.verifyCredentials(username, password)
+        const authkey = req.body.authkey
+        const verified = await db.verifyCredentials(username, authkey)
         if (!verified) {
           const error = new HttpError({
             name: 'invalid credentials',
@@ -135,8 +135,7 @@ export default function (router: Router): void {
           throw error
         }
         const token = jwtSign({
-          username,
-          password
+          username
         }, jwt.secret, {
           algorithm: jwt.alg
         })

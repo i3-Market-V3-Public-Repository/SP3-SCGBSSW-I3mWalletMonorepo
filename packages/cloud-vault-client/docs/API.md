@@ -11,8 +11,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 ### Interfaces
 
-- [DerivationOptions](interfaces/DerivationOptions.md)
-- [KdfOptions](interfaces/KdfOptions.md)
+- [KeyDerivationOptions](interfaces/KeyDerivationOptions.md)
 - [ScryptOptions](interfaces/ScryptOptions.md)
 
 ### Functions
@@ -23,15 +22,14 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 ### deriveKey
 
-▸ **deriveKey**(`password`, `opts`, `returnBuffer?`): `Promise`<`KeyObject`\>
+▸ **deriveKey**(`password`, `opts`): `Promise`<`KeyObject`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `password` | `BinaryLike` |
-| `opts` | [`KdfOptions`](interfaces/KdfOptions.md) |
-| `returnBuffer?` | ``false`` |
+| `password` | `string` |
+| `opts` | [`KeyDerivationOptions`](interfaces/KeyDerivationOptions.md) |
 
 #### Returns
 
@@ -39,22 +37,21 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[src/ts/key-manager.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L57)
+[cloud-vault-client/src/ts/key-manager.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L66)
 
-▸ **deriveKey**(`password`, `opts`, `returnBuffer`): `Promise`<`Buffer`\>
+▸ **deriveKey**(`key`, `opts`): `Promise`<`KeyObject`\>
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `password` | `BinaryLike` |
-| `opts` | [`KdfOptions`](interfaces/KdfOptions.md) |
-| `returnBuffer` | ``true`` |
+| `key` | `KeyObject` |
+| `opts` | [`KeyDerivationOptions`](interfaces/KeyDerivationOptions.md) |
 
 #### Returns
 
-`Promise`<`Buffer`\>
+`Promise`<`KeyObject`\>
 
 #### Defined in
 
-[src/ts/key-manager.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/cloud-vault-client/src/ts/key-manager.ts#L58)
+[cloud-vault-client/src/ts/key-manager.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L67)

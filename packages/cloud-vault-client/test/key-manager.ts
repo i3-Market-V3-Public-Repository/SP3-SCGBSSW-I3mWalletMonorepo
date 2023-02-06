@@ -12,24 +12,42 @@ describe('KeyManager', function () {
   }
 
   before('should create the key manager', async function () {
-    keyManager = new KeyManager('mysuperpassword', {
+    keyManager = new KeyManager(conf.username, conf.password, {
       master: {
-        salt: 'master' + conf.serverId + conf.username,
+        saltPattern: 'master' + conf.serverId + '{username}',
+        saltHashingAlgorithm: 'sha3-512',
+        input: 'password',
         alg: 'scrypt',
         derivedKeyLength: 32,
         algOptions: {
-          N: 2 ** 21
+          N: 2 ** 21,
+          r: 8,
+          p: 1
         }
       },
       auth: {
-        salt: 'auth',
+        saltPattern: 'auth' + conf.serverId + '{username}',
+        saltHashingAlgorithm: 'sha3-512',
+        input: 'master-key',
         alg: 'scrypt',
-        derivedKeyLength: 32
+        derivedKeyLength: 32,
+        algOptions: {
+          N: 2 ** 16,
+          r: 8,
+          p: 1
+        }
       },
       enc: {
-        salt: 'enc',
+        saltPattern: 'enc' + conf.serverId + '{username}',
+        saltHashingAlgorithm: 'sha3-512',
+        input: 'master-key',
         alg: 'scrypt',
-        derivedKeyLength: 32
+        derivedKeyLength: 32,
+        algOptions: {
+          N: 2 ** 16,
+          r: 8,
+          p: 1
+        }
       }
     })
 

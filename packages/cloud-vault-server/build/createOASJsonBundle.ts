@@ -30,6 +30,22 @@ function addLocalhostServerIfInDevelopment (spec: OpenAPIV3.Document): void {
   }
 }
 
+function iterateObject (obj: any, stringToReplace: string, replacement: string): void {
+  const obj2 = _.clone(obj)
+  for (const [key, value] of Object.entries(obj2)) {
+    const replacementKey = key.replaceAll(stringToReplace, replacement)
+    if (replacementKey !== key) {
+      obj[replacementKey] = value
+      delete obj[key] // eslint-disable-line @typescript-eslint/no-dynamic-delete
+    }
+    if (typeof value === 'object') {
+      iterateObject(obj[replacementKey], stringToReplace, replacement)
+    } else if (typeof value === 'string') {
+      obj[replacementKey] = value.replaceAll(stringToReplace, replacement)
+    }
+  }
+}
+
 function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
   spec.info.description = pkgJson.description
   spec.info.version = apiVersion
@@ -49,12 +65,13 @@ function fillWithPkgJsonData (spec: OpenAPIV3.Document): void {
     email: pkgJson.author.email,
     url: pkgJson.author.url
   }
-  const paths: { [key: string]: any } = {}
-  for (const path of Object.keys(spec.paths)) {
-    const key: string = path.replace('API_VERSION', apiVersion)
-    paths[key] = spec.paths[path]
-  }
-  spec.paths = paths
+  // const paths: { [key: string]: any } = {}
+  // for (const path of Object.keys(spec.paths)) {
+  //   const key: string = path.replace('API_VERSION', apiVersion)
+  //   paths[key] = spec.paths[path]
+  // }
+  // spec.paths = paths
+  iterateObject(spec, 'API_VERSION', apiVersion)
 }
 
 function fixRefs (obj: {}): void {

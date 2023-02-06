@@ -18,11 +18,18 @@ components:
       description: |
          A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
       required:
+        - kty
         - alg
         - crv
         - x
         - y
       properties:
+        kty:
+          type: string
+          enum:
+            - EC
+          example: EC
+
         alg:
           type: string
           description: |
@@ -32,18 +39,6 @@ components:
             - ES384
             - ES512
           example: ES256
-        
-        use:
-          type: string
-          description: |
-            OPTIONAL. The "use" (public key use) parameter identifies the intended use of the public key.  The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
-
-            Values defined by this specification are:
-            - "sig" (signature)
-            - "enc" (encryption)
-
-            Other values MAY be used.  The "use" value is a case-sensitive string.  Use of the "use" member is OPTIONAL, unless the application requires its presence.
-          example: sig
 
         kid:
           type: string

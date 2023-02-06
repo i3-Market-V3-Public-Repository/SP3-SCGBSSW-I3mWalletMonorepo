@@ -5,5 +5,5 @@ interface CorsConfig {
 }
 
 export const cors: CorsConfig = {
-  allowedOrigin: parseProccessEnvVar('CORS_ACCESS_CONTROL_ALLOW_ORIGIN', { defaultValue: '*' }) as string
+  allowedOrigin: parseProccessEnvVar('CORS_ACCESS_CONTROL_ALLOW_ORIGIN', 'string', { defaultValue: '*' })
 }

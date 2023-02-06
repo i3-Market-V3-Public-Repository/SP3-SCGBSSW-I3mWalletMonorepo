@@ -1,42 +1,41 @@
-import { BinaryLike, createSecretKey, KeyObject, scrypt } from 'node:crypto'
+import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
+import { createHash, createSecretKey, KeyObject, scrypt } from 'crypto'
 
 export interface ScryptOptions {
-  N?: number
-  r?: number
-  p?: number
-  maxmem?: number
+  N: number
+  r: number
+  p: number
+  maxmem: number
 }
 
-export interface KdfOptions {
-  alg: 'scrypt'
-  derivedKeyLength: number // in octets
-  salt: BinaryLike
-  algOptions?: ScryptOptions
-}
-
-export interface DerivationOptions {
-  master: KdfOptions
-  auth: KdfOptions
-  enc: KdfOptions
+export interface KeyDerivationOptions extends OpenApiComponents.Schemas.KeyDerivationOptions {
+  salt: Buffer
 }
 
 export class KeyManager {
   private _encKey!: KeyObject
   private _authKey!: KeyObject
-  derivationOptions: DerivationOptions
+  username: string
+  derivationOptions: OpenApiComponents.Schemas.VaultConfiguration['key-derivation']
   initialized: Promise<void>
 
-  constructor (password: BinaryLike, opts: DerivationOptions) {
+  constructor (username: string, password: string, opts: OpenApiComponents.Schemas.VaultConfiguration['key-derivation']) {
+    this.username = username
     this.derivationOptions = opts
     this.initialized = this.init(password)
   }
 
-  private async init (password: BinaryLike): Promise<void> {
-    const masterKey = await deriveKey(password, this.derivationOptions.master, true)
+  private async init (password: string): Promise<void> {
+    const { master, auth, enc } = this.derivationOptions
+    const masterSalt = _salt(master.saltHashingAlgorithm, master.saltPattern, { username: this.username })
+    const masterKey = await deriveKey(password, { ...master, salt: masterSalt })
+
+    const authSalt = _salt(auth.saltHashingAlgorithm, auth.saltPattern, { username: this.username })
+    const encSalt = _salt(enc.saltHashingAlgorithm, enc.saltPattern, { username: this.username })
 
     const [authKey, encKey] = await Promise.all([
-      deriveKey(masterKey, this.derivationOptions.auth),
-      deriveKey(masterKey, this.derivationOptions.enc)
+      deriveKey(masterKey, { ...auth, salt: authSalt }),
+      deriveKey(masterKey, { ...enc, salt: encSalt })
     ])
 
     this._authKey = authKey
@@ -54,23 +53,28 @@ export class KeyManager {
   }
 }
 
-export async function deriveKey (password: BinaryLike, opts: KdfOptions, returnBuffer?: false): Promise<KeyObject>
-export async function deriveKey (password: BinaryLike, opts: KdfOptions, returnBuffer: true): Promise<Buffer>
-export async function deriveKey<T extends Buffer | KeyObject> (password: BinaryLike, opts: KdfOptions, returnBuffer = false): Promise<T> {
-  let scryptOptions: ScryptOptions = {}
-  if (opts.algOptions !== undefined) {
-    scryptOptions = {
-      N: 16384,
-      r: 8,
-      p: 1,
-      ...opts.algOptions
-    }
-    scryptOptions.maxmem = 256 * scryptOptions.N! * scryptOptions.r! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+function _salt (hashAlgorithm: OpenApiComponents.Schemas.KeyDerivationOptions['saltHashingAlgorithm'], saltPattern: string, replacements: { [name: string]: string }): Buffer {
+  let saltString = ''
+  for (const searchValue in replacements) {
+    saltString = saltPattern.replaceAll(searchValue, replacements[searchValue])
   }
+  const hash = createHash(hashAlgorithm)
+  const salt = hash.update(saltString).digest()
+  return salt
+}
+
+export async function deriveKey (password: string, opts: KeyDerivationOptions): Promise<KeyObject>
+export async function deriveKey (key: KeyObject, opts: KeyDerivationOptions): Promise<KeyObject>
+export async function deriveKey (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<KeyObject> {
+  const scryptOptions: ScryptOptions = {
+    ...opts.algOptions,
+    maxmem: 256 * opts.algOptions.N * opts.algOptions.r
+  }
+  const password = (typeof passwordOrKey === 'string') ? passwordOrKey : passwordOrKey.export()
   const keyPromise: Promise<any> = new Promise((resolve, reject) => {
     scrypt(password, opts.salt, opts.derivedKeyLength, scryptOptions, (err, key) => {
       if (err !== null) reject(err)
-      resolve(returnBuffer ? key : createSecretKey(key))
+      resolve(createSecretKey(key))
     })
   })
   return await keyPromise

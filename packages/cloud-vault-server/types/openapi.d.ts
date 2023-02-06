@@ -42,6 +42,18 @@ export namespace OpenApiComponents {
             authkey: string // ^[a-zA-Z0-9_-]{43,86}$
         }
         /**
+         * Cloud-Vault-Server Well-Known Configuration
+         */
+        export interface CvsConfiguration {
+            name: string;
+            description?: string;
+            "registration-configuration": /* Registration Endpoints */ RegistrationConfiguration;
+            "vault-configuration": {
+                [name: string]: /* Vault Well-Known Configuration */ VaultConfiguration;
+                v2: /* Vault Well-Known Configuration */ VaultConfiguration;
+            };
+        }
+        /**
          * Encrypted Storage
          * EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault
          *
@@ -66,25 +78,17 @@ export namespace OpenApiComponents {
          */
         export interface JwkEcPublicKey {
             /**
+             * example:
+             * EC
+             */
+            kty: "EC";
+            /**
              * The alg member identifies the cryptographic algorithm family used with the key.
              *
              * example:
              * ES256
              */
             alg: "ES256" | "ES384" | "ES512";
-            /**
-             * OPTIONAL. The "use" (public key use) parameter identifies the intended use of the public key.  The "use" parameter is employed to indicate whether a public key is used for encrypting data or verifying the signature on data.
-             *
-             * Values defined by this specification are:
-             * - "sig" (signature)
-             * - "enc" (encryption)
-             *
-             * Other values MAY be used.  The "use" value is a case-sensitive string.  Use of the "use" member is OPTIONAL, unless the application requires its presence.
-             *
-             * example:
-             * sig
-             */
-            use?: string;
             /**
              * The "kid" (key ID) parameter is used to match a specific key. This is used, for instance, to choose among a set of keys within a JWK Set during key rollover.  The structure of the "kid" value is unspecified.  When "kid" values are used within a JWK Set, different keys within the JWK Set SHOULD use distinct "kid" values.  (One example in which different keys might use the same "kid" value is if they have different "kty" (key type) values but are considered to be equivalent alternatives by the application using them.) The "kid" value is a case-sensitive string. When used with JWS or JWE, the "kid" value is used to match a JWS or JWE "kid" Header Parameter value.
              *
@@ -111,6 +115,68 @@ export namespace OpenApiComponents {
              * r-qUFiNmBZqr00pTyUZPPLsBsmEW8pH7_vtBVOPVsi0
              */
             y: string // ^[A-Za-z0-9_-]+$
+        }
+        export interface KeyDerivationOptions {
+            alg: "scrypt";
+            /**
+             * Desired key length in bytes
+             */
+            derivedKeyLength: number;
+            /**
+             * example:
+             * password
+             */
+            input: "password" | "master-key";
+            /**
+             * Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.
+             *
+             * The salt is a concatenation of key_name, server_id and username.
+             *
+             * The length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm)
+             *
+             * example:
+             * master9u8tHv8_s-QsG8CxuAefhg{username}
+             */
+            saltPattern: string;
+            /**
+             * Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.
+             *
+             * example:
+             * sha3-512
+             */
+            saltHashingAlgorithm: "sha3-256" | "sha3-384" | "sha3-512";
+            algOptions: ScryptOptions;
+        }
+        /**
+         * Registration Endpoints
+         */
+        export interface RegistrationConfiguration {
+            /**
+             * example:
+             * /api/v2/registration/public-jwk
+             */
+            "public-jwk_endpoint": string;
+            /**
+             * Endpoint for registering a new client. The endpoint requires authentication with valid i3-MARKET credentials.
+             *
+             * {data} refers to a compact JWE encrypted with this server's public key with the following payload:
+             *
+             * ```json
+             * {
+             *   did: string
+             *   username: string
+             *   authkey: string
+             * }
+             * ```
+             *
+             * - `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`
+             * - `username` is a unique username proposed by the client (it should be able to memorize it)
+             * - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+             *
+             * example:
+             * /api/v2/registration/{data}
+             */
+            registration_endpoint: string;
         }
         /**
          * RegistrationData
@@ -146,11 +212,22 @@ export namespace OpenApiComponents {
              *
              */
             username: string;
+        }
+        export interface ScryptOptions {
             /**
-             * The endpoint where to authenticate with `username` and its corresponding `authkey` (which is derived from the user's password) in order to get a valid API token for the Cloud Vault.
-             *
+             * CPU/memory cost parameter – Must be a power of 2 (e.g. 1024)
+             * example:
+             * 2097152
              */
-            auth_endpoint: string;
+            N: number;
+            /**
+             * blocksize parameter, which fine-tunes sequential memory read size and performance. (8 is commonly used)
+             */
+            r: number;
+            /**
+             * Parallelization parameter. (1 .. 232-1 * hLen/MFlen)
+             */
+            p: number;
         }
         /**
          * Timestamp
@@ -164,6 +241,57 @@ export namespace OpenApiComponents {
              * 1674060143749
              */
             timestamp: number;
+        }
+        /**
+         * Vault Well-Known Configuration
+         */
+        export interface VaultConfiguration {
+            /**
+             * a unique id for this server
+             */
+            id: string;
+            /**
+             * the version of the API this configuration applies to
+             * example:
+             * v2
+             */
+            version: string;
+            /**
+             * the vault endpoint where to GET, POST or DELETE the storage
+             * example:
+             * /api/v2/vault
+             */
+            vault_endpoint: string;
+            /**
+             * endpoint where the server where to subscribe for storage-update Server-Sent Events (SSE)
+             * example:
+             * /api/v2/vault/events
+             */
+            events_endpoint: string;
+            /**
+             * where to get the timestamp (in milliseconds elapsed since the epoch) of the latest uploaded storage
+             * example:
+             * /api/v2/vault/timsestamp
+             */
+            timestamp_endpoint: string;
+            /**
+             * the path on this server where to get a valid bearer token for operating with the vault
+             * example:
+             * /api/v2/vault/token
+             */
+            token_endpoint: string;
+            /**
+             * example:
+             * [
+             *   "client_secret_post"
+             * ]
+             */
+            token_endpoint_auth_methods_supported: ("client_secret_post" | "client_secret_basic" | "client_secret_jwt" | "private_key_jwt")[];
+            "key-derivation": {
+                master: KeyDerivationOptions;
+                enc: KeyDerivationOptions;
+                auth: KeyDerivationOptions;
+            };
         }
     }
 }
@@ -268,7 +396,28 @@ export namespace OpenApiPaths {
             }
         }
     }
-    export namespace ApiV2VaultAuth {
+    export namespace ApiV2VaultEvents {
+        export namespace Get {
+            export namespace Responses {
+                export interface $200 {
+                }
+            }
+        }
+    }
+    export namespace ApiV2VaultTimestamp {
+        export namespace Get {
+            export namespace Responses {
+                export type $200 = /**
+                 * Timestamp
+                 * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
+                 *
+                 */
+                OpenApiComponents.Schemas.Timestamp;
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2VaultToken {
         export namespace Post {
             export type RequestBody = /**
              * AuthorizationRequest
@@ -287,23 +436,10 @@ export namespace OpenApiPaths {
             }
         }
     }
-    export namespace ApiV2VaultEvents {
+    export namespace WellKnownCvsConfiguration {
         export namespace Get {
             export namespace Responses {
-                export interface $200 {
-                }
-            }
-        }
-    }
-    export namespace ApiV2VaultTimestamp {
-        export namespace Get {
-            export namespace Responses {
-                export type $200 = /**
-                 * Timestamp
-                 * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
-                 *
-                 */
-                OpenApiComponents.Schemas.Timestamp;
+                export type $200 = /* Cloud-Vault-Server Well-Known Configuration */ OpenApiComponents.Schemas.CvsConfiguration;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
