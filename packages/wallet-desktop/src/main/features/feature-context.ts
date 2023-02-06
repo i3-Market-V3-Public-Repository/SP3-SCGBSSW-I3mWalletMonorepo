@@ -1,9 +1,9 @@
-import ElectronStore, { Options as ElectronStoreOptions } from 'electron-store'
-import { StoreModel } from '@wallet/main/internal'
+import { StoreModel, StoreOptions } from '@wallet/main/internal'
+import { Store } from '@i3m/base-wallet'
 
-export type Store = ElectronStore<StoreModel>
-export type StoreOptions = ElectronStoreOptions<StoreModel>
+export type WalletStore = Store<StoreModel>
+export type WalletStoreOptions = StoreOptions<StoreModel>
 
 export interface FeatureContext {
-  store?: Store
+  store?: WalletStore
 }

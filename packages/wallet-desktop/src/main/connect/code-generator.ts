@@ -16,7 +16,7 @@ export class JwtCodeGenerator implements CodeGenerator {
       .setSubject(masterKey.to.name)
       .setIssuedAt(iat)
 
-    const connect = settings.get('connect')
+    const connect = await settings.get('connect')
     if (connect.enableTokenExpiration) {
       const exp = iat + connect.tokenTTL
       token.setExpirationTime(exp)

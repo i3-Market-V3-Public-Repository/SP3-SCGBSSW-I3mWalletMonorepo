@@ -64,7 +64,7 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
   // Add middlewares
   app.use(express.json())
   app.use(loggerMiddleware)
-  app.use(developerApi(locals))
+  app.use(await developerApi(locals))
 
   // Add default endpoint
   app.get('/', function (req, res) {

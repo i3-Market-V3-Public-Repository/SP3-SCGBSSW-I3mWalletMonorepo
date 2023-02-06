@@ -17,18 +17,24 @@ import {
   WalletFactory,
   ElectronDialog,
   ToastManager,
-  StartFeatureError,
   ActionReducer,
-  LocalAuthentication,
+  KeysManager,
   ConnectManager,
   VersionManager,
   initPrivateSettings,
-  initPublicSettings
+  initPublicSettings,
+  StoreManager,
+  handleError
 } from './internal'
+import { createStoreMigrationProxy } from './store/migration'
 
 async function initApplication (ctx: MainContext, locals: Locals): Promise<void> {
   const sharedMemoryManager = new SharedMemoryManager()
   locals.sharedMemoryManager = sharedMemoryManager
+
+  const storeManager = new StoreManager(ctx, locals)
+  await storeManager.initialize()
+  locals.storeManager = storeManager
 
   const publicSettings = await initPublicSettings({ cwd: ctx.settingsPath }, locals)
   locals.publicSettings = publicSettings
@@ -71,34 +77,25 @@ async function initUI (ctx: MainContext, locals: Locals): Promise<void> {
 
 async function initVersionManager (ctx: MainContext, locals: Locals): Promise<void> {
   const versionManager = new VersionManager(locals)
-  versionManager.initialized.then(() => {
-    versionManager.needsUpdate().then(update => {
-      if (update) {
-        locals.toast.show({
-          message: 'Update pending...',
-          details: `Your current version (${versionManager.currentVersion}) is outdated. \n Please, download the latest release (${versionManager.latestVersion}) going to 'Help → Latest Release'.`,
-    
-          type: 'warning',
-          timeout: 0 // never close this alert!
-        })
-      }
-    })
-  }).catch((error) => {
-    locals.toast.show({
-      message: 'Checking for updates...',
-      details: (typeof error === 'string') ? error : 'Error checking for updates. Are you connected to the Internet?',
-      type: 'warning',
-      timeout: 0
-    })
-  })
   locals.versionManager = versionManager
+
+  await versionManager.initialize()
+  await versionManager.verifySettingsVersion()
+
+  // Do not await verifyLatestVersion!
+  // If there is no internet connection it will freeze the application
+  versionManager.verifyLatestVersion().catch(...handleError(locals))
 }
 
 async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
-  const auth = new LocalAuthentication(locals)
-  locals.auth = auth
+  const keysManager = new KeysManager(ctx, locals)
+  locals.keysManager = keysManager
 
-  await auth.authenticate()
+  await keysManager.initialize()
+  await keysManager.authenticate()
+
+  // Migrate stores (if needed)
+  await locals.storeManager.migrate()
 
   const settings = await initPrivateSettings({
     cwd: ctx.settingsPath
@@ -116,7 +113,7 @@ async function initApi (
   locals: Locals
 ): Promise<void> {
   // Create and initialize connect manager
-  const jwk = locals.settings.get('secret') as JWK
+  const jwk = await locals.settings.get('secret') as JWK
   const key = await importJWK(jwk, 'HS256')
   locals.connectManager = new ConnectManager(locals, key)
   await locals.connectManager.initialize()
@@ -137,18 +134,12 @@ async function initWalletFactory (
 /**
  * Desktop Wallet startup function
  */
-async function onReady (): Promise<void> {
-  const locals: Locals = { packageJson } as any
-  const ctx = initContext<MainContext>({
-    appPath: path.resolve(__dirname, '../../'),
-    settingsPath: app.getPath('userData')
-  })
-
+async function onReady (ctx: MainContext, locals: Locals): Promise<void> {
   // Preauthentication initialization
   await initApplication(ctx, locals)
   await initActions(ctx, locals)
   await initUI(ctx, locals)
-  initVersionManager(ctx, locals)
+  await initVersionManager(ctx, locals)
   await initFeatureManager(ctx, locals)
 
   // Authentication
@@ -157,6 +148,10 @@ async function onReady (): Promise<void> {
   // Postauthentication initialization
   await initApi(ctx, locals)
   await initWalletFactory(ctx, locals)
+
+  // Finish migration
+  const { versionManager } = locals
+  await versionManager.finishMigration()
 
   // Launch UI
   const { windowManager } = locals
@@ -176,16 +171,13 @@ export default async (argv: string[]): Promise<void> => {
       return
     }
 
-    onReady().catch((err) => {
-      if (err instanceof StartFeatureError && err.exit) {
-        return app.quit()
-      }
-
-      if (err instanceof Error) {
-        logger.error(err.stack)
-      } else {
-        logger.error(err)
-      }
+    const locals: Locals = { packageJson } as any
+    const ctx = initContext<MainContext>({
+      appPath: path.resolve(__dirname, '../../'),
+      settingsPath: app.getPath('userData'),
+      storeMigrationProxy: createStoreMigrationProxy()
     })
+
+    onReady(ctx, locals).catch(...handleError(locals))
   })
 }

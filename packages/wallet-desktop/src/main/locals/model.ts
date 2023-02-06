@@ -13,8 +13,9 @@ import {
   FeatureManager,
   ActionReducer,
   ConnectManager,
-  LocalAuthentication,
-  VersionManager
+  KeysManager,
+  VersionManager,
+  StoreManager
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -30,9 +31,10 @@ export interface Locals {
   dialog: Dialog
   toast: Toast
   actionReducer: ActionReducer
-  auth: LocalAuthentication
+  keysManager: KeysManager
   connectManager: ConnectManager
   password: string
   versionManager: VersionManager
+  storeManager: StoreManager
   packageJson: typeof packageJson
 }

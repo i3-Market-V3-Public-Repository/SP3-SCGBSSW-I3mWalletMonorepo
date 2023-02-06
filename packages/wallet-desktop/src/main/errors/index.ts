@@ -1,0 +1,7 @@
+export * from './wallet-desktop-error'
+export * from './no-connection-error'
+export * from './invalid-settings'
+export * from './feature-error'
+export * from './authentication-error'
+export * from './file-not-found-error'
+export * from './format-error'

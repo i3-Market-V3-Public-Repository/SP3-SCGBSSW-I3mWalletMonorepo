@@ -1,4 +1,7 @@
-import { mkdir, readFile, rm, writeFile } from 'fs/promises'
+import { mkdir, rm } from 'fs/promises'
+// TODO: Use atomically
+// import { readFileSync, writeFileSync } from 'atomically'
+import { writeFileSync, readFileSync } from 'fs'
 import _ from 'lodash'
 import { BinaryLike, createCipheriv, createDecipheriv, createSecretKey, KeyObject, randomBytes, scrypt } from 'crypto'
 import { dirname } from 'path'
@@ -73,21 +76,25 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
   private async getModel (): Promise<T> {
     let model = _.cloneDeep(this.defaultModel)
     try {
-      const fileBuf = await readFile(this.filepath)
+      const fileBuf = readFileSync(this.filepath)
       if (this.key === undefined) {
         model = JSON.parse(fileBuf.toString('utf8'))
       } else {
         model = await this.decryptModel(fileBuf)
       }
-    } catch (error) {}
+    } catch (error: unknown) {
+      if ((error as any)?.code !== 'ENOENT') {
+        throw error
+      }
+    }
     return model
   }
 
   private async setModel (model: T): Promise<void> {
     if (this.key === undefined) {
-      await writeFile(this.filepath, JSON.stringify(model), { encoding: 'utf8' })
+      writeFileSync(this.filepath, JSON.stringify(model), { encoding: 'utf8' })
     } else {
-      await writeFile(this.filepath, await this.encryptModel(model))
+      writeFileSync(this.filepath, await this.encryptModel(model))
     }
   }
 

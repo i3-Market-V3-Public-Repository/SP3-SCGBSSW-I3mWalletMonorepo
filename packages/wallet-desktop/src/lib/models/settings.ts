@@ -33,11 +33,6 @@ export interface WalletConnectSettings {
   tokenTTL: number // in seconds
 }
 
-export interface AuthSettings {
-  localAuth: string
-  salt: string
-}
-
 export interface PrivateSettings {
   wallet: WalletSettings
   providers: Provider[]
@@ -46,9 +41,29 @@ export interface PrivateSettings {
   secret?: JWK
 }
 
-export interface PublicSettings {
+export type AuthSettingsAlgorithms = 'pbkdf.2'
+
+export interface BaseAuthSettings {
+  algorithm?: AuthSettingsAlgorithms
+}
+
+export type EncSettingsAlgorithms = 'pbkdf.2'
+
+export interface BaseEncSettings {
+  algorithm?: EncSettingsAlgorithms
+}
+
+export type StoreType = 'electron-store' | 'file-store'
+
+export interface StoreSettings {
+  type?: StoreType
+}
+
+export interface PublicSettings<A extends BaseAuthSettings = BaseAuthSettings, E extends BaseEncSettings = BaseEncSettings> {
   version: string
-  auth?: AuthSettings
+  auth?: A
+  enc?: E
+  store?: StoreSettings
 }
 
 export function createDefaultPrivateSettings (): PrivateSettings {

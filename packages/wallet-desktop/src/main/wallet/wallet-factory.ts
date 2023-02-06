@@ -53,7 +53,7 @@ export class WalletFactory {
   async initialize (): Promise<void> {
     await this.loadWalletsMetadata()
 
-    const wallet = this.locals.settings.get('wallet')
+    const wallet = await this.locals.settings.get('wallet')
     if (wallet.current === undefined) {
       return
     }
@@ -88,8 +88,9 @@ export class WalletFactory {
 
   async buildWallet (walletName: string): Promise<Wallet> {
     const { settings, featureContext, featureManager, dialog, toast } = this.locals
-    const { wallets } = settings.get('wallet')
-    const providersData = settings.get('providers').reduce<Record<string, ProviderData>>(
+    const { wallets } = await settings.get('wallet')
+    const providers = await settings.get('providers')
+    const providersData = providers.reduce<Record<string, ProviderData>>(
       (prev, curr) => {
         prev[curr.provider] = curr
         return prev
@@ -141,7 +142,7 @@ export class WalletFactory {
 
   async deleteWallet (walletName: string): Promise<void> {
     const { settings } = this.locals
-    const { wallets, current } = settings.get('wallet')
+    const { wallets, current } = await settings.get('wallet')
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
     if (walletInfo === undefined) {
@@ -221,7 +222,7 @@ export class WalletFactory {
     }))
 
     // Update current wallet
-    settings.set('wallet.current', walletName)
+    await settings.set('wallet.current', walletName)
 
     // Start API
     await apiManager.listen()

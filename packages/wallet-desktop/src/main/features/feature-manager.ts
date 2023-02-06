@@ -29,14 +29,14 @@ export class FeatureManager {
     this.features.set(name, feature)
   }
 
-  getWallet (walletName?: string): string {
+  async getWallet (walletName?: string): Promise<string> {
     if (walletName !== undefined) {
       return walletName
     }
 
-    const walletSettings = this.locals.settings.get('wallet')
+    const walletSettings = await this.locals.settings.get('wallet')
     if (walletSettings.current === undefined) {
-      throw new Error('Cannot initialize store if current wallet is not selected')
+      throw new Error('Wallet settings is undefined')
     }
 
     return walletSettings.current
@@ -45,7 +45,8 @@ export class FeatureManager {
   async clearFeatures (walletName?: string): Promise<void> {
     for (const [, feature] of this.features) {
       if (feature.handler.stop !== undefined) {
-        await feature.handler.stop(this.getWallet(walletName), feature.opts, this.locals)
+        const wallet = await this.getWallet(walletName)
+        await feature.handler.stop(wallet, feature.opts, this.locals)
       }
     }
     this.features.clear()
@@ -54,7 +55,8 @@ export class FeatureManager {
   async start (walletName?: string): Promise<void> {
     for (const [, feature] of this.features) {
       if (feature.handler.start !== undefined) {
-        await feature.handler.start(this.getWallet(walletName), feature.opts, this.locals)
+        const wallet = await this.getWallet(walletName)
+        await feature.handler.start(wallet, feature.opts, this.locals)
       }
     }
   }
@@ -62,7 +64,8 @@ export class FeatureManager {
   async delete (walletName?: string): Promise<void> {
     for (const [, feature] of this.features) {
       if (feature.handler.delete !== undefined) {
-        await feature.handler.delete(this.getWallet(walletName), feature.opts, this.locals)
+        const wallet = await this.getWallet(walletName)
+        await feature.handler.delete(wallet, feature.opts, this.locals)
       }
     }
   }

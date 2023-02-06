@@ -3,13 +3,10 @@ import fs from 'fs'
 import _ from 'lodash'
 import { app } from 'electron'
 
-import ElectronStore from 'electron-store'
-
-import { logger, Locals } from '@wallet/main/internal'
+import { logger, Locals, StartFeatureError } from '@wallet/main/internal'
 
 import { FeatureHandler } from './feature-handler'
-import { StartFeatureError } from './feature-error'
-import { Store, StoreOptions } from './feature-context'
+import { WalletStore, WalletStoreOptions } from './feature-context'
 
 interface StoreFeatureOptions {
   encryption?: {
@@ -21,24 +18,24 @@ interface StoreFeatureOptions {
   storePath?: string
 }
 
-const initStore = (storeOptions: StoreOptions): Store => {
-  const store: Store = new ElectronStore(storeOptions)
+const initStore = async (locals: Locals, storeOptions: WalletStoreOptions): Promise<WalletStore> => {
+  const store: WalletStore = await locals.storeManager.buildStore(storeOptions)
 
-  const lastDate = store.get('start')
+  const lastDate = await store.get('start')
   if (lastDate !== undefined) {
     logger.info(`Previous start at ${lastDate.toString()}`)
   } else {
     logger.info('This is the first time you start this application!')
   }
-  store.set('start', new Date())
+  await store.set('start', new Date())
 
   return store
 }
 
-const recoverStore = async (storeOptions: StoreOptions, locals: Locals): Promise<Store> => {
+const recoverStore = async (locals: Locals, storeOptions: WalletStoreOptions): Promise<WalletStore> => {
   const { settings, dialog } = locals
 
-  const walletSettings = settings.get('wallet')
+  const walletSettings = await settings.get('wallet')
   if (walletSettings.current === undefined) {
     throw new Error('Cannot initialize store if current wallet is not selected')
   }
@@ -53,7 +50,7 @@ const recoverStore = async (storeOptions: StoreOptions, locals: Locals): Promise
     fs.unlinkSync(file)
   }
 
-  return initStore(storeOptions)
+  return await initStore(locals, storeOptions)
 }
 
 interface FileInfo {
@@ -62,14 +59,14 @@ interface FileInfo {
   fileExtension: string
 }
 
-const buildStoreOptions = (walletName: string, opts: StoreFeatureOptions, locals: Locals): FileInfo => {
+const buildStoreOptions = async (walletName: string, opts: StoreFeatureOptions, locals: Locals): Promise<FileInfo> => {
   const { settings } = locals
 
   const name = _.get(opts, 'name', 'wallet')
   const storePath = _.get(opts, 'storePath', path.resolve(app.getPath('userData')))
   const encryptionEnabled: boolean = _.get(opts, 'encryption.enabled', false)
 
-  const walletSettings = settings.get('wallet')
+  const walletSettings = await settings.get('wallet')
   const walletArgs = walletSettings.wallets[walletName]
   const storeId = walletArgs.store
 
@@ -84,31 +81,32 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
   name: 'store',
 
   async start (walletName, opts, locals) {
-    const { settings, auth } = locals
-    let store: Store | undefined
+    const { settings, keysManager: auth } = locals
+    let store: WalletStore | undefined
 
     const encryptionEnabled: boolean = _.get(opts, 'encryption.enabled', false)
 
-    const walletSettings = settings.get('wallet')
+    const walletSettings = await settings.get('wallet')
     if (walletSettings.current === undefined) {
       throw new Error('Cannot initialize store if current wallet is not selected')
     }
     const walletArgs = walletSettings.wallets[walletSettings.current]
     const storeId = walletArgs.store
 
-    const storeOptions: StoreOptions = buildStoreOptions(walletName, opts, locals)
+    const storeOptions: WalletStoreOptions = await buildStoreOptions(walletName, opts, locals)
 
     if (encryptionEnabled) {
-      storeOptions.encryptionKey = await auth.computeWalletKey(storeId)
+      const wk = await auth.computeWalletKey(storeId)
+      storeOptions.encryptionKey = wk
       try {
-        store = initStore(storeOptions)
+        store = await initStore(locals, storeOptions)
       } catch (ex) {
         if (ex instanceof SyntaxError) {
-          store = await recoverStore(storeOptions, locals)
+          store = await recoverStore(locals, storeOptions)
         }
       }
     } else {
-      store = initStore(storeOptions)
+      store = await initStore(locals, storeOptions)
     }
 
     if (store === undefined) {
@@ -120,7 +118,7 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
   },
 
   async delete (walletName, opts, locals) {
-    const storeOptions = buildStoreOptions(walletName, opts, locals)
+    const storeOptions = await buildStoreOptions(walletName, opts, locals)
     const storeFullPath = `${storeOptions.cwd}/${storeOptions.name}.${storeOptions.fileExtension}`
 
     if (fs.existsSync(storeFullPath)) {

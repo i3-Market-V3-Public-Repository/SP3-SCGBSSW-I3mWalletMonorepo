@@ -1,26 +1,49 @@
-import ElectronStore, { Options as ElectronStoreOptions } from 'electron-store'
 import { generateSecret, exportJWK } from 'jose'
 import _ from 'lodash'
 
 import { PrivateSettings, PublicSettings, createDefaultPrivateSettings, Provider } from '@wallet/lib'
-import { Locals, logger } from '@wallet/main/internal'
+import { softwareVersion, Locals, StoreOptions, handleCanBePromise } from '@wallet/main/internal'
+import { Store } from '@i3m/base-wallet'
 
-export type PublicSettingsStore = ElectronStore<PublicSettings>
-export type PublicSettingsOptions = ElectronStoreOptions<PublicSettings>
+export type PublicSettingsStore = Store<PublicSettings>
+export type PublicSettingsOptions = Partial<StoreOptions<PublicSettings>>
+
+// ** PUBLIC SETTINGS **
+
+async function cleanPublicSettings (locals: Locals): Promise<void> {
+  const publicSettingsValues = await locals.publicSettings.getStore()
+
+  // Clean public settings
+  await locals.publicSettings.clear()
+  await locals.publicSettings.set({
+    version: publicSettingsValues.version,
+    auth: publicSettingsValues.auth ?? {},
+    enc: publicSettingsValues.enc ?? {},
+    store: publicSettingsValues.store ?? { type: 'electron-store' }
+  })
+}
 
 export const initPublicSettings = async (options: PublicSettingsOptions, locals: Locals): Promise<PublicSettingsStore> => {
   const fixedOptions = _.merge<PublicSettingsOptions, PublicSettingsOptions>({
-    defaults: { version: '' }
+    defaults: { version: softwareVersion(locals) }
   }, options)
 
   // TODO: Check if the settings format is corret. If not fix corrupted data
-  const settings = new ElectronStore<PublicSettings>(fixedOptions)
-  logger.debug(`Load public settings from '${settings.path}'`)
 
-  settings.set('version', locals.packageJson.version)
+  // NOTE: Public settings must always be not encrypted and using the electorn store.
+  // This guarantees compatibilities with future versions!
+  const { storeManager } = locals
+  const settings = await storeManager.buildStore(fixedOptions, 'electron-store')
+
+  const storeInfo = await settings.get('store')
+  if (storeInfo?.type === undefined) {
+    await settings.set('store', { type: 'electron-store' })
+  }
 
   return settings
 }
+
+// ** PRIVATE SETTINGS **
 
 function validProviders (providers: Provider[]): boolean {
   if (providers === undefined || providers.length === 0) {
@@ -38,14 +61,14 @@ function validProviders (providers: Provider[]): boolean {
   return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
 }
 
-export type PrivateSettingsStore = ElectronStore<PrivateSettings>
-export type PrivateSettingsOptions = ElectronStoreOptions<PrivateSettings>
+export type PrivateSettingsStore = Store<PrivateSettings>
+export type PrivateSettingsOptions = Partial<StoreOptions<PrivateSettings>>
 
 export const initPrivateSettings = async (options: PrivateSettingsOptions, locals: Locals): Promise<PrivateSettingsStore> => {
-  const { sharedMemoryManager, auth } = locals
+  const { sharedMemoryManager, keysManager: auth, storeManager } = locals
 
   const sek = await auth.computeSettingsKey()
-  const publicSettingsValues = locals.publicSettings.store
+  const publicSettingsValues = await locals.publicSettings.getStore()
   const fixedOptions = _.merge<PrivateSettingsOptions, PrivateSettingsOptions>({
     defaults: Object.assign({}, createDefaultPrivateSettings(), publicSettingsValues),
     encryptionKey: sek,
@@ -53,47 +76,42 @@ export const initPrivateSettings = async (options: PrivateSettingsOptions, local
   }, options)
 
   // TODO: Check if the settings format is corret. If not fix corrupted data
-  const settings = new ElectronStore<PrivateSettings>(fixedOptions)
-  logger.debug(`Load encrypted settings from '${settings.path}'`)
+  const settings = await storeManager.buildStore(fixedOptions)
 
-  // Clean public settings
-  locals.publicSettings.clear()
-  locals.publicSettings.set({
-    version: publicSettingsValues.version,
-    auth: publicSettingsValues.auth
-  })
-
-  const providers = settings.get('providers')
+  await cleanPublicSettings(locals)
+  const providers = await settings.get('providers')
 
   // Setup default providers
   if (!validProviders(providers)) {
-    settings.set('providers', [
+    await settings.set('providers', [
       { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' },
       { name: 'Rinkeby', provider: 'did:ethr:rinkeby', network: 'rinkeby', rpcUrl: 'https://rpc.ankr.com/eth_rinkeby' }
     ])
   }
 
-  const wallet = settings.get('wallet')
+  const wallet = await settings.get('wallet')
   wallet.packages = [
     '@i3m/sw-wallet',
     '@i3m/bok-wallet'
   ]
-  settings.set('wallet', wallet)
+  await settings.set('wallet', wallet)
 
-  const secret = settings.get('secret')
+  const secret = await settings.get('secret')
   if (secret === undefined) {
     const key = await generateSecret('HS256', { extractable: true })
     const jwk = await exportJWK(key)
-    settings.set('secret', jwk)
+    await settings.set('secret', jwk)
   }
 
   // Syncronize shared memory and settings
+  const store = await settings.getStore()
   sharedMemoryManager.update((mem) => ({
     ...mem,
-    settings: settings.store
+    settings: store
   }))
   sharedMemoryManager.on('change', (mem) => {
-    settings.set(mem.settings)
+    const promise = settings.set(mem.settings)
+    handleCanBePromise(locals, promise)
   })
 
   return settings

@@ -1,0 +1,67 @@
+import crypto, { KeyObject } from 'crypto'
+
+import { AuthenticationError, deriveKey, isKeyObject, Locals, PbkdfSettings } from '@wallet/main/internal'
+import { BaseAuthSettings } from '@wallet/lib'
+import { AuthenticationKeys, KeyContext } from '../key-generators'
+
+export interface Pbkdf2AuthSettings extends BaseAuthSettings {
+  algorithm?: 'pbkdf.2'
+  salt?: string
+  localAuth?: string
+  // TODO: modify for hashed password
+}
+
+const authPbkdfSettings: PbkdfSettings = {
+  iterations: 100000,
+  keyLength: 32,
+  usage: 'local'
+}
+
+export class Pbkdf2AuthKeys implements AuthenticationKeys {
+  readonly type = 'pbkdf.2'
+  protected salt: Buffer
+  protected _localAuth?: KeyObject
+
+  // pek stands for pree encryption key
+  protected pek?: Buffer
+
+  constructor (auth: Pbkdf2AuthSettings) {
+    if (auth.salt !== undefined) {
+      this.salt = Buffer.from(auth.salt, 'base64')
+    } else {
+      this.salt = crypto.randomBytes(16)
+    }
+
+    if (auth.localAuth !== undefined) {
+      this._localAuth = crypto.createSecretKey(Buffer.from(auth.localAuth, 'base64'))
+    }
+  }
+
+  get localAuth (): KeyObject {
+    if (!isKeyObject(this._localAuth)) {
+      throw new AuthenticationError('The user is not registered. Why are you trying to authenticate?')
+    }
+    return this._localAuth
+  }
+
+  async generateAuthKey (keyCtx: KeyContext): Promise<KeyObject> {
+    return await deriveKey(keyCtx.password, this.salt, authPbkdfSettings)
+  }
+
+  async register (keyCtx: KeyContext): Promise<void> {
+    this._localAuth = await this.generateAuthKey(keyCtx)
+  }
+
+  async authenticate (keyCtx: KeyContext): Promise<boolean> {
+    const localAuth = (await this.generateAuthKey(keyCtx))
+    return this.localAuth.export().equals(new Uint8Array(localAuth.export()))
+  }
+
+  async storeSettings (locals: Locals): Promise<void> {
+    await locals.publicSettings.set('auth', {
+      algorithm: 'pbkdf.2',
+      salt: this.salt.toString('base64'),
+      localAuth: this.localAuth.export().toString('base64')
+    })
+  }
+}

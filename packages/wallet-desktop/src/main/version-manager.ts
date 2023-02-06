@@ -1,36 +1,75 @@
 import { get, RequestOptions } from 'https'
 
-import { Locals } from './internal'
+import {
+  InvalidSettingsError,
+  Locals,
+  logger,
+  NoConnectionError,
+  softwareVersion,
+  wait
+} from './internal'
 
 export class VersionManager {
-  latestVersion: string
-  currentVersion: string
-  initialized: Promise<void>
+  softwareVersion: string
+  settingsVersion: string
 
   constructor (protected locals: Locals) {
-    this.currentVersion = `v${locals.packageJson.version}`
-    this.latestVersion = ''
-    this.initialized = new Promise((resolve, reject) => {
-      this.initialize().then(() => {
-        resolve()
-      }).catch((reason) => {
-        reject(reason)
-      })
-    })
+    this.softwareVersion = softwareVersion(locals)
+    this.settingsVersion = ''
   }
 
   async initialize (): Promise<void> {
+    this.settingsVersion = `${await this.locals.publicSettings.get('version')}`
+  }
+
+  async verifySettingsVersion (): Promise<void> {
+    const { settingsVersion, softwareVersion } = this
+    if (this.compareVersions(settingsVersion, softwareVersion) > 0) {
+      throw new InvalidSettingsError(`Your settings version (${settingsVersion}) is newer than the version of the wallet that you are running now (${softwareVersion}).\n Please, install a newer version of the wallet going to 'Help → Latest Release'.`)
+    }
+  }
+
+  async verifyLatestVersion (): Promise<void> {
     const lastestVersionInfoUrl = 'https://api.github.com/repos/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/releases/latest'
-    try {
-      this.latestVersion = (await this.getRemoteJson(lastestVersionInfoUrl)).tag_name 
-    } catch (error) {
-      this.latestVersion = this.currentVersion
-      throw new Error('Could not retrieve latest published i3M-Wallet app version. Please check your internet connection')
+    let firstTry = true
+    let onlineVersion: string = ''
+    while (onlineVersion === '') {
+      try {
+        onlineVersion = (await this.getRemoteJson(lastestVersionInfoUrl)).tag_name
+        break
+      } catch (err) {
+        if (firstTry) {
+          const noConnection = new NoConnectionError('No internet connection')
+          noConnection.showToast(this.locals)
+          firstTry = false
+        }
+        // Sleep some time after retry
+        await wait(10000)
+      }
+    }
+
+    if (!firstTry) {
+      this.locals.toast.show({
+        message: 'Connection established',
+        details: 'The connection issue is solved! We can now check if you have the latest version.',
+        type: 'success',
+        timeout: 3000
+      })
+    }
+
+    const { softwareVersion: currentVersion } = this
+    if (this.compareVersions(onlineVersion, currentVersion) > 0) {
+      this.locals.toast.show({
+        message: 'Update pending...',
+        details: `Your current version (${currentVersion}) is outdated. \n Please, download the latest release (${onlineVersion}) going to 'Help → Latest Release'.`,
+
+        type: 'warning',
+        timeout: 0 // never close this alert!
+      })
     }
   }
 
   async getRemoteJson (url: string): Promise<any> {
-    await this.initialized
     return await new Promise((resolve, reject) => {
       const urlObject = new URL(url)
       const opts: RequestOptions = {
@@ -85,12 +124,32 @@ export class VersionManager {
       .map(n => parseInt(n))
   }
 
-  async needsUpdate (): Promise<boolean> {
-    await this.initialized
-    const currentVersion = this.parseVersion(this.currentVersion)
-    const latestVersion = this.parseVersion(this.latestVersion)
+  compareVersions (a: string, b: string): number {
+    if (a === b) {
+      return 0
+    }
 
-    if (currentVersion.length !== latestVersion.length) {
+    const aVersion = this.parseVersion(a)
+    const bVersion = this.parseVersion(b)
+
+    if (aVersion.length !== bVersion.length) {
+      throw new Error('Inconsistent versions')
+    }
+
+    for (let i = 0; i < aVersion.length; i++) {
+      if (aVersion[i] < bVersion[i]) {
+        return -1
+      }
+    }
+
+    return 1
+  }
+
+  needsUpdate (onlineVersion: string): boolean {
+    const currentVersion = this.parseVersion(this.softwareVersion)
+    const latestVersion = this.parseVersion(onlineVersion)
+
+    if (currentVersion.length !== onlineVersion.length) {
       throw new Error('Inconsistent versions')
     }
 
@@ -101,5 +160,12 @@ export class VersionManager {
     }
 
     return false
+  }
+
+  async finishMigration (): Promise<void> {
+    await this.locals.publicSettings.set('version', this.softwareVersion)
+    this.settingsVersion = this.softwareVersion
+
+    logger.debug('Migration finished')
   }
 }
