@@ -252,7 +252,7 @@
                     },
                     {
                       "required": [
-                        "storage",
+                        "ciphertext",
                         "timestamp"
                       ]
                     }
@@ -363,8 +363,8 @@
         "title": "Cloud-Vault-Server Well-Known Configuration",
         "required": [
           "name",
-          "registration-configuration",
-          "vault-configuration"
+          "registration_configuration",
+          "vault_configuration"
         ],
         "properties": {
           "name": {
@@ -373,10 +373,10 @@
           "description": {
             "type": "string"
           },
-          "registration-configuration": {
+          "registration_configuration": {
             "$ref": "#/components/schemas/RegistrationConfiguration"
           },
-          "vault-configuration": {
+          "vault_configuration": {
             "type": "object",
             "required": [
               "v2"
@@ -396,11 +396,11 @@
         "type": "object",
         "title": "Registration Endpoints",
         "required": [
-          "public-jwk_endpoint",
+          "public_jwk_endpoint",
           "registration_endpoint"
         ],
         "properties": {
-          "public-jwk_endpoint": {
+          "public_jwk_endpoint": {
             "type": "string",
             "example": "/api/v2/registration/public-jwk"
           },
@@ -422,7 +422,8 @@
           "timestamp_endpoint",
           "token_endpoint",
           "token_endpoint_auth_methods_supported",
-          "key-derivation"
+          "enc_algorithm",
+          "key_derivation"
         ],
         "properties": {
           "id": {
@@ -469,7 +470,7 @@
               "client_secret_post"
             ]
           },
-          "key-derivation": {
+          "key_derivation": {
             "type": "object",
             "required": [
               "master",
@@ -481,7 +482,27 @@
                 "$ref": "#/components/schemas/KeyDerivationOptions"
               },
               "enc": {
-                "$ref": "#/components/schemas/KeyDerivationOptions"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/KeyDerivationOptions"
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "enc_algorithm"
+                    ],
+                    "properties": {
+                      "enc_algorithm": {
+                        "type": "string",
+                        "enum": [
+                          "aes-192-gcm",
+                          "aes-256-gcm"
+                        ],
+                        "example": "aes-256-gcm"
+                      }
+                    }
+                  }
+                ]
               },
               "auth": {
                 "$ref": "#/components/schemas/KeyDerivationOptions"
@@ -517,11 +538,11 @@
         "type": "object",
         "required": [
           "alg",
-          "derivedKeyLength",
+          "derived_key_length",
           "input",
-          "saltPattern",
-          "saltHashingAlgorithm",
-          "algOptions"
+          "salt_pattern",
+          "salt_hashing_algorithm",
+          "alg_options"
         ],
         "properties": {
           "alg": {
@@ -531,7 +552,7 @@
             ],
             "default": "scrypt"
           },
-          "derivedKeyLength": {
+          "derived_key_length": {
             "type": "integer",
             "description": "Desired key length in bytes"
           },
@@ -543,12 +564,12 @@
             ],
             "example": "password"
           },
-          "saltPattern": {
+          "salt_pattern": {
             "description": "Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.\n\nThe salt is a concatenation of key_name, server_id and username.\n\nThe length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm)\n",
             "type": "string",
             "example": "master9u8tHv8_s-QsG8CxuAefhg{username}"
           },
-          "saltHashingAlgorithm": {
+          "salt_hashing_algorithm": {
             "description": "Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.\n",
             "type": "string",
             "enum": [
@@ -558,7 +579,7 @@
             ],
             "example": "sha3-512"
           },
-          "algOptions": {
+          "alg_options": {
             "oneOf": [
               {
                 "$ref": "#/components/schemas/ScryptOptions"
@@ -725,13 +746,13 @@
         "title": "Encrypted Storage",
         "description": "EncryptedStorage is the JSON obejct representing the storage of registered users in the cloud vault\n",
         "required": [
-          "jwe"
+          "ciphertext"
         ],
         "properties": {
-          "jwe": {
+          "ciphertext": {
             "type": "string",
-            "pattern": "^[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]*){4}$",
-            "description": "A JWE containing the encrypted storage\n"
+            "pattern": "^[a-zA-Z0-9_-]+$",
+            "description": "The encrypted storage in base64url encoding\n"
           },
           "timestamp": {
             "type": "number",

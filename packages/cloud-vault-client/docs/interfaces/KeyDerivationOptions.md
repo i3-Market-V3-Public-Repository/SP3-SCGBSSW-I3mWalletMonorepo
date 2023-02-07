@@ -11,12 +11,12 @@
 ### Properties
 
 - [alg](KeyDerivationOptions.md#alg)
-- [algOptions](KeyDerivationOptions.md#algoptions)
-- [derivedKeyLength](KeyDerivationOptions.md#derivedkeylength)
+- [alg\_options](KeyDerivationOptions.md#alg_options)
+- [derived\_key\_length](KeyDerivationOptions.md#derived_key_length)
 - [input](KeyDerivationOptions.md#input)
 - [salt](KeyDerivationOptions.md#salt)
-- [saltHashingAlgorithm](KeyDerivationOptions.md#salthashingalgorithm)
-- [saltPattern](KeyDerivationOptions.md#saltpattern)
+- [salt\_hashing\_algorithm](KeyDerivationOptions.md#salt_hashing_algorithm)
+- [salt\_pattern](KeyDerivationOptions.md#salt_pattern)
 
 ## Properties
 
@@ -30,37 +30,37 @@ OpenApiComponents.Schemas.KeyDerivationOptions.alg
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L120)
+[cloud-vault-server/types/openapi.d.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L120)
 
 ___
 
-### algOptions
+### alg\_options
 
-• **algOptions**: `ScryptOptions`
+• **alg\_options**: `ScryptOptions`
 
 #### Inherited from
 
-OpenApiComponents.Schemas.KeyDerivationOptions.algOptions
+OpenApiComponents.Schemas.KeyDerivationOptions.alg\_options
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L148)
+[cloud-vault-server/types/openapi.d.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L148)
 
 ___
 
-### derivedKeyLength
+### derived\_key\_length
 
-• **derivedKeyLength**: `number`
+• **derived\_key\_length**: `number`
 
 Desired key length in bytes
 
 #### Inherited from
 
-OpenApiComponents.Schemas.KeyDerivationOptions.derivedKeyLength
+OpenApiComponents.Schemas.KeyDerivationOptions.derived\_key\_length
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L124)
+[cloud-vault-server/types/openapi.d.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L124)
 
 ___
 
@@ -77,7 +77,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.input
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L129)
+[cloud-vault-server/types/openapi.d.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L129)
 
 ___
 
@@ -87,13 +87,13 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L12)
+[cloud-vault-client/src/ts/key-manager.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L13)
 
 ___
 
-### saltHashingAlgorithm
+### salt\_hashing\_algorithm
 
-• **saltHashingAlgorithm**: ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"``
+• **salt\_hashing\_algorithm**: ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"``
 
 Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.
 
@@ -102,17 +102,17 @@ sha3-512
 
 #### Inherited from
 
-OpenApiComponents.Schemas.KeyDerivationOptions.saltHashingAlgorithm
+OpenApiComponents.Schemas.KeyDerivationOptions.salt\_hashing\_algorithm
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:147](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L147)
+[cloud-vault-server/types/openapi.d.ts:147](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L147)
 
 ___
 
-### saltPattern
+### salt\_pattern
 
-• **saltPattern**: `string`
+• **salt\_pattern**: `string`
 
 Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.
 
@@ -125,8 +125,8 @@ master9u8tHv8_s-QsG8CxuAefhg{username}
 
 #### Inherited from
 
-OpenApiComponents.Schemas.KeyDerivationOptions.saltPattern
+OpenApiComponents.Schemas.KeyDerivationOptions.salt\_pattern
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-server/types/openapi.d.ts#L140)
+[cloud-vault-server/types/openapi.d.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-server/types/openapi.d.ts#L140)

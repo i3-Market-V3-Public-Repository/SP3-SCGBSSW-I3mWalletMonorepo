@@ -1,8 +1,18 @@
 /// <reference types="node" />
-import type { OpenApiPaths, OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
+/// <reference types="node" />
+import type { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { EventEmitter } from 'events';
-export declare class VaultClient extends EventEmitter {
+export interface VaultStorage {
+    storage: Buffer;
     timestamp?: number;
+}
+export interface VaultEvent {
+    name: string;
+    description: string;
+}
+export declare class VaultClient extends EventEmitter {
+    localTimestamp?: number;
+    remoteTimestamp?: number;
     private token?;
     name: string;
     serverUrl: string;
@@ -10,6 +20,15 @@ export declare class VaultClient extends EventEmitter {
     private password?;
     private keyManager?;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
+    defaultEvents: {
+        connected: string;
+        close: string;
+        'login-required': string;
+        'storage-updated': string;
+        'storage-deleted': string;
+        conflict: string;
+        error: string;
+    };
     initialized: Promise<boolean>;
     private es?;
     constructor(serverUrl: string, username: string, password: string, name?: string);
@@ -22,7 +41,8 @@ export declare class VaultClient extends EventEmitter {
     login(): Promise<boolean>;
     logout(): void;
     getRemoteStorageTimestamp(): Promise<number | null>;
-    updateStorage(storage: OpenApiPaths.ApiV2Vault.Post.RequestBody, force?: boolean): Promise<boolean>;
+    getStorage(): Promise<VaultStorage | null>;
+    updateStorage(storage: VaultStorage, force?: boolean): Promise<boolean>;
     deleteStorage(): Promise<boolean>;
     getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey | null>;
 }

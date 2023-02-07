@@ -1,8 +1,9 @@
 import { Request, Response, Router } from 'express'
 import { HttpError } from 'express-openapi-validator/dist/framework/types'
 import { sign as jwtSign } from 'jsonwebtoken'
+import { DatabaseError } from 'pg'
 import { OpenApiPaths } from '../../../types/openapi'
-import { general, jwt } from '../../config'
+import { general, jwt, dbConfig } from '../../config'
 import { dbFunctions as db } from '../../db'
 import { passport, User } from '../../middlewares/passport'
 import { vaultEvents } from '../../vault'
@@ -70,10 +71,7 @@ export default function (router: Router): void {
           })
           throw error
         }
-        res.status(200).json({
-          jwe: storage.storage,
-          timestamp: storage.timestamp
-        })
+        res.status(200).json(storage)
       } catch (error) {
         return next(error)
       }
@@ -101,9 +99,9 @@ export default function (router: Router): void {
       try {
         const { username } = req.user as User
         if (general.nodeEnv === 'development') {
-          console.log(username, req.body)
+          console.log('VAULT POST', username, req.body)
         }
-        const newTimestamp: number = await db.setStorage(username, req.body.jwe, req.body.timestamp)
+        const newTimestamp: number = await db.setStorage(username, req.body.ciphertext, req.body.timestamp)
         vaultEvents.sendEvent(username, {
           event: 'storage-updated',
           data: {
@@ -114,6 +112,24 @@ export default function (router: Router): void {
           timestamp: newTimestamp
         })
       } catch (error) {
+        if (error instanceof DatabaseError) {
+          switch (error.code) {
+            case '22001':
+              throw new HttpError({
+                name: 'error',
+                path: req.path,
+                status: 400,
+                message: `encrypted storage in base64url cannot be more than ${dbConfig.storageLimit} long`
+              })
+            default:
+              throw new HttpError({
+                name: 'error',
+                path: req.path,
+                status: 400,
+                message: 'couldn\'t update storage'
+              })
+          }
+        }
         return next(error)
       }
     }

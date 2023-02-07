@@ -2,14 +2,14 @@
 import express, { Express } from 'express'
 import http from 'http'
 import morgan from 'morgan'
-import { general, server as serverConfig } from './config'
+import { general, server as serverConfig, dbConfig } from './config'
 import apiRoutesPromise from './routes/api'
 import oasRoutesPromise from './routes/oas'
 import wellKnownCvsConfigurationRoutePromise from './routes/well-known-cvs-configuration'
 
 async function startApp (): Promise<Express> {
   const app = express()
-  app.use(express.json())
+  app.use(express.json({ limit: dbConfig.storageLimit + 1024 }))
   app.use(morgan(general.nodeEnv === 'development' ? 'dev' : 'tiny'))
 
   // Load CORS for the routes

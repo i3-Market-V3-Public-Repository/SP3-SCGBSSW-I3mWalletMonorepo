@@ -1,5 +1,6 @@
-import { db } from './Db'
 import { hash, verify } from 'scrypt-mcf'
+import { OpenApiComponents } from '../../types/openapi'
+import { db } from './Db'
 
 /**
  * Registers a user in the database
@@ -27,27 +28,27 @@ export async function verifyCredentials (username: string, password: string): Pr
   return verified
 }
 
-interface Storage {
-  timestamp: number
-  storage: string
-}
 /**
  * Gets the user storage for a specific username
  * @param username
  * @returns A string in Base64 encoding of the storage
  */
-export async function getStorage (username: string): Promise<Storage | null> {
-  const query = 'SELECT last_uploaded, storage FROM vault WHERE username=$1'
-  const { rows } = await db.query(query, [username])
-  if (rows.length !== 1) throw new Error('DB: failed getting storage')
-  if (rows[0].last_uploaded === null) {
+export async function getStorage (username: string): Promise<Required<OpenApiComponents.Schemas.EncryptedStorage> | null> {
+  try {
+    const query = 'SELECT last_uploaded, storage FROM vault WHERE username=$1'
+    const { rows } = await db.query(query, [username])
+    if (rows.length !== 1) throw new Error('DB: failed getting storage')
+    if (rows[0].last_uploaded === null) {
+      return null
+    }
+    const storage = {
+      timestamp: (rows[0].last_uploaded as Date).valueOf(),
+      ciphertext: rows[0].storage
+    }
+    return storage
+  } catch (error) {
     return null
   }
-  const storage: Storage = {
-    timestamp: (rows[0].last_uploaded as Date).valueOf(),
-    storage: rows[0].storage
-  }
-  return storage
 }
 
 /**
@@ -79,7 +80,6 @@ export async function setStorage (username: string, storage: string, timestamp?:
     values = [storage, username]
   }
   const res = await db.query(query, values)
-  if (res.rowCount !== 1) throw new Error('failed updating storage')
   return (res.rows[0].last_uploaded as Date).valueOf()
 }
 

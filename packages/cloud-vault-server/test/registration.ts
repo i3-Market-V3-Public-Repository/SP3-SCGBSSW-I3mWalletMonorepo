@@ -34,7 +34,7 @@ describe('Wallet Cloud-Vault: Registration', function () {
   describe(`Testing /api/${apiVersion}/registration/public-jwk`, function () {
     it('it should receive a valid public key', async function () {
       const res = await request(serverConfig.url)
-        .get(wellKnownCvsConfiguration['registration-configuration']['public-jwk_endpoint'])
+        .get(wellKnownCvsConfiguration.registration_configuration.public_jwk_endpoint)
       console.log(res.body)
       expect(res).to.have.status(200)
       try {
@@ -56,7 +56,7 @@ describe('Wallet Cloud-Vault: Registration', function () {
         'A256GCM'
       )
       const res = await request(serverConfig.url)
-        .get(wellKnownCvsConfiguration['registration-configuration'].registration_endpoint.replace('{data}', data))
+        .get(wellKnownCvsConfiguration.registration_configuration.registration_endpoint.replace('{data}', data))
       console.log(res.body)
       expect(res).to.have.status(201)
       expect(res.body.status).to.equal('created')

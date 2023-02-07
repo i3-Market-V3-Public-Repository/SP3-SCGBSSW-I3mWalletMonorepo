@@ -47,8 +47,8 @@ export namespace OpenApiComponents {
         export interface CvsConfiguration {
             name: string;
             description?: string;
-            "registration-configuration": /* Registration Endpoints */ RegistrationConfiguration;
-            "vault-configuration": {
+            registration_configuration: /* Registration Endpoints */ RegistrationConfiguration;
+            vault_configuration: {
                 [name: string]: /* Vault Well-Known Configuration */ VaultConfiguration;
                 v2: /* Vault Well-Known Configuration */ VaultConfiguration;
             };
@@ -60,10 +60,10 @@ export namespace OpenApiComponents {
          */
         export interface EncryptedStorage {
             /**
-             * A JWE containing the encrypted storage
+             * The encrypted storage in base64url encoding
              *
              */
-            jwe: string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+            ciphertext: string // ^[a-zA-Z0-9_-]+$
             /**
              * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
              * example:
@@ -121,7 +121,7 @@ export namespace OpenApiComponents {
             /**
              * Desired key length in bytes
              */
-            derivedKeyLength: number;
+            derived_key_length: number;
             /**
              * example:
              * password
@@ -137,15 +137,15 @@ export namespace OpenApiComponents {
              * example:
              * master9u8tHv8_s-QsG8CxuAefhg{username}
              */
-            saltPattern: string;
+            salt_pattern: string;
             /**
              * Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.
              *
              * example:
              * sha3-512
              */
-            saltHashingAlgorithm: "sha3-256" | "sha3-384" | "sha3-512";
-            algOptions: ScryptOptions;
+            salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512";
+            alg_options: ScryptOptions;
         }
         /**
          * Registration Endpoints
@@ -155,7 +155,7 @@ export namespace OpenApiComponents {
              * example:
              * /api/v2/registration/public-jwk
              */
-            "public-jwk_endpoint": string;
+            public_jwk_endpoint: string;
             /**
              * Endpoint for registering a new client. The endpoint requires authentication with valid i3-MARKET credentials.
              *
@@ -287,9 +287,44 @@ export namespace OpenApiComponents {
              * ]
              */
             token_endpoint_auth_methods_supported: ("client_secret_post" | "client_secret_basic" | "client_secret_jwt" | "private_key_jwt")[];
-            "key-derivation": {
+            key_derivation: {
                 master: KeyDerivationOptions;
-                enc: KeyDerivationOptions;
+                enc: {
+                    alg: "scrypt";
+                    /**
+                     * Desired key length in bytes
+                     */
+                    derived_key_length: number;
+                    /**
+                     * example:
+                     * password
+                     */
+                    input: "password" | "master-key";
+                    /**
+                     * Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.
+                     *
+                     * The salt is a concatenation of key_name, server_id and username.
+                     *
+                     * The length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm)
+                     *
+                     * example:
+                     * master9u8tHv8_s-QsG8CxuAefhg{username}
+                     */
+                    salt_pattern: string;
+                    /**
+                     * Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.
+                     *
+                     * example:
+                     * sha3-512
+                     */
+                    salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512";
+                    alg_options: ScryptOptions;
+                    /**
+                     * example:
+                     * aes-256-gcm
+                     */
+                    enc_algorithm: "aes-192-gcm" | "aes-256-gcm";
+                };
                 auth: KeyDerivationOptions;
             };
         }
@@ -364,10 +399,10 @@ export namespace OpenApiPaths {
                  */
                 export interface $200 {
                     /**
-                     * A JWE containing the encrypted storage
+                     * The encrypted storage in base64url encoding
                      *
                      */
-                    jwe: string // ^[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]*){4}$
+                    ciphertext: string // ^[a-zA-Z0-9_-]+$
                     /**
                      * A timestamp expressed in milliseconds elapsed since the epoch. The timestamp refers to the exact time the latest storage was registered in the cloud vault.
                      * example:

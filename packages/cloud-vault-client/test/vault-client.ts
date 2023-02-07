@@ -6,6 +6,8 @@ import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/ty
 import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { config as loadEnvFile } from 'dotenv'
 import axios, { AxiosError } from 'axios'
+import { randomBytes } from 'crypto'
+import { expect } from 'chai'
 
 loadEnvFile()
 
@@ -18,8 +20,6 @@ const user = {
   username,
   password
 }
-
-const storageJwe = 'RraFbEXzRKeb6-LVOS1ejNKKR7CS34_eGvQC9luVpvBUxvb5Ul7SMnS3_g-BIrTrhiK0AlMdCIuCJoMQd2SISHY.As9nW9zmGHUgwKikL8m-IfoyTWHmlAAUYfBom14g_GGH940vyxXiXulpSs8uSJNeP8-DquuqozZnGFSgsj9tnxS.1W1FkvVm6ZD0ZguaQHmoQ96zDODBgLMbqCPhFqGLNwf7c.l-F5VoevEez3AiTJDu7oUWnwYgK6Gs9QvrKbxzJOsRKToW2Ha2slS1Dze5OYINaa6rq44Y1tS7m8WDg1s-v.blFNOdNWXFu-xlw-ms_KAFd1WWE6UgGos9ZkHIeSZT8Cu98nU_pk48IC9J5P5y24S0ohU6BaArxl-_dHngPNABE9zA21l'
 
 const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
@@ -90,13 +90,27 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   it('it should send and receive events when the storage is updated', async function () {
-    const msgLimit = 6
+    const storages = [
+      randomBytes(1024),
+      randomBytes(20480),
+      randomBytes(5242880) // 5 Mbytes
+    ]
+    const msgLimit = storages.length
 
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
-      client2.on('storage-updated', (timestamp: number) => {
+      client2.on('storage-updated', async (timestamp: number) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+        console.log(`Client ${client2.name} received storage-updated event. Downloading`)
+        const storage = await client2.getStorage()
+        if (storage === null) {
+          reject(new Error('could not download storage'))
+          return
+        }
+        if (storages[receivedEvents].compare(storage.storage) !== 0) {
+          reject(new Error('remote storage does not equal the uploaded one'))
+          return
+        }
         receivedEvents++
-        console.log(`Client ${client2.name} received storage-updated event`)
         if (receivedEvents === msgLimit) {
           resolve()
         }
@@ -107,14 +121,19 @@ describe('Wallet Cloud-Vault', function () {
     for (let i = 0; i < msgLimit; i++) {
       await setTimeout(1000)
       updated = await client1.updateStorage({
-        jwe: storageJwe,
-        timestamp: client1.timestamp
+        storage: storages[i],
+        timestamp: client1.localTimestamp
       })
       console.log(`Client ${client1.name} storage updated: ${updated.toString()}`)
       chai.expect(updated).to.be.true
     }
 
-    await client2promise
+    try {
+      await client2promise
+      expect(true)
+    } catch (error) {
+      expect(false)
+    }
   })
   it('should delete all data from user if requested', async function () {
     const deleted = await client1.deleteStorage()

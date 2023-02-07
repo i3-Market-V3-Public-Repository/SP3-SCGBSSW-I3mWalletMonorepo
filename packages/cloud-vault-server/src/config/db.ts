@@ -6,5 +6,6 @@ export const dbConfig = {
   user: parseProccessEnvVar('DB_USER', 'string'),
   password: parseProccessEnvVar('DB_PASSWORD', 'string'),
   database: parseProccessEnvVar('DB_NAME', 'string'),
-  reset: parseProccessEnvVar('DB_RESET', 'boolean', { defaultValue: false })
+  reset: parseProccessEnvVar('DB_RESET', 'boolean', { defaultValue: false }),
+  storageLimit: Number(parseProccessEnvVar('DB_STORAGE_LIMIT', 'string', { defaultValue: '6990552' }))
 }

@@ -159,7 +159,7 @@ paths:
                 allOf:
                   - $ref: "./schema/vault.yaml#/components/schemas/EncryptedStorage"
                   - required:
-                    - storage
+                    - ciphertext
                     - timestamp
         default:
           description: error

@@ -17,16 +17,16 @@ components:
       title: Cloud-Vault-Server Well-Known Configuration
       required:
         - name
-        - registration-configuration
-        - vault-configuration
+        - registration_configuration
+        - vault_configuration
       properties:
         name:
           type: string
         description:
           type: string
-        registration-configuration:
+        registration_configuration:
           $ref: '#/components/schemas/RegistrationConfiguration'
-        vault-configuration:
+        vault_configuration:
           type: object
           required:
             - API_VERSION
@@ -40,10 +40,10 @@ components:
       type: object
       title: Registration Endpoints
       required:
-        - public-jwk_endpoint
+        - public_jwk_endpoint
         - registration_endpoint
       properties:
-        public-jwk_endpoint: 
+        public_jwk_endpoint: 
           type: string
           example: '/api/API_VERSION/registration/public-jwk'
         registration_endpoint: 
@@ -77,7 +77,8 @@ components:
         - timestamp_endpoint
         - token_endpoint
         - token_endpoint_auth_methods_supported
-        - key-derivation
+        - enc_algorithm
+        - key_derivation
       properties:
         id:
           type: string
@@ -112,7 +113,7 @@ components:
               - client_secret_jwt
               - private_key_jwt
           example: ['client_secret_post']
-        key-derivation:
+        key_derivation:
           type: object
           required:
             - master
@@ -122,7 +123,18 @@ components:
             master:
               $ref: '#/components/schemas/KeyDerivationOptions'
             enc:
-              $ref: '#/components/schemas/KeyDerivationOptions'
+              allOf:
+                - $ref: '#/components/schemas/KeyDerivationOptions'
+                - type: object
+                  required:
+                    - enc_algorithm
+                  properties:
+                    enc_algorithm:
+                      type: string
+                      enum:
+                        - aes-192-gcm
+                        - aes-256-gcm
+                      example: aes-256-gcm
             auth:
               $ref: '#/components/schemas/KeyDerivationOptions'
 
@@ -148,18 +160,18 @@ components:
       type: object
       required:
         - alg
-        - derivedKeyLength
+        - derived_key_length
         - input
-        - saltPattern
-        - saltHashingAlgorithm
-        - algOptions
+        - salt_pattern
+        - salt_hashing_algorithm
+        - alg_options
       properties:
         alg:
           type: string
           enum:
             - scrypt
           default: scrypt
-        derivedKeyLength:
+        derived_key_length:
           type: integer
           description: Desired key length in bytes
         input:
@@ -168,7 +180,7 @@ components:
             - password
             - master-key
           example: password
-        saltPattern:
+        salt_pattern:
           description: |
             Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces.
             
@@ -177,7 +189,7 @@ components:
             The length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm)
           type: string
           example: master9u8tHv8_s-QsG8CxuAefhg{username}
-        saltHashingAlgorithm:
+        salt_hashing_algorithm:
           description: |
             Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm.
           type: string
@@ -186,6 +198,6 @@ components:
             - sha3-384
             - sha3-512
           example: sha3-512
-        algOptions:
+        alg_options:
           oneOf:
             - $ref: '#/components/schemas/ScryptOptions'

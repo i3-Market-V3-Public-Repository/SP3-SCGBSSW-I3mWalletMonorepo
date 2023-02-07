@@ -12,10 +12,10 @@
 - [initialized](KeyManager.md#initialized)
 - [username](KeyManager.md#username)
 
-### Methods
+### Accessors
 
-- [getAuthKey](KeyManager.md#getauthkey)
-- [getEncKey](KeyManager.md#getenckey)
+- [authKey](KeyManager.md#authkey)
+- [encKey](KeyManager.md#enckey)
 
 ## Constructors
 
@@ -25,18 +25,25 @@
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `username` | `string` |
-| `password` | `string` |
-| `opts` | `Object` |
-| `opts.auth` | `KeyDerivationOptions` |
-| `opts.enc` | `KeyDerivationOptions` |
-| `opts.master` | `KeyDerivationOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `username` | `string` | - |
+| `password` | `string` | - |
+| `opts` | `Object` | - |
+| `opts.auth` | `KeyDerivationOptions` | - |
+| `opts.enc` | `Object` | - |
+| `opts.enc.alg` | ``"scrypt"`` | - |
+| `opts.enc.alg_options` | `ScryptOptions` | - |
+| `opts.enc.derived_key_length` | `number` | Desired key length in bytes |
+| `opts.enc.enc_algorithm` | ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` | example: aes-256-gcm |
+| `opts.enc.input` | ``"password"`` \| ``"master-key"`` | example: password |
+| `opts.enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` | Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm. example: sha3-512 |
+| `opts.enc.salt_pattern` | `string` | Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces. The salt is a concatenation of key_name, server_id and username. The length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm) example: master9u8tHv8_s-QsG8CxuAefhg{username} |
+| `opts.master` | `KeyDerivationOptions` | - |
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L22)
+[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
 
 ## Properties
 
@@ -49,12 +56,19 @@
 | Name | Type |
 | :------ | :------ |
 | `auth` | `KeyDerivationOptions` |
-| `enc` | `KeyDerivationOptions` |
+| `enc` | { `alg`: ``"scrypt"`` ; `alg_options`: `ScryptOptions` ; `derived_key_length`: `number` ; `enc_algorithm`: ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` ; `input`: ``"password"`` \| ``"master-key"`` ; `salt_hashing_algorithm`: ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` ; `salt_pattern`: `string`  } |
+| `enc.alg` | ``"scrypt"`` |
+| `enc.alg_options` | `ScryptOptions` |
+| `enc.derived_key_length` | `number` |
+| `enc.enc_algorithm` | ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` |
+| `enc.input` | ``"password"`` \| ``"master-key"`` |
+| `enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` |
+| `enc.salt_pattern` | `string` |
 | `master` | `KeyDerivationOptions` |
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
+[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
 
 ___
 
@@ -64,7 +78,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
+[cloud-vault-client/src/ts/key-manager.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L21)
 
 ___
 
@@ -74,32 +88,32 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:18](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L18)
+[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
 
-## Methods
+## Accessors
 
-### getAuthKey
+### authKey
 
-▸ **getAuthKey**(): `Promise`<`string`\>
+• `get` **authKey**(): `string`
 
 #### Returns
 
-`Promise`<`string`\>
+`string`
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L45)
+[cloud-vault-client/src/ts/key-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L49)
 
 ___
 
-### getEncKey
+### encKey
 
-▸ **getEncKey**(): `Promise`<`KeyObject`\>
+• `get` **encKey**(): `SecretKey`
 
 #### Returns
 
-`Promise`<`KeyObject`\>
+`SecretKey`
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/ec1c8b6/packages/cloud-vault-client/src/ts/key-manager.ts#L50)
+[cloud-vault-client/src/ts/key-manager.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L56)

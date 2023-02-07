@@ -6,11 +6,11 @@ const id = parseProccessEnvVar('SERVER_ID', 'string')
 
 export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfiguration = {
   name: '',
-  'registration-configuration': {
-    'public-jwk_endpoint': `/api/${apiVersion}/registration/public-jwk`,
+  registration_configuration: {
+    public_jwk_endpoint: `/api/${apiVersion}/registration/public-jwk`,
     registration_endpoint: `/api/${apiVersion}/registration/{data}`
   },
-  'vault-configuration': {
+  vault_configuration: {
     v2: {
       id,
       version: 'v2',
@@ -21,14 +21,14 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
       token_endpoint_auth_methods_supported: [
         'client_secret_post'
       ],
-      'key-derivation': {
+      key_derivation: {
         master: {
           alg: 'scrypt',
-          derivedKeyLength: 32,
+          derived_key_length: 32,
           input: 'password',
-          saltPattern: 'master' + id + '{username}',
-          saltHashingAlgorithm: 'sha3-512',
-          algOptions: {
+          salt_pattern: 'master' + id + '{username}',
+          salt_hashing_algorithm: 'sha3-512',
+          alg_options: {
             N: 2 ** 22,
             p: 1,
             r: 8
@@ -36,11 +36,11 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
         },
         auth: {
           alg: 'scrypt',
-          derivedKeyLength: 32,
+          derived_key_length: 32,
           input: 'master-key',
-          saltPattern: 'auth' + id + '{username}',
-          saltHashingAlgorithm: 'sha3-512',
-          algOptions: {
+          salt_pattern: 'auth' + id + '{username}',
+          salt_hashing_algorithm: 'sha3-512',
+          alg_options: {
             N: 2 ** 16,
             p: 1,
             r: 8
@@ -48,15 +48,16 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
         },
         enc: {
           alg: 'scrypt',
-          derivedKeyLength: 32,
+          derived_key_length: 32,
           input: 'master-key',
-          saltPattern: 'enc' + id + '{username}',
-          saltHashingAlgorithm: 'sha3-512',
-          algOptions: {
+          salt_pattern: 'enc' + id + '{username}',
+          salt_hashing_algorithm: 'sha3-512',
+          alg_options: {
             N: 2 ** 16,
             p: 1,
             r: 8
-          }
+          },
+          enc_algorithm: 'aes-256-gcm'
         }
       }
     }

@@ -1,3 +1,4 @@
+import { OpenApiComponents } from '../../types/openapi';
 /**
  * Registers a user in the database
  * @param did
@@ -12,16 +13,12 @@ export declare function registerUser(did: string, username: string, password: st
  * @returns
  */
 export declare function verifyCredentials(username: string, password: string): Promise<boolean>;
-interface Storage {
-    timestamp: number;
-    storage: string;
-}
 /**
  * Gets the user storage for a specific username
  * @param username
  * @returns A string in Base64 encoding of the storage
  */
-export declare function getStorage(username: string): Promise<Storage | null>;
+export declare function getStorage(username: string): Promise<Required<OpenApiComponents.Schemas.EncryptedStorage> | null>;
 /**
  * Gets when the storage was last uploaded
  * @param username
@@ -41,4 +38,3 @@ export declare function setStorage(username: string, storage: string, timestamp?
  * @param username
  */
 export declare function deleteStorage(username: string): Promise<void>;
-export {};
