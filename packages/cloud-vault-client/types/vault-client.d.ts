@@ -11,8 +11,7 @@ export interface VaultEvent {
     description: string;
 }
 export declare class VaultClient extends EventEmitter {
-    localTimestamp?: number;
-    remoteTimestamp?: number;
+    timestamp?: number;
     private token?;
     name: string;
     serverUrl: string;

@@ -19,8 +19,7 @@ export interface VaultEvent {
 }
 
 export class VaultClient extends EventEmitter {
-  localTimestamp?: number
-  remoteTimestamp?: number
+  timestamp?: number
   private token?: string
   name: string
   serverUrl: string
@@ -48,7 +47,7 @@ export class VaultClient extends EventEmitter {
       'login-required': 'login-required', // The client is not logged in. Try to run client.login()
       'storage-updated': 'storage-updated', // storage in the cloud server is more updated than the local copy
       'storage-deleted': 'storage-deleted', // storage in the cloud server has been deleted
-      conflict: 'conlict', // you are trying to update modifications over a storage that was outdated
+      conflict: 'conflict', // you are trying to update modifications over a storage that was outdated
       error: 'error' // An unexpected error event. Likely related with connection issues
     }
 
@@ -112,18 +111,21 @@ export class VaultClient extends EventEmitter {
     }
     this.es.addEventListener('connected', (e) => {
       const msg = JSON.parse(e.data) as ConnectedEvent['data']
+      this.timestamp = msg.timestamp
       this.emit(this.defaultEvents.connected, msg.timestamp)
     })
 
     this.es.addEventListener('storage-updated', (e) => {
       const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
-      if (msg.timestamp !== this.remoteTimestamp) {
-        this.remoteTimestamp = msg.timestamp
-        this.emit(this.defaultEvents['storage-updated'], this.remoteTimestamp)
+      if (msg.timestamp !== this.timestamp) {
+        this.timestamp = msg.timestamp
+        this.emit(this.defaultEvents['storage-updated'], this.timestamp)
       }
     })
 
     this.es.addEventListener('storage-deleted', (e) => {
+      delete this.timestamp
+      this.close()
       this.emit(this.defaultEvents['storage-deleted'])
     })
 
@@ -211,8 +213,8 @@ export class VaultClient extends EventEmitter {
         this.emitError(res)
         return null
       }
-      if ((this.remoteTimestamp ?? 0) < res.data.timestamp) {
-        this.remoteTimestamp = res.data.timestamp
+      if ((this.timestamp ?? 0) < res.data.timestamp) {
+        this.timestamp = res.data.timestamp
       }
       return res.data.timestamp
     } catch (error) {
@@ -243,13 +245,12 @@ export class VaultClient extends EventEmitter {
         return null
       }
 
-      if (res.data.timestamp < (this.remoteTimestamp ?? 0)) {
+      if (res.data.timestamp < (this.timestamp ?? 0)) {
         this.emitError(new Error('Received timestamp is older than the latest one published'))
         return null
       }
       const storage = key.decrypt(Buffer.from(res.data.ciphertext, 'base64url'))
-      this.remoteTimestamp = res.data.timestamp
-      this.localTimestamp = res.data.timestamp
+      this.timestamp = res.data.timestamp
 
       return {
         storage,
@@ -267,8 +268,9 @@ export class VaultClient extends EventEmitter {
         this.emit(this.defaultEvents['login-required'])
         return false
       }
-      if (this.remoteTimestamp !== undefined && (storage.timestamp ?? 0) < this.remoteTimestamp) {
+      if (this.timestamp !== undefined && (storage.timestamp ?? 0) < this.timestamp) {
         this.emit(this.defaultEvents.conflict)
+        return false
       }
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const key: SecretKey = (this.keyManager as KeyManager).encKey
@@ -297,8 +299,7 @@ export class VaultClient extends EventEmitter {
         this.emitError(res)
         return false
       }
-      this.remoteTimestamp = res.data.timestamp
-      this.localTimestamp = res.data.timestamp
+      this.timestamp = res.data.timestamp
       return true
     } catch (error) {
       this.emitError(error)
@@ -327,8 +328,8 @@ export class VaultClient extends EventEmitter {
         return false
       }
       this.emit(this.defaultEvents['storage-deleted'])
-      delete this.localTimestamp
-      delete this.remoteTimestamp
+      delete this.timestamp
+      this.close()
       return true
     } catch (error) {
       this.emitError(error)

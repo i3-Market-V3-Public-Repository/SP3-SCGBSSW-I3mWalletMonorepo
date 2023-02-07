@@ -24,10 +24,10 @@ RUN chown node.node /app &&\
 USER node
 
 RUN mkdir .keys && \
-    npm install @i3m/wallet-cloud-vault@${VERSION}
+    npm install @i3m/cloud-vault-server@${VERSION}
 
 EXPOSE 3000
 
 ENTRYPOINT [ "npx" ]
 
-CMD [ "wcv" ]
+CMD [ "cvs" ]

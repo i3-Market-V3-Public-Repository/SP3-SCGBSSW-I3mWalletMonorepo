@@ -122,7 +122,7 @@ describe('Wallet Cloud-Vault', function () {
       await setTimeout(1000)
       updated = await client1.updateStorage({
         storage: storages[i],
-        timestamp: client1.localTimestamp
+        timestamp: client1.timestamp
       })
       console.log(`Client ${client1.name} storage updated: ${updated.toString()}`)
       chai.expect(updated).to.be.true
