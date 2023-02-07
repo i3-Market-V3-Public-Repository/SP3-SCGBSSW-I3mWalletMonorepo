@@ -33,10 +33,10 @@ describe('Wallet Cloud-Vault', function () {
     client1 = new VaultClient(serverUrl, user.username, user.password, '1')
     client2 = new VaultClient(serverUrl, user.username, user.password, '2')
 
-    client1.on('error', error => {
+    client1.on(client1.defaultEvents.error, error => {
       console.log(client1.name, ': ', error)
     })
-    client2.on('error', error => {
+    client2.on(client1.defaultEvents.error, error => {
       console.log(client2.name, ': ', error)
     })
 
@@ -99,7 +99,7 @@ describe('Wallet Cloud-Vault', function () {
 
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
-      client2.on('storage-updated', async (timestamp: number) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+      client2.on(client2.defaultEvents['storage-updated'], async (timestamp: number) => { // eslint-disable-line @typescript-eslint/no-misused-promises
         console.log(`Client ${client2.name} received storage-updated event. Downloading`)
         const storage = await client2.getStorage()
         if (storage === null) {
