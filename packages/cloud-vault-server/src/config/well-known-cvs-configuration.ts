@@ -1,4 +1,5 @@
 import { OpenApiComponents } from '../../types/openapi'
+import { dbConfig } from './db'
 import { apiVersion } from './openApi'
 import { parseProccessEnvVar } from './parseProcessEnvVar'
 
@@ -14,6 +15,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
     v2: {
       id,
       version: 'v2',
+      vault_size: dbConfig.storageByteLength,
       vault_endpoint: '/api/v2/vault',
       events_endpoint: '/api/v2/vault/events',
       timestamp_endpoint: 'api/v2/vault/timestamp',

@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
+[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
 
 ## Properties
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
+[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L21)
+[cloud-vault-client/src/ts/key-manager.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L21)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
+[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
 
 ## Accessors
 
@@ -102,18 +102,18 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L49)
+[cloud-vault-client/src/ts/key-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L49)
 
 ___
 
 ### encKey
 
-• `get` **encKey**(): `SecretKey`
+• `get` **encKey**(): [`SecretKey`](SecretKey.md)
 
 #### Returns
 
-`SecretKey`
+[`SecretKey`](SecretKey.md)
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L56)
+[cloud-vault-client/src/ts/key-manager.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L56)

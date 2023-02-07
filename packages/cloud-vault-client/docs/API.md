@@ -7,6 +7,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 ### Classes
 
 - [KeyManager](classes/KeyManager.md)
+- [SecretKey](classes/SecretKey.md)
 - [VaultClient](classes/VaultClient.md)
 
 ### Interfaces
@@ -39,7 +40,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
+[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
 
 ▸ **deriveKey**(`key`, `opts`): `Promise`<`KeyObject`\>
 
@@ -56,4 +57,4 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e69c9f8/packages/cloud-vault-client/src/ts/key-manager.ts#L75)
+[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c1c9b37/packages/cloud-vault-client/src/ts/key-manager.ts#L75)

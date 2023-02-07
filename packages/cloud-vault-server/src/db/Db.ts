@@ -21,7 +21,7 @@ CREATE TABLE credentials (
 CREATE TABLE vault (
   username VARCHAR (100) PRIMARY KEY REFERENCES users(username),
   last_uploaded TIMESTAMP WITH TIME ZONE,
-  storage VARCHAR (${dbConfig.storageLimit})
+  storage VARCHAR (${dbConfig.storageCharLength})
 );
 
 CREATE FUNCTION fn_update_last_uploaded()

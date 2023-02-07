@@ -119,7 +119,7 @@ export default function (router: Router): void {
                 name: 'error',
                 path: req.path,
                 status: 400,
-                message: `encrypted storage in base64url cannot be more than ${dbConfig.storageLimit} long`
+                message: `encrypted storage in base64url cannot be more than ${dbConfig.storageCharLength} long (${dbConfig.storageByteLength} in binary format)`
               })
             default:
               throw new HttpError({

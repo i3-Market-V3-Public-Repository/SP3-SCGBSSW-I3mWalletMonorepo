@@ -1,5 +1,9 @@
 import { parseProccessEnvVar } from './parseProcessEnvVar'
 
+const storageByteLength = Number(parseProccessEnvVar('DB_STORAGE_LIMIT', 'string', { defaultValue: '5242880' }))
+
+const storageCharLength = Math.ceil((Math.ceil(storageByteLength / 16) * 16 + 16 + 16) / 6) * 8
+
 export const dbConfig = {
   host: parseProccessEnvVar('DB_HOST', 'string'),
   port: Number(parseProccessEnvVar('DB_PORT', 'string')),
@@ -7,5 +11,6 @@ export const dbConfig = {
   password: parseProccessEnvVar('DB_PASSWORD', 'string'),
   database: parseProccessEnvVar('DB_NAME', 'string'),
   reset: parseProccessEnvVar('DB_RESET', 'boolean', { defaultValue: false }),
-  storageLimit: Number(parseProccessEnvVar('DB_STORAGE_LIMIT', 'string', { defaultValue: '6990552' }))
+  storageByteLength,
+  storageCharLength
 }

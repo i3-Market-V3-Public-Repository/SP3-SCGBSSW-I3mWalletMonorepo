@@ -257,6 +257,10 @@ export namespace OpenApiComponents {
              */
             version: string;
             /**
+             * the upper limit for the length in bytes of the vault storage
+             */
+            vault_size: number;
+            /**
              * the vault endpoint where to GET, POST or DELETE the storage
              * example:
              * /api/v2/vault

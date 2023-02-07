@@ -417,6 +417,7 @@
         "required": [
           "id",
           "version",
+          "vault_size",
           "vault_endpoint",
           "events_endpoint",
           "timestamp_endpoint",
@@ -434,6 +435,10 @@
             "type": "string",
             "description": "the version of the API this configuration applies to",
             "example": "v2"
+          },
+          "vault_size": {
+            "type": "integer",
+            "description": "the upper limit for the length in bytes of the vault storage"
           },
           "vault_endpoint": {
             "type": "string",

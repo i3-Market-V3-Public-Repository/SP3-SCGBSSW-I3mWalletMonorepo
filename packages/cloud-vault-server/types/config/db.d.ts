@@ -5,5 +5,6 @@ export declare const dbConfig: {
     password: string;
     database: string;
     reset: boolean;
-    storageLimit: number;
+    storageByteLength: number;
+    storageCharLength: number;
 };

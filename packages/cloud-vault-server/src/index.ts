@@ -9,7 +9,7 @@ import wellKnownCvsConfigurationRoutePromise from './routes/well-known-cvs-confi
 
 async function startApp (): Promise<Express> {
   const app = express()
-  app.use(express.json({ limit: dbConfig.storageLimit + 1024 }))
+  app.use(express.json({ limit: dbConfig.storageCharLength + 1024 }))
   app.use(morgan(general.nodeEnv === 'development' ? 'dev' : 'tiny'))
 
   // Load CORS for the routes
