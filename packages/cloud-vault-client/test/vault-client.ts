@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import { VaultClient } from '#pkg'
-import { setTimeout } from 'timers/promises'
+import { setTimeout as timersSetTimeout } from 'timers'
+import { promisify } from 'util'
 
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
 import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
@@ -10,6 +11,8 @@ import { randomBytes } from 'crypto'
 import { expect } from 'chai'
 
 loadEnvFile()
+
+const setTimeout = promisify(timersSetTimeout)
 
 const serverUrl = process.env.WCV_SERVER_URL ?? 'http://localhost:3000'
 const username = process.env.WCV_USERNAME ?? 'testUser'

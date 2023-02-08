@@ -31,8 +31,8 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           salt_pattern: 'master' + id + '{username}',
           salt_hashing_algorithm: 'sha3-512',
           alg_options: {
-            N: 2 ** 22,
-            p: 1,
+            N: 2 ** 19,
+            p: 2,
             r: 8
           }
         },

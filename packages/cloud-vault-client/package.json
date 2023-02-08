@@ -28,9 +28,6 @@
   },
   "homepage": "https://github.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/tree/public/packages/cloud-vault-client#readme",
   "license": "EUPL-1.2",
-  "engines": {
-    "node": ">=16.x"
-  },
   "publishConfig": {
     "access": "public"
   },

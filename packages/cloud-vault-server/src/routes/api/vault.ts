@@ -139,7 +139,6 @@ export default function (router: Router): void {
   router.post('/token',
     async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultToken.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
-        console.log(req.body)
         const username = req.body.username
         const authkey = req.body.authkey
         const verified = await db.verifyCredentials(username, authkey)

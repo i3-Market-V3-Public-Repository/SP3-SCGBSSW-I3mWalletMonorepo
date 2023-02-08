@@ -64,7 +64,7 @@ export class KeyManager {
 function _salt (hashAlgorithm: OpenApiComponents.Schemas.KeyDerivationOptions['salt_hashing_algorithm'], saltPattern: string, replacements: { [name: string]: string }): Buffer {
   let saltString = ''
   for (const searchValue in replacements) {
-    saltString = saltPattern.replaceAll(searchValue, replacements[searchValue])
+    saltString = saltPattern.replace(searchValue, replacements[searchValue])
   }
   const hash = createHash(hashAlgorithm)
   const salt = hash.update(saltString).digest()

@@ -669,4 +669,4 @@ components:
             in the cloud vault.
           example: 1674060143749
 servers:
-  - url: http://[::1]:3000
+  - url: http://[::]:3000
