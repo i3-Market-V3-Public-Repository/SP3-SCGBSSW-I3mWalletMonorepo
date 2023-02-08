@@ -4,15 +4,15 @@ import { OpenApiComponents } from '../../types/openapi'
 import { general } from '../config'
 
 export function errorMiddleware (err: HttpError, req: Request, res: Response, next: NextFunction): void {
+  if (general.nodeEnv === 'development') {
+    console.error(err)
+  }
+  let error: OpenApiComponents.Schemas.ApiError = {
+    name: 'error',
+    description: 'something bad happened'
+  }
   if (req.path !== undefined) {
-    let error: OpenApiComponents.Schemas.ApiError = {
-      name: 'error',
-      description: 'something bad happened'
-    }
     if (err.status === undefined) {
-      if (general.nodeEnv === 'development') {
-        console.error(err)
-      }
       err.status = 500
     } else {
       error = {
@@ -20,8 +20,6 @@ export function errorMiddleware (err: HttpError, req: Request, res: Response, ne
         description: err.message
       }
     }
-    res.status(err.status).json(error)
-  } else {
-    next(err)
   }
+  res.status(err.status).json(error)
 }

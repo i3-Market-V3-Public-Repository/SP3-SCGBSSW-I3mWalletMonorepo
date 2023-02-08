@@ -18,6 +18,20 @@ export interface VaultEvent {
   description: string
 }
 
+export interface VaultConnError {
+  request: {
+    method?: string
+    url?: string
+    headers?: { [header: string]: string }
+    data?: any
+  }
+  response?: {
+    status?: number
+    headers?: { [header: string]: string }
+    data?: any
+  }
+}
+
 export class VaultClient extends EventEmitter {
   timestamp?: number
   private token?: string
@@ -75,12 +89,25 @@ export class VaultClient extends EventEmitter {
   }
 
   private emitError (error: any): void {
-    if (error instanceof AxiosError && error.response !== undefined) {
-      if ((error.response.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
+    if (error instanceof AxiosError) {
+      if ((error.response?.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
         this.logout()
         this.emit(this.defaultEvents['login-required'])
       } else {
-        this.emit(this.defaultEvents.error, error.response)
+        const vaultConnError: VaultConnError = {
+          request: {
+            method: error.config?.method?.toLocaleUpperCase(),
+            url: error.config?.url,
+            headers: error.config?.headers,
+            data: error.config?.data
+          },
+          response: {
+            status: error.response?.status,
+            headers: error.response?.headers as { [key: string]: string },
+            data: error.response?.data
+          }
+        }
+        this.emit(this.defaultEvents.error, vaultConnError)
       }
     } else {
       this.emit(this.defaultEvents.error, error)

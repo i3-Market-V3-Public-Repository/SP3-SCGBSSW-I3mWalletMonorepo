@@ -9,14 +9,14 @@ export declare function registerUser(did: string, username: string, password: st
 /**
  * Verify provided user credentials
  * @param username
- * @param password
+ * @param authkey
  * @returns
  */
-export declare function verifyCredentials(username: string, password: string): Promise<boolean>;
+export declare function verifyCredentials(username: string, authkey: string): Promise<boolean>;
 /**
  * Gets the user storage for a specific username
  * @param username
- * @returns A string in Base64 encoding of the storage
+ * @returns an object with the encrypted storage and the timestamp (milliseconds since epoch) when it was uploaded
  */
 export declare function getStorage(username: string): Promise<Required<OpenApiComponents.Schemas.EncryptedStorage> | null>;
 /**
@@ -37,4 +37,4 @@ export declare function setStorage(username: string, storage: string, timestamp?
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export declare function deleteStorage(username: string): Promise<void>;
+export declare function deleteStorage(username: string): Promise<boolean>;

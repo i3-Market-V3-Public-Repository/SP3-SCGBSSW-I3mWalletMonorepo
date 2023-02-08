@@ -37,7 +37,7 @@ describe('Wallet Cloud-Vault', function () {
       console.log(client1.name, ': ', error)
     })
     client2.on(client1.defaultEvents.error, error => {
-      console.log(client2.name, ': ', error)
+      console.log(client1.name, ': ', error)
     })
 
     const resPublicJwk = await client1.getServerPublicKey()
@@ -99,21 +99,22 @@ describe('Wallet Cloud-Vault', function () {
 
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
-      client2.on(client2.defaultEvents['storage-updated'], async (timestamp: number) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+      client2.on(client2.defaultEvents['storage-updated'], (timestamp: number) => {
         console.log(`Client ${client2.name} received storage-updated event. Downloading`)
-        const storage = await client2.getStorage()
-        if (storage === null) {
-          reject(new Error('could not download storage'))
-          return
-        }
-        if (storages[receivedEvents].compare(storage.storage) !== 0) {
-          reject(new Error('remote storage does not equal the uploaded one'))
-          return
-        }
-        receivedEvents++
-        if (receivedEvents === msgLimit) {
-          resolve()
-        }
+        client2.getStorage().then(storage => {
+          if (storage === null) {
+            reject(new Error('could not download storage'))
+            return
+          }
+          if (storages[receivedEvents].compare(storage.storage) !== 0) {
+            reject(new Error('remote storage does not equal the uploaded one'))
+            return
+          }
+          receivedEvents++
+          if (receivedEvents === msgLimit) {
+            resolve()
+          }
+        }).catch(error => reject(error))
       })
     })
 
@@ -128,12 +129,11 @@ describe('Wallet Cloud-Vault', function () {
       chai.expect(updated).to.be.true
     }
 
-    try {
-      await client2promise
-      expect(true)
-    } catch (error) {
-      expect(false)
-    }
+    await client2promise.catch((reason) => {
+      console.log(reason)
+      expect(false).to.be.true
+    })
+    expect(true).to.be.true
   })
   it('should delete all data from user if requested', async function () {
     const deleted = await client1.deleteStorage()

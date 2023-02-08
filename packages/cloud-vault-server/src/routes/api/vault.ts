@@ -13,15 +13,14 @@ export default function (router: Router): void {
   router.get('/events',
     passport.authenticate('jwtBearer', { session: false }),
     async (req: Request, res: Response, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+      const { username } = req.user as User
       try {
-        const { username } = req.user as User
-
         const connId = vaultEvents.addConnection(username, res)
-
+        const timestamp = (await db.getTimestamp(username)) ?? undefined
         vaultEvents.sendEvent(username, {
           event: 'connected',
           data: {
-            timestamp: (await db.getTimestamp(username)) ?? undefined
+            timestamp
           }
         })
 
@@ -82,7 +81,10 @@ export default function (router: Router): void {
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         const { username } = req.user as User
-        await db.deleteStorage(username)
+        const deleted = await db.deleteStorage(username)
+        if (!deleted) {
+          throw new HttpError({ name: 'cannot delete', path: req.path, status: 400 })
+        }
         vaultEvents.sendEvent(username, {
           event: 'storage-deleted',
           data: {}

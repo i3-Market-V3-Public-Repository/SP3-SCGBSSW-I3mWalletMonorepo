@@ -10,6 +10,23 @@ export interface VaultEvent {
     name: string;
     description: string;
 }
+export interface VaultConnError {
+    request: {
+        method?: string;
+        url?: string;
+        headers?: {
+            [header: string]: string;
+        };
+        data?: any;
+    };
+    response?: {
+        status?: number;
+        headers?: {
+            [header: string]: string;
+        };
+        data?: any;
+    };
+}
 export declare class VaultClient extends EventEmitter {
     timestamp?: number;
     private token?;

@@ -16,39 +16,35 @@ export async function registerUser (did: string, username: string, password: str
 /**
  * Verify provided user credentials
  * @param username
- * @param password
+ * @param authkey
  * @returns
  */
-export async function verifyCredentials (username: string, password: string): Promise<boolean> {
-  const query = 'SELECT passwd FROM credentials WHERE username=$1'
+export async function verifyCredentials (username: string, authkey: string): Promise<boolean> {
+  const query = 'SELECT authkey FROM credentials WHERE username=$1'
   const { rows } = await db.query(query, [username])
   if (rows.length !== 1) return false
-  const mcfString = rows[0].passwd
-  const verified = await verify(password, mcfString)
+  const mcfString = rows[0].authkey
+  const verified = await verify(authkey, mcfString)
   return verified
 }
 
 /**
  * Gets the user storage for a specific username
  * @param username
- * @returns A string in Base64 encoding of the storage
+ * @returns an object with the encrypted storage and the timestamp (milliseconds since epoch) when it was uploaded
  */
 export async function getStorage (username: string): Promise<Required<OpenApiComponents.Schemas.EncryptedStorage> | null> {
-  try {
-    const query = 'SELECT last_uploaded, storage FROM vault WHERE username=$1'
-    const { rows } = await db.query(query, [username])
-    if (rows.length !== 1) throw new Error('DB: failed getting storage')
-    if (rows[0].last_uploaded === null) {
-      return null
-    }
-    const storage = {
-      timestamp: (rows[0].last_uploaded as Date).valueOf(),
-      ciphertext: rows[0].storage
-    }
-    return storage
-  } catch (error) {
+  const query = 'SELECT last_uploaded, storage FROM vault WHERE username=$1'
+  const { rows } = await db.query(query, [username])
+  if (rows.length !== 1) throw new Error('DB: failed getting storage')
+  if (rows[0].last_uploaded === null) {
     return null
   }
+  const storage = {
+    timestamp: Number(rows[0].last_uploaded),
+    ciphertext: rows[0].storage
+  }
+  return storage
 }
 
 /**
@@ -58,9 +54,9 @@ export async function getStorage (username: string): Promise<Required<OpenApiCom
  */
 export async function getTimestamp (username: string): Promise<number | null> {
   const query = 'SELECT last_uploaded FROM vault WHERE username=$1'
-  const { rows } = await db.query(query, [username])
-  if (rows.length !== 1) throw new Error('failed getting timestamp')
-  return (rows[0].last_uploaded !== null) ? (rows[0].last_uploaded as Date).valueOf() : null
+  const { rows, rowCount } = await db.query(query, [username])
+  if (rowCount !== 1) throw new Error(`Can't get timestamp. User ${username} not registered`)
+  return (rows[0].last_uploaded !== null) ? Number(rows[0].last_uploaded) : null
 }
 
 /**
@@ -73,21 +69,24 @@ export async function getTimestamp (username: string): Promise<number | null> {
 export async function setStorage (username: string, storage: string, timestamp?: number): Promise<number> {
   let query: string, values: any[]
   if (timestamp !== undefined) {
-    query = 'UPDATE vault SET storage=$1 WHERE username=$2 AND TRUNC(1000*EXTRACT(EPOCH FROM last_uploaded))=$3::numeric RETURNING last_uploaded'
+    query = 'SELECT update_storage($1, $2, $3) AS last_uploaded'
     values = [storage, username, timestamp]
   } else {
-    query = 'UPDATE vault SET storage=$1 WHERE username=$2 AND last_uploaded IS NULL RETURNING last_uploaded'
+    query = 'SELECT set_storage($1, $2) AS last_uploaded'
     values = [storage, username]
   }
   const res = await db.query(query, values)
-  return (res.rows[0].last_uploaded as Date).valueOf()
+  if (res.rows.length !== 1) throw new Error(`Can't set storage. User ${username} not registered`)
+  return Number(res.rows[0].last_uploaded)
 }
 
 /**
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export async function deleteStorage (username: string): Promise<void> {
-  const query = 'SELECT delete_user($1)'
-  await db.query(query, [username])
+export async function deleteStorage (username: string): Promise<boolean> {
+  const query = 'SELECT delete_user($1) AS deleted'
+  const res = await db.query(query, [username])
+  if (res.rows.length !== 1) throw new Error('Can\'t delete storage')
+  return res.rows[0].deleted
 }

@@ -15,43 +15,71 @@ CREATE TABLE users (
 
 CREATE TABLE credentials (
   username VARCHAR(100) PRIMARY KEY REFERENCES users(username),
-  passwd VARCHAR(100) NOT NULL
+  authkey VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE vault (
   username VARCHAR (100) PRIMARY KEY REFERENCES users(username),
-  last_uploaded TIMESTAMP WITH TIME ZONE,
+  last_uploaded BIGINT, -- milliseconds elapsed from EPOCH
   storage VARCHAR (${dbConfig.storageCharLength})
 );
 
-CREATE FUNCTION fn_update_last_uploaded()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.last_uploaded = now();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
+CREATE FUNCTION set_storage(arg_storage VARCHAR, arg_username VARCHAR) RETURNS BIGINT AS $$
+  UPDATE vault
+  SET storage=arg_storage,
+      last_uploaded=TRUNC(1000*EXTRACT(EPOCH FROM CURRENT_TIMESTAMP))
+  WHERE username=arg_username AND last_uploaded IS NULL
+  RETURNING last_uploaded
+$$ LANGUAGE SQL;
 
-CREATE TRIGGER update_vault_last_uploaded
-  BEFORE UPDATE ON vault
-  FOR EACH ROW
-    EXECUTE PROCEDURE fn_update_last_uploaded();
+CREATE FUNCTION update_storage(arg_storage VARCHAR, arg_username VARCHAR, arg_timestamp BIGINT) RETURNS BIGINT AS $$
+  UPDATE vault
+  SET storage=arg_storage,
+      last_uploaded=TRUNC(1000*EXTRACT(EPOCH FROM CURRENT_TIMESTAMP))
+  WHERE username=arg_username
+    AND last_uploaded=arg_timestamp
+  RETURNING last_uploaded
+$$ LANGUAGE SQL;
 
-CREATE FUNCTION register_user(did varchar, username varchar, password varchar) RETURNs void AS $$
-BEGIN
-  INSERT INTO users (did, username) VALUES (did, username);
-  INSERT INTO credentials (username, passwd) VALUES (username, password);
-  INSERT INTO vault (username) VALUES (username);
-END;
-$$ language 'plpgsql';
+CREATE FUNCTION register_user(arg_did varchar, arg_username varchar, arg_authkey varchar) RETURNS boolean AS $$
+  WITH u AS (
+    INSERT INTO users (did, username) VALUES (arg_did, arg_username) RETURNING username
+  ),
+  c AS (
+    INSERT INTO credentials (username, authkey) VALUES (arg_username, arg_authkey) RETURNING username
+  ),
+  v AS (
+    INSERT INTO vault (username) VALUES (arg_username) RETURNING username
+  ),
+  f AS (
+    SELECT count(*) FROM v
+    UNION ALL
+    SELECT count(*) FROM c
+    UNION ALL
+    SELECT count(*) FROM u
+  )
+  SELECT SUM(count) = 3 AS deleted FROM f
+$$ LANGUAGE SQL;
 
-CREATE FUNCTION delete_user(user_name varchar) RETURNs void AS $$
-BEGIN
-  DELETE FROM vault WHERE username=user_name;
-  DELETE FROM credentials WHERE username=user_name;
-  DELETE FROM users WHERE username=user_name;
-END;
-$$ language 'plpgsql';
+CREATE FUNCTION delete_user(arg_username varchar) RETURNS boolean AS $$
+  WITH v AS (
+    DELETE FROM vault WHERE username=arg_username RETURNING username
+  ),
+  c AS (
+    DELETE FROM credentials WHERE username=arg_username RETURNING username
+  ),
+  u AS (
+    DELETE FROM users WHERE username=arg_username RETURNING username
+  ),
+  f AS (
+    SELECT count(*) FROM v
+    UNION ALL
+    SELECT count(*) FROM c
+    UNION ALL
+    SELECT count(*) FROM u
+  )
+  SELECT SUM(count) = 3 AS deleted FROM f
+$$ LANGUAGE SQL;
 `
 
 const resetDbQuery = `
@@ -59,10 +87,10 @@ DROP TABLE IF EXISTS config CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TABLE IF EXISTS credentials CASCADE;
 DROP TABLE IF EXISTS vault CASCADE;
-DROP FUNCTION IF EXISTS fn_update_last_uploaded CASCADE;
+DROP FUNCTION IF EXISTS set_storage CASCADE;
+DROP FUNCTION IF EXISTS update_storage CASCADE;
 DROP FUNCTION IF EXISTS register_user CASCADE;
 DROP FUNCTION IF EXISTS delete_user CASCADE;
-
 `
 
 export class Db {
