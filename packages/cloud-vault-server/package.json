@@ -34,7 +34,7 @@
   "main": "dist/index.js",
   "types": "./types/index.d.ts",
   "bin": {
-    "wcv": "./dist/index.js"
+    "cvs": "./dist/index.js"
   },
   "directories": {
     "build": "./build",

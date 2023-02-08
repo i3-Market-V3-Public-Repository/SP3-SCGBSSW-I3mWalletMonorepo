@@ -1,14 +1,11 @@
 # Instructions:
 # Download this file (you don't need anything else)
-# Build: docker build -t wcv . 
-# Generate keys if you don't have a valid pair : 
-#  - [new keys] docker run -it --init wcv generateJwks ES256
-#  - [using a privatekey in hex] docker run -it --init wcv generateJwks ES256 8c2ebb279f950edec15d36f3d7b10a35858d9743f964489ec0ad8860e3e9423b
+# Build: docker build -t cvs . 
 # Copy template.env to .env and fill all the required env variables.
-# Run the Wallet Cloud-Vault: docker run -it --init -p 127.0.0.1:3000:3000 --env-file .env wcv
+# Run the Cloud-Vault Server: docker run -it --init -p 127.0.0.1:3000:3000 --env-file .env cvs
 FROM node:18-alpine
 
-# VERSION can be used to build docker with a specific NPM version of the @i3m/conflict-resolver-service
+# VERSION can be used to build docker with a specific NPM version of the @i3m/cloud-vault-server
 ARG VERSION=${VERSION:-latest}
 
 ENV NODE_ENV=${NODE_ENV:-production}
@@ -23,8 +20,7 @@ RUN chown node.node /app &&\
 
 USER node
 
-RUN mkdir .keys && \
-    npm install @i3m/cloud-vault-server@${VERSION}
+RUN npm install @i3m/cloud-vault-server@${VERSION}
 
 EXPOSE 3000
 
