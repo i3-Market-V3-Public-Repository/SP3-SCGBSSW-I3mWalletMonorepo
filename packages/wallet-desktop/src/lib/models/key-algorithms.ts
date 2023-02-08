@@ -16,7 +16,12 @@ export interface Pbkdf2AuthSettings {
   localAuth?: string
 }
 
-export type AuthSettings = UndefinedAuthSettings | Pbkdf2AuthSettings
+export interface GeneralMcfAuthSettings {
+  algorithm: 'general-mcf'
+  localAuth?: string
+}
+
+export type AuthSettings = UndefinedAuthSettings | Pbkdf2AuthSettings | GeneralMcfAuthSettings
 export type AuthSettingsAlgorithms = AuthSettings['algorithm']
 
 // *** Encryption ***

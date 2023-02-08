@@ -16,9 +16,6 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
   protected salt: Buffer
   protected _localAuth?: KeyObject
 
-  // pek stands for pree encryption key
-  protected pek?: Buffer
-
   constructor (auth: Pbkdf2AuthSettings) {
     if (auth.salt !== undefined) {
       this.salt = Buffer.from(auth.salt, 'base64')
@@ -52,11 +49,12 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
   }
 
   async storeSettings (locals: Locals): Promise<void> {
-    await locals.publicSettings.set('auth', {
+    const auth: Pbkdf2AuthSettings = {
       algorithm: 'pbkdf.2',
       salt: this.salt.toString('base64'),
       localAuth: this.localAuth.export().toString('base64')
-    })
+    }
+    await locals.publicSettings.set('auth', auth)
   }
 
   async migrationNeeded (): Promise<boolean> {

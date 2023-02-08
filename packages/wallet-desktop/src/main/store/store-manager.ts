@@ -74,34 +74,32 @@ export class StoreManager {
 
   public async migrate (): Promise<void> {
     const { from, to, needed, migrations } = this.ctx.storeMigrationProxy
-    if (!needed) {
-      return
-    }
-
-    const { keysManager } = this.locals
-    const oldSettingsKey = await keysManager.computeSettingsKey(from.encKeys)
-    const newSettingsKey = await keysManager.computeSettingsKey(to.encKeys)
-    await this.migrateStore({
-      fileExtension: 'enc.json',
-      encryptionKey: oldSettingsKey
-    }, {
-      fileExtension: 'enc.json',
-      encryptionKey: newSettingsKey
-    })
-
-    const walletUuids = await this.getWalletUuids()
-    for (const uuid of walletUuids) {
-      const oldWalletKey = await keysManager.computeWalletKey(uuid, from.encKeys)
-      const newWalletKey = await keysManager.computeWalletKey(uuid, to.encKeys)
+    if (needed) {
+      const { keysManager } = this.locals
+      const oldSettingsKey = await keysManager.computeSettingsKey(from.encKeys)
+      const newSettingsKey = await keysManager.computeSettingsKey(to.encKeys)
       await this.migrateStore({
-        name: `wallet.${uuid}`,
         fileExtension: 'enc.json',
-        encryptionKey: oldWalletKey
+        encryptionKey: oldSettingsKey
       }, {
-        name: `wallet.${uuid}`,
         fileExtension: 'enc.json',
-        encryptionKey: newWalletKey
+        encryptionKey: newSettingsKey
       })
+
+      const walletUuids = await this.getWalletUuids()
+      for (const uuid of walletUuids) {
+        const oldWalletKey = await keysManager.computeWalletKey(uuid, from.encKeys)
+        const newWalletKey = await keysManager.computeWalletKey(uuid, to.encKeys)
+        await this.migrateStore({
+          name: `wallet.${uuid}`,
+          fileExtension: 'enc.json',
+          encryptionKey: oldWalletKey
+        }, {
+          name: `wallet.${uuid}`,
+          fileExtension: 'enc.json',
+          encryptionKey: newWalletKey
+        })
+      }
     }
 
     for (const migration of migrations) {

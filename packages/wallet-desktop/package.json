@@ -107,6 +107,7 @@
     "react-transition-group": "^4.4.2",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.6",
+    "scrypt-mcf": "^1.0.0",
     "scrypt-pbkdf": "^1.0.10",
     "swagger-ui-express": "^4.1.6",
     "uuid": "^8.3.2",

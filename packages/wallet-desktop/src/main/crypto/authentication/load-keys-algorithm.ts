@@ -1,5 +1,6 @@
 import { AuthSettingsAlgorithms, AuthSettings } from '@wallet/lib'
 import { AuthenticationKeys, AuthenticationKeysConstructor } from '../key-generators'
+import { GeneralMcfAuthKeys } from './general-mcf'
 import { Pbkdf2AuthKeys } from './pbkdf2'
 
 type DefinedAlgorithms = AuthSettingsAlgorithms & string
@@ -9,10 +10,11 @@ type AuthKeysMap = {
 }
 
 const authKeysByType: AuthKeysMap = {
-  'pbkdf.2': Pbkdf2AuthKeys
+  'pbkdf.2': Pbkdf2AuthKeys,
+  'general-mcf': GeneralMcfAuthKeys
 }
 
-export const currentAuthAlgorithm: DefinedAlgorithms = 'pbkdf.2'
+export const currentAuthAlgorithm: DefinedAlgorithms = 'general-mcf'
 
 export const loadAuthKeyAlgorithm = (auth?: AuthSettings): AuthenticationKeys => {
   if (auth === undefined) {
@@ -27,7 +29,7 @@ export const loadAuthKeyAlgorithm = (auth?: AuthSettings): AuthenticationKeys =>
     })
   }
 
-  const AuthKeysType = authKeysByType[auth.algorithm]
+  const AuthKeysType = authKeysByType[auth.algorithm] as AuthenticationKeysConstructor<typeof auth.algorithm>
   return new AuthKeysType(auth)
 }
 
