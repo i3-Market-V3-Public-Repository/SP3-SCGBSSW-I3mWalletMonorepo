@@ -79,13 +79,6 @@ export class StoreManager {
     }
 
     const { keysManager } = this.locals
-
-    for (const foo of [from, to]) {
-      if (foo.encKeys !== undefined) {
-        console.log(foo.encKeys.preencryptionKey.export().toString('base64'))
-      }
-    }
-
     const oldSettingsKey = await keysManager.computeSettingsKey(from.encKeys)
     const newSettingsKey = await keysManager.computeSettingsKey(to.encKeys)
     await this.migrateStore({

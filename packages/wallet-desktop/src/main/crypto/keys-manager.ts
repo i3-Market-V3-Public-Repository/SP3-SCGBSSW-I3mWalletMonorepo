@@ -164,9 +164,7 @@ export class KeysManager {
   private async migrate (oldCtx: KeyContext): Promise<void> {
     const { storeMigrationProxy } = this.ctx
     const newCtx: KeyContext = _.clone(oldCtx)
-
-    const auth = await this.locals.publicSettings.get('auth')
-    if (auth?.algorithm !== currentAuthAlgorithm) {
+    const migrateAuth = async (): Promise<void> => {
       logger.debug(`Migrate authentication keys from ${auth?.algorithm ?? 'default'} to '${currentAuthAlgorithm}'`)
       newCtx.authKeys = await getCurrentAuthKeys()
 
@@ -176,10 +174,8 @@ export class KeysManager {
         this._authKeys = newCtx.authKeys
       })
     }
-
-    const enc = await this.locals.publicSettings.get('enc')
-    if (enc?.algorithm !== currentEncAlgorithm) {
-      logger.debug(`Migrate encryption keys from '${enc?.algorithm ?? 'default'}' to '${currentAuthAlgorithm}'`)
+    const migrateEnc = async (): Promise<void> => {
+      logger.debug(`Migrate encryption keys from '${enc?.algorithm ?? 'default'}' to '${currentEncAlgorithm}'`)
 
       newCtx.encKeys = await getCurrentEncKeys()
       await newCtx.encKeys.prepareEncryption(oldCtx)
@@ -190,6 +186,20 @@ export class KeysManager {
         await newCtx.encKeys.storeSettings(this.locals, oldCtx)
         this._encKeys = newCtx.encKeys
       })
+    }
+
+    const auth = await this.locals.publicSettings.get('auth')
+    if (auth?.algorithm !== currentAuthAlgorithm) {
+      await migrateAuth()
+    } else if (await oldCtx.authKeys.migrationNeeded()) {
+      await migrateAuth()
+    }
+
+    const enc = await this.locals.publicSettings.get('enc')
+    if (enc?.algorithm !== currentEncAlgorithm) {
+      await migrateEnc()
+    } else if (await oldCtx.encKeys.migrationNeeded()) {
+      await migrateEnc()
     }
   }
 

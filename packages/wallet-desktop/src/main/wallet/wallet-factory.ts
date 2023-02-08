@@ -55,8 +55,10 @@ export class WalletFactory {
 
     const wallet = await this.locals.settings.get('wallet')
     if (wallet.current === undefined) {
+      logger.debug('No wallets stored into the configuration')
       return
     }
+    logger.debug(`The current configuration has the following wallets: ${Object.keys(wallet.wallets).join(', ')}`)
 
     await this.changeWallet(wallet.current)
   }

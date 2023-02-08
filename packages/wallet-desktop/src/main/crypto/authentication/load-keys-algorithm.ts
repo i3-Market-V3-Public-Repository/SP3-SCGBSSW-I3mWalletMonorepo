@@ -1,22 +1,36 @@
-import { AuthSettingsAlgorithms, BaseAuthSettings } from '@wallet/lib'
+import { AuthSettingsAlgorithms, AuthSettings } from '@wallet/lib'
 import { AuthenticationKeys, AuthenticationKeysConstructor } from '../key-generators'
 import { Pbkdf2AuthKeys } from './pbkdf2'
 
-const authKeysByType: Record<AuthSettingsAlgorithms, AuthenticationKeysConstructor> = {
+type DefinedAlgorithms = AuthSettingsAlgorithms & string
+
+type AuthKeysMap = {
+  [K in DefinedAlgorithms]: AuthenticationKeysConstructor<K>
+}
+
+const authKeysByType: AuthKeysMap = {
   'pbkdf.2': Pbkdf2AuthKeys
 }
 
-export const loadAuthKeyAlgorithm = (auth?: BaseAuthSettings): AuthenticationKeys => {
+export const currentAuthAlgorithm: DefinedAlgorithms = 'pbkdf.2'
+
+export const loadAuthKeyAlgorithm = (auth?: AuthSettings): AuthenticationKeys => {
   if (auth === undefined) {
-    return new (authKeysByType[currentAuthAlgorithm])({})
+    const AuthKeysType = authKeysByType[currentAuthAlgorithm]
+    return AuthKeysType.initialize()
   }
 
-  const algorithm = auth.algorithm ?? 'pbkdf.2'
-  return new (authKeysByType[algorithm])(auth)
+  if (auth.algorithm === undefined) {
+    return new Pbkdf2AuthKeys({
+      ...auth,
+      algorithm: 'pbkdf.2'
+    })
+  }
+
+  const AuthKeysType = authKeysByType[auth.algorithm]
+  return new AuthKeysType(auth)
 }
 
-export const currentAuthAlgorithm: AuthSettingsAlgorithms = 'pbkdf.2'
-
 export const getCurrentAuthKeys = async (): Promise<AuthenticationKeys> => {
-  return new (authKeysByType[currentAuthAlgorithm])({})
+  return (authKeysByType[currentAuthAlgorithm]).initialize()
 }

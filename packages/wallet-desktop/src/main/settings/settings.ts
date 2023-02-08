@@ -17,8 +17,8 @@ async function cleanPublicSettings (locals: Locals): Promise<void> {
   await locals.publicSettings.clear()
   await locals.publicSettings.set({
     version: publicSettingsValues.version,
-    auth: publicSettingsValues.auth ?? {},
-    enc: publicSettingsValues.enc ?? {},
+    auth: publicSettingsValues.auth,
+    enc: publicSettingsValues.enc,
     store: publicSettingsValues.store ?? { type: 'electron-store' }
   })
 }

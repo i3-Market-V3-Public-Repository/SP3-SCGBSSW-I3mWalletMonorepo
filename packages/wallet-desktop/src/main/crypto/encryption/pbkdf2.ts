@@ -1,15 +1,16 @@
 import crypto, { KeyObject } from 'crypto'
 
-import { AuthenticationError, deriveKey, isKeyObject, Locals, PbkdfSettings } from '@wallet/main/internal'
+import { AuthenticationError, deriveKeyOld, InvalidSettingsError, isKeyObject, Locals, PbkdfSettings } from '@wallet/main/internal'
 import { EncryptionKeys, KeyContext } from '../key-generators'
-import { BaseAuthSettings } from '@wallet/lib'
+import { AuthSettings, Pbkdf2AuthSettings, Pbkdf2EncSettings } from '@wallet/lib'
 
-export interface Pbkdf2EncSettings extends BaseAuthSettings {
-  algorithm?: 'pbkdf.2'
-  salt?: string
+function isPbkdf2AuthSettings (settings: AuthSettings): settings is Pbkdf2AuthSettings {
+  return typeof (settings as any).salt !== 'undefined' && typeof (settings as any).algorithm === 'undefined'
 }
 
 export class Pbkdf2EncKeys implements EncryptionKeys {
+  readonly algorithm = 'pbkdf.2'
+
   protected pekSettings: PbkdfSettings
   protected salt: Buffer
 
@@ -37,7 +38,7 @@ export class Pbkdf2EncKeys implements EncryptionKeys {
   }
 
   async prepareEncryption (keyCtx: KeyContext): Promise<void> {
-    this._pek = await deriveKey(keyCtx.password, this.salt, this.pekSettings)
+    this._pek = await deriveKeyOld(keyCtx.password, this.salt, this.pekSettings)
   }
 
   async generateWalletKey (walletUuid: string): Promise<KeyObject> {
@@ -49,7 +50,7 @@ export class Pbkdf2EncKeys implements EncryptionKeys {
     const pekBuffer = this.preencryptionKey.export()
     const salt = crypto.createHash('sha256').update(pekBuffer).digest()
 
-    return await deriveKey(pekBuffer, salt.subarray(0, 15), wkSettings)
+    return await deriveKeyOld(pekBuffer, salt.subarray(0, 15), wkSettings)
   }
 
   async generateSettingsKey (): Promise<KeyObject> {
@@ -59,7 +60,7 @@ export class Pbkdf2EncKeys implements EncryptionKeys {
     }
 
     const pekBuffer = this.preencryptionKey.export()
-    return await deriveKey(pekBuffer, Buffer.alloc(16), wkSettings)
+    return await deriveKeyOld(pekBuffer, Buffer.alloc(16), wkSettings)
   }
 
   async storeSettings (locals: Locals, keyCtx: KeyContext): Promise<void> {
@@ -69,12 +70,23 @@ export class Pbkdf2EncKeys implements EncryptionKeys {
     })
   }
 
-  static async fromPassword (): Promise<Pbkdf2EncKeys> {
+  async migrationNeeded (): Promise<boolean> {
+    return false
+  }
+
+  static initialize (): Pbkdf2EncKeys {
     const salt = crypto.randomBytes(16)
 
     return new Pbkdf2EncKeys({
       algorithm: 'pbkdf.2',
       salt: salt.toString('base64')
     })
+  }
+
+  static fromAuth (auth: AuthSettings): Pbkdf2EncKeys {
+    if (isPbkdf2AuthSettings(auth)) {
+      return new Pbkdf2EncKeys(auth)
+    }
+    throw new InvalidSettingsError('Wrong authentication settings')
   }
 }

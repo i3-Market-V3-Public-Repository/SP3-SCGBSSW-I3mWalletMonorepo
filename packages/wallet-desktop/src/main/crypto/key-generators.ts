@@ -1,6 +1,6 @@
 import { KeyObject } from 'crypto'
 
-import { AuthSettingsAlgorithms, BaseAuthSettings, BaseEncSettings } from '@wallet/lib'
+import { AuthSettings, AuthSettingsAlgorithms, EncSettings, EncSettingsAlgorithms } from '@wallet/lib'
 import { Locals } from '@wallet/main/internal'
 
 export interface KeyContext {
@@ -9,7 +9,8 @@ export interface KeyContext {
   encKeys: EncryptionKeys
 }
 
-export interface EncryptionKeys {
+export interface EncryptionKeys<E extends EncSettingsAlgorithms = EncSettingsAlgorithms> {
+  readonly algorithm: E
   get preencryptionKey (): KeyObject // eslint-disable-line @typescript-eslint/method-signature-style
 
   // Prepare
@@ -22,16 +23,32 @@ export interface EncryptionKeys {
 
   // Storage
   storeSettings: (locals: Locals, keyCtx: KeyContext) => Promise<void>
+
+  // Migration
+  migrationNeeded: () => Promise<boolean>
 }
 
-export type EncryptionKeysConstructor<E extends BaseEncSettings = BaseEncSettings> = new (enc: E) => EncryptionKeys
+export type EncSettingsFor<E extends EncSettingsAlgorithms> = { algorithm: E } & EncSettings
+export interface EncryptionKeysConstructor<E extends EncSettingsAlgorithms> {
+  new (enc: EncSettingsFor<E>): EncryptionKeys<E>
 
-export interface AuthenticationKeys {
-  readonly type: AuthSettingsAlgorithms
+  initialize: () => EncryptionKeys<E>
+}
+
+export interface AuthenticationKeys<A extends AuthSettingsAlgorithms = AuthSettingsAlgorithms> {
+  readonly algorithm: A
 
   authenticate: (keyCtx: KeyContext) => Promise<boolean>
   register: (keyCtx: KeyContext) => Promise<void>
   storeSettings: (locals: Locals, keyCtx: KeyContext) => Promise<void>
+
+  // Migration
+  migrationNeeded: () => Promise<boolean>
 }
 
-export type AuthenticationKeysConstructor<A extends BaseAuthSettings = BaseAuthSettings> = new (auth: A) => AuthenticationKeys
+export type AuthSettingsFor<A extends AuthSettingsAlgorithms> = { algorithm: A } & AuthSettings
+export interface AuthenticationKeysConstructor<A extends AuthSettingsAlgorithms = AuthSettingsAlgorithms> {
+  new (auth: AuthSettingsFor<A>): AuthenticationKeys
+
+  initialize: () => AuthenticationKeys<A>
+}

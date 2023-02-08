@@ -2,6 +2,7 @@
 import { JWK } from 'jose'
 import { JSONObject } from './json-object'
 import { ProviderData } from '@i3m/base-wallet'
+import { AuthSettings, EncSettings } from './key-algorithms'
 
 export interface WalletInfo {
   name: string
@@ -41,28 +42,16 @@ export interface PrivateSettings {
   secret?: JWK
 }
 
-export type AuthSettingsAlgorithms = 'pbkdf.2'
-
-export interface BaseAuthSettings {
-  algorithm?: AuthSettingsAlgorithms
-}
-
-export type EncSettingsAlgorithms = 'pbkdf.2'
-
-export interface BaseEncSettings {
-  algorithm?: EncSettingsAlgorithms
-}
-
 export type StoreType = 'electron-store' | 'file-store'
 
 export interface StoreSettings {
   type?: StoreType
 }
 
-export interface PublicSettings<A extends BaseAuthSettings = BaseAuthSettings, E extends BaseEncSettings = BaseEncSettings> {
+export interface PublicSettings {
   version: string
-  auth?: A
-  enc?: E
+  auth?: AuthSettings
+  enc?: EncSettings
   store?: StoreSettings
 }
 

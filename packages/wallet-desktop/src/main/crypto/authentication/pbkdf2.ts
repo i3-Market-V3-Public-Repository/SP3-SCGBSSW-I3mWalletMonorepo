@@ -1,15 +1,8 @@
 import crypto, { KeyObject } from 'crypto'
 
-import { AuthenticationError, deriveKey, isKeyObject, Locals, PbkdfSettings } from '@wallet/main/internal'
-import { BaseAuthSettings } from '@wallet/lib'
+import { AuthenticationError, deriveKeyOld, isKeyObject, Locals, PbkdfSettings } from '@wallet/main/internal'
+import { Pbkdf2AuthSettings } from '@wallet/lib'
 import { AuthenticationKeys, KeyContext } from '../key-generators'
-
-export interface Pbkdf2AuthSettings extends BaseAuthSettings {
-  algorithm?: 'pbkdf.2'
-  salt?: string
-  localAuth?: string
-  // TODO: modify for hashed password
-}
 
 const authPbkdfSettings: PbkdfSettings = {
   iterations: 100000,
@@ -18,7 +11,8 @@ const authPbkdfSettings: PbkdfSettings = {
 }
 
 export class Pbkdf2AuthKeys implements AuthenticationKeys {
-  readonly type = 'pbkdf.2'
+  readonly algorithm = 'pbkdf.2'
+
   protected salt: Buffer
   protected _localAuth?: KeyObject
 
@@ -45,7 +39,7 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
   }
 
   async generateAuthKey (keyCtx: KeyContext): Promise<KeyObject> {
-    return await deriveKey(keyCtx.password, this.salt, authPbkdfSettings)
+    return await deriveKeyOld(keyCtx.password, this.salt, authPbkdfSettings)
   }
 
   async register (keyCtx: KeyContext): Promise<void> {
@@ -62,6 +56,19 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
       algorithm: 'pbkdf.2',
       salt: this.salt.toString('base64'),
       localAuth: this.localAuth.export().toString('base64')
+    })
+  }
+
+  async migrationNeeded (): Promise<boolean> {
+    return false
+  }
+
+  static initialize (): Pbkdf2AuthKeys {
+    const salt = crypto.randomBytes(16)
+
+    return new Pbkdf2AuthKeys({
+      algorithm: 'pbkdf.2',
+      salt: salt.toString('base64')
     })
   }
 }

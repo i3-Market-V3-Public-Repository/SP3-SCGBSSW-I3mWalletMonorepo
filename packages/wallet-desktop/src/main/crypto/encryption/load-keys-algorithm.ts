@@ -1,32 +1,36 @@
-import { EncSettingsAlgorithms, BaseEncSettings, BaseAuthSettings } from '@wallet/lib'
+import { AuthSettings, EncSettings, EncSettingsAlgorithms } from '@wallet/lib'
 import { EncryptionKeys, EncryptionKeysConstructor } from '../key-generators'
 
 import { Pbkdf2EncKeys } from './pbkdf2'
+import { GenericPbkdfEncKeys } from './generic-pbkdf'
 
-const encKeysByType: Record<EncSettingsAlgorithms, EncryptionKeysConstructor> = {
-  'pbkdf.2': Pbkdf2EncKeys
+type EncKeysMap = {
+  [K in EncSettingsAlgorithms]: EncryptionKeysConstructor<K>
 }
 
-export const currentEncAlgorithm: EncSettingsAlgorithms = 'pbkdf.2'
+const encKeysByType: EncKeysMap = {
+  'pbkdf.2': Pbkdf2EncKeys,
+  'generic-pbkdf': GenericPbkdfEncKeys
+}
 
-export const loadEncKeyAlgorithm = (auth?: BaseAuthSettings, enc?: BaseEncSettings): EncryptionKeys => {
+export const currentEncAlgorithm: EncSettingsAlgorithms = 'generic-pbkdf'
+
+export const loadEncKeyAlgorithm = (auth?: AuthSettings, enc?: EncSettings): EncryptionKeys => {
   if (enc === undefined) {
     if (auth === undefined) {
-      return new (encKeysByType[currentEncAlgorithm])({})
+      const EncKeysType = (encKeysByType[currentEncAlgorithm])
+      return EncKeysType.initialize()
     }
 
     // When there is no enc data but there is auth data means that the settings are form an older version
     // This version had Pbkdf2 for the enc keys and auth keys with the same salt
-    return new Pbkdf2EncKeys(auth)
+    return Pbkdf2EncKeys.fromAuth(auth)
   }
 
-  if (enc.algorithm === undefined) {
-    return new Pbkdf2EncKeys(enc as any)
-  }
-
-  return new (encKeysByType[enc.algorithm])(enc)
+  const EncKeysType = (encKeysByType[enc.algorithm]) as EncryptionKeysConstructor<typeof enc.algorithm>
+  return new EncKeysType(enc)
 }
 
 export const getCurrentEncKeys = async (): Promise<EncryptionKeys> => {
-  return new (encKeysByType[currentEncAlgorithm])({})
+  return (encKeysByType[currentEncAlgorithm]).initialize()
 }
