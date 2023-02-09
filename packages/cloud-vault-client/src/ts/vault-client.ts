@@ -7,29 +7,12 @@ import EventSource from 'eventsource'
 import { apiVersion } from './config'
 import { KeyManager } from './key-manager'
 import { SecretKey } from './secret-key'
+import type { VaultConnError } from './types/error'
+import type { VaultEvent, VaultConflictEvent, VaultConnectedEvent, VaultConnErrorEvent, VaultDisconnectedEvent, VaultLoggedOutEvent, VaultStorageUpdatedEvent } from './types/events'
 
 export interface VaultStorage {
   storage: Buffer
   timestamp?: number // milliseconds elapsed since epoch of the last downloaded storage
-}
-
-export interface VaultEvent {
-  name: string
-  description: string
-}
-
-export interface VaultConnError {
-  request: {
-    method?: string
-    url?: string
-    headers?: { [header: string]: string }
-    data?: any
-  }
-  response?: {
-    status?: number
-    headers?: { [header: string]: string }
-    data?: any
-  }
 }
 
 export class VaultClient extends EventEmitter {
@@ -41,7 +24,6 @@ export class VaultClient extends EventEmitter {
   private password?: string // it will be only stored until keys are properly derived from it
   private keyManager?: KeyManager
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
-  defaultEvents
   initialized: Promise<boolean>
 
   private es?: EventSource
@@ -55,17 +37,12 @@ export class VaultClient extends EventEmitter {
     this.username = username
     this.password = password
 
-    this.defaultEvents = {
-      connected: 'connected', // The client is properly subscribed and will receive storage updated events
-      close: 'close', // server conection has been closed
-      'login-required': 'login-required', // The client is not logged in. Try to run client.login()
-      'storage-updated': 'storage-updated', // storage in the cloud server is more updated than the local copy
-      'storage-deleted': 'storage-deleted', // storage in the cloud server has been deleted
-      conflict: 'conflict', // you are trying to update modifications over a storage that was outdated
-      error: 'error' // An unexpected error event. Likely related with connection issues
-    }
-
     this.initialized = this.init()
+  }
+
+  emit (eventName: VaultEvent['name'], ...args: VaultEvent['args']): boolean
+  emit (eventName: string | symbol, ...args: any[]): boolean {
+    return super.emit(eventName, ...args)
   }
 
   private async init (): Promise<boolean> {
@@ -92,7 +69,7 @@ export class VaultClient extends EventEmitter {
     if (error instanceof AxiosError) {
       if ((error.response?.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
         this.logout()
-        this.emit(this.defaultEvents['login-required'])
+        this.emit('logged-out')
       } else {
         const vaultConnError: VaultConnError = {
           request: {
