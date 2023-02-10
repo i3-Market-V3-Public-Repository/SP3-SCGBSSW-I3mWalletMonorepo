@@ -1,14 +1,17 @@
 import type { ConnectedEvent, StorageUpdatedEvent } from '@i3m/cloud-vault-server'
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { randomBytes } from 'crypto'
 import { EventEmitter } from 'events'
 import EventSource from 'eventsource'
 import { apiVersion } from './config'
+import { VaultError } from './error'
 import { KeyManager } from './key-manager'
 import { SecretKey } from './secret-key'
-import type { VaultConnError } from './types/error'
-import type { VaultEvent, VaultConflictEvent, VaultConnectedEvent, VaultConnErrorEvent, VaultDisconnectedEvent, VaultLoggedOutEvent, VaultStorageUpdatedEvent } from './types/events'
+
+import type { ArgsForEvent, VaultEventName } from './events'
+
+type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void
 
 export interface VaultStorage {
   storage: Buffer
@@ -24,7 +27,7 @@ export class VaultClient extends EventEmitter {
   private password?: string // it will be only stored until keys are properly derived from it
   private keyManager?: KeyManager
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
-  initialized: Promise<boolean>
+  private readonly initialized: Promise<void>
 
   private es?: EventSource
 
@@ -40,54 +43,35 @@ export class VaultClient extends EventEmitter {
     this.initialized = this.init()
   }
 
-  emit (eventName: VaultEvent['name'], ...args: VaultEvent['args']): boolean
+  emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean
+  emit (eventName: string | symbol, ...args: any[]): boolean
   emit (eventName: string | symbol, ...args: any[]): boolean {
     return super.emit(eventName, ...args)
   }
 
-  private async init (): Promise<boolean> {
-    try {
-      await this.getWellKnownCvsConfiguration()
-    } catch (error) {
-      this.emitError(error)
-      return false
-    }
-    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-
-    this.keyManager = new KeyManager(this.username, this.password as string, cvsConf.vault_configuration[apiVersion].key_derivation)
-    try {
-      await this.keyManager.initialized
-    } catch (error) {
-      this.emitError(error)
-      return false
-    }
-    delete this.password // we don't need to store the password anymore if the keys are already derived
-    return true
+  on<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this
+  on (eventName: string | symbol, listener: (...args: any[]) => void): this
+  on (eventName: string | symbol, listener: (...args: any[]) => void): this {
+    return super.on(eventName, listener)
   }
 
-  private emitError (error: any): void {
-    if (error instanceof AxiosError) {
-      if ((error.response?.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
-        this.logout()
-        this.emit('logged-out')
-      } else {
-        const vaultConnError: VaultConnError = {
-          request: {
-            method: error.config?.method?.toLocaleUpperCase(),
-            url: error.config?.url,
-            headers: error.config?.headers,
-            data: error.config?.data
-          },
-          response: {
-            status: error.response?.status,
-            headers: error.response?.headers as { [key: string]: string },
-            data: error.response?.data
-          }
-        }
-        this.emit(this.defaultEvents.error, vaultConnError)
-      }
-    } else {
-      this.emit(this.defaultEvents.error, error)
+  once<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this
+  once (eventName: string | symbol, listener: (...args: any[]) => void): this
+  once (eventName: string | symbol, listener: (...args: any[]) => void): this {
+    return super.once(eventName, listener)
+  }
+
+  private async init (): Promise<void> {
+    try {
+      await this.getWellKnownCvsConfiguration()
+      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+
+      this.keyManager = new KeyManager(this.username, this.password as string, cvsConf.vault_configuration[apiVersion].key_derivation)
+      await this.keyManager.initialized
+
+      delete this.password // we don't need to store the password anymore if the keys are already derived
+    } catch (error) {
+      throw VaultError.from(error)
     }
   }
 
@@ -100,7 +84,7 @@ export class VaultClient extends EventEmitter {
 
   private async initEventSourceClient (): Promise<void> {
     if (this.token === undefined) {
-      throw new Error('Cannot subscribe to events without login first')
+      throw new VaultError('unauthorized', undefined)
     }
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
@@ -116,21 +100,21 @@ export class VaultClient extends EventEmitter {
     this.es.addEventListener('connected', (e) => {
       const msg = JSON.parse(e.data) as ConnectedEvent['data']
       this.timestamp = msg.timestamp
-      this.emit(this.defaultEvents.connected, msg.timestamp)
+      this.emit('connected', msg.timestamp)
     })
 
     this.es.addEventListener('storage-updated', (e) => {
       const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
       if (msg.timestamp !== this.timestamp) {
         this.timestamp = msg.timestamp
-        this.emit(this.defaultEvents['storage-updated'], this.timestamp)
+        this.emit('storage-updated', this.timestamp)
       }
     })
 
     this.es.addEventListener('storage-deleted', (e) => {
       delete this.timestamp
-      this.close()
-      this.emit(this.defaultEvents['storage-deleted'])
+      this.logout()
+      this.emit('storage-deleted')
     })
 
     this.es.onerror = (e) => {
@@ -138,101 +122,97 @@ export class VaultClient extends EventEmitter {
     }
   }
 
-  close (): void {
-    this.logout()
-    this.emit(this.defaultEvents.close)
-  }
-
-  async getAuthKey (): Promise<string | null> {
-    const initialized = await this.initialized
-    if (!initialized) { // try again to initialize
-      try {
-        await this.init()
-      } catch (error) {
-        this.emitError(error)
-        return null
-      }
-    }
-    return (this.keyManager as KeyManager).authKey
-  }
-
-  async login (): Promise<boolean> {
-    const initialized = await this.initialized
-    if (!initialized) { // try again to initialize
-      try {
-        await this.init()
-      } catch (error) {
-        this.emitError(error)
-        return false
-      }
-    }
-    const reqBody: OpenApiPaths.ApiV2VaultToken.Post.RequestBody = {
-      username: this.username,
-      authkey: (this.keyManager as KeyManager).authKey
-    }
-    try {
-      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-      const res = await axios.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
-        this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody
-      )
-
-      if (res.status !== 200) {
-        this.emitError(res)
-        return false
-      }
-
-      const body = res.data
-      this.token = body.token
-
-      await this.initEventSourceClient()
-      return true
-    } catch (error) {
-      this.emitError(error)
-      return false
+  private emitError (error: unknown): void {
+    const vaultError = VaultError.from(error)
+    switch (vaultError.message) {
+      case 'unauthorized':
+        this.logout()
+        this.emit('logged-out')
+        break
+      case 'sse-connection-error':
+        this.emit('connection-error', vaultError)
+        break
+      default:
+        this.emit('error', vaultError)
+        break
     }
   }
 
   logout (): void {
-    this.token = undefined
     this.es?.close()
+    this.token = undefined
+    this.emit('logged-out')
+  }
+
+  async getAuthKey (): Promise<string> {
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    return (this.keyManager as KeyManager).authKey
+  }
+
+  async login (): Promise<void> {
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    const reqBody: OpenApiPaths.ApiV2VaultToken.Post.RequestBody = {
+      username: this.username,
+      authkey: (this.keyManager as KeyManager).authKey
+    }
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const res = await axios.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
+      this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody
+    ).catch((error) => { throw VaultError.from(error) })
+
+    if (res.status !== 200) {
+      throw new VaultError('validation', {
+        description: `Received HTTP status ${res.status} does not match the expected one (200)`
+      }, { cause: 'HTTP status does not match the expected one' })
+    }
+
+    const body = res.data
+    this.token = body.token
+
+    await this.initEventSourceClient().catch((error) => { throw VaultError.from(error) })
   }
 
   async getRemoteStorageTimestamp (): Promise<number | null> {
-    try {
-      if (this.token === undefined) {
-        this.emit(this.defaultEvents['login-required'])
-        return null
-      }
-      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-      const res = await axios.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
-        this.serverUrl + cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
-        {
-          headers: {
-            Authorization: 'Bearer ' + this.token,
-            'Content-Type': 'application/json'
-          }
-        }
-      )
-      if (res.status !== 200) {
-        this.emitError(res)
-        return null
-      }
-      if ((this.timestamp ?? 0) < res.data.timestamp) {
-        this.timestamp = res.data.timestamp
-      }
-      return res.data.timestamp
-    } catch (error) {
-      this.emitError(error)
-      return null
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    if (this.token === undefined) {
+      throw new VaultError('unauthorized', undefined)
     }
+
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const res = await axios.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
+      this.serverUrl + cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
+      {
+        headers: {
+          Authorization: 'Bearer ' + this.token,
+          'Content-Type': 'application/json'
+        }
+      }
+    ).catch((error) => { throw VaultError.from(error) })
+
+    if (res.status !== 200) {
+      throw new VaultError('validation', {
+        description: `Received HTTP status ${res.status} does not match the expected one (200)`
+      }, { cause: 'HTTP status does not match the expected one' })
+    }
+
+    if ((this.timestamp ?? 0) < res.data.timestamp) {
+      this.timestamp = res.data.timestamp
+    }
+
+    return res.data.timestamp
   }
 
-  async getStorage (): Promise<VaultStorage | null> {
+  async getStorage (): Promise<VaultStorage> {
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    if (this.token === undefined) {
+      throw new VaultError('unauthorized', undefined)
+    }
+
     try {
-      if (this.token === undefined) {
-        this.emit(this.defaultEvents['login-required'])
-        return null
-      }
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const key: SecretKey = (this.keyManager as KeyManager).encKey
 
@@ -245,14 +225,17 @@ export class VaultClient extends EventEmitter {
           }
         })
       if (res.status !== 200) {
-        this.emitError(res)
-        return null
+        throw new VaultError('validation', {
+          description: `Received HTTP status ${res.status} does not match the expected one (200)`
+        }, { cause: 'HTTP status does not match the expected one' })
       }
 
       if (res.data.timestamp < (this.timestamp ?? 0)) {
-        this.emitError(new Error('Received timestamp is older than the latest one published'))
-        return null
+        throw new VaultError('validation', {
+          description: 'WEIRD!!! Received timestamp is older than the one received in previous events'
+        })
       }
+
       const storage = key.decrypt(Buffer.from(res.data.ciphertext, 'base64url'))
       this.timestamp = res.data.timestamp
 
@@ -261,21 +244,25 @@ export class VaultClient extends EventEmitter {
         timestamp: res.data.timestamp
       }
     } catch (error) {
-      this.emitError(error)
-      return null
+      throw VaultError.from(error)
     }
   }
 
-  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<boolean> {
+  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<void> {
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    if (this.token === undefined) {
+      throw new VaultError('unauthorized', undefined)
+    }
+
+    if (this.timestamp !== undefined && (storage.timestamp ?? 0) < this.timestamp) {
+      throw new VaultError('conflict', {
+        localTimestamp: storage.timestamp,
+        remoteTimestamp: this.timestamp
+      })
+    }
+
     try {
-      if (this.token === undefined) {
-        this.emit(this.defaultEvents['login-required'])
-        return false
-      }
-      if (this.timestamp !== undefined && (storage.timestamp ?? 0) < this.timestamp) {
-        this.emit(this.defaultEvents.conflict)
-        return false
-      }
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const key: SecretKey = (this.keyManager as KeyManager).encKey
 
@@ -300,24 +287,24 @@ export class VaultClient extends EventEmitter {
           }
         })
       if (res.status !== 201) {
-        this.emitError(res)
-        return false
+        throw new VaultError('validation', {
+          description: `Received HTTP status ${res.status} does not match the expected one (201)`
+        }, { cause: 'HTTP status does not match the expected one' })
       }
       this.timestamp = res.data.timestamp
-      return true
     } catch (error) {
-      this.emitError(error)
+      throw VaultError.from(error)
     }
-    return false
   }
 
-  async deleteStorage (): Promise<boolean> {
+  async deleteStorage (): Promise<void> {
+    await this.initialized.catch((error) => { throw new VaultError('not-initialized', error) })
+
+    if (this.token === undefined) {
+      throw new VaultError('unauthorized', undefined)
+    }
+
     try {
-      if (this.token === undefined) {
-        this.logout()
-        this.emit(this.defaultEvents['login-required'])
-        return false
-      }
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const res = await axios.delete<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
         this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
@@ -328,20 +315,19 @@ export class VaultClient extends EventEmitter {
         }
       )
       if (res.status !== 204) {
-        this.emitError(res)
-        return false
+        throw new VaultError('validation', {
+          description: `Received HTTP status ${res.status} does not match the expected one (204)`
+        }, { cause: 'HTTP status does not match the expected one' })
       }
-      this.emit(this.defaultEvents['storage-deleted'])
+
       delete this.timestamp
-      this.close()
-      return true
+      this.logout()
     } catch (error) {
-      this.emitError(error)
+      throw VaultError.from(error)
     }
-    return false
   }
 
-  async getServerPublicKey (): Promise<OpenApiComponents.Schemas.JwkEcPublicKey | null> {
+  async getServerPublicKey (): Promise<OpenApiComponents.Schemas.JwkEcPublicKey> {
     try {
       await this.getWellKnownCvsConfiguration()
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
@@ -349,13 +335,13 @@ export class VaultClient extends EventEmitter {
         this.serverUrl + cvsConf.registration_configuration.public_jwk_endpoint
       )
       if (res.status !== 200) {
-        this.emitError(res)
-        return null
+        throw new VaultError('validation', {
+          description: `Received HTTP status ${res.status} does not match the expected one (200)`
+        }, { cause: 'HTTP status does not match the expected one' })
       }
       return res.data.jwk
     } catch (error) {
-      this.emitError(error)
-      return null
+      throw VaultError.from(error)
     }
   }
 }

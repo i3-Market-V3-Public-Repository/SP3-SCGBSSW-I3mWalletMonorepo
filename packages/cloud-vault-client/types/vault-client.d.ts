@@ -2,30 +2,11 @@
 /// <reference types="node" />
 import type { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { EventEmitter } from 'events';
+import type { ArgsForEvent, VaultEventName } from './events';
+type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void;
 export interface VaultStorage {
     storage: Buffer;
     timestamp?: number;
-}
-export interface VaultEvent {
-    name: string;
-    description: string;
-}
-export interface VaultConnError {
-    request: {
-        method?: string;
-        url?: string;
-        headers?: {
-            [header: string]: string;
-        };
-        data?: any;
-    };
-    response?: {
-        status?: number;
-        headers?: {
-            [header: string]: string;
-        };
-        data?: any;
-    };
 }
 export declare class VaultClient extends EventEmitter {
     timestamp?: number;
@@ -36,30 +17,27 @@ export declare class VaultClient extends EventEmitter {
     private password?;
     private keyManager?;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
-    defaultEvents: {
-        connected: string;
-        close: string;
-        'login-required': string;
-        'storage-updated': string;
-        'storage-deleted': string;
-        conflict: string;
-        error: string;
-    };
-    initialized: Promise<boolean>;
+    private readonly initialized;
     private es?;
     constructor(serverUrl: string, username: string, password: string, name?: string);
+    emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean;
+    emit(eventName: string | symbol, ...args: any[]): boolean;
+    on<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
+    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    once<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
+    once(eventName: string | symbol, listener: (...args: any[]) => void): this;
     private init;
-    private emitError;
     private getWellKnownCvsConfiguration;
     private initEventSourceClient;
-    close(): void;
-    getAuthKey(): Promise<string | null>;
-    login(): Promise<boolean>;
+    private emitError;
     logout(): void;
+    getAuthKey(): Promise<string>;
+    login(): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
-    getStorage(): Promise<VaultStorage | null>;
-    updateStorage(storage: VaultStorage, force?: boolean): Promise<boolean>;
-    deleteStorage(): Promise<boolean>;
-    getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey | null>;
+    getStorage(): Promise<VaultStorage>;
+    updateStorage(storage: VaultStorage, force?: boolean): Promise<void>;
+    deleteStorage(): Promise<void>;
+    getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey>;
 }
+export {};
 //# sourceMappingURL=vault-client.d.ts.map
