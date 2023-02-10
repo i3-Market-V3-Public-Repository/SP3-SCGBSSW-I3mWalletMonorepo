@@ -1,6 +1,6 @@
 import type { ConnectedEvent, StorageUpdatedEvent } from '@i3m/cloud-vault-server'
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
-import axios from 'axios'
+import request from './request'
 import { randomBytes } from 'crypto'
 import { EventEmitter } from 'events'
 import EventSource from 'eventsource'
@@ -76,10 +76,10 @@ export class VaultClient extends EventEmitter {
   }
 
   private async getWellKnownCvsConfiguration (): Promise<void> {
-    const res = await axios.get<OpenApiPaths.WellKnownCvsConfiguration.Get.Responses.$200>(
-      this.serverUrl + '/.well-known/cvs-configuration'
+    this.wellKnownCvsConfiguration = await request.get<OpenApiPaths.WellKnownCvsConfiguration.Get.Responses.$200>(
+      this.serverUrl + '/.well-known/cvs-configuration',
+      { responseStatus: 200 }
     )
-    this.wellKnownCvsConfiguration = res.data
   }
 
   private async initEventSourceClient (): Promise<void> {
@@ -158,18 +158,12 @@ export class VaultClient extends EventEmitter {
       authkey: (this.keyManager as KeyManager).authKey
     }
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-    const res = await axios.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
-      this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody
-    ).catch((error) => { throw VaultError.from(error) })
+    const data = await request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
+      this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody,
+      { responseStatus: 200 }
+    )
 
-    if (res.status !== 200) {
-      throw new VaultError('validation', {
-        description: `Received HTTP status ${res.status} does not match the expected one (200)`
-      }, { cause: 'HTTP status does not match the expected one' })
-    }
-
-    const body = res.data
-    this.token = body.token
+    this.token = data.token
 
     await this.initEventSourceClient().catch((error) => { throw VaultError.from(error) })
   }
@@ -182,27 +176,19 @@ export class VaultClient extends EventEmitter {
     }
 
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-    const res = await axios.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
+    const data = await request.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
       this.serverUrl + cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
       {
-        headers: {
-          Authorization: 'Bearer ' + this.token,
-          'Content-Type': 'application/json'
-        }
+        bearerToken: this.token,
+        responseStatus: 200
       }
-    ).catch((error) => { throw VaultError.from(error) })
+    )
 
-    if (res.status !== 200) {
-      throw new VaultError('validation', {
-        description: `Received HTTP status ${res.status} does not match the expected one (200)`
-      }, { cause: 'HTTP status does not match the expected one' })
+    if ((this.timestamp ?? 0) < data.timestamp) {
+      this.timestamp = data.timestamp
     }
 
-    if ((this.timestamp ?? 0) < res.data.timestamp) {
-      this.timestamp = res.data.timestamp
-    }
-
-    return res.data.timestamp
+    return data.timestamp
   }
 
   async getStorage (): Promise<VaultStorage> {
@@ -216,32 +202,26 @@ export class VaultClient extends EventEmitter {
       const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const key: SecretKey = (this.keyManager as KeyManager).encKey
 
-      const res = await axios.get<OpenApiPaths.ApiV2Vault.Get.Responses.$200>(
+      const data = await request.get<OpenApiPaths.ApiV2Vault.Get.Responses.$200>(
         this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
         {
-          headers: {
-            Authorization: 'Bearer ' + this.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      if (res.status !== 200) {
-        throw new VaultError('validation', {
-          description: `Received HTTP status ${res.status} does not match the expected one (200)`
-        }, { cause: 'HTTP status does not match the expected one' })
-      }
+          bearerToken: this.token,
+          responseStatus: 200
+        }
+      )
 
-      if (res.data.timestamp < (this.timestamp ?? 0)) {
+      if (data.timestamp < (this.timestamp ?? 0)) {
         throw new VaultError('validation', {
           description: 'WEIRD!!! Received timestamp is older than the one received in previous events'
         })
       }
 
-      const storage = key.decrypt(Buffer.from(res.data.ciphertext, 'base64url'))
-      this.timestamp = res.data.timestamp
+      const storage = key.decrypt(Buffer.from(data.ciphertext, 'base64url'))
+      this.timestamp = data.timestamp
 
       return {
         storage,
-        timestamp: res.data.timestamp
+        timestamp: data.timestamp
       }
     } catch (error) {
       throw VaultError.from(error)
@@ -262,39 +242,29 @@ export class VaultClient extends EventEmitter {
       })
     }
 
-    try {
-      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-      const key: SecretKey = (this.keyManager as KeyManager).encKey
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const key: SecretKey = (this.keyManager as KeyManager).encKey
 
-      if (force) {
-        const remoteTimestamp = await this.getRemoteStorageTimestamp()
-        storage.timestamp = (remoteTimestamp !== null) ? remoteTimestamp : undefined
-      }
-
-      const encryptedStorage = key.encrypt(storage.storage)
-
-      const requestBody: OpenApiPaths.ApiV2Vault.Post.RequestBody = {
-        ciphertext: encryptedStorage.toString('base64url'),
-        timestamp: storage.timestamp
-      }
-      const res = await axios.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(
-        this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
-        requestBody,
-        {
-          headers: {
-            Authorization: 'Bearer ' + this.token,
-            'Content-Type': 'application/json'
-          }
-        })
-      if (res.status !== 201) {
-        throw new VaultError('validation', {
-          description: `Received HTTP status ${res.status} does not match the expected one (201)`
-        }, { cause: 'HTTP status does not match the expected one' })
-      }
-      this.timestamp = res.data.timestamp
-    } catch (error) {
-      throw VaultError.from(error)
+    if (force) {
+      const remoteTimestamp = await this.getRemoteStorageTimestamp()
+      storage.timestamp = (remoteTimestamp !== null) ? remoteTimestamp : undefined
     }
+
+    const encryptedStorage = key.encrypt(storage.storage)
+
+    const requestBody: OpenApiPaths.ApiV2Vault.Post.RequestBody = {
+      ciphertext: encryptedStorage.toString('base64url'),
+      timestamp: storage.timestamp
+    }
+    const data = await request.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(
+      this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
+      requestBody,
+      {
+        bearerToken: this.token,
+        responseStatus: 201
+      }
+    )
+    this.timestamp = data.timestamp
   }
 
   async deleteStorage (): Promise<void> {
@@ -304,44 +274,25 @@ export class VaultClient extends EventEmitter {
       throw new VaultError('unauthorized', undefined)
     }
 
-    try {
-      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-      const res = await axios.delete<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
-        this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
-        {
-          headers: {
-            Authorization: 'Bearer ' + this.token
-          }
-        }
-      )
-      if (res.status !== 204) {
-        throw new VaultError('validation', {
-          description: `Received HTTP status ${res.status} does not match the expected one (204)`
-        }, { cause: 'HTTP status does not match the expected one' })
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    await request.delete<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
+      this.serverUrl + cvsConf.vault_configuration[apiVersion].vault_endpoint,
+      {
+        bearerToken: this.token,
+        responseStatus: 204
       }
-
-      delete this.timestamp
-      this.logout()
-    } catch (error) {
-      throw VaultError.from(error)
-    }
+    )
+    delete this.timestamp
+    this.logout()
   }
 
   async getServerPublicKey (): Promise<OpenApiComponents.Schemas.JwkEcPublicKey> {
-    try {
-      await this.getWellKnownCvsConfiguration()
-      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-      const res = await axios.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
-        this.serverUrl + cvsConf.registration_configuration.public_jwk_endpoint
-      )
-      if (res.status !== 200) {
-        throw new VaultError('validation', {
-          description: `Received HTTP status ${res.status} does not match the expected one (200)`
-        }, { cause: 'HTTP status does not match the expected one' })
-      }
-      return res.data.jwk
-    } catch (error) {
-      throw VaultError.from(error)
-    }
+    await this.getWellKnownCvsConfiguration()
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const data = await request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
+      this.serverUrl + cvsConf.registration_configuration.public_jwk_endpoint,
+      { responseStatus: 200 }
+    )
+    return data.jwk
   }
 }
