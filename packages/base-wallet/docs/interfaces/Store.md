@@ -22,8 +22,10 @@
 ### Methods
 
 - [delete](Store.md#delete)
+- [emit](Store.md#emit)
 - [get](Store.md#get)
 - [has](Store.md#has)
+- [on](Store.md#on)
 - [set](Store.md#set)
 
 ## Properties
@@ -44,7 +46,7 @@ Delete all items.
 
 #### Defined in
 
-[src/ts/app/store.ts:69](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L69)
+[src/ts/app/store.ts:72](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L72)
 
 ___
 
@@ -66,7 +68,7 @@ The store path
 
 #### Defined in
 
-[src/ts/app/store.ts:81](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L81)
+[src/ts/app/store.ts:84](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L84)
 
 ___
 
@@ -88,7 +90,7 @@ The entire store
 
 #### Defined in
 
-[src/ts/app/store.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L75)
+[src/ts/app/store.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L78)
 
 ## Methods
 
@@ -116,7 +118,7 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:63](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L63)
+[src/ts/app/store.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L66)
 
 ▸ **delete**(`key`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
@@ -132,7 +134,109 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L64)
+[src/ts/app/store.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L67)
+
+___
+
+### emit
+
+▸ **emit**(`eventName`, `changedAt`): `boolean`
+
+Synchronously calls each of the listeners registered for the 'change'
+event, in the order they were registered, passing the `changedAt`argument
+to each.
+The 'change' event should be emitted when the store contents change
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | ``"change"`` |  |
+| `changedAt` | `number` | timestamp (in milliseconds ellapsed from EPOCH) when the change happened |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[src/ts/app/store.ts:151](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L151)
+
+▸ **emit**(`eventName`, `changedAt`): `boolean`
+
+Synchronously calls each of the listeners registered for the 'cleared'
+event, in the order they were registered, passing the `changedAt`argument
+to each.
+The 'cleared' event should be emitted when the store contents are cleared.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | ``"cleared"`` |  |
+| `changedAt` | `number` | timestamp (in milliseconds ellapsed from EPOCH) when the store contents were cleared |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[src/ts/app/store.ts:161](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L161)
+
+▸ **emit**(`eventName`, ...`args`): `boolean`
+
+Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
+to each.
+
+Returns `true` if the event had listeners, `false` otherwise.
+
+```js
+const EventEmitter = require('events');
+const myEmitter = new EventEmitter();
+
+// First listener
+myEmitter.on('event', function firstListener() {
+  console.log('Helloooo! first listener');
+});
+// Second listener
+myEmitter.on('event', function secondListener(arg1, arg2) {
+  console.log(`event with parameters ${arg1}, ${arg2} in second listener`);
+});
+// Third listener
+myEmitter.on('event', function thirdListener(...args) {
+  const parameters = args.join(', ');
+  console.log(`event with parameters ${parameters} in third listener`);
+});
+
+console.log(myEmitter.listeners('event'));
+
+myEmitter.emit('event', 1, 2, 3, 4, 5);
+
+// Prints:
+// [
+//   [Function: firstListener],
+//   [Function: secondListener],
+//   [Function: thirdListener]
+// ]
+// Helloooo! first listener
+// event with parameters 1, 2 in second listener
+// event with parameters 1, 2, 3, 4, 5 in third listener
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `eventName` | `string` \| `symbol` |
+| `...args` | `any`[] |
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[src/ts/app/store.ts:200](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L200)
 
 ___
 
@@ -160,7 +264,7 @@ Get an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L35)
+[src/ts/app/store.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L37)
 
 ▸ **get**<`Key`\>(`key`, `defaultValue`): [`CanBePromise`](../API.md#canbepromise)<`Required`<`T`\>[`Key`]\>
 
@@ -183,7 +287,7 @@ Get an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L36)
+[src/ts/app/store.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L38)
 
 ___
 
@@ -211,7 +315,7 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/app/store.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L56)
+[src/ts/app/store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L59)
 
 ▸ **has**(`key`): [`CanBePromise`](../API.md#canbepromise)<`boolean`\>
 
@@ -227,7 +331,106 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/app/store.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L57)
+[src/ts/app/store.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L60)
+
+___
+
+### on
+
+▸ **on**(`eventName`, `listener`): [`Store`](Store.md)<`T`\>
+
+Adds the `listener` function to the end of the listeners array for the
+'change' event, which is emitted when the store changes its contents.
+The only argument passed to the listener is the `changedAt` timestamp with
+the local timestamp (milliseconds ellapsed from EPOCH) when the change happened.
+No checks are made to see if the `listener` has already been added. Multiple
+calls for the 'change' event will result in multiple `listener` being added,
+and called, multiple times when the event is emitted.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `eventName` | ``"change"`` |
+| `listener` | (`changedAt`: `number`) => `void` |
+
+#### Returns
+
+[`Store`](Store.md)<`T`\>
+
+#### Defined in
+
+[src/ts/app/store.ts:98](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L98)
+
+▸ **on**(`eventName`, `listener`): [`Store`](Store.md)<`T`\>
+
+Adds the `listener` function to the end of the listeners array for the
+'cleared' event, which is emitted when the store contents are cleared.
+The only argument passed to the listener is the `changedAt` timestamp with
+the local timestamp (milliseconds ellapsed from EPOCH) when the change happened.
+No checks are made to see if the `listener` has already been added. Multiple
+calls for the 'cleared' event will result in multiple `listener` being added,
+and called, multiple times when the event is emitted.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `eventName` | ``"cleared"`` |
+| `listener` | (`changedAt`: `number`) => `void` |
+
+#### Returns
+
+[`Store`](Store.md)<`T`\>
+
+#### Defined in
+
+[src/ts/app/store.ts:111](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L111)
+
+▸ **on**(`eventName`, `listener`): [`Store`](Store.md)<`T`\>
+
+Adds a **one-time**`listener` function for the event named `eventName`. The
+next time `eventName` is triggered, this listener is removed and then invoked.
+
+```js
+server.once('connection', (stream) => {
+  console.log('Ah, we have our first user!');
+});
+```
+
+Returns a reference to the `EventEmitter`, so that calls can be chained.
+
+By default, event listeners are invoked in the order they are added. The`emitter.prependOnceListener()` method can be used as an alternative to add the
+event listener to the beginning of the listeners array.
+
+```js
+const myEE = new EventEmitter();
+myEE.once('foo', () => console.log('a'));
+myEE.prependOnceListener('foo', () => console.log('b'));
+myEE.emit('foo');
+// Prints:
+//   b
+//   a
+```
+
+**`Since`**
+
+v0.3.0
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventName` | `string` \| `symbol` | The name of the event. |
+| `listener` | (...`args`: `any`[]) => `void` | The callback function |
+
+#### Returns
+
+[`Store`](Store.md)<`T`\>
+
+#### Defined in
+
+[src/ts/app/store.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L140)
 
 ___
 
@@ -249,7 +452,7 @@ Set multiple keys at once.
 
 #### Defined in
 
-[src/ts/app/store.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L42)
+[src/ts/app/store.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L44)
 
 ▸ **set**<`Key`\>(`key`, `value`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
@@ -274,7 +477,7 @@ Set an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:48](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L48)
+[src/ts/app/store.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L51)
 
 ▸ **set**(`key`, `value`): [`CanBePromise`](../API.md#canbepromise)<`void`\>
 
@@ -291,4 +494,4 @@ Set an item.
 
 #### Defined in
 
-[src/ts/app/store.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/4218bfe/packages/base-wallet/src/ts/app/store.ts#L49)
+[src/ts/app/store.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/app/store.ts#L52)

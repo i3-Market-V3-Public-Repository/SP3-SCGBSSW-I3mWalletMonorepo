@@ -1,5 +1,7 @@
 /// <reference types="node" />
 /// <reference types="node" />
+/// <reference types="node" />
+import { EventEmitter } from 'events';
 import { BinaryLike, KeyObject } from 'crypto';
 import { Store } from '../../app';
 /**
@@ -9,7 +11,7 @@ import { Store } from '../../app';
  *
  * The wallet's storage-file can be encrypted for added security.
  */
-export declare class FileStore<T extends Record<string, any> = Record<string, unknown>> implements Store<T> {
+export declare class FileStore<T extends Record<string, any> = Record<string, unknown>> extends EventEmitter implements Store<T> {
     filepath: string;
     private key;
     private readonly _password?;
@@ -30,6 +32,12 @@ export declare class FileStore<T extends Record<string, any> = Record<string, un
      * @deprecated you should consider passing a more secure KeyObject derived from your password
      */
     constructor(filepath: string, password?: string, defaultModel?: T);
+    on(eventName: 'change', listener: (changedAt: number) => void): this;
+    on(eventName: 'cleared', listener: (changedAt: number) => void): this;
+    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
+    emit(eventName: 'change', changedAt: number): boolean;
+    emit(eventName: 'cleared', changedAt: number): boolean;
+    emit(eventName: string | symbol, ...args: any[]): boolean;
     private init;
     deriveKey(password: string, salt?: Buffer): Promise<void>;
     private getModel;

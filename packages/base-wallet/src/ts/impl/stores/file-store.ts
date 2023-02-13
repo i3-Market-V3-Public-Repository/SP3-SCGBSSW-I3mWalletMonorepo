@@ -1,4 +1,5 @@
 import { mkdir, rm } from 'fs/promises'
+import { EventEmitter } from 'events'
 // TODO: Use atomically
 // import { readFileSync, writeFileSync } from 'atomically'
 import { writeFileSync, readFileSync } from 'fs'
@@ -14,7 +15,7 @@ import { Store } from '../../app'
  *
  * The wallet's storage-file can be encrypted for added security.
  */
-export class FileStore<T extends Record<string, any> = Record<string, unknown>> implements Store<T> {
+export class FileStore<T extends Record<string, any> = Record<string, unknown>> extends EventEmitter implements Store<T> {
   filepath: string
   private key!: KeyObject
   private readonly _password?: string
@@ -37,6 +38,7 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
    */
   constructor (filepath: string, password?: string, defaultModel?: T)
   constructor (filepath: string, keyObjectOrPassword?: KeyObject | string, defaultModel?: T) {
+    super()
     const isNode = typeof process !== 'undefined' && process.versions != null && process.versions.node != null
     if (!isNode) {
       throw new Error('FileStore can only be instantiated from Node.js')
@@ -51,6 +53,20 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
 
     this.defaultModel = defaultModel ?? {} as any
     this.initialized = this.init()
+  }
+
+  on (eventName: 'change', listener: (changedAt: number) => void): this
+  on (eventName: 'cleared', listener: (changedAt: number) => void): this
+  on (eventName: string | symbol, listener: (...args: any[]) => void): this
+  on (eventName: string | symbol, listener: (...args: any[]) => void): this {
+    return super.on(eventName, listener)
+  }
+
+  emit (eventName: 'change', changedAt: number): boolean
+  emit (eventName: 'cleared', changedAt: number): boolean
+  emit (eventName: string | symbol, ...args: any[]): boolean
+  emit (eventName: string | symbol, ...args: any[]): boolean {
+    return super.emit(eventName, ...args)
   }
 
   private async init (): Promise<void> {
@@ -173,6 +189,7 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     }
 
     await this.setModel(model)
+    this.emit('change', Date.now())
   }
 
   async has<Key extends 'accounts'>(key: Key): Promise<boolean> {
@@ -188,10 +205,12 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     let model = await this.getModel()
     model = _.omit(model, key) as any
     await this.setModel(model)
+    this.emit('change', Date.now())
   }
 
   async clear (): Promise<void> {
     await this.initialized
+    this.emit('cleared', Date.now())
 
     await rm(this.filepath)
   }
