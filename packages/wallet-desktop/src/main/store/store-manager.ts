@@ -116,13 +116,6 @@ export class StoreManager {
     const builder = loadStoreBuilder<T>(storeType ?? this.storeInfo.type)
     const path = getPath(this.ctx, this.locals, options)
     logger.debug(`Loading store on '${path}'`)
-    try {
-      return await builder.build(this.ctx, this.locals, fixedOptions)
-    } catch (e) {
-      if (e instanceof SyntaxError) {
-        throw new FormatError(`Inconsistent format on file '${path}'`)
-      }
-      throw e
-    }
+    return await builder.build(this.ctx, this.locals, fixedOptions)
   }
 }

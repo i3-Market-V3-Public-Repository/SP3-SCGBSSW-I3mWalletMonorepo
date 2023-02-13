@@ -14,7 +14,8 @@ import {
   setLocals,
   Locals,
   getResourcePath,
-  ActionError
+  ActionError,
+  logger
 } from '@wallet/main/internal'
 import { developerApi } from './developer-api'
 import { getModulesPath } from '../directories'
@@ -83,20 +84,6 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
   app.use('/pairing', express.static(getResourcePath('pairing')))
   app.use('/pairing/@i3m', express.static(getModulesPath('@i3m')))
 
-  // Add error middleware. I add it before the openapi so that the openapi properly validates the error responses
-  const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
-    if (err instanceof HttpError || err instanceof WalletError || err instanceof ActionError) {
-      const status = Number(err.status ?? 400)
-      res.status(status).json({
-        code: 1,
-        message: err.message
-      })
-    } else {
-      next(err)
-    }
-  }
-  app.use(errorMiddleware)
-
   // Add routes using openapi validator middleware
   const openApiMiddleware = openapiValidator({
     apiSpec: openapiSpec as any,
@@ -107,4 +94,23 @@ export async function initServer (app: Express, locals: Locals): Promise<void> {
     // ignorePaths: /^(?!\/?rp).*$/
   })
   app.use(openApiMiddleware)
+
+  // Add error middleware. I add it before the openapi so that the openapi properly validates the error responses
+  const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
+    if (err instanceof HttpError || err instanceof WalletError || err instanceof ActionError) {
+      const status = Number(err.status ?? 400)
+      res.status(status).json({
+        code: 1,
+        message: err.message
+      })
+    } else {
+      logger.error('Something went wrong in the API service')
+      console.error(err)
+      res.status(500).json({
+        code: -1,
+        message: 'something bad happend'
+      })
+    }
+  }
+  app.use(errorMiddleware)
 }

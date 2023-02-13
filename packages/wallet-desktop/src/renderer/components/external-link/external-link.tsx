@@ -9,7 +9,7 @@ export function ExternalLink (props: React.PropsWithChildren<Props>): JSX.Elemen
 
   const onClick: React.MouseEventHandler = async (ev) => {
     ev.preventDefault()
-    await electron.remote.shell.openExternal(href)
+    await electron.shell.openExternal(href)
   }
 
   return (

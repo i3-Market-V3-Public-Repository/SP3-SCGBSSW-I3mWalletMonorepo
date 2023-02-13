@@ -8,9 +8,9 @@ const configFontAwesome = (): void => {
 }
 
 export default (windowArgs: WindowArgs): void => {
-  if (process.env.NODE_ENV === 'development') {
-    require('electron-connect').client.create() // eslint-disable-line
-  }
+  // if (process.env.NODE_ENV === 'development') {
+  //   require('electron-connect').client.create() // eslint-disable-line
+  // }
 
   // Config fontawesome
   configFontAwesome()

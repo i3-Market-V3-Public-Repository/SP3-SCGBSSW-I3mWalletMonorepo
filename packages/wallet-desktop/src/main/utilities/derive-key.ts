@@ -1,6 +1,6 @@
-import { KeyObject, createSecretKey, createHash } from 'crypto'
+import crypto, { KeyObject, createSecretKey, createHash } from 'node:crypto'
 import pbkdf2Hmac from 'pbkdf2-hmac'
-import { scrypt } from 'scrypt-pbkdf'
+// import { scrypt } from 'scrypt-pbkdf'
 
 import { KeyDerivation, KeyDerivationContext, PbkdfAlgorithms } from '@wallet/lib'
 import { logger } from '@wallet/main/internal'
@@ -72,13 +72,28 @@ const derivePbkdf2 = async (password: string | Buffer, salt: Buffer, kd: KeyDeri
 }
 
 const deriveScrypt = async (password: string | Buffer, salt: Buffer, kd: KeyDerivation<'scrypt'>, kdCtx: KeyDerivationContext): Promise<KeyObject> => {
-  const keyBuffer = await scrypt(
-    password,
-    salt,
-    kd.derived_key_length,
-    kd.alg_options
-  )
-  return createSecretKey(Buffer.from(keyBuffer))
+  return await new Promise<KeyObject>(resolve => {
+    crypto.scrypt(
+      password,
+      salt,
+      kd.derived_key_length,
+      {
+        ...kd.alg_options,
+        maxmem: 160 * kd.alg_options.N * kd.alg_options.r
+      },
+      (err, deriveKey) => {
+        if (err !== undefined) {
+          const key = createSecretKey(Buffer.from(deriveKey))
+          resolve(key)
+        }
+      })
+  })
+  // const keyBuffer = scrypt(
+  //   password,
+  //   salt,
+  //   kd.derived_key_length,
+  //   kd.alg_options
+  // )
 }
 
 const checkKeyDerivationType = <Alg extends PbkdfAlgorithms>(kd: KeyDerivation, alg: Alg): kd is KeyDerivation<Alg> => {

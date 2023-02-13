@@ -47,15 +47,15 @@ export type AlgorithmOptionsFor<Alg extends PbkdfAlgorithms> = {
 export type KeyDerivationContext = Record<string, string | KeyObject | Buffer | undefined>
 export type KeyDerivation<Alg extends PbkdfAlgorithms = PbkdfAlgorithms> = {
   alg: Alg
-  derived_key_length: number,
-  input_pattern: string,
-  salt_pattern: string,
-  salt_hashing_algorithm: HashFunction,
   alg_options: AlgorithmOptionsFor<Alg>
+  derived_key_length: number
+  input_pattern: string
+  salt_pattern: string
+  salt_hashing_algorithm: HashFunction
 }
 
 export type KeyDerivationMap<K extends string> = {
-  [P in K]: KeyDerivation
+  [P in K]: KeyDerivation<'pbkdf2'> | KeyDerivation<'scrypt'>
 }
 
 export interface GenericPbkdfEncSettings {

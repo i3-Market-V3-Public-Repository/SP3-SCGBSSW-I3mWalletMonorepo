@@ -41,8 +41,7 @@ export class WindowManager {
         preload: path.join(__dirname, 'preload.js'),
         additionalArguments: [this.convertToArgs(args)],
         contextIsolation: false,
-        nodeIntegration: true,
-        enableRemoteModule: true // TODO: Needed because electron-connect. It is deprecated so electron connect must be removed
+        nodeIntegration: true
       },
       ...creationArgs
     })

@@ -13,8 +13,8 @@ const DEFAULT_KD: GenericPbkdfEncSettings['key_derivation'] = {
     salt_pattern: '{salt}',
     salt_hashing_algorithm: 'sha512',
     alg_options: {
-      N: 2 ** 16,
-      p: 1,
+      N: 2 ** 19,
+      p: 2,
       r: 8
     }
   },
@@ -22,10 +22,10 @@ const DEFAULT_KD: GenericPbkdfEncSettings['key_derivation'] = {
     alg: 'scrypt',
     derived_key_length: 32,
     input_pattern: '{master}',
-    salt_pattern: '',
+    salt_pattern: 'sk',
     salt_hashing_algorithm: 'sha512',
     alg_options: {
-      N: 2 ** 1,
+      N: 2 ** 8,
       p: 1,
       r: 8
     }
@@ -34,10 +34,10 @@ const DEFAULT_KD: GenericPbkdfEncSettings['key_derivation'] = {
     alg: 'scrypt',
     derived_key_length: 32,
     input_pattern: '{master}',
-    salt_pattern: '{salt}{wallet}',
+    salt_pattern: 'wk-{wallet}',
     salt_hashing_algorithm: 'sha512',
     alg_options: {
-      N: 2 ** 1,
+      N: 2 ** 8,
       p: 1,
       r: 8
     }

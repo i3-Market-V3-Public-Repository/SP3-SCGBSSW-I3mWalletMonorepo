@@ -27,7 +27,7 @@ export class GeneralMcfAuthKeys implements AuthenticationKeys {
   }
 
   async authenticate (keyCtx: KeyContext): Promise<boolean> {
-    return verify(keyCtx.password, this.localAuth)
+    return await verify(keyCtx.password, this.localAuth)
   }
 
   async storeSettings (locals: Locals): Promise<void> {
@@ -44,7 +44,7 @@ export class GeneralMcfAuthKeys implements AuthenticationKeys {
 
   static initialize (): GeneralMcfAuthKeys {
     return new GeneralMcfAuthKeys({
-      algorithm: 'general-mcf',
+      algorithm: 'general-mcf'
     })
   }
 }
