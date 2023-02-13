@@ -14,8 +14,6 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 - [KeyDerivationOptions](interfaces/KeyDerivationOptions.md)
 - [ScryptOptions](interfaces/ScryptOptions.md)
-- [VaultConnError](interfaces/VaultConnError.md)
-- [VaultEvent](interfaces/VaultEvent.md)
 - [VaultStorage](interfaces/VaultStorage.md)
 
 ### Functions
@@ -41,7 +39,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/2705a55/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
+[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
 
 ▸ **deriveKey**(`key`, `opts`): `Promise`<`KeyObject`\>
 
@@ -58,4 +56,4 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/2705a55/packages/cloud-vault-client/src/ts/key-manager.ts#L75)
+[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L75)

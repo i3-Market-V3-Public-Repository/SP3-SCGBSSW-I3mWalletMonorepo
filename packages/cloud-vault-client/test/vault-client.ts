@@ -36,10 +36,10 @@ describe('Wallet Cloud-Vault', function () {
     client1 = new VaultClient(serverUrl, user.username, user.password, '1')
     client2 = new VaultClient(serverUrl, user.username, user.password, '2')
 
-    client1.on(client1.defaultEvents.error, error => {
+    client1.on('connection-error', error => {
       console.log(client1.name, ': ', error)
     })
-    client2.on(client1.defaultEvents.error, error => {
+    client2.on('connection-error', error => {
       console.log(client1.name, ': ', error)
     })
 
@@ -55,8 +55,8 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   after('Close clients', function (done) {
-    client1.close()
-    client2.close()
+    client1.logout()
+    client2.logout()
     done()
   })
 
@@ -86,10 +86,13 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   it('should be able to connect to server using registered credentials', async function () {
-    const client1Connected = await client1.login()
-    const client2Connected = await client2.login()
-    chai.expect(client1Connected).to.be.true
-    chai.expect(client2Connected).to.be.true
+    let clientsConnected = false
+    try {
+      await client1.login()
+      await client2.login()
+      clientsConnected = true
+    } catch (error) {}
+    chai.expect(clientsConnected).to.be.true
   })
 
   it('it should send and receive events when the storage is updated', async function () {
@@ -102,13 +105,9 @@ describe('Wallet Cloud-Vault', function () {
 
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
-      client2.on(client2.defaultEvents['storage-updated'], (timestamp: number) => {
+      client2.on('storage-updated', (timestamp: number) => {
         console.log(`Client ${client2.name} received storage-updated event. Downloading`)
         client2.getStorage().then(storage => {
-          if (storage === null) {
-            reject(new Error('could not download storage'))
-            return
-          }
           if (storages[receivedEvents].compare(storage.storage) !== 0) {
             reject(new Error('remote storage does not equal the uploaded one'))
             return
@@ -121,13 +120,18 @@ describe('Wallet Cloud-Vault', function () {
       })
     })
 
-    let updated: boolean = false
     for (let i = 0; i < msgLimit; i++) {
       await setTimeout(1000)
-      updated = await client1.updateStorage({
-        storage: storages[i],
-        timestamp: client1.timestamp
-      })
+      let updated = false
+      try {
+        await client1.updateStorage({
+          storage: storages[i],
+          timestamp: client1.timestamp
+        })
+        updated = true
+      } catch (error) {
+        console.log(error)
+      }
       console.log(`Client ${client1.name} storage updated: ${updated.toString()}`)
       chai.expect(updated).to.be.true
     }
@@ -139,7 +143,11 @@ describe('Wallet Cloud-Vault', function () {
     expect(true).to.be.true
   })
   it('should delete all data from user if requested', async function () {
-    const deleted = await client1.deleteStorage()
+    let deleted = true
+    await client1.deleteStorage().catch(error => {
+      console.log(error)
+      deleted = false
+    })
     chai.expect(deleted).to.be.true
   })
 })
