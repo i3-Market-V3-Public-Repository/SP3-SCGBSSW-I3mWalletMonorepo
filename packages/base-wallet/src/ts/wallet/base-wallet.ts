@@ -880,10 +880,18 @@ export class BaseWallet<
    */
   async selectiveDisclosure (pathParameters: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200> {
     const sdrRaw = pathParameters.jwt
-    const sdrMessage = await this.veramo.agent.handleMessage({
-      raw: sdrRaw,
-      save: false
-    })
+    let sdrMessage
+    try {
+      sdrMessage = await this.veramo.agent.handleMessage({
+        raw: sdrRaw,
+        save: false
+      })
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        throw new WalletError(`Cannot verify selective disclousure request: ${err.message}`)
+      }
+      throw err
+    }
 
     if (sdrMessage.from === undefined) {
       throw new WalletError('Selective disclosure request origin not defined')

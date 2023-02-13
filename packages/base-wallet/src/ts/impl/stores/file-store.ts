@@ -152,14 +152,7 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     decipher.setAuthTag(tag)
 
     // decrypt, pass to JSON string, parse
-    try {
-      return JSON.parse(Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8'))
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        throw new SyntaxError(err.message)
-      }
-      throw err
-    }
+    return JSON.parse(Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8'))
   }
 
   async get (key: any, defaultValue?: any): Promise<any> {
