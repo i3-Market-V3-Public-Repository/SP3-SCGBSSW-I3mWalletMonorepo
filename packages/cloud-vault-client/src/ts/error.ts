@@ -16,13 +16,14 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
       data?: any
     }
   }
-  'no-uploadded-storage': any
+  'no-uploaded-storage': any
   'sse-connection-error': Event
   conflict: {
     localTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been downloaded by this client
     remoteTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been uploaded by any client
   }
   unauthorized: any
+  'invalid-credentials': any
   error: any
   unknown: any
   validation: {
@@ -30,8 +31,8 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
     data?: any
   }
 }
-type VaultErrorName = keyof VaultErrorData
-type DataForError<T extends VaultErrorName> = VaultErrorData[T]
+export type VaultErrorName = keyof VaultErrorData
+export type DataForError<T extends VaultErrorName> = VaultErrorData[T]
 
 export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error {
   data: any
@@ -55,7 +56,10 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
         return new VaultError('unauthorized', undefined)
       }
       if (error.response?.status === 404 && error.response.data.name === 'no storage') {
-        return new VaultError('no-uploadded-storage', undefined)
+        return new VaultError('no-uploaded-storage', undefined)
+      }
+      if (error.response?.status === 404 && error.response.data.name === 'invalid credentials') {
+        return new VaultError('invalid-credentials', undefined)
       }
       const vaultConnError: VaultErrorData['http-connection-error'] = {
         request: {
@@ -79,4 +83,8 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
     }
     return new VaultError('unknown', error)
   }
+}
+
+export function checkErrorType <T extends VaultErrorName> (err: VaultError, type: T): err is VaultError<T> {
+  return err.message === type
 }

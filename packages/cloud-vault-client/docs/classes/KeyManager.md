@@ -37,13 +37,13 @@
 | `opts.enc.derived_key_length` | `number` | Desired key length in bytes |
 | `opts.enc.enc_algorithm` | ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` | example: aes-256-gcm |
 | `opts.enc.input` | ``"password"`` \| ``"master-key"`` | example: password |
-| `opts.enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` | Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm. example: sha3-512 |
+| `opts.enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` \| ``"sha256"`` \| ``"sha384"`` \| ``"sha512"`` | Since salts are length contrained, and saltPattern creates salts with an arbitrary length, the input salt is hashed with the provided hash algorithm. example: sha3-512 |
 | `opts.enc.salt_pattern` | `string` | Describes the salt pattern to use when deriving the key from a password. It is a UTF-8 string, where variables to replace wrapped in curly braces. The salt is a concatenation of key_name, server_id and username. The length is not important since the provided salt will be hashed before being used (see saltHashingAlgorithm) example: master9u8tHv8_s-QsG8CxuAefhg{username} |
 | `opts.master` | `KeyDerivationOptions` | - |
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
+[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
 
 ## Properties
 
@@ -56,19 +56,19 @@
 | Name | Type |
 | :------ | :------ |
 | `auth` | `KeyDerivationOptions` |
-| `enc` | { `alg`: ``"scrypt"`` ; `alg_options`: `ScryptOptions` ; `derived_key_length`: `number` ; `enc_algorithm`: ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` ; `input`: ``"password"`` \| ``"master-key"`` ; `salt_hashing_algorithm`: ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` ; `salt_pattern`: `string`  } |
+| `enc` | { `alg`: ``"scrypt"`` ; `alg_options`: `ScryptOptions` ; `derived_key_length`: `number` ; `enc_algorithm`: ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` ; `input`: ``"password"`` \| ``"master-key"`` ; `salt_hashing_algorithm`: ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` \| ``"sha256"`` \| ``"sha384"`` \| ``"sha512"`` ; `salt_pattern`: `string`  } |
 | `enc.alg` | ``"scrypt"`` |
 | `enc.alg_options` | `ScryptOptions` |
 | `enc.derived_key_length` | `number` |
 | `enc.enc_algorithm` | ``"aes-192-gcm"`` \| ``"aes-256-gcm"`` |
 | `enc.input` | ``"password"`` \| ``"master-key"`` |
-| `enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` |
+| `enc.salt_hashing_algorithm` | ``"sha3-256"`` \| ``"sha3-384"`` \| ``"sha3-512"`` \| ``"sha256"`` \| ``"sha384"`` \| ``"sha512"`` |
 | `enc.salt_pattern` | `string` |
 | `master` | `KeyDerivationOptions` |
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
+[cloud-vault-client/src/ts/key-manager.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L20)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L21)
+[cloud-vault-client/src/ts/key-manager.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L21)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
+[cloud-vault-client/src/ts/key-manager.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L19)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L49)
+[cloud-vault-client/src/ts/key-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L49)
 
 ___
 
@@ -116,4 +116,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/395bf13/packages/cloud-vault-client/src/ts/key-manager.ts#L56)
+[cloud-vault-client/src/ts/key-manager.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c06b5b5/packages/cloud-vault-client/src/ts/key-manager.ts#L56)

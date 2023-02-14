@@ -144,7 +144,7 @@ export namespace OpenApiComponents {
              * example:
              * sha3-512
              */
-            salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512";
+            salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512" | "sha256" | "sha384" | "sha512";
             alg_options: ScryptOptions;
         }
         /**
@@ -321,7 +321,7 @@ export namespace OpenApiComponents {
                      * example:
                      * sha3-512
                      */
-                    salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512";
+                    salt_hashing_algorithm: "sha3-256" | "sha3-384" | "sha3-512" | "sha256" | "sha384" | "sha512";
                     alg_options: ScryptOptions;
                     /**
                      * example:

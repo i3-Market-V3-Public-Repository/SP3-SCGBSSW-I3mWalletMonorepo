@@ -453,6 +453,9 @@ components:
             - sha3-256
             - sha3-384
             - sha3-512
+            - sha256
+            - sha384
+            - sha512
           example: sha3-512
         alg_options:
           oneOf:

@@ -25,6 +25,12 @@
 			"path": "packages/wallet-protocol-utils"
 		},
 		{
+			"path": "packages/cloud-vault-server"
+		},
+		{
+			"path": "packages/cloud-vault-client"
+		},
+		{
 			"path": "packages/wallet-desktop"
 		},
 		{
@@ -36,6 +42,6 @@
 	],
 	"settings": {
 		"typescript.tsdk": "base-wallet/node_modules/typescript/lib",
-		"liveServer.settings.multiRootWorkspaceName": "I3M-Wallet"
+		"liveServer.settings.multiRootWorkspaceName": "i3m-wallet-monorepo"
 	}
 }

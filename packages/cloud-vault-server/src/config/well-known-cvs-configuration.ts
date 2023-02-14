@@ -29,7 +29,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           derived_key_length: 32,
           input: 'password',
           salt_pattern: 'master' + id + '{username}',
-          salt_hashing_algorithm: 'sha3-512',
+          salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 19,
             p: 2,
@@ -41,7 +41,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           derived_key_length: 32,
           input: 'master-key',
           salt_pattern: 'auth' + id + '{username}',
-          salt_hashing_algorithm: 'sha3-512',
+          salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 16,
             p: 1,
@@ -53,7 +53,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           derived_key_length: 32,
           input: 'master-key',
           salt_pattern: 'enc' + id + '{username}',
-          salt_hashing_algorithm: 'sha3-512',
+          salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 16,
             p: 1,

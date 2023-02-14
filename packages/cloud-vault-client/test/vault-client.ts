@@ -33,8 +33,8 @@ describe('Wallet Cloud-Vault', function () {
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
   before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
-    client1 = new VaultClient(serverUrl, user.username, user.password, '1')
-    client2 = new VaultClient(serverUrl, user.username, user.password, '2')
+    client1 = new VaultClient(serverUrl, undefined, '1')
+    client2 = new VaultClient(serverUrl, undefined, '2')
 
     client1.on('connection-error', error => {
       console.log(client1.name, ': ', error)
@@ -62,12 +62,13 @@ describe('Wallet Cloud-Vault', function () {
 
   it('it should register the test user', async function () {
     try {
+      const userData = {
+        did: user.did,
+        username: user.username,
+        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
+      }
       const data = await jweEncrypt(
-        Buffer.from(JSON.stringify({
-          did: user.did,
-          username: client1.username,
-          authkey: await client1.getAuthKey()
-        })),
+        Buffer.from(JSON.stringify(userData)),
         publicJwk as JWK,
         'A256GCM'
       )
@@ -81,15 +82,15 @@ describe('Wallet Cloud-Vault', function () {
       } else {
         console.log('error', error)
       }
-      chai.expect(false)
+      chai.expect(false).to.be.true
     }
   })
 
   it('should be able to connect to server using registered credentials', async function () {
     let clientsConnected = false
     try {
-      await client1.login()
-      await client2.login()
+      await client1.login(user.username, user.password)
+      await client2.login(user.username, user.password)
       clientsConnected = true
     } catch (error) {}
     chai.expect(clientsConnected).to.be.true
