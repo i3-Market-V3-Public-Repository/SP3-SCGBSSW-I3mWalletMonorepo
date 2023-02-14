@@ -83,7 +83,7 @@
         }
       }
     },
-    "/api/v2/registration/{data}": {
+    "/api/v2/registration/register/{data}": {
       "get": {
         "summary": "Endpoint where any non-previously registered user can register to enable the cloud vault for the i3M-Wallet.",
         "tags": [
@@ -106,6 +106,49 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/RegistrationResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "user already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/registration/deregister": {
+      "get": {
+        "summary": "Endpoint where users logged in with valid credentials can deregister their registered username and associated storage. The cloud vault for that identity (DID) will be cleared, and new registration would be needed to use it again",
+        "tags": [
+          "Registration"
+        ],
+        "responses": {
+          "204": {
+            "description": "Vault for logged in identity has been cleared"
+          },
+          "400": {
+            "description": "the identity requesting to delete her/his vault has not previously registered to have one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -397,7 +440,8 @@
         "title": "Registration Endpoints",
         "required": [
           "public_jwk_endpoint",
-          "registration_endpoint"
+          "registration_endpoint",
+          "deregistration_endpoint"
         ],
         "properties": {
           "public_jwk_endpoint": {
@@ -406,8 +450,12 @@
           },
           "registration_endpoint": {
             "type": "string",
-            "example": "/api/v2/registration/{data}",
+            "example": "/api/v2/registration/register/{data}",
             "description": "Endpoint for registering a new client. The endpoint requires authentication with valid i3-MARKET credentials.\n\n{data} refers to a compact JWE encrypted with this server's public key with the following payload:\n\n```json\n{\n  did: string\n  username: string\n  authkey: string\n}\n```\n\n- `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`\n- `username` is a unique username proposed by the client (it should be able to memorize it)\n- `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.\n"
+          },
+          "deregistration_endpoint": {
+            "type": "string",
+            "example": "/api/v2/registration/deregister"
           }
         }
       },

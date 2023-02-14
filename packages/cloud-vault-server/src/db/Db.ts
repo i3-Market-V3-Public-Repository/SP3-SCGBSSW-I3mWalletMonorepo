@@ -80,6 +80,13 @@ CREATE FUNCTION delete_user(arg_username varchar) RETURNS boolean AS $$
   )
   SELECT SUM(count) = 3 AS deleted FROM f
 $$ LANGUAGE SQL;
+
+CREATE FUNCTION delete_did(arg_did varchar) RETURNS boolean AS $$
+  WITH u AS (
+    SELECT username FROM users WHERE did=arg_did
+  )
+  SELECT delete_user(username) FROM u
+$$ LANGUAGE SQL;
 `
 
 const resetDbQuery = `
@@ -91,6 +98,8 @@ DROP FUNCTION IF EXISTS set_storage CASCADE;
 DROP FUNCTION IF EXISTS update_storage CASCADE;
 DROP FUNCTION IF EXISTS register_user CASCADE;
 DROP FUNCTION IF EXISTS delete_user CASCADE;
+DROP FUNCTION IF EXISTS delete_did CASCADE;
+
 `
 
 export class Db {

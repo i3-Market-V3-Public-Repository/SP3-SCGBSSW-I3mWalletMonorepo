@@ -9,7 +9,8 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
   name: '',
   registration_configuration: {
     public_jwk_endpoint: `/api/${apiVersion}/registration/public-jwk`,
-    registration_endpoint: `/api/${apiVersion}/registration/{data}`
+    registration_endpoint: `/api/${apiVersion}/registration/register/{data}`,
+    deregistration_endpoint: `/api/${apiVersion}/registration/deregister`
   },
   vault_configuration: {
     v2: {

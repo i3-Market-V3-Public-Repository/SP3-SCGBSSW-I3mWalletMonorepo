@@ -84,9 +84,20 @@ export async function setStorage (username: string, storage: string, timestamp?:
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export async function deleteStorage (username: string): Promise<boolean> {
+export async function deleteStorageByUsername (username: string): Promise<boolean> {
   const query = 'SELECT delete_user($1) AS deleted'
   const res = await db.query(query, [username])
+  if (res.rows.length !== 1) throw new Error('Can\'t delete storage')
+  return res.rows[0].deleted
+}
+
+/**
+ * Deletes storage (and user) data for the specified username
+ * @param username
+ */
+export async function deleteStorageByDid (did: string): Promise<boolean> {
+  const query = 'SELECT delete_did($1) AS deleted'
+  const res = await db.query(query, [did])
   if (res.rows.length !== 1) throw new Error('Can\'t delete storage')
   return res.rows[0].deleted
 }

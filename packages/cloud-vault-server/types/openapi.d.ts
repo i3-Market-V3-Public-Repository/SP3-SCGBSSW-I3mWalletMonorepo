@@ -174,9 +174,14 @@ export namespace OpenApiComponents {
              * - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
              *
              * example:
-             * /api/v2/registration/{data}
+             * /api/v2/registration/register/{data}
              */
             registration_endpoint: string;
+            /**
+             * example:
+             * /api/v2/registration/deregister
+             */
+            deregistration_endpoint: string;
         }
         /**
          * RegistrationData
@@ -335,7 +340,32 @@ export namespace OpenApiComponents {
     }
 }
 export namespace OpenApiPaths {
-    export namespace ApiV2Registration$Data {
+    export namespace ApiV2RegistrationDeregister {
+        export namespace Get {
+            export namespace Responses {
+                export interface $204 {
+                }
+                export type $400 = /* Error */ OpenApiComponents.Schemas.ApiError;
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2RegistrationPublicJwk {
+        export namespace Get {
+            export namespace Responses {
+                export interface $200 {
+                    jwk: /**
+                     * JWK Elliptic-Curve Public Key Object
+                     * A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
+                     *
+                     */
+                    OpenApiComponents.Schemas.JwkEcPublicKey;
+                }
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2RegistrationRegister$Data {
         export namespace Get {
             export namespace Parameters {
                 export type Data = /**
@@ -367,21 +397,7 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.RegistrationResponse;
-                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
-            }
-        }
-    }
-    export namespace ApiV2RegistrationPublicJwk {
-        export namespace Get {
-            export namespace Responses {
-                export interface $200 {
-                    jwk: /**
-                     * JWK Elliptic-Curve Public Key Object
-                     * A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
-                     *
-                     */
-                    OpenApiComponents.Schemas.JwkEcPublicKey;
-                }
+                export type $400 = /* Error */ OpenApiComponents.Schemas.ApiError;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }

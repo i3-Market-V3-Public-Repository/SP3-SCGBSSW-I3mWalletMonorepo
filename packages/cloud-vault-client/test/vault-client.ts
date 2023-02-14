@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { VaultClient } from '#pkg'
+import { VaultClient, VaultError } from '#pkg'
 import { setTimeout as timersSetTimeout } from 'timers'
 import { promisify } from 'util'
 
@@ -72,8 +72,8 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      const res = await axios.get<OpenApiPaths.ApiV2Registration$Data.Get.Responses.$201>(
-        serverUrl + `/api/${apiVersion}/registration/` + data
+      const res = await axios.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+        serverUrl + `/api/${apiVersion}/registration/register/` + data
       )
       chai.expect(res.status).to.equal(201)
     } catch (error) {
@@ -86,6 +86,46 @@ describe('Wallet Cloud-Vault', function () {
     }
   })
 
+  it('it should fail registering the same user again', async function () {
+    try {
+      const userData = {
+        did: user.did,
+        username: user.username,
+        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
+      }
+      const data = await jweEncrypt(
+        Buffer.from(JSON.stringify(userData)),
+        publicJwk as JWK,
+        'A256GCM'
+      )
+      await axios.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
+        serverUrl + `/api/${apiVersion}/registration/register/` + data
+      )
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const response = error.response
+        chai.expect(response?.status).to.equal(400)
+      } else {
+        console.log('error', error)
+        chai.expect(false).to.be.true
+      }
+    }
+  })
+
+  it('trying to log in with invalid credentials fails', async function () {
+    let clientConnected = false
+    try {
+      await client1.login(user.username, 'badpassword')
+      clientConnected = true
+    } catch (error) {}
+    chai.expect(clientConnected).to.be.false
+  })
+
+  it('trying to get storage fails if not logged in', async function () {
+    const storage = await client1.getStorage().catch(() => {})
+    chai.expect(storage).to.be.undefined
+  })
+
   it('should be able to connect to server using registered credentials', async function () {
     let clientsConnected = false
     try {
@@ -94,6 +134,14 @@ describe('Wallet Cloud-Vault', function () {
       clientsConnected = true
     } catch (error) {}
     chai.expect(clientsConnected).to.be.true
+  })
+
+  it('should fail getting storage if not previously uploaded', async function () {
+    const storage = await client1.getStorage().catch((err) => {
+      expect(err).to.be.an.instanceOf(VaultError)
+      expect((err as VaultError).message).to.equal('no-uploaded-storage')
+    })
+    expect(storage).to.be.undefined
   })
 
   it('it should send and receive events when the storage is updated', async function () {
@@ -107,12 +155,13 @@ describe('Wallet Cloud-Vault', function () {
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
       client2.on('storage-updated', (timestamp: number) => {
-        console.log(`Client ${client2.name} received storage-updated event. Downloading`)
+        console.log(`Client ${client2.name} received storage-updated event. Downloading...`)
         client2.getStorage().then(storage => {
           if (storages[receivedEvents].compare(storage.storage) !== 0) {
             reject(new Error('remote storage does not equal the uploaded one'))
             return
           }
+          console.log(`Client ${client2.name}: dowloading done`)
           receivedEvents++
           if (receivedEvents === msgLimit) {
             resolve()

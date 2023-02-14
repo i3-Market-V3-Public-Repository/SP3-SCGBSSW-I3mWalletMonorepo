@@ -81,7 +81,7 @@ export default function (router: Router): void {
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         const { username } = req.user as User
-        const deleted = await db.deleteStorage(username)
+        const deleted = await db.deleteStorageByUsername(username)
         if (!deleted) {
           throw new HttpError({ name: 'cannot delete', path: req.path, status: 400 })
         }

@@ -37,4 +37,9 @@ export declare function setStorage(username: string, storage: string, timestamp?
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export declare function deleteStorage(username: string): Promise<boolean>;
+export declare function deleteStorageByUsername(username: string): Promise<boolean>;
+/**
+ * Deletes storage (and user) data for the specified username
+ * @param username
+ */
+export declare function deleteStorageByDid(did: string): Promise<boolean>;

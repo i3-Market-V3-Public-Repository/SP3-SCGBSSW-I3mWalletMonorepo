@@ -48,8 +48,36 @@ describe('Wallet Cloud-Vault: Registration', function () {
     })
   })
 
-  describe(`Testing /api/${apiVersion}/registration/{data}`, function () {
-    it('it should register the test user', async function () {
+  describe(`Testing /api/${apiVersion}/registration/register/{data}`, function () {
+    it('should register the test user', async function () {
+      const data = await jweEncrypt(
+        Buffer.from(JSON.stringify(user)),
+        publicJwk as JWK,
+        'A256GCM'
+      )
+      const res = await request(serverConfig.url)
+        .get(wellKnownCvsConfiguration.registration_configuration.registration_endpoint.replace('{data}', data))
+      console.log(res.body)
+      expect(res).to.have.status(201)
+      expect(res.body.status).to.equal('created')
+    })
+    it('should fail registering the same user again', async function () {
+      const data = await jweEncrypt(
+        Buffer.from(JSON.stringify(user)),
+        publicJwk as JWK,
+        'A256GCM'
+      )
+      const res = await request(serverConfig.url)
+        .get(wellKnownCvsConfiguration.registration_configuration.registration_endpoint.replace('{data}', data))
+      console.log(res.body)
+      expect(res).to.not.have.status(201)
+    })
+    it('should deregister the user', async function () {
+      const res = await request(serverConfig.url)
+        .get(wellKnownCvsConfiguration.registration_configuration.deregistration_endpoint)
+      expect(res).to.have.status(204)
+    })
+    it('since it is deregistered, the test user can be registered again', async function () {
       const data = await jweEncrypt(
         Buffer.from(JSON.stringify(user)),
         publicJwk as JWK,

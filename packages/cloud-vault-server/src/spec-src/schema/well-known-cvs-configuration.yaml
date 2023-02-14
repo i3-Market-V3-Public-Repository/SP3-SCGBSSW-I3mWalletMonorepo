@@ -42,13 +42,14 @@ components:
       required:
         - public_jwk_endpoint
         - registration_endpoint
+        - deregistration_endpoint
       properties:
         public_jwk_endpoint: 
           type: string
           example: '/api/API_VERSION/registration/public-jwk'
         registration_endpoint: 
           type: string
-          example: '/api/API_VERSION/registration/{data}'
+          example: '/api/API_VERSION/registration/register/{data}'
           description: |
             Endpoint for registering a new client. The endpoint requires authentication with valid i3-MARKET credentials.
             
@@ -65,6 +66,9 @@ components:
             - `did` is the did of the user. The required authorization forces the user to prove that is the owner of this `did`
             - `username` is a unique username proposed by the client (it should be able to memorize it)
             - `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.
+        deregistration_endpoint:
+          type: string
+          example: '/api/API_VERSION/registration/deregister'
 
     VaultConfiguration:
       type: object
