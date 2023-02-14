@@ -9,6 +9,7 @@ import { ActionHandler } from './action-handler'
 import { walletModule } from './wallet'
 import { connectModule } from './connect'
 import { systemModule } from './system'
+import { cloudModule } from './cloud'
 import { ActionResult } from './action-result'
 
 const debug = Debug('wallet-desktop:ActionReducer')
@@ -34,7 +35,8 @@ export class ActionReducer {
     return [
       walletModule,
       connectModule,
-      systemModule
+      systemModule,
+      cloudModule
     ]
   }
 

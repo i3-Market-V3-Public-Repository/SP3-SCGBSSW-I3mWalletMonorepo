@@ -151,6 +151,24 @@ select.modern {
   height: 34px;
 }
 
+// Spinner
+.spinner {
+  animation: spin infinite 5s linear;
+
+  /*You can increase or decrease the timer (5s) to 
+   increase or decrease the speed of the spinner*/
+}
+
+@keyframes spin {
+from {
+  transform: rotate(0deg);
+}
+to {
+  transform: rotate(360deg);
+}
+}
+
+
 /* width */
 ::-webkit-scrollbar {
   width: 13px;
@@ -182,4 +200,3 @@ select.modern {
   background: transparentize($dark-gray, $amount: 0.8);
   border: 1px solid transparentize($dark-gray, $amount: 0.7);
 }
-

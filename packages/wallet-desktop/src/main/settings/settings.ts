@@ -1,5 +1,6 @@
 import { generateSecret, exportJWK } from 'jose'
 import _ from 'lodash'
+import { digest } from 'object-sha'
 
 import { PrivateSettings, PublicSettings, createDefaultPrivateSettings, Provider } from '@wallet/lib'
 import { softwareVersion, Locals, StoreOptions, handleCanBePromise } from '@wallet/main/internal'
@@ -109,9 +110,13 @@ export const initPrivateSettings = async (options: PrivateSettingsOptions, local
     ...mem,
     settings: store
   }))
-  sharedMemoryManager.on('change', (mem) => {
-    const promise = settings.set(mem.settings)
-    handleCanBePromise(locals, promise)
+  sharedMemoryManager.on('change', (mem, oldMem) => {
+    const newSha = digest(mem)
+    const oldSha = digest(mem)
+    if (oldSha !== newSha) {
+      const promise = settings.set(mem.settings)
+      handleCanBePromise(locals, promise)
+    }
   })
 
   return settings

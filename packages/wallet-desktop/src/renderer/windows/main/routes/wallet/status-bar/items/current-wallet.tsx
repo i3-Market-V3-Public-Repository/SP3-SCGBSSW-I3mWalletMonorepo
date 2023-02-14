@@ -1,4 +1,5 @@
 import { faWallet } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 import { selectWalletAction } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
@@ -15,8 +16,9 @@ export function CurrentWallet (): JSX.Element | null {
   }
 
   return wallet.current !== undefined ? (
-    <StatusBarItem icon={faWallet} onClick={onClick}>
-      {wallet.current}
+    <StatusBarItem onClick={onClick}>
+      <FontAwesomeIcon icon={faWallet} className='icon'/>
+      <span>{wallet.current}</span>
     </StatusBarItem>
   ) : null
 }

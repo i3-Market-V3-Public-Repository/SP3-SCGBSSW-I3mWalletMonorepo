@@ -34,11 +34,17 @@ export interface WalletConnectSettings {
   tokenTTL: number // in seconds
 }
 
+export interface CloudVaultSettings {
+  state: 'complete' | 'in-progress'
+  token: string
+}
+
 export interface PrivateSettings {
   wallet: WalletSettings
   providers: Provider[]
   developer: DeveloperSettings
   connect: WalletConnectSettings
+  cloud?: CloudVaultSettings
   secret?: JWK
 }
 

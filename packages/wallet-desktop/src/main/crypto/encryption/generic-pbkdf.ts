@@ -13,7 +13,7 @@ const DEFAULT_KD: GenericPbkdfEncSettings['key_derivation'] = {
     salt_pattern: '{salt}',
     salt_hashing_algorithm: 'sha512',
     alg_options: {
-      N: 2 ** 19,
+      N: process.env['NODE_ENV'] === 'development' ? 2 ** 8 : 2 ** 19,
       p: 2,
       r: 8
     }

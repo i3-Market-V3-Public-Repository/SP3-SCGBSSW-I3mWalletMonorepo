@@ -1,5 +1,5 @@
 import { ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
-import { WalletMetadataMap } from '@wallet/lib'
+import { TaskDescription, WalletMetadataMap } from '@wallet/lib'
 import {
   logger,
   Locals,
@@ -7,7 +7,8 @@ import {
   Feature,
   storeFeature,
   FeatureHandler,
-  StartFeatureError
+  StartFeatureError,
+  LabeledTaskHandler
 } from '@wallet/main/internal'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -88,7 +89,7 @@ export class WalletFactory {
     }))
   }
 
-  async buildWallet (walletName: string): Promise<Wallet> {
+  async buildWalletTask (walletName: string, task: LabeledTaskHandler): Promise<Wallet> {
     const { settings, featureContext, featureManager, dialog, toast } = this.locals
     const { wallets } = await settings.get('wallet')
     const providers = await settings.get('providers')
@@ -142,6 +143,16 @@ export class WalletFactory {
     }
   }
 
+  async buildWallet (walletName: string): Promise<Wallet> {
+    const taskInfo: TaskDescription = {
+      title: 'Build Wallet',
+      details: `Creating wallet ${walletName}`
+    }
+    return await this.locals.taskManager.createTask('labeled', taskInfo, async (task) => {
+      return await this.buildWalletTask(walletName, task)
+    })
+  }
+
   async deleteWallet (walletName: string): Promise<void> {
     const { settings } = this.locals
     const { wallets, current } = await settings.get('wallet')
@@ -161,7 +172,6 @@ export class WalletFactory {
     }
     await featureManager.delete(walletName)
 
-    console.log(newWallets)
     let currentWallet = current
     if (currentWallet === walletName) {
       currentWallet = undefined

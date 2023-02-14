@@ -1,0 +1,25 @@
+
+.freeze-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #000000cc;
+  z-index: 100;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  > .overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 22px;
+
+    > .title {
+      margin-top: 12px;
+    }
+  }
+  
+}

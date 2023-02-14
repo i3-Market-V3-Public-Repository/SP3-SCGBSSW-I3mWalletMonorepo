@@ -7,6 +7,7 @@ import { ContextMenu } from '@wallet/renderer/components'
 import { Password, Wallet } from './routes'
 import { Dialog, DialogProps } from './dialogs'
 import { Toasts } from './toasts'
+import { FreezeOverlay } from './freeze-overlay'
 
 import './main.scss'
 
@@ -39,6 +40,7 @@ function App (props: MainArgs): JSX.Element {
         <Route path='/wallet'>
           <Wallet />
         </Route>
+      <FreezeOverlay />
       </ContextMenu>
     </div>
   )

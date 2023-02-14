@@ -1,5 +1,6 @@
 import { Resource, Identity, WalletMetadata, ToastOptions } from '@i3m/base-wallet'
 import { PrivateSettings, createDefaultPrivateSettings, DialogData, ConnectData } from '../internal'
+import { WalletTask } from './tasks'
 
 export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
@@ -27,6 +28,7 @@ export interface SharedMemory {
   toasts: ToastData[]
   walletsMetadata: WalletMetadataMap
   connectData: ConnectData
+  tasks: WalletTask[]
 }
 
 export function createDefaultSharedMemory (values?: Partial<SharedMemory>): SharedMemory {
@@ -46,6 +48,7 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
       walletProtocol: {}
     },
     toasts: [],
+    tasks: [],
 
     ...values
   }

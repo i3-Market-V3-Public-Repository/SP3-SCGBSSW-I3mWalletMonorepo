@@ -7,12 +7,22 @@ import { getPath } from './get-path'
 
 class ElectronStoreExtra<T extends Record<string, any> = Record<string, unknown>>
   extends ElectronStore<T> implements Store<T> {
+
   getStore (): CanBePromise<T> {
     return this.store
   }
 
   getPath (): string {
     return this.path
+  }
+
+  on (eventName: string | symbol, listener: (...args: any[]) => void): this {
+    this.events.on(eventName, listener)
+    return this
+  }
+
+  emit (eventName: string | symbol, ...args: any[]): boolean {
+    return this.events.emit(eventName, ...args)
   }
 }
 
@@ -22,10 +32,14 @@ export class ElectronStoreBuilder<T extends Record<string, any> = Record<string,
     const path = getPath(ctx, locals, options)
 
     try {
-      return new ElectronStoreExtra({
+      const store = new ElectronStoreExtra({
         encryptionKey: encryptionKey?.export(),
         ...electronStoreOptions
       })
+      store.onDidAnyChange(() => {
+        store.emit('changed', 0)
+      })
+      return store
     } catch (e) {
       if (e instanceof SyntaxError) {
         throw new DecryptionError(`Inconsistent format on file '${path}'`)

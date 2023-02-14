@@ -7,9 +7,11 @@ import { StoreOptions, loadStoreBuilder, currentStoreType, getPath } from './bui
 
 export class StoreManager {
   storeInfo: StoreSettings
+  stores: Record<string, Store<any>>
 
   constructor (protected ctx: MainContext, protected locals: Locals) {
     this.storeInfo = { type: 'electron-store' }
+    this.stores = {}
   }
 
   async initialize (): Promise<void> {
@@ -74,37 +76,49 @@ export class StoreManager {
 
   public async migrate (): Promise<void> {
     const { from, to, needed, migrations } = this.ctx.storeMigrationProxy
-    if (needed) {
-      const { keysManager } = this.locals
-      const oldSettingsKey = await keysManager.computeSettingsKey(from.encKeys)
-      const newSettingsKey = await keysManager.computeSettingsKey(to.encKeys)
-      await this.migrateStore({
-        fileExtension: 'enc.json',
-        encryptionKey: oldSettingsKey
-      }, {
-        fileExtension: 'enc.json',
-        encryptionKey: newSettingsKey
-      })
+    const { taskManager } = this.locals
 
-      const walletUuids = await this.getWalletUuids()
-      for (const uuid of walletUuids) {
-        const oldWalletKey = await keysManager.computeWalletKey(uuid, from.encKeys)
-        const newWalletKey = await keysManager.computeWalletKey(uuid, to.encKeys)
+    if (needed) {
+      await taskManager.createTask('labeled', {
+        title: 'Migration',
+        details: 'Migrating private settings'
+      }, async (task) => {
+        const { keysManager } = this.locals
+        const oldSettingsKey = await keysManager.computeSettingsKey(from.encKeys)
+        const newSettingsKey = await keysManager.computeSettingsKey(to.encKeys)
         await this.migrateStore({
-          name: `wallet.${uuid}`,
           fileExtension: 'enc.json',
-          encryptionKey: oldWalletKey
+          encryptionKey: oldSettingsKey
         }, {
-          name: `wallet.${uuid}`,
           fileExtension: 'enc.json',
-          encryptionKey: newWalletKey
+          encryptionKey: newSettingsKey
         })
-      }
+
+        const walletUuids = await this.getWalletUuids()
+        for (const uuid of walletUuids) {
+          task.setDetails(`Migrating wallet ${uuid}`)
+          const oldWalletKey = await keysManager.computeWalletKey(uuid, from.encKeys)
+          const newWalletKey = await keysManager.computeWalletKey(uuid, to.encKeys)
+          await this.migrateStore({
+            name: `wallet.${uuid}`,
+            fileExtension: 'enc.json',
+            encryptionKey: oldWalletKey
+          }, {
+            name: `wallet.${uuid}`,
+            fileExtension: 'enc.json',
+            encryptionKey: newWalletKey
+          })
+        }
+      })
     }
 
     for (const migration of migrations) {
       await migration(to)
     }
+  }
+
+  public async loadEncryptedStores (): Promise<void> {
+    
   }
 
   public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>, storeType?: StoreType): Promise<Store<T>> {
@@ -117,5 +131,9 @@ export class StoreManager {
     const path = getPath(this.ctx, this.locals, options)
     logger.debug(`Loading store on '${path}'`)
     return await builder.build(this.ctx, this.locals, fixedOptions)
+  }
+
+  public async getStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>, storeType?: StoreType): Promise<Store<T>> {
+    return this.buildStore(options, storeType)
   }
 }

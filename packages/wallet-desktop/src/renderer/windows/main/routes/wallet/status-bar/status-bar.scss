@@ -17,7 +17,9 @@
     display: flex;
     align-items: center;
     white-space: nowrap;
-    padding: 0px 5px;
+    padding: 0px 6px;
+    margin: 0px 3px;
+    overflow: hidden;
 
     &.clickable {
       cursor: pointer;
@@ -28,7 +30,14 @@
     }
 
     > .icon {
-      width: 16px;
+      width: 20px;
+      margin-right: 5px;
+      max-height: 16px;
+    }
+
+    > .loader {
+      width: 18px !important;
+      height: 18px !important;
       margin-right: 5px;
     }
   }

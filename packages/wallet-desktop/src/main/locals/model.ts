@@ -15,7 +15,9 @@ import {
   ConnectManager,
   KeysManager,
   VersionManager,
-  StoreManager
+  StoreManager,
+  CloudVaultManager,
+  TaskManager
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -36,5 +38,7 @@ export interface Locals {
   password: string
   versionManager: VersionManager
   storeManager: StoreManager
+  cloudVaultManager: CloudVaultManager
+  taskManager: TaskManager
   packageJson: typeof packageJson
 }

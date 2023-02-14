@@ -95,9 +95,9 @@ export class KeysManager {
     }
   }
 
-  private async initializePassword (): Promise<void> {
-    this._authKeys = await getCurrentAuthKeys()
-    this._encKeys = await getCurrentEncKeys()
+  private async initializePassword (): Promise<KeyContext> {
+    const authKeys = await getCurrentAuthKeys()
+    const encKeys = await getCurrentEncKeys()
 
     const message = (tries: number): string => `You don't have an application password: setup a new one (${tries} left).\n ${this.passwordRegexMessage}`
     const validPassword = await this.askValidPassword(message)
@@ -115,34 +115,44 @@ export class KeysManager {
 
     const keyCtx: KeyContext = {
       password: validPassword,
-      authKeys: this.authKeys,
-      encKeys: this.encKeys
+      authKeys,
+      encKeys
     }
-    await this.encKeys.prepareEncryption(keyCtx)
-    await this.encKeys.storeSettings(this.locals, keyCtx)
+    await keyCtx.encKeys.prepareEncryption(keyCtx)
+    await keyCtx.encKeys.storeSettings(this.locals, keyCtx)
 
-    await this.authKeys.register(keyCtx)
-    await this.authKeys.storeSettings(this.locals, keyCtx)
+    await keyCtx.authKeys.register(keyCtx)
+    await keyCtx.authKeys.storeSettings(this.locals, keyCtx)
+
+    return keyCtx
   }
 
-  private async localAuthentication (): Promise<void> {
+  private async localAuthentication (): Promise<KeyContext> {
     const { publicSettings } = this.locals
     const auth = await publicSettings.get('auth')
-    this._authKeys = loadAuthKeyAlgorithm(auth)
+    const authKeys = loadAuthKeyAlgorithm(auth)
 
     const enc = await publicSettings.get('enc')
-    this._encKeys = loadEncKeyAlgorithm(auth, enc)
+    const encKeys = loadEncKeyAlgorithm(auth, enc)
 
     const keyCtx: KeyContext = {
       password: '',
-      authKeys: this.authKeys,
-      encKeys: this.encKeys
+      authKeys,
+      encKeys
     }
     const message = (tries: number): string => `Enter the application password. You have ${tries} left.`
     const validPassword = await this.askValidPassword(message, async (password) => {
       keyCtx.password = password
-      await this.encKeys.prepareEncryption(keyCtx)
-      return await this.authKeys.authenticate(keyCtx)
+
+      const { taskManager } = this.locals
+      return await taskManager.createTask('labeled', {
+        title: 'Computing keys',
+        details: 'Deriving cryptographic keys from password',
+        freezing: true
+      }, async (task) => {
+        await keyCtx.encKeys.prepareEncryption(keyCtx)
+        return await keyCtx.authKeys.authenticate(keyCtx)
+      })
     })
 
     if (validPassword === undefined) {
@@ -150,15 +160,24 @@ export class KeysManager {
     }
 
     await this.migrate(keyCtx)
+
+    return keyCtx
   }
 
-  async authenticate (): Promise<void> {
+  async authenticate (): Promise<KeyContext> {
+    let keyCtx
     if (!this.registered) {
-      await this.initializePassword()
+      keyCtx = await this.initializePassword()
       this.registered = true
     } else {
-      await this.localAuthentication()
+      keyCtx = await this.localAuthentication()
     }
+
+    // Set algorithms
+    this._authKeys = keyCtx.authKeys
+    this._encKeys = keyCtx.encKeys
+
+    return keyCtx
   }
 
   private async migrate (oldCtx: KeyContext): Promise<void> {

@@ -24,13 +24,18 @@ import {
   initPrivateSettings,
   initPublicSettings,
   StoreManager,
-  handleError
+  handleError,
+  CloudVaultManager,
+  TaskManager
 } from './internal'
 import { createStoreMigrationProxy } from './store/migration'
 
 async function initApplication (ctx: MainContext, locals: Locals): Promise<void> {
   const sharedMemoryManager = new SharedMemoryManager()
   locals.sharedMemoryManager = sharedMemoryManager
+
+  const taskManager = new TaskManager(locals)
+  locals.taskManager = taskManager
 
   const storeManager = new StoreManager(ctx, locals)
   await storeManager.initialize()
@@ -88,6 +93,7 @@ async function initVersionManager (ctx: MainContext, locals: Locals): Promise<vo
 }
 
 async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
+  // Keys manager
   const keysManager = new KeysManager(ctx, locals)
   locals.keysManager = keysManager
 
@@ -97,10 +103,17 @@ async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
   // Migrate stores (if needed)
   await locals.storeManager.migrate()
 
+  // Load encrypted settings
   const settings = await initPrivateSettings({
     cwd: ctx.settingsPath
   }, locals)
   locals.settings = settings
+
+  // Cloud vault manager
+  const cvManagger = new CloudVaultManager(locals)
+  locals.cloudVaultManager = cvManagger
+
+  await cvManagger.initialize()
 }
 
 async function initFeatureManager (ctx: MainContext, locals: Locals): Promise<void> {
