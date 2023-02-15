@@ -44,7 +44,23 @@ The wallet's storage-file can be encrypted for added security by passing an opti
 Example of instantiation of a server wallet in typescript:
 
 ```typescript
-wallet = await serverWalletBuilder({ password: '1735b07cb074bc1057vc130377$(==)(5v0bx23YGSA', filepath: '/path/where/the/wallet/will/store/things' })
+const wallet = await serverWalletBuilder({ password: '1735b07cb074bc1057vc130377$(==)(5v0bx23YGSA', filepath: '/path/where/the/wallet/will/store/things' })
+```
+
+For connecting to the blockchain, the wallet server requires an RPC endpoint. It comes with one configured by default, but just in case it is malfunctioning or you just need to use another one, you can create your wallet as:
+
+```typescript
+const wallet = await serverWalletBuilder({
+  password: '1735b07cb074bc1057vc130377$(==)(5v0bx23YGSA',
+  filepath: '/path/where/the/wallet/will/store/things',
+  provider: 'did:ethr:i3m', // should match the key in `providerData`
+  providerData: {
+    'did:ethr:i3m': {
+      network: 'i3m',
+      rpcUrl: 'http://95.211.3.249:8545' // The URL of your RPC endpoint
+    }
+  }
+})
 ```
 
 ## Create an identity (DID)
