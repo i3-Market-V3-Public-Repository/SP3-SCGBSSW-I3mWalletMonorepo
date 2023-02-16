@@ -1,5 +1,5 @@
 import { verifyJWT } from 'did-jwt'
-import Veramo, {} from '../veramo'
+import { Veramo } from '../veramo'
 import { decodeJWS } from './jws'
 import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import _ from 'lodash'

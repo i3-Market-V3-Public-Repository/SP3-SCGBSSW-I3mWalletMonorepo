@@ -1,5 +1,5 @@
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
-import Veramo from '../veramo';
+import { Veramo } from '../veramo';
 interface Validation {
     validated: boolean;
     errors: Error[];

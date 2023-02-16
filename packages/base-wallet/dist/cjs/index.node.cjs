@@ -11,6 +11,8 @@ var nonRepudiationLibrary = require('@i3m/non-repudiation-library');
 var didJwt = require('did-jwt');
 var crypto = require('crypto');
 var Debug = require('debug');
+var path = require('path');
+var rxjs = require('rxjs');
 var core = require('@veramo/core');
 var didManager = require('@veramo/did-manager');
 var didProviderEthr = require('@veramo/did-provider-ethr');
@@ -18,7 +20,13 @@ var didProviderWeb = require('@veramo/did-provider-web');
 var keyManager = require('@veramo/key-manager');
 var didResolver$1 = require('@veramo/did-resolver');
 var didResolver = require('did-resolver');
-var ethrDidResolver = require('ethr-did-resolver');
+var basex = require('@ethersproject/basex');
+var bignumber = require('@ethersproject/bignumber');
+var contracts = require('@ethersproject/contracts');
+var providers = require('@ethersproject/providers');
+var address = require('@ethersproject/address');
+var transactions = require('@ethersproject/transactions');
+var qs = require('querystring');
 var webDidResolver = require('web-did-resolver');
 var selectiveDisclosure = require('@veramo/selective-disclosure');
 var messageHandler = require('@veramo/message-handler');
@@ -26,7 +34,6 @@ var didJwt$1 = require('@veramo/did-jwt');
 var credentialW3c = require('@veramo/credential-w3c');
 var promises = require('fs/promises');
 var fs = require('fs');
-var path = require('path');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -52,6 +59,7 @@ var ___default = /*#__PURE__*/_interopDefaultLegacy(_);
 var u8a__namespace = /*#__PURE__*/_interopNamespace(u8a);
 var crypto__default = /*#__PURE__*/_interopDefaultLegacy(crypto);
 var Debug__default = /*#__PURE__*/_interopDefaultLegacy(Debug);
+var qs__namespace = /*#__PURE__*/_interopNamespace(qs);
 
 const encode = (buf) => {
     return buf.toString('base64').replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
@@ -282,6 +290,79 @@ function parseHex(a, prefix0x = true) {
     return (prefix0x) ? '0x' + hex : hex;
 }
 
+const debug$9 = Debug__default["default"]('base-wallet' + path.basename(__filename));
+async function multipleExecutions(options, executors, fnName, ...args) {
+    if (executors.length < 1 || executors[0][fnName] === undefined) {
+        throw new Error('invalid executors');
+    }
+    /** By default, if n executors, it is enough with 1 to succeed  */
+    const successRate = options.successRate ?? 0;
+    if (successRate < 0 || successRate > 1) {
+        throw new Error('invalid successRate. It should be a value between 0 and 1 (both included)');
+    }
+    const minResults = successRate === 0 ? 1 : Math.ceil(successRate * executors.length);
+    const _timeout = options.timeout ?? 10000;
+    const observable = new rxjs.Observable((subscriber) => {
+        let subscriberSFinished = 0;
+        executors.forEach(executor => {
+            if (isAsync(executor[fnName])) {
+                executor[fnName](...args).then((result) => {
+                    subscriber.next(result);
+                }).catch((err) => {
+                    debug$9(err);
+                }).finally(() => {
+                    subscriberSFinished++;
+                    if (subscriberSFinished === executors.length) {
+                        subscriber.complete();
+                    }
+                });
+            }
+            else {
+                try {
+                    const result = executor[fnName](...args);
+                    subscriber.next(result);
+                }
+                catch (err) {
+                    debug$9(err);
+                }
+                finally {
+                    subscriberSFinished++;
+                    if (subscriberSFinished === executors.length) {
+                        subscriber.complete();
+                    }
+                }
+            }
+        });
+    }).pipe(rxjs.bufferCount(minResults), rxjs.timeout(_timeout));
+    const results = await new Promise((resolve, reject) => {
+        const subscription = observable.subscribe({
+            next: v => {
+                resolve(v);
+            },
+            error: (e) => {
+                debug$9(e);
+                reject(e);
+            }
+        });
+        setTimeout(() => {
+            subscription.unsubscribe();
+        }, _timeout);
+    });
+    if (results.length < minResults) {
+        throw new Error(`less successful executions (${results.length}) than min requested (${minResults})`);
+    }
+    return results;
+}
+function isAsync(fn) {
+    if (fn.constructor.name === 'AsyncFunction') {
+        return true;
+    }
+    else if (fn.constructor.name === 'Function') {
+        return false;
+    }
+    throw new Error('not a function');
+}
+
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 const contractValidator = async (resource, veramo) => {
     const errors = [];
@@ -440,6 +521,21234 @@ const displayDid = (did) => {
     }
 };
 
+var contractName = "EthereumDIDRegistry";
+var abi = [
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		name: "owners",
+		outputs: [
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "",
+				type: "address"
+			},
+			{
+				name: "",
+				type: "bytes32"
+			},
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		name: "delegates",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		name: "nonce",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		name: "changed",
+		outputs: [
+			{
+				name: "",
+				type: "uint256"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "identity",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "owner",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "previousChange",
+				type: "uint256"
+			}
+		],
+		name: "DIDOwnerChanged",
+		type: "event"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "identity",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				indexed: false,
+				name: "delegate",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "validTo",
+				type: "uint256"
+			},
+			{
+				indexed: false,
+				name: "previousChange",
+				type: "uint256"
+			}
+		],
+		name: "DIDDelegateChanged",
+		type: "event"
+	},
+	{
+		anonymous: false,
+		inputs: [
+			{
+				indexed: true,
+				name: "identity",
+				type: "address"
+			},
+			{
+				indexed: false,
+				name: "name",
+				type: "bytes32"
+			},
+			{
+				indexed: false,
+				name: "value",
+				type: "bytes"
+			},
+			{
+				indexed: false,
+				name: "validTo",
+				type: "uint256"
+			},
+			{
+				indexed: false,
+				name: "previousChange",
+				type: "uint256"
+			}
+		],
+		name: "DIDAttributeChanged",
+		type: "event"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			}
+		],
+		name: "identityOwner",
+		outputs: [
+			{
+				name: "",
+				type: "address"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: true,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				name: "delegate",
+				type: "address"
+			}
+		],
+		name: "validDelegate",
+		outputs: [
+			{
+				name: "",
+				type: "bool"
+			}
+		],
+		payable: false,
+		stateMutability: "view",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "newOwner",
+				type: "address"
+			}
+		],
+		name: "changeOwner",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "sigV",
+				type: "uint8"
+			},
+			{
+				name: "sigR",
+				type: "bytes32"
+			},
+			{
+				name: "sigS",
+				type: "bytes32"
+			},
+			{
+				name: "newOwner",
+				type: "address"
+			}
+		],
+		name: "changeOwnerSigned",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				name: "delegate",
+				type: "address"
+			},
+			{
+				name: "validity",
+				type: "uint256"
+			}
+		],
+		name: "addDelegate",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "sigV",
+				type: "uint8"
+			},
+			{
+				name: "sigR",
+				type: "bytes32"
+			},
+			{
+				name: "sigS",
+				type: "bytes32"
+			},
+			{
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				name: "delegate",
+				type: "address"
+			},
+			{
+				name: "validity",
+				type: "uint256"
+			}
+		],
+		name: "addDelegateSigned",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				name: "delegate",
+				type: "address"
+			}
+		],
+		name: "revokeDelegate",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "sigV",
+				type: "uint8"
+			},
+			{
+				name: "sigR",
+				type: "bytes32"
+			},
+			{
+				name: "sigS",
+				type: "bytes32"
+			},
+			{
+				name: "delegateType",
+				type: "bytes32"
+			},
+			{
+				name: "delegate",
+				type: "address"
+			}
+		],
+		name: "revokeDelegateSigned",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "name",
+				type: "bytes32"
+			},
+			{
+				name: "value",
+				type: "bytes"
+			},
+			{
+				name: "validity",
+				type: "uint256"
+			}
+		],
+		name: "setAttribute",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "sigV",
+				type: "uint8"
+			},
+			{
+				name: "sigR",
+				type: "bytes32"
+			},
+			{
+				name: "sigS",
+				type: "bytes32"
+			},
+			{
+				name: "name",
+				type: "bytes32"
+			},
+			{
+				name: "value",
+				type: "bytes"
+			},
+			{
+				name: "validity",
+				type: "uint256"
+			}
+		],
+		name: "setAttributeSigned",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "name",
+				type: "bytes32"
+			},
+			{
+				name: "value",
+				type: "bytes"
+			}
+		],
+		name: "revokeAttribute",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	},
+	{
+		constant: false,
+		inputs: [
+			{
+				name: "identity",
+				type: "address"
+			},
+			{
+				name: "sigV",
+				type: "uint8"
+			},
+			{
+				name: "sigR",
+				type: "bytes32"
+			},
+			{
+				name: "sigS",
+				type: "bytes32"
+			},
+			{
+				name: "name",
+				type: "bytes32"
+			},
+			{
+				name: "value",
+				type: "bytes"
+			}
+		],
+		name: "revokeAttributeSigned",
+		outputs: [
+		],
+		payable: false,
+		stateMutability: "nonpayable",
+		type: "function"
+	}
+];
+var bytecode = "0x608060405234801561001057600080fd5b50612273806100206000396000f3006080604052600436106100e5576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168062c023da146100ea578063022914a7146101815780630d44625b14610204578063123b5e9814610289578063240cf1fa14610353578063622b2a3c146103df57806370ae92d2146104685780637ad4b0a4146104bf57806380b29f7c146105605780638733d4e8146105d157806393072684146106545780639c2c1b2b146106ee578063a7068d6614610792578063e476af5c1461080d578063f00d4b5d146108cd578063f96d0f9f14610930575b600080fd5b3480156100f657600080fd5b5061017f600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050610987565b005b34801561018d57600080fd5b506101c2600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610998565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561021057600080fd5b50610273600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506109cb565b6040518082815260200191505060405180910390f35b34801561029557600080fd5b50610351600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290803590602001909291905050506109fd565b005b34801561035f57600080fd5b506103dd600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff16906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610c72565b005b3480156103eb57600080fd5b5061044e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610ec1565b604051808215151515815260200191505060405180910390f35b34801561047457600080fd5b506104a9600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610f86565b6040518082815260200191505060405180910390f35b3480156104cb57600080fd5b5061055e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803590602001908201803590602001908080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050919291929080359060200190929190505050610f9e565b005b34801561056c57600080fd5b506105cf600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610fb1565b005b3480156105dd57600080fd5b50610612600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610fc2565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561066057600080fd5b506106ec600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611058565b005b3480156106fa57600080fd5b50610790600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506112b9565b005b34801561079e57600080fd5b5061080b600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050611524565b005b34801561081957600080fd5b506108cb600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050611537565b005b3480156108d957600080fd5b5061092e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506117a2565b005b34801561093c57600080fd5b50610971600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506117b1565b6040518082815260200191505060405180910390f35b610993833384846117c9565b505050565b60006020528060005260406000206000915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600160205282600052604060002060205281600052604060002060205280600052604060002060009250925050505481565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548b88888860405180897effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7365744174747269627574650000000000000000000000000000000000000000815250600c01846000191660001916815260200183805190602001908083835b602083101515610c135780518252602082019150602081019050602083039250610bee565b6001836020036101000a0380198251168184511680821785525050505050509050018281526020019850505050505050505060405180910390209050610c6888610c608a8a8a8a8761196c565b868686611a90565b5050505050505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f0100000000000000000000000000000000000000000000000000000000000000023060036000610cca8b610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054898660405180877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101867effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018481526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f6368616e67654f776e6572000000000000000000000000000000000000000000815250600b018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401965050505050505060405180910390209050610eb986610eb3888888888761196c565b84611c35565b505050505050565b600080600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008560405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490504281119150509392505050565b60036020528060005260406000206000915090505481565b610fab8433858585611a90565b50505050565b610fbd83338484611e02565b505050565b6000806000808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905060008173ffffffffffffffffffffffffffffffffffffffff1614151561104e57809150611052565b8291505b50919050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360006110b08c610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548a878760405180887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018581526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7265766f6b6544656c6567617465000000000000000000000000000000000000815250600e0183600019166000191681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401975050505050505050604051809103902090506112b0876112a9898989898761196c565b8585611e02565b50505050505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360006113118d610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548b88888860405180897effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f61646444656c6567617465000000000000000000000000000000000000000000815250600b0184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401828152602001985050505050505050506040518091039020905061151a886115128a8a8a8a8761196c565b868686612022565b5050505050505050565b6115318433858585612022565b50505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360008b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548a878760405180887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018581526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7265766f6b654174747269627574650000000000000000000000000000000000815250600f01836000191660001916815260200182805190602001908083835b60208310151561174c5780518252602082019150602081019050602083039250611727565b6001836020036101000a0380198251168184511680821785525050505050509050019750505050505050506040518091039020905061179987611792898989898761196c565b85856117c9565b50505050505050565b6117ad823383611c35565b5050565b60026020528060005260406000206000915090505481565b83836117d482610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151561180d57600080fd5b8573ffffffffffffffffffffffffffffffffffffffff167f18ab6b2ae3d64306c00ce663125f2bd680e441a098de1635bd7ad8b0d44965e485856000600260008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205460405180856000191660001916815260200180602001848152602001838152602001828103825285818151815260200191508051906020019080838360005b838110156118e35780820151818401526020810190506118c8565b50505050905090810190601f1680156119105780820380516001836020036101000a031916815260200191505b509550505050505060405180910390a243600260008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050565b600080600183878787604051600081526020016040526040518085600019166000191681526020018460ff1660ff1681526020018360001916600019168152602001826000191660001916815260200194505050505060206040516020810390808403906000865af11580156119e6573d6000803e3d6000fd5b5050506020604051035190506119fb87610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611a3457600080fd5b600360008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600081548092919060010191905055508091505095945050505050565b8484611a9b82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611ad457600080fd5b8673ffffffffffffffffffffffffffffffffffffffff167f18ab6b2ae3d64306c00ce663125f2bd680e441a098de1635bd7ad8b0d44965e48686864201600260008d73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205460405180856000191660001916815260200180602001848152602001838152602001828103825285818151815260200191508051906020019080838360005b83811015611bab578082015181840152602081019050611b90565b50505050905090810190601f168015611bd85780820380516001836020036101000a031916815260200191505b509550505050505060405180910390a243600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555050505050505050565b8282611c4082610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611c7957600080fd5b826000808773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508473ffffffffffffffffffffffffffffffffffffffff167f38a5a6e68f30ed1ab45860a4afb34bcb2fc00f22ca462d249b8a8d40cda6f7a384600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a243600260008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505050505050565b8383611e0d82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611e4657600080fd5b42600160008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008660405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508573ffffffffffffffffffffffffffffffffffffffff167f5a5084339536bcab65f20799fcc58724588145ca054bd2be626174b27ba156f7858542600260008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546040518085600019166000191681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200183815260200182815260200194505050505060405180910390a243600260008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050565b848461202d82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151561206657600080fd5b824201600160008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008760405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508673ffffffffffffffffffffffffffffffffffffffff167f5a5084339536bcab65f20799fcc58724588145ca054bd2be626174b27ba156f78686864201600260008d73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546040518085600019166000191681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200183815260200182815260200194505050505060405180910390a243600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050505600a165627a7a72305820ce15794c08edea0fae7ce9c85210f71a312b60c8d5cb2e5fd716c2adcd7403c70029";
+var deployedBytecode = "0x6080604052600436106100e5576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff168062c023da146100ea578063022914a7146101815780630d44625b14610204578063123b5e9814610289578063240cf1fa14610353578063622b2a3c146103df57806370ae92d2146104685780637ad4b0a4146104bf57806380b29f7c146105605780638733d4e8146105d157806393072684146106545780639c2c1b2b146106ee578063a7068d6614610792578063e476af5c1461080d578063f00d4b5d146108cd578063f96d0f9f14610930575b600080fd5b3480156100f657600080fd5b5061017f600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050610987565b005b34801561018d57600080fd5b506101c2600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610998565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561021057600080fd5b50610273600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506109cb565b6040518082815260200191505060405180910390f35b34801561029557600080fd5b50610351600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290803590602001909291905050506109fd565b005b34801561035f57600080fd5b506103dd600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff16906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610c72565b005b3480156103eb57600080fd5b5061044e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610ec1565b604051808215151515815260200191505060405180910390f35b34801561047457600080fd5b506104a9600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610f86565b6040518082815260200191505060405180910390f35b3480156104cb57600080fd5b5061055e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803590602001908201803590602001908080601f016020809104026020016040519081016040528093929190818152602001838380828437820191505050505050919291929080359060200190929190505050610f9e565b005b34801561056c57600080fd5b506105cf600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610fb1565b005b3480156105dd57600080fd5b50610612600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610fc2565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561066057600080fd5b506106ec600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050611058565b005b3480156106fa57600080fd5b50610790600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803590602001909291905050506112b9565b005b34801561079e57600080fd5b5061080b600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035600019169060200190929190803573ffffffffffffffffffffffffffffffffffffffff16906020019092919080359060200190929190505050611524565b005b34801561081957600080fd5b506108cb600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803560ff169060200190929190803560001916906020019092919080356000191690602001909291908035600019169060200190929190803590602001908201803590602001908080601f0160208091040260200160405190810160405280939291908181526020018383808284378201915050505050509192919290505050611537565b005b3480156108d957600080fd5b5061092e600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506117a2565b005b34801561093c57600080fd5b50610971600480360381019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291905050506117b1565b6040518082815260200191505060405180910390f35b610993833384846117c9565b505050565b60006020528060005260406000206000915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b600160205282600052604060002060205281600052604060002060205280600052604060002060009250925050505481565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548b88888860405180897effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7365744174747269627574650000000000000000000000000000000000000000815250600c01846000191660001916815260200183805190602001908083835b602083101515610c135780518252602082019150602081019050602083039250610bee565b6001836020036101000a0380198251168184511680821785525050505050509050018281526020019850505050505050505060405180910390209050610c6888610c608a8a8a8a8761196c565b868686611a90565b5050505050505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f0100000000000000000000000000000000000000000000000000000000000000023060036000610cca8b610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054898660405180877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101867effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018481526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f6368616e67654f776e6572000000000000000000000000000000000000000000815250600b018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401965050505050505060405180910390209050610eb986610eb3888888888761196c565b84611c35565b505050505050565b600080600160008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008560405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205490504281119150509392505050565b60036020528060005260406000206000915090505481565b610fab8433858585611a90565b50505050565b610fbd83338484611e02565b505050565b6000806000808473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff16905060008173ffffffffffffffffffffffffffffffffffffffff1614151561104e57809150611052565b8291505b50919050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360006110b08c610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548a878760405180887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018581526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7265766f6b6544656c6567617465000000000000000000000000000000000000815250600e0183600019166000191681526020018273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401975050505050505050604051809103902090506112b0876112a9898989898761196c565b8585611e02565b50505050505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360006113118d610fc2565b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548b88888860405180897effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018681526020018573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f61646444656c6567617465000000000000000000000000000000000000000000815250600b0184600019166000191681526020018373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401828152602001985050505050505050506040518091039020905061151a886115128a8a8a8a8761196c565b868686612022565b5050505050505050565b6115318433858585612022565b50505050565b600060197f01000000000000000000000000000000000000000000000000000000000000000260007f01000000000000000000000000000000000000000000000000000000000000000230600360008b73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020548a878760405180887effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19168152600101877effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff19167effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff191681526001018673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c010000000000000000000000000281526014018581526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff166c01000000000000000000000000028152601401807f7265766f6b654174747269627574650000000000000000000000000000000000815250600f01836000191660001916815260200182805190602001908083835b60208310151561174c5780518252602082019150602081019050602083039250611727565b6001836020036101000a0380198251168184511680821785525050505050509050019750505050505050506040518091039020905061179987611792898989898761196c565b85856117c9565b50505050505050565b6117ad823383611c35565b5050565b60026020528060005260406000206000915090505481565b83836117d482610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151561180d57600080fd5b8573ffffffffffffffffffffffffffffffffffffffff167f18ab6b2ae3d64306c00ce663125f2bd680e441a098de1635bd7ad8b0d44965e485856000600260008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205460405180856000191660001916815260200180602001848152602001838152602001828103825285818151815260200191508051906020019080838360005b838110156118e35780820151818401526020810190506118c8565b50505050905090810190601f1680156119105780820380516001836020036101000a031916815260200191505b509550505050505060405180910390a243600260008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050565b600080600183878787604051600081526020016040526040518085600019166000191681526020018460ff1660ff1681526020018360001916600019168152602001826000191660001916815260200194505050505060206040516020810390808403906000865af11580156119e6573d6000803e3d6000fd5b5050506020604051035190506119fb87610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611a3457600080fd5b600360008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020600081548092919060010191905055508091505095945050505050565b8484611a9b82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611ad457600080fd5b8673ffffffffffffffffffffffffffffffffffffffff167f18ab6b2ae3d64306c00ce663125f2bd680e441a098de1635bd7ad8b0d44965e48686864201600260008d73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000205460405180856000191660001916815260200180602001848152602001838152602001828103825285818151815260200191508051906020019080838360005b83811015611bab578082015181840152602081019050611b90565b50505050905090810190601f168015611bd85780820380516001836020036101000a031916815260200191505b509550505050505060405180910390a243600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020019081526020016000208190555050505050505050565b8282611c4082610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611c7957600080fd5b826000808773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055508473ffffffffffffffffffffffffffffffffffffffff167f38a5a6e68f30ed1ab45860a4afb34bcb2fc00f22ca462d249b8a8d40cda6f7a384600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002054604051808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1681526020018281526020019250505060405180910390a243600260008773ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055505050505050565b8383611e0d82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16141515611e4657600080fd5b42600160008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008660405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008573ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508573ffffffffffffffffffffffffffffffffffffffff167f5a5084339536bcab65f20799fcc58724588145ca054bd2be626174b27ba156f7858542600260008c73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546040518085600019166000191681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200183815260200182815260200194505050505060405180910390a243600260008873ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050565b848461202d82610fc2565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151561206657600080fd5b824201600160008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002060008760405180826000191660001916815260200191505060405180910390206000191660001916815260200190815260200160002060008673ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020819055508673ffffffffffffffffffffffffffffffffffffffff167f5a5084339536bcab65f20799fcc58724588145ca054bd2be626174b27ba156f78686864201600260008d73ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168152602001908152602001600020546040518085600019166000191681526020018473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200183815260200182815260200194505050505060405180910390a243600260008973ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200190815260200160002081905550505050505050505600a165627a7a72305820ce15794c08edea0fae7ce9c85210f71a312b60c8d5cb2e5fd716c2adcd7403c70029";
+var sourceMap = "25:5537:0:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;25:5537:0;;;;;;;";
+var deployedSourceMap = "25:5537:0:-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;5079:138;;8:9:-1;5:2;;;30:1;27;20:12;5:2;5079:138:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;59:41;;8:9:-1;5:2;;;30:1;27;20:12;5:2;59:41:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;104:81;;8:9:-1;5:2;;;30:1;27;20:12;5:2;104:81:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;4467:364;;8:9:-1;5:2;;;30:1;27;20:12;5:2;4467:364:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1856:326;;8:9:-1;5:2;;;30:1;27;20:12;5:2;1856:326:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1260:217;;8:9:-1;5:2;;;30:1;27;20:12;5:2;1260:217:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;232:37;;8:9:-1;5:2;;;30:1;27;20:12;5:2;232:37:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;4306:157;;8:9:-1;5:2;;;30:1;27;20:12;5:2;4306:157:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3484:160;;8:9:-1;5:2;;;30:1;27;20:12;5:2;3484:160:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;790:189;;8:9:-1;5:2;;;30:1;27;20:12;5:2;790:189:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3648:385;;8:9:-1;5:2;;;30:1;27;20:12;5:2;3648:385:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2736:411;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2736:411:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2553:179;;8:9:-1;5:2;;;30:1;27;20:12;5:2;2553:179:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;5220:339;;8:9:-1;5:2;;;30:1;27;20:12;5:2;5220:339:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1734:118;;8:9:-1;5:2;;;30:1;27;20:12;5:2;1734:118:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;189:39;;8:9:-1;5:2;;;30:1;27;20:12;5:2;189:39:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;5079:138;5162:50;5178:8;5188:10;5200:4;5206:5;5162:15;:50::i;:::-;5079:138;;;:::o;59:41::-;;;;;;;;;;;;;;;;;;;;;;:::o;104:81::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;4467:364::-;4608:12;4638:4;4633:10;;4650:1;4645:7;;4654:4;4660:5;:15;4666:8;4660:15;;;;;;;;;;;;;;;;4677:8;4703:4;4709:5;4716:8;4623:102;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:11;51:19;36:153;;;182:3;176:10;171:3;164:23;98:2;93:3;89:12;82:19;;123:2;118:3;114:12;107:19;;148:2;143:3;139:12;132:19;;36:153;;;274:1;267:3;263:2;259:12;254:3;250:22;246:30;315:4;311:9;305:3;299:10;295:26;356:4;350:3;344:10;340:21;389:7;380;377:20;372:3;365:33;3:399;;;4623:102:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;4608:117;;4731:95;4744:8;4754:48;4769:8;4779:4;4785;4791;4797;4754:14;:48::i;:::-;4804:4;4810:5;4817:8;4731:12;:95::i;:::-;4467:364;;;;;;;;:::o;1856:326::-;1972:12;2002:4;1997:10;;2014:1;2009:7;;2018:4;2024:5;:30;2030:23;2044:8;2030:13;:23::i;:::-;2024:30;;;;;;;;;;;;;;;;2056:8;2081;1987:103;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1972:118;;2096:81;2108:8;2118:48;2133:8;2143:4;2149;2155;2161;2118:14;:48::i;:::-;2168:8;2096:11;:81::i;:::-;1856:326;;;;;;:::o;1260:217::-;1361:4;1373:13;1389:9;:19;1399:8;1389:19;;;;;;;;;;;;;;;:44;1419:12;1409:23;;;;;;;;;;;;;;;;;;;;;;;;1389:44;;;;;;;;;;;;;;;;;:54;1434:8;1389:54;;;;;;;;;;;;;;;;1373:70;;1468:3;1457:8;:14;1449:23;;1260:217;;;;;;:::o;232:37::-;;;;;;;;;;;;;;;;;:::o;4306:157::-;4401:57;4414:8;4424:10;4436:4;4442:5;4449:8;4401:12;:57::i;:::-;4306:157;;;;:::o;3484:160::-;3579:60;3594:8;3604:10;3616:12;3630:8;3579:14;:60::i;:::-;3484:160;;;:::o;790:189::-;851:7;867:13;883:6;:16;890:8;883:16;;;;;;;;;;;;;;;;;;;;;;;;;867:32;;919:3;910:5;:12;;;;906:47;;;940:5;933:12;;;;906:47;966:8;959:15;;790:189;;;;;:::o;3648:385::-;3789:12;3819:4;3814:10;;3831:1;3826:7;;3835:4;3841:5;:30;3847:23;3861:8;3847:13;:23::i;:::-;3841:30;;;;;;;;;;;;;;;;3873:8;3901:12;3915:8;3804:120;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3789:135;;3930:98;3945:8;3955:48;3970:8;3980:4;3986;3992;3998;3955:14;:48::i;:::-;4005:12;4019:8;3930:14;:98::i;:::-;3648:385;;;;;;;:::o;2736:411::-;2889:12;2919:4;2914:10;;2931:1;2926:7;;2935:4;2941:5;:30;2947:23;2961:8;2947:13;:23::i;:::-;2941:30;;;;;;;;;;;;;;;;2973:8;2998:12;3012:8;3022;2904:127;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2889:142;;3037:105;3049:8;3059:48;3074:8;3084:4;3090;3096;3102;3059:14;:48::i;:::-;3109:12;3123:8;3133;3037:11;:105::i;:::-;2736:411;;;;;;;;:::o;2553:179::-;2660:67;2672:8;2682:10;2694:12;2708:8;2718;2660:11;:67::i;:::-;2553:179;;;;:::o;5220:339::-;5349:12;5379:4;5374:10;;5391:1;5386:7;;5395:4;5401:5;:15;5407:8;5401:15;;;;;;;;;;;;;;;;5418:8;5447:4;5453:5;5364:95;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:11;51:19;36:153;;;182:3;176:10;171:3;164:23;98:2;93:3;89:12;82:19;;123:2;118:3;114:12;107:19;;148:2;143:3;139:12;132:19;;36:153;;;274:1;267:3;263:2;259:12;254:3;250:22;246:30;315:4;311:9;305:3;299:10;295:26;356:4;350:3;344:10;340:21;389:7;380;377:20;372:3;365:33;3:399;;;5364:95:0;;;;;;;;;;;;;;;;;;;;;;5349:110;;5466:88;5482:8;5492:48;5507:8;5517:4;5523;5529;5535;5492:14;:48::i;:::-;5542:4;5548:5;5466:15;:88::i;:::-;5220:339;;;;;;;:::o;1734:118::-;1804:43;1816:8;1826:10;1838:8;1804:11;:43::i;:::-;1734:118;;:::o;189:39::-;;;;;;;;;;;;;;;;;:::o;4835:240::-;4940:8;4950:5;350:23;364:8;350:13;:23::i;:::-;341:32;;:5;:32;;;332:42;;;;;;;;4988:8;4968:64;;;4998:4;5004:5;5011:1;5014:7;:17;5022:8;5014:17;;;;;;;;;;;;;;;;4968:64;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;4968:64:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;5058:12;5038:7;:17;5046:8;5038:17;;;;;;;;;;;;;;;:32;;;;4835:240;;;;;;:::o;983:273::-;1096:7;1111:14;1128:33;1138:4;1144;1150;1156;1128:33;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;8:9:-1;5:2;;;45:16;42:1;39;24:38;77:16;74:1;67:27;5:2;1128:33:0;;;;;;;;1111:50;;1185:23;1199:8;1185:13;:23::i;:::-;1175:33;;:6;:33;;;1167:42;;;;;;;;1215:5;:15;1221:8;1215:15;;;;;;;;;;;;;;;;:17;;;;;;;;;;;;;1245:6;1238:13;;983:273;;;;;;;;:::o;4037:265::-;4154:8;4164:5;350:23;364:8;350:13;:23::i;:::-;341:32;;:5;:32;;;332:42;;;;;;;;4202:8;4182:77;;;4212:4;4218:5;4231:8;4225:3;:14;4241:7;:17;4249:8;4241:17;;;;;;;;;;;;;;;;4182:77;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;4182:77:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;4285:12;4265:7;:17;4273:8;4265:17;;;;;;;;;;;;;;;:32;;;;4037:265;;;;;;;:::o;1481:249::-;1572:8;1582:5;350:23;364:8;350:13;:23::i;:::-;341:32;;:5;:32;;;332:42;;;;;;;;1614:8;1595:6;:16;1602:8;1595:16;;;;;;;;;;;;;;;;:27;;;;;;;;;;;;;;;;;;1649:8;1633:54;;;1659:8;1669:7;:17;1677:8;1669:17;;;;;;;;;;;;;;;;1633:54;;;;;;;;;;;;;;;;;;;;;;;;;;;;1713:12;1693:7;:17;1701:8;1693:17;;;;;;;;;;;;;;;:32;;;;1481:249;;;;;:::o;3151:329::-;3267:8;3277:5;350:23;364:8;350:13;:23::i;:::-;341:32;;:5;:32;;;332:42;;;;;;;;3347:3;3290:9;:19;3300:8;3290:19;;;;;;;;;;;;;;;:44;3320:12;3310:23;;;;;;;;;;;;;;;;;;;;;;;;3290:44;;;;;;;;;;;;;;;;;:54;3335:8;3290:54;;;;;;;;;;;;;;;:60;;;;3380:8;3361:76;;;3390:12;3404:8;3414:3;3419:7;:17;3427:8;3419:17;;;;;;;;;;;;;;;;3361:76;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;3463:12;3443:7;:17;3451:8;3443:17;;;;;;;;;;;;;;;:32;;;;3151:329;;;;;;:::o;2186:363::-;2314:8;2324:5;350:23;364:8;350:13;:23::i;:::-;341:32;;:5;:32;;;332:42;;;;;;;;2400:8;2394:3;:14;2337:9;:19;2347:8;2337:19;;;;;;;;;;;;;;;:44;2367:12;2357:23;;;;;;;;;;;;;;;;;;;;;;;;2337:44;;;;;;;;;;;;;;;;;:54;2382:8;2337:54;;;;;;;;;;;;;;;:71;;;;2438:8;2419:87;;;2448:12;2462:8;2478;2472:3;:14;2488:7;:17;2496:8;2488:17;;;;;;;;;;;;;;;;2419:87;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;2532:12;2512:7;:17;2520:8;2512:17;;;;;;;;;;;;;;;:32;;;;2186:363;;;;;;;:::o";
+var source = "pragma solidity ^0.4.4;\n\ncontract EthereumDIDRegistry {\n\n  mapping(address => address) public owners;\n  mapping(address => mapping(bytes32 => mapping(address => uint))) public delegates;\n  mapping(address => uint) public changed;\n  mapping(address => uint) public nonce;\n\n  modifier onlyOwner(address identity, address actor) {\n    require (actor == identityOwner(identity));\n    _;\n  }\n\n  event DIDOwnerChanged(\n    address indexed identity,\n    address owner,\n    uint previousChange\n  );\n\n  event DIDDelegateChanged(\n    address indexed identity,\n    bytes32 delegateType,\n    address delegate,\n    uint validTo,\n    uint previousChange\n  );\n\n  event DIDAttributeChanged(\n    address indexed identity,\n    bytes32 name,\n    bytes value,\n    uint validTo,\n    uint previousChange\n  );\n\n  function identityOwner(address identity) public view returns(address) {\n     address owner = owners[identity];\n     if (owner != 0x0) {\n       return owner;\n     }\n     return identity;\n  }\n\n  function checkSignature(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, bytes32 hash) internal returns(address) {\n    address signer = ecrecover(hash, sigV, sigR, sigS);\n    require(signer == identityOwner(identity));\n    nonce[identity]++;\n    return signer;\n  }\n\n  function validDelegate(address identity, bytes32 delegateType, address delegate) public view returns(bool) {\n    uint validity = delegates[identity][keccak256(delegateType)][delegate];\n    return (validity > now);\n  }\n\n  function changeOwner(address identity, address actor, address newOwner) internal onlyOwner(identity, actor) {\n    owners[identity] = newOwner;\n    emit DIDOwnerChanged(identity, newOwner, changed[identity]);\n    changed[identity] = block.number;\n  }\n\n  function changeOwner(address identity, address newOwner) public {\n    changeOwner(identity, msg.sender, newOwner);\n  }\n\n  function changeOwnerSigned(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, address newOwner) public {\n    bytes32 hash = keccak256(byte(0x19), byte(0), this, nonce[identityOwner(identity)], identity, \"changeOwner\", newOwner);\n    changeOwner(identity, checkSignature(identity, sigV, sigR, sigS, hash), newOwner);\n  }\n\n  function addDelegate(address identity, address actor, bytes32 delegateType, address delegate, uint validity) internal onlyOwner(identity, actor) {\n    delegates[identity][keccak256(delegateType)][delegate] = now + validity;\n    emit DIDDelegateChanged(identity, delegateType, delegate, now + validity, changed[identity]);\n    changed[identity] = block.number;\n  }\n\n  function addDelegate(address identity, bytes32 delegateType, address delegate, uint validity) public {\n    addDelegate(identity, msg.sender, delegateType, delegate, validity);\n  }\n\n  function addDelegateSigned(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, bytes32 delegateType, address delegate, uint validity) public {\n    bytes32 hash = keccak256(byte(0x19), byte(0), this, nonce[identityOwner(identity)], identity, \"addDelegate\", delegateType, delegate, validity);\n    addDelegate(identity, checkSignature(identity, sigV, sigR, sigS, hash), delegateType, delegate, validity);\n  }\n\n  function revokeDelegate(address identity, address actor, bytes32 delegateType, address delegate) internal onlyOwner(identity, actor) {\n    delegates[identity][keccak256(delegateType)][delegate] = now;\n    emit DIDDelegateChanged(identity, delegateType, delegate, now, changed[identity]);\n    changed[identity] = block.number;\n  }\n\n  function revokeDelegate(address identity, bytes32 delegateType, address delegate) public {\n    revokeDelegate(identity, msg.sender, delegateType, delegate);\n  }\n\n  function revokeDelegateSigned(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, bytes32 delegateType, address delegate) public {\n    bytes32 hash = keccak256(byte(0x19), byte(0), this, nonce[identityOwner(identity)], identity, \"revokeDelegate\", delegateType, delegate);\n    revokeDelegate(identity, checkSignature(identity, sigV, sigR, sigS, hash), delegateType, delegate);\n  }\n\n  function setAttribute(address identity, address actor, bytes32 name, bytes value, uint validity ) internal onlyOwner(identity, actor) {\n    emit DIDAttributeChanged(identity, name, value, now + validity, changed[identity]);\n    changed[identity] = block.number;\n  }\n\n  function setAttribute(address identity, bytes32 name, bytes value, uint validity) public {\n    setAttribute(identity, msg.sender, name, value, validity);\n  }\n\n  function setAttributeSigned(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, bytes32 name, bytes value, uint validity) public {\n    bytes32 hash = keccak256(byte(0x19), byte(0), this, nonce[identity], identity, \"setAttribute\", name, value, validity);\n    setAttribute(identity, checkSignature(identity, sigV, sigR, sigS, hash), name, value, validity);\n  }\n\n  function revokeAttribute(address identity, address actor, bytes32 name, bytes value ) internal onlyOwner(identity, actor) {\n    emit DIDAttributeChanged(identity, name, value, 0, changed[identity]);\n    changed[identity] = block.number;\n  }\n\n  function revokeAttribute(address identity, bytes32 name, bytes value) public {\n    revokeAttribute(identity, msg.sender, name, value);\n  }\n\n function revokeAttributeSigned(address identity, uint8 sigV, bytes32 sigR, bytes32 sigS, bytes32 name, bytes value) public {\n    bytes32 hash = keccak256(byte(0x19), byte(0), this, nonce[identity], identity, \"revokeAttribute\", name, value); \n    revokeAttribute(identity, checkSignature(identity, sigV, sigR, sigS, hash), name, value);\n  }\n\n}\n";
+var sourcePath = "/Users/pelleb/code/consensys/ethereum-did-registry/contracts/EthereumDIDRegistry.sol";
+var ast = {
+	absolutePath: "/Users/pelleb/code/consensys/ethereum-did-registry/contracts/EthereumDIDRegistry.sol",
+	exportedSymbols: {
+		EthereumDIDRegistry: [
+			706
+		]
+	},
+	id: 707,
+	nodeType: "SourceUnit",
+	nodes: [
+		{
+			id: 1,
+			literals: [
+				"solidity",
+				"^",
+				"0.4",
+				".4"
+			],
+			nodeType: "PragmaDirective",
+			src: "0:23:0"
+		},
+		{
+			baseContracts: [
+			],
+			contractDependencies: [
+			],
+			contractKind: "contract",
+			documentation: null,
+			fullyImplemented: true,
+			id: 706,
+			linearizedBaseContracts: [
+				706
+			],
+			name: "EthereumDIDRegistry",
+			nodeType: "ContractDefinition",
+			nodes: [
+				{
+					constant: false,
+					id: 5,
+					name: "owners",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "59:41:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+						typeString: "mapping(address => address)"
+					},
+					typeName: {
+						id: 4,
+						keyType: {
+							id: 2,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "67:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "59:27:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+							typeString: "mapping(address => address)"
+						},
+						valueType: {
+							id: 3,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "78:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 13,
+					name: "delegates",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "104:81:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+						typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+					},
+					typeName: {
+						id: 12,
+						keyType: {
+							id: 6,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "112:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "104:64:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+							typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+						},
+						valueType: {
+							id: 11,
+							keyType: {
+								id: 7,
+								name: "bytes32",
+								nodeType: "ElementaryTypeName",
+								src: "131:7:0",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								}
+							},
+							nodeType: "Mapping",
+							src: "123:44:0",
+							typeDescriptions: {
+								typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+								typeString: "mapping(bytes32 => mapping(address => uint256))"
+							},
+							valueType: {
+								id: 10,
+								keyType: {
+									id: 8,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "150:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "Mapping",
+								src: "142:24:0",
+								typeDescriptions: {
+									typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+									typeString: "mapping(address => uint256)"
+								},
+								valueType: {
+									id: 9,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "161:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								}
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 17,
+					name: "changed",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "189:39:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+						typeString: "mapping(address => uint256)"
+					},
+					typeName: {
+						id: 16,
+						keyType: {
+							id: 14,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "197:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "189:24:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+							typeString: "mapping(address => uint256)"
+						},
+						valueType: {
+							id: 15,
+							name: "uint",
+							nodeType: "ElementaryTypeName",
+							src: "208:4:0",
+							typeDescriptions: {
+								typeIdentifier: "t_uint256",
+								typeString: "uint256"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 21,
+					name: "nonce",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "232:37:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+						typeString: "mapping(address => uint256)"
+					},
+					typeName: {
+						id: 20,
+						keyType: {
+							id: 18,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "240:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "232:24:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+							typeString: "mapping(address => uint256)"
+						},
+						valueType: {
+							id: 19,
+							name: "uint",
+							nodeType: "ElementaryTypeName",
+							src: "251:4:0",
+							typeDescriptions: {
+								typeIdentifier: "t_uint256",
+								typeString: "uint256"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 36,
+						nodeType: "Block",
+						src: "326:60:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											id: 32,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 28,
+												name: "actor",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 25,
+												src: "341:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "==",
+											rightExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 30,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 23,
+														src: "364:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 29,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "350:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 31,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "350:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											src: "341:32:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										],
+										id: 27,
+										name: "require",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											724,
+											725
+										],
+										referencedDeclaration: 724,
+										src: "332:7:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_require_pure$_t_bool_$returns$__$",
+											typeString: "function (bool) pure"
+										}
+									},
+									id: 33,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "332:42:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 34,
+								nodeType: "ExpressionStatement",
+								src: "332:42:0"
+							},
+							{
+								id: 35,
+								nodeType: "PlaceholderStatement",
+								src: "380:1:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 37,
+					name: "onlyOwner",
+					nodeType: "ModifierDefinition",
+					parameters: {
+						id: 26,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 23,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 37,
+								src: "293:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 22,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "293:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 25,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 37,
+								src: "311:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 24,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "311:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "292:33:0"
+					},
+					src: "274:112:0",
+					visibility: "internal"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 45,
+					name: "DIDOwnerChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 44,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 39,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "417:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 38,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "417:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 41,
+								indexed: false,
+								name: "owner",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "447:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 40,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "447:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 43,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "466:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 42,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "466:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "411:78:0"
+					},
+					src: "390:100:0"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 57,
+					name: "DIDDelegateChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 56,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 47,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "524:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 46,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "524:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 49,
+								indexed: false,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "554:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 48,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "554:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 51,
+								indexed: false,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "580:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 50,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "580:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 53,
+								indexed: false,
+								name: "validTo",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "602:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 52,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "602:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 55,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "620:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 54,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "620:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "518:125:0"
+					},
+					src: "494:150:0"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 69,
+					name: "DIDAttributeChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 68,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 59,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "679:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 58,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "679:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 61,
+								indexed: false,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "709:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 60,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "709:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 63,
+								indexed: false,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "727:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 62,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "727:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 65,
+								indexed: false,
+								name: "validTo",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "744:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 64,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "744:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 67,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "762:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 66,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "762:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "673:112:0"
+					},
+					src: "648:138:0"
+				},
+				{
+					body: {
+						id: 91,
+						nodeType: "Block",
+						src: "860:119:0",
+						statements: [
+							{
+								assignments: [
+									77
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 77,
+										name: "owner",
+										nodeType: "VariableDeclaration",
+										scope: 92,
+										src: "867:13:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										},
+										typeName: {
+											id: 76,
+											name: "address",
+											nodeType: "ElementaryTypeName",
+											src: "867:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 81,
+								initialValue: {
+									argumentTypes: null,
+									baseExpression: {
+										argumentTypes: null,
+										id: 78,
+										name: "owners",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 5,
+										src: "883:6:0",
+										typeDescriptions: {
+											typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+											typeString: "mapping(address => address)"
+										}
+									},
+									id: 80,
+									indexExpression: {
+										argumentTypes: null,
+										id: 79,
+										name: "identity",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 71,
+										src: "890:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									isConstant: false,
+									isLValue: true,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "IndexAccess",
+									src: "883:16:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "867:32:0"
+							},
+							{
+								condition: {
+									argumentTypes: null,
+									commonType: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									},
+									id: 84,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftExpression: {
+										argumentTypes: null,
+										id: 82,
+										name: "owner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 77,
+										src: "910:5:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									nodeType: "BinaryOperation",
+									operator: "!=",
+									rightExpression: {
+										argumentTypes: null,
+										hexValue: "307830",
+										id: 83,
+										isConstant: false,
+										isLValue: false,
+										isPure: true,
+										kind: "number",
+										lValueRequested: false,
+										nodeType: "Literal",
+										src: "919:3:0",
+										subdenomination: null,
+										typeDescriptions: {
+											typeIdentifier: "t_rational_0_by_1",
+											typeString: "int_const 0"
+										},
+										value: "0x0"
+									},
+									src: "910:12:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								falseBody: null,
+								id: 88,
+								nodeType: "IfStatement",
+								src: "906:47:0",
+								trueBody: {
+									id: 87,
+									nodeType: "Block",
+									src: "924:29:0",
+									statements: [
+										{
+											expression: {
+												argumentTypes: null,
+												id: 85,
+												name: "owner",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 77,
+												src: "940:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											functionReturnParameters: 75,
+											id: 86,
+											nodeType: "Return",
+											src: "933:12:0"
+										}
+									]
+								}
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 89,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 71,
+									src: "966:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								functionReturnParameters: 75,
+								id: 90,
+								nodeType: "Return",
+								src: "959:15:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 92,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: true,
+					modifiers: [
+					],
+					name: "identityOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 72,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 71,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 92,
+								src: "813:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 70,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "813:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "812:18:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 75,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 74,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 92,
+								src: "851:7:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 73,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "851:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "850:9:0"
+					},
+					scope: 706,
+					src: "790:189:0",
+					stateMutability: "view",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 131,
+						nodeType: "Block",
+						src: "1105:151:0",
+						statements: [
+							{
+								assignments: [
+									108
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 108,
+										name: "signer",
+										nodeType: "VariableDeclaration",
+										scope: 132,
+										src: "1111:14:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										},
+										typeName: {
+											id: 107,
+											name: "address",
+											nodeType: "ElementaryTypeName",
+											src: "1111:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 115,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 110,
+											name: "hash",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 102,
+											src: "1138:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 111,
+											name: "sigV",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 96,
+											src: "1144:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint8",
+												typeString: "uint8"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 112,
+											name: "sigR",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 98,
+											src: "1150:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 113,
+											name: "sigS",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 100,
+											src: "1156:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_uint8",
+												typeString: "uint8"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										],
+										id: 109,
+										name: "ecrecover",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 713,
+										src: "1128:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_ecrecover_pure$_t_bytes32_$_t_uint8_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+											typeString: "function (bytes32,uint8,bytes32,bytes32) pure returns (address)"
+										}
+									},
+									id: 114,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1128:33:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1111:50:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											id: 121,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 117,
+												name: "signer",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 108,
+												src: "1175:6:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "==",
+											rightExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 119,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 94,
+														src: "1199:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 118,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "1185:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 120,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "1185:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											src: "1175:33:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										],
+										id: 116,
+										name: "require",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											724,
+											725
+										],
+										referencedDeclaration: 724,
+										src: "1167:7:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_require_pure$_t_bool_$returns$__$",
+											typeString: "function (bool) pure"
+										}
+									},
+									id: 122,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1167:42:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 123,
+								nodeType: "ExpressionStatement",
+								src: "1167:42:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 127,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "UnaryOperation",
+									operator: "++",
+									prefix: false,
+									src: "1215:17:0",
+									subExpression: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 124,
+											name: "nonce",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 21,
+											src: "1215:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 126,
+										indexExpression: {
+											argumentTypes: null,
+											id: 125,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 94,
+											src: "1221:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1215:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 128,
+								nodeType: "ExpressionStatement",
+								src: "1215:17:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 129,
+									name: "signer",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 108,
+									src: "1245:6:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								functionReturnParameters: 106,
+								id: 130,
+								nodeType: "Return",
+								src: "1238:13:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 132,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "checkSignature",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 103,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 94,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1007:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 93,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1007:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 96,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1025:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 95,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "1025:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 98,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1037:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 97,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1037:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 100,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1051:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 99,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1051:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 102,
+								name: "hash",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1065:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 101,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1065:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1006:72:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 106,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 105,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1096:7:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 104,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1096:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1095:9:0"
+					},
+					scope: 706,
+					src: "983:273:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 160,
+						nodeType: "Block",
+						src: "1367:110:0",
+						statements: [
+							{
+								assignments: [
+									144
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 144,
+										name: "validity",
+										nodeType: "VariableDeclaration",
+										scope: 161,
+										src: "1373:13:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										},
+										typeName: {
+											id: 143,
+											name: "uint",
+											nodeType: "ElementaryTypeName",
+											src: "1373:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 154,
+								initialValue: {
+									argumentTypes: null,
+									baseExpression: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 145,
+												name: "delegates",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 13,
+												src: "1389:9:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+													typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+												}
+											},
+											id: 147,
+											indexExpression: {
+												argumentTypes: null,
+												id: 146,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 134,
+												src: "1399:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "1389:19:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+												typeString: "mapping(bytes32 => mapping(address => uint256))"
+											}
+										},
+										id: 151,
+										indexExpression: {
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 149,
+													name: "delegateType",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 136,
+													src: "1419:12:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 148,
+												name: "keccak256",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 715,
+												src: "1409:9:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+													typeString: "function () pure returns (bytes32)"
+												}
+											},
+											id: 150,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "1409:23:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: false,
+										nodeType: "IndexAccess",
+										src: "1389:44:0",
+										typeDescriptions: {
+											typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+											typeString: "mapping(address => uint256)"
+										}
+									},
+									id: 153,
+									indexExpression: {
+										argumentTypes: null,
+										id: 152,
+										name: "delegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 138,
+										src: "1434:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									isConstant: false,
+									isLValue: true,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "IndexAccess",
+									src: "1389:54:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1373:70:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									components: [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 157,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 155,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 144,
+												src: "1457:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: ">",
+											rightExpression: {
+												argumentTypes: null,
+												id: 156,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "1468:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "1457:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									id: 158,
+									isConstant: false,
+									isInlineArray: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "TupleExpression",
+									src: "1456:16:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								functionReturnParameters: 142,
+								id: 159,
+								nodeType: "Return",
+								src: "1449:23:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 161,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: true,
+					modifiers: [
+					],
+					name: "validDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 139,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 134,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1283:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 133,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1283:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 136,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1301:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 135,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1301:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 138,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1323:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 137,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1323:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1282:58:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 142,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 141,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1361:4:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bool",
+									typeString: "bool"
+								},
+								typeName: {
+									id: 140,
+									name: "bool",
+									nodeType: "ElementaryTypeName",
+									src: "1361:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1360:6:0"
+					},
+					scope: 706,
+					src: "1260:217:0",
+					stateMutability: "view",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 195,
+						nodeType: "Block",
+						src: "1589:141:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 178,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 174,
+											name: "owners",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 5,
+											src: "1595:6:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+												typeString: "mapping(address => address)"
+											}
+										},
+										id: 176,
+										indexExpression: {
+											argumentTypes: null,
+											id: 175,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1602:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1595:16:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										id: 177,
+										name: "newOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 167,
+										src: "1614:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									src: "1595:27:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								id: 179,
+								nodeType: "ExpressionStatement",
+								src: "1595:27:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 181,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1649:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 182,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 167,
+											src: "1659:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 183,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "1669:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 185,
+											indexExpression: {
+												argumentTypes: null,
+												id: 184,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 163,
+												src: "1677:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "1669:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 180,
+										name: "DIDOwnerChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 45,
+										src: "1633:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,uint256)"
+										}
+									},
+									id: 186,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1633:54:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 187,
+								nodeType: "EmitStatement",
+								src: "1628:59:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 193,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 188,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "1693:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 190,
+										indexExpression: {
+											argumentTypes: null,
+											id: 189,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1701:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1693:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 191,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "1713:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 192,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "1713:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "1693:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 194,
+								nodeType: "ExpressionStatement",
+								src: "1693:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 196,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 170,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 163,
+									src: "1572:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 171,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 165,
+									src: "1582:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 172,
+							modifierName: {
+								argumentTypes: null,
+								id: 169,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "1562:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "1562:26:0"
+						}
+					],
+					name: "changeOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 168,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 163,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1502:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 162,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1502:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 165,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1520:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 164,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1520:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 167,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1535:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 166,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1535:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1501:51:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 173,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1589:0:0"
+					},
+					scope: 706,
+					src: "1481:249:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 210,
+						nodeType: "Block",
+						src: "1798:54:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 204,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 198,
+											src: "1816:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 205,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "1826:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 206,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "1826:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 207,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 200,
+											src: "1838:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 203,
+										name: "changeOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											196,
+											211
+										],
+										referencedDeclaration: 196,
+										src: "1804:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_address_$returns$__$",
+											typeString: "function (address,address,address)"
+										}
+									},
+									id: 208,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1804:43:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 209,
+								nodeType: "ExpressionStatement",
+								src: "1804:43:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 211,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "changeOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 201,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 198,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 211,
+								src: "1755:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 197,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1755:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 200,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 211,
+								src: "1773:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 199,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1773:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1754:36:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 202,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1798:0:0"
+					},
+					scope: 706,
+					src: "1734:118:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 256,
+						nodeType: "Block",
+						src: "1966:216:0",
+						statements: [
+							{
+								assignments: [
+									225
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 225,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 257,
+										src: "1972:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 224,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "1972:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 243,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 228,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2002:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 227,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "1997:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 229,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "1997:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 231,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2014:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 230,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2009:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 232,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2009:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 233,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "2018:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 234,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "2024:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 238,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 236,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 213,
+														src: "2044:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 235,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "2030:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 237,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2030:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2024:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 239,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 213,
+											src: "2056:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "6368616e67654f776e6572",
+											id: 240,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "2066:13:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_497a2d03cc86298e55cb693e1ab1fe854c7b50c0aa5aad6229104986e0bf69c9",
+												typeString: "literal_string \"changeOwner\""
+											},
+											value: "changeOwner"
+										},
+										{
+											argumentTypes: null,
+											id: 241,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 221,
+											src: "2081:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_497a2d03cc86298e55cb693e1ab1fe854c7b50c0aa5aad6229104986e0bf69c9",
+												typeString: "literal_string \"changeOwner\""
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 226,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "1987:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 242,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1987:103:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1972:118:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 245,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 213,
+											src: "2108:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 247,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 213,
+													src: "2133:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 248,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 215,
+													src: "2143:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 249,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 217,
+													src: "2149:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 250,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 219,
+													src: "2155:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 251,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 225,
+													src: "2161:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 246,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "2118:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 252,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2118:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 253,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 221,
+											src: "2168:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 244,
+										name: "changeOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											196,
+											211
+										],
+										referencedDeclaration: 196,
+										src: "2096:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_address_$returns$__$",
+											typeString: "function (address,address,address)"
+										}
+									},
+									id: 254,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2096:81:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 255,
+								nodeType: "ExpressionStatement",
+								src: "2096:81:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 257,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "changeOwnerSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 222,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 213,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1883:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 212,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1883:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 215,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1901:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 214,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "1901:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 217,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1913:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 216,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1913:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 219,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1927:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 218,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1927:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 221,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1941:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 220,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1941:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1882:76:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 223,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1966:0:0"
+					},
+					scope: 706,
+					src: "1856:326:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 307,
+						nodeType: "Block",
+						src: "2331:218:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 286,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												baseExpression: {
+													argumentTypes: null,
+													id: 274,
+													name: "delegates",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 13,
+													src: "2337:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+														typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+													}
+												},
+												id: 280,
+												indexExpression: {
+													argumentTypes: null,
+													id: 275,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 259,
+													src: "2347:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												isConstant: false,
+												isLValue: true,
+												isPure: false,
+												lValueRequested: false,
+												nodeType: "IndexAccess",
+												src: "2337:19:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+													typeString: "mapping(bytes32 => mapping(address => uint256))"
+												}
+											},
+											id: 281,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 277,
+														name: "delegateType",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 263,
+														src: "2367:12:0",
+														typeDescriptions: {
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													],
+													id: 276,
+													name: "keccak256",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 715,
+													src: "2357:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+														typeString: "function () pure returns (bytes32)"
+													}
+												},
+												id: 278,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2357:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_bytes32",
+													typeString: "bytes32"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2337:44:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 282,
+										indexExpression: {
+											argumentTypes: null,
+											id: 279,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 265,
+											src: "2382:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "2337:54:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										commonType: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										},
+										id: 285,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										leftExpression: {
+											argumentTypes: null,
+											id: 283,
+											name: "now",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 723,
+											src: "2394:3:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										nodeType: "BinaryOperation",
+										operator: "+",
+										rightExpression: {
+											argumentTypes: null,
+											id: 284,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 267,
+											src: "2400:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										src: "2394:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "2337:71:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 287,
+								nodeType: "ExpressionStatement",
+								src: "2337:71:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 289,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 259,
+											src: "2438:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 290,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 263,
+											src: "2448:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 291,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 265,
+											src: "2462:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 294,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 292,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "2472:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "+",
+											rightExpression: {
+												argumentTypes: null,
+												id: 293,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 267,
+												src: "2478:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "2472:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 295,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "2488:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 297,
+											indexExpression: {
+												argumentTypes: null,
+												id: 296,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 259,
+												src: "2496:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2488:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 288,
+										name: "DIDDelegateChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 57,
+										src: "2419:18:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,address,uint256,uint256)"
+										}
+									},
+									id: 298,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2419:87:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 299,
+								nodeType: "EmitStatement",
+								src: "2414:92:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 305,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 300,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "2512:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 302,
+										indexExpression: {
+											argumentTypes: null,
+											id: 301,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 259,
+											src: "2520:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "2512:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 303,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "2532:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 304,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "2532:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "2512:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 306,
+								nodeType: "ExpressionStatement",
+								src: "2512:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 308,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 270,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 259,
+									src: "2314:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 271,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 261,
+									src: "2324:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 272,
+							modifierName: {
+								argumentTypes: null,
+								id: 269,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "2304:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "2304:26:0"
+						}
+					],
+					name: "addDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 268,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 259,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2207:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 258,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2207:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 261,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2225:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 260,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2225:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 263,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2240:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 262,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2240:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 265,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2262:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 264,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2262:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 267,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2280:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 266,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2280:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2206:88:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 273,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2331:0:0"
+					},
+					scope: 706,
+					src: "2186:363:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 328,
+						nodeType: "Block",
+						src: "2654:78:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 320,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 310,
+											src: "2672:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 321,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "2682:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 322,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "2682:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 323,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 312,
+											src: "2694:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 324,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 314,
+											src: "2708:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 325,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 316,
+											src: "2718:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 319,
+										name: "addDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											308,
+											329
+										],
+										referencedDeclaration: 308,
+										src: "2660:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,address,uint256)"
+										}
+									},
+									id: 326,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2660:67:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 327,
+								nodeType: "ExpressionStatement",
+								src: "2660:67:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 329,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "addDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 317,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 310,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2574:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 309,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2574:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 312,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2592:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 311,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2592:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 314,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2614:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 313,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2614:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 316,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2632:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 315,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2632:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2573:73:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 318,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2654:0:0"
+					},
+					scope: 706,
+					src: "2553:179:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 382,
+						nodeType: "Block",
+						src: "2883:264:0",
+						statements: [
+							{
+								assignments: [
+									347
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 347,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 383,
+										src: "2889:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 346,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "2889:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 367,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 350,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2919:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 349,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2914:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 351,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2914:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 353,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2931:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 352,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2926:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 354,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2926:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 355,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "2935:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 356,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "2941:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 360,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 358,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 331,
+														src: "2961:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 357,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "2947:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 359,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2947:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2941:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 361,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 331,
+											src: "2973:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "61646444656c6567617465",
+											id: 362,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "2983:13:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_debebbcfc53a895bddcfa7790235910fa4c752e6acb9c798d39f50a51a8429a2",
+												typeString: "literal_string \"addDelegate\""
+											},
+											value: "addDelegate"
+										},
+										{
+											argumentTypes: null,
+											id: 363,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 339,
+											src: "2998:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 364,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 341,
+											src: "3012:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 365,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 343,
+											src: "3022:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_debebbcfc53a895bddcfa7790235910fa4c752e6acb9c798d39f50a51a8429a2",
+												typeString: "literal_string \"addDelegate\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 348,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "2904:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 366,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2904:127:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "2889:142:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 369,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 331,
+											src: "3049:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 371,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 331,
+													src: "3074:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 372,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 333,
+													src: "3084:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 373,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 335,
+													src: "3090:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 374,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 337,
+													src: "3096:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 375,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 347,
+													src: "3102:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 370,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "3059:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 376,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3059:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 377,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 339,
+											src: "3109:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 378,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 341,
+											src: "3123:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 379,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 343,
+											src: "3133:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 368,
+										name: "addDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											308,
+											329
+										],
+										referencedDeclaration: 308,
+										src: "3037:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,address,uint256)"
+										}
+									},
+									id: 380,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3037:105:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 381,
+								nodeType: "ExpressionStatement",
+								src: "3037:105:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 383,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "addDelegateSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 344,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 331,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2763:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 330,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2763:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 333,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2781:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 332,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "2781:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 335,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2793:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 334,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2793:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 337,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2807:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 336,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2807:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 339,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2821:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 338,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2821:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 341,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2843:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 340,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2843:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 343,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2861:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 342,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2861:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2762:113:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 345,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2883:0:0"
+					},
+					scope: 706,
+					src: "2736:411:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 427,
+						nodeType: "Block",
+						src: "3284:196:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 408,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												baseExpression: {
+													argumentTypes: null,
+													id: 398,
+													name: "delegates",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 13,
+													src: "3290:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+														typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+													}
+												},
+												id: 404,
+												indexExpression: {
+													argumentTypes: null,
+													id: 399,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 385,
+													src: "3300:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												isConstant: false,
+												isLValue: true,
+												isPure: false,
+												lValueRequested: false,
+												nodeType: "IndexAccess",
+												src: "3290:19:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+													typeString: "mapping(bytes32 => mapping(address => uint256))"
+												}
+											},
+											id: 405,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 401,
+														name: "delegateType",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 389,
+														src: "3320:12:0",
+														typeDescriptions: {
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													],
+													id: 400,
+													name: "keccak256",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 715,
+													src: "3310:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+														typeString: "function () pure returns (bytes32)"
+													}
+												},
+												id: 402,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "3310:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_bytes32",
+													typeString: "bytes32"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3290:44:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 406,
+										indexExpression: {
+											argumentTypes: null,
+											id: 403,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 391,
+											src: "3335:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "3290:54:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										id: 407,
+										name: "now",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 723,
+										src: "3347:3:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "3290:60:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 409,
+								nodeType: "ExpressionStatement",
+								src: "3290:60:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 411,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 385,
+											src: "3380:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 412,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 389,
+											src: "3390:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 413,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 391,
+											src: "3404:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 414,
+											name: "now",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 723,
+											src: "3414:3:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 415,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "3419:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 417,
+											indexExpression: {
+												argumentTypes: null,
+												id: 416,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 385,
+												src: "3427:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3419:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 410,
+										name: "DIDDelegateChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 57,
+										src: "3361:18:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,address,uint256,uint256)"
+										}
+									},
+									id: 418,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3361:76:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 419,
+								nodeType: "EmitStatement",
+								src: "3356:81:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 425,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 420,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "3443:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 422,
+										indexExpression: {
+											argumentTypes: null,
+											id: 421,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 385,
+											src: "3451:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "3443:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 423,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "3463:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 424,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "3463:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "3443:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 426,
+								nodeType: "ExpressionStatement",
+								src: "3443:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 428,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 394,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 385,
+									src: "3267:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 395,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 387,
+									src: "3277:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 396,
+							modifierName: {
+								argumentTypes: null,
+								id: 393,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "3257:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "3257:26:0"
+						}
+					],
+					name: "revokeDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 392,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 385,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3175:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 384,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3175:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 387,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3193:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 386,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3193:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 389,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3208:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 388,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3208:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 391,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3230:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 390,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3230:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3174:73:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 397,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3284:0:0"
+					},
+					scope: 706,
+					src: "3151:329:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 445,
+						nodeType: "Block",
+						src: "3573:71:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 438,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 430,
+											src: "3594:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 439,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "3604:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 440,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "3604:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 441,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 432,
+											src: "3616:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 442,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 434,
+											src: "3630:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 437,
+										name: "revokeDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											428,
+											446
+										],
+										referencedDeclaration: 428,
+										src: "3579:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$returns$__$",
+											typeString: "function (address,address,bytes32,address)"
+										}
+									},
+									id: 443,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3579:60:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 444,
+								nodeType: "ExpressionStatement",
+								src: "3579:60:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 446,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 435,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 430,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3508:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 429,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3508:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 432,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3526:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 431,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3526:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 434,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3548:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 433,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3548:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3507:58:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 436,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3573:0:0"
+					},
+					scope: 706,
+					src: "3484:160:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 495,
+						nodeType: "Block",
+						src: "3783:250:0",
+						statements: [
+							{
+								assignments: [
+									462
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 462,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 496,
+										src: "3789:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 461,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "3789:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 481,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 465,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "3819:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 464,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "3814:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 466,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3814:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 468,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "3831:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 467,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "3826:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 469,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3826:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 470,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "3835:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 471,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "3841:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 475,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 473,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 448,
+														src: "3861:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 472,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "3847:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 474,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "3847:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3841:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 476,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 448,
+											src: "3873:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "7265766f6b6544656c6567617465",
+											id: 477,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "3883:16:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_f63fea8fc7bd9fe254f7933b81fa1716b5a073ddd1aa14e432aa87d81784f86c",
+												typeString: "literal_string \"revokeDelegate\""
+											},
+											value: "revokeDelegate"
+										},
+										{
+											argumentTypes: null,
+											id: 478,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 456,
+											src: "3901:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 479,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 458,
+											src: "3915:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_f63fea8fc7bd9fe254f7933b81fa1716b5a073ddd1aa14e432aa87d81784f86c",
+												typeString: "literal_string \"revokeDelegate\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 463,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "3804:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 480,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3804:120:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "3789:135:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 483,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 448,
+											src: "3945:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 485,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 448,
+													src: "3970:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 486,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 450,
+													src: "3980:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 487,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 452,
+													src: "3986:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 488,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 454,
+													src: "3992:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 489,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 462,
+													src: "3998:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 484,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "3955:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 490,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3955:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 491,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 456,
+											src: "4005:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 492,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 458,
+											src: "4019:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 482,
+										name: "revokeDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											428,
+											446
+										],
+										referencedDeclaration: 428,
+										src: "3930:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$returns$__$",
+											typeString: "function (address,address,bytes32,address)"
+										}
+									},
+									id: 493,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3930:98:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 494,
+								nodeType: "ExpressionStatement",
+								src: "3930:98:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 496,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeDelegateSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 459,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 448,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3678:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 447,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3678:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 450,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3696:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 449,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "3696:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 452,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3708:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 451,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3708:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 454,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3722:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 453,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3722:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 456,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3736:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 455,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3736:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 458,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3758:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 457,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3758:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3677:98:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 460,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3783:0:0"
+					},
+					scope: 706,
+					src: "3648:385:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 532,
+						nodeType: "Block",
+						src: "4171:131:0",
+						statements: [
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 514,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 498,
+											src: "4202:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 515,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 502,
+											src: "4212:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 516,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 504,
+											src: "4218:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 519,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 517,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "4225:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "+",
+											rightExpression: {
+												argumentTypes: null,
+												id: 518,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 506,
+												src: "4231:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "4225:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 520,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "4241:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 522,
+											indexExpression: {
+												argumentTypes: null,
+												id: 521,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 498,
+												src: "4249:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "4241:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 513,
+										name: "DIDAttributeChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 69,
+										src: "4182:19:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,bytes memory,uint256,uint256)"
+										}
+									},
+									id: 523,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4182:77:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 524,
+								nodeType: "EmitStatement",
+								src: "4177:82:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 530,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 525,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "4265:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 527,
+										indexExpression: {
+											argumentTypes: null,
+											id: 526,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 498,
+											src: "4273:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "4265:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 528,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "4285:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 529,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "4285:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "4265:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 531,
+								nodeType: "ExpressionStatement",
+								src: "4265:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 533,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 509,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 498,
+									src: "4154:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 510,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 500,
+									src: "4164:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 511,
+							modifierName: {
+								argumentTypes: null,
+								id: 508,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "4144:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "4144:26:0"
+						}
+					],
+					name: "setAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 507,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 498,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4059:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 497,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4059:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 500,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4077:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 499,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4077:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 502,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4092:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 501,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4092:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 504,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4106:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 503,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4106:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 506,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4119:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 505,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4119:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4058:76:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 512,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4171:0:0"
+					},
+					scope: 706,
+					src: "4037:265:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 553,
+						nodeType: "Block",
+						src: "4395:68:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 545,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 535,
+											src: "4414:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 546,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "4424:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 547,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "4424:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 548,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 537,
+											src: "4436:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 549,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 539,
+											src: "4442:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 550,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 541,
+											src: "4449:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 544,
+										name: "setAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											533,
+											554
+										],
+										referencedDeclaration: 533,
+										src: "4401:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory,uint256)"
+										}
+									},
+									id: 551,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4401:57:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 552,
+								nodeType: "ExpressionStatement",
+								src: "4401:57:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 554,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "setAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 542,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 535,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4328:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 534,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4328:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 537,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4346:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 536,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4346:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 539,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4360:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 538,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4360:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 541,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4373:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 540,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4373:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4327:60:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 543,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4395:0:0"
+					},
+					scope: 706,
+					src: "4306:157:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 605,
+						nodeType: "Block",
+						src: "4602:229:0",
+						statements: [
+							{
+								assignments: [
+									572
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 572,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 606,
+										src: "4608:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 571,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "4608:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 590,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 575,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "4638:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 574,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "4633:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 576,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4633:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 578,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "4650:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 577,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "4645:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 579,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4645:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 580,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "4654:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 581,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "4660:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 583,
+											indexExpression: {
+												argumentTypes: null,
+												id: 582,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 556,
+												src: "4666:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "4660:15:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 584,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 556,
+											src: "4677:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "736574417474726962757465",
+											id: 585,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "4687:14:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_e5bbb0cf2a185ea034bc61efc4cb764352403a5c06c1da63a3fd765abbac4ea6",
+												typeString: "literal_string \"setAttribute\""
+											},
+											value: "setAttribute"
+										},
+										{
+											argumentTypes: null,
+											id: 586,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 564,
+											src: "4703:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 587,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 566,
+											src: "4709:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 588,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 568,
+											src: "4716:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_e5bbb0cf2a185ea034bc61efc4cb764352403a5c06c1da63a3fd765abbac4ea6",
+												typeString: "literal_string \"setAttribute\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 573,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "4623:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 589,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4623:102:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "4608:117:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 592,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 556,
+											src: "4744:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 594,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 556,
+													src: "4769:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 595,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 558,
+													src: "4779:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 596,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 560,
+													src: "4785:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 597,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 562,
+													src: "4791:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 598,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 572,
+													src: "4797:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 593,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "4754:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 599,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4754:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 600,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 564,
+											src: "4804:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 601,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 566,
+											src: "4810:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 602,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 568,
+											src: "4817:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 591,
+										name: "setAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											533,
+											554
+										],
+										referencedDeclaration: 533,
+										src: "4731:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory,uint256)"
+										}
+									},
+									id: 603,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4731:95:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 604,
+								nodeType: "ExpressionStatement",
+								src: "4731:95:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 606,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "setAttributeSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 569,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 556,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4495:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 555,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4495:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 558,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4513:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 557,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "4513:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 560,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4525:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 559,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4525:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 562,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4539:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 561,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4539:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 564,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4553:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 563,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4553:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 566,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4567:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 565,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4567:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 568,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4580:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 567,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4580:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4494:100:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 570,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4602:0:0"
+					},
+					scope: 706,
+					src: "4467:364:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 638,
+						nodeType: "Block",
+						src: "4957:118:0",
+						statements: [
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 622,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 608,
+											src: "4988:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 623,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 612,
+											src: "4998:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 624,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 614,
+											src: "5004:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "30",
+											id: 625,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "number",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "5011:1:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_rational_0_by_1",
+												typeString: "int_const 0"
+											},
+											value: "0"
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 626,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "5014:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 628,
+											indexExpression: {
+												argumentTypes: null,
+												id: 627,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 608,
+												src: "5022:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "5014:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_rational_0_by_1",
+												typeString: "int_const 0"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 621,
+										name: "DIDAttributeChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 69,
+										src: "4968:19:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,bytes memory,uint256,uint256)"
+										}
+									},
+									id: 629,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4968:64:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 630,
+								nodeType: "EmitStatement",
+								src: "4963:69:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 636,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 631,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "5038:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 633,
+										indexExpression: {
+											argumentTypes: null,
+											id: 632,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 608,
+											src: "5046:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "5038:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 634,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "5058:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 635,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "5058:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "5038:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 637,
+								nodeType: "ExpressionStatement",
+								src: "5038:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 639,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 617,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 608,
+									src: "4940:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 618,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 610,
+									src: "4950:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 619,
+							modifierName: {
+								argumentTypes: null,
+								id: 616,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "4930:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "4930:26:0"
+						}
+					],
+					name: "revokeAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 615,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 608,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4860:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 607,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4860:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 610,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4878:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 609,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4878:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 612,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4893:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 611,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4893:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 614,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4907:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 613,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4907:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4859:61:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 620,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4957:0:0"
+					},
+					scope: 706,
+					src: "4835:240:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 656,
+						nodeType: "Block",
+						src: "5156:61:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 649,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 641,
+											src: "5178:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 650,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "5188:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 651,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "5188:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 652,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 643,
+											src: "5200:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 653,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 645,
+											src: "5206:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 648,
+										name: "revokeAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											639,
+											657
+										],
+										referencedDeclaration: 639,
+										src: "5162:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory)"
+										}
+									},
+									id: 654,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5162:50:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 655,
+								nodeType: "ExpressionStatement",
+								src: "5162:50:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 657,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 646,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 641,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5104:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 640,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "5104:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 643,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5122:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 642,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5122:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 645,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5136:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 644,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "5136:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "5103:45:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 647,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "5156:0:0"
+					},
+					scope: 706,
+					src: "5079:138:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 704,
+						nodeType: "Block",
+						src: "5343:216:0",
+						statements: [
+							{
+								assignments: [
+									673
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 673,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 705,
+										src: "5349:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 672,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "5349:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 690,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 676,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "5379:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 675,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "5374:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 677,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5374:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 679,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "5391:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 678,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "5386:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 680,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5386:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 681,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "5395:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 682,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "5401:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 684,
+											indexExpression: {
+												argumentTypes: null,
+												id: 683,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 659,
+												src: "5407:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "5401:15:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 685,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 659,
+											src: "5418:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "7265766f6b65417474726962757465",
+											id: 686,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "5428:17:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_168e4cc0ad03cc4b6896d89f8a470b9997cd8bbe87ac639c5474674fa958f860",
+												typeString: "literal_string \"revokeAttribute\""
+											},
+											value: "revokeAttribute"
+										},
+										{
+											argumentTypes: null,
+											id: 687,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 667,
+											src: "5447:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 688,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 669,
+											src: "5453:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_168e4cc0ad03cc4b6896d89f8a470b9997cd8bbe87ac639c5474674fa958f860",
+												typeString: "literal_string \"revokeAttribute\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 674,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "5364:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 689,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5364:95:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "5349:110:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 692,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 659,
+											src: "5482:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 694,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 659,
+													src: "5507:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 695,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 661,
+													src: "5517:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 696,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 663,
+													src: "5523:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 697,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 665,
+													src: "5529:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 698,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 673,
+													src: "5535:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 693,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "5492:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 699,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5492:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 700,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 667,
+											src: "5542:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 701,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 669,
+											src: "5548:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 691,
+										name: "revokeAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											639,
+											657
+										],
+										referencedDeclaration: 639,
+										src: "5466:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory)"
+										}
+									},
+									id: 702,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5466:88:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 703,
+								nodeType: "ExpressionStatement",
+								src: "5466:88:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 705,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeAttributeSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 670,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 659,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5251:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 658,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "5251:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 661,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5269:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 660,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "5269:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 663,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5281:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 662,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5281:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 665,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5295:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 664,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5295:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 667,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5309:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 666,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5309:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 669,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5323:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 668,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "5323:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "5250:85:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 671,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "5343:0:0"
+					},
+					scope: 706,
+					src: "5220:339:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				}
+			],
+			scope: 707,
+			src: "25:5537:0"
+		}
+	],
+	src: "0:5563:0"
+};
+var legacyAST = {
+	absolutePath: "/Users/pelleb/code/consensys/ethereum-did-registry/contracts/EthereumDIDRegistry.sol",
+	exportedSymbols: {
+		EthereumDIDRegistry: [
+			706
+		]
+	},
+	id: 707,
+	nodeType: "SourceUnit",
+	nodes: [
+		{
+			id: 1,
+			literals: [
+				"solidity",
+				"^",
+				"0.4",
+				".4"
+			],
+			nodeType: "PragmaDirective",
+			src: "0:23:0"
+		},
+		{
+			baseContracts: [
+			],
+			contractDependencies: [
+			],
+			contractKind: "contract",
+			documentation: null,
+			fullyImplemented: true,
+			id: 706,
+			linearizedBaseContracts: [
+				706
+			],
+			name: "EthereumDIDRegistry",
+			nodeType: "ContractDefinition",
+			nodes: [
+				{
+					constant: false,
+					id: 5,
+					name: "owners",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "59:41:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+						typeString: "mapping(address => address)"
+					},
+					typeName: {
+						id: 4,
+						keyType: {
+							id: 2,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "67:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "59:27:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+							typeString: "mapping(address => address)"
+						},
+						valueType: {
+							id: 3,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "78:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 13,
+					name: "delegates",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "104:81:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+						typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+					},
+					typeName: {
+						id: 12,
+						keyType: {
+							id: 6,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "112:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "104:64:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+							typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+						},
+						valueType: {
+							id: 11,
+							keyType: {
+								id: 7,
+								name: "bytes32",
+								nodeType: "ElementaryTypeName",
+								src: "131:7:0",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								}
+							},
+							nodeType: "Mapping",
+							src: "123:44:0",
+							typeDescriptions: {
+								typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+								typeString: "mapping(bytes32 => mapping(address => uint256))"
+							},
+							valueType: {
+								id: 10,
+								keyType: {
+									id: 8,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "150:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "Mapping",
+								src: "142:24:0",
+								typeDescriptions: {
+									typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+									typeString: "mapping(address => uint256)"
+								},
+								valueType: {
+									id: 9,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "161:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								}
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 17,
+					name: "changed",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "189:39:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+						typeString: "mapping(address => uint256)"
+					},
+					typeName: {
+						id: 16,
+						keyType: {
+							id: 14,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "197:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "189:24:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+							typeString: "mapping(address => uint256)"
+						},
+						valueType: {
+							id: 15,
+							name: "uint",
+							nodeType: "ElementaryTypeName",
+							src: "208:4:0",
+							typeDescriptions: {
+								typeIdentifier: "t_uint256",
+								typeString: "uint256"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					constant: false,
+					id: 21,
+					name: "nonce",
+					nodeType: "VariableDeclaration",
+					scope: 706,
+					src: "232:37:0",
+					stateVariable: true,
+					storageLocation: "default",
+					typeDescriptions: {
+						typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+						typeString: "mapping(address => uint256)"
+					},
+					typeName: {
+						id: 20,
+						keyType: {
+							id: 18,
+							name: "address",
+							nodeType: "ElementaryTypeName",
+							src: "240:7:0",
+							typeDescriptions: {
+								typeIdentifier: "t_address",
+								typeString: "address"
+							}
+						},
+						nodeType: "Mapping",
+						src: "232:24:0",
+						typeDescriptions: {
+							typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+							typeString: "mapping(address => uint256)"
+						},
+						valueType: {
+							id: 19,
+							name: "uint",
+							nodeType: "ElementaryTypeName",
+							src: "251:4:0",
+							typeDescriptions: {
+								typeIdentifier: "t_uint256",
+								typeString: "uint256"
+							}
+						}
+					},
+					value: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 36,
+						nodeType: "Block",
+						src: "326:60:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											id: 32,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 28,
+												name: "actor",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 25,
+												src: "341:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "==",
+											rightExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 30,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 23,
+														src: "364:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 29,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "350:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 31,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "350:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											src: "341:32:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										],
+										id: 27,
+										name: "require",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											724,
+											725
+										],
+										referencedDeclaration: 724,
+										src: "332:7:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_require_pure$_t_bool_$returns$__$",
+											typeString: "function (bool) pure"
+										}
+									},
+									id: 33,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "332:42:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 34,
+								nodeType: "ExpressionStatement",
+								src: "332:42:0"
+							},
+							{
+								id: 35,
+								nodeType: "PlaceholderStatement",
+								src: "380:1:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 37,
+					name: "onlyOwner",
+					nodeType: "ModifierDefinition",
+					parameters: {
+						id: 26,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 23,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 37,
+								src: "293:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 22,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "293:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 25,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 37,
+								src: "311:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 24,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "311:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "292:33:0"
+					},
+					src: "274:112:0",
+					visibility: "internal"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 45,
+					name: "DIDOwnerChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 44,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 39,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "417:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 38,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "417:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 41,
+								indexed: false,
+								name: "owner",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "447:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 40,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "447:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 43,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 45,
+								src: "466:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 42,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "466:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "411:78:0"
+					},
+					src: "390:100:0"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 57,
+					name: "DIDDelegateChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 56,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 47,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "524:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 46,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "524:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 49,
+								indexed: false,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "554:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 48,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "554:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 51,
+								indexed: false,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "580:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 50,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "580:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 53,
+								indexed: false,
+								name: "validTo",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "602:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 52,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "602:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 55,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 57,
+								src: "620:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 54,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "620:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "518:125:0"
+					},
+					src: "494:150:0"
+				},
+				{
+					anonymous: false,
+					documentation: null,
+					id: 69,
+					name: "DIDAttributeChanged",
+					nodeType: "EventDefinition",
+					parameters: {
+						id: 68,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 59,
+								indexed: true,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "679:24:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 58,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "679:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 61,
+								indexed: false,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "709:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 60,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "709:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 63,
+								indexed: false,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "727:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 62,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "727:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 65,
+								indexed: false,
+								name: "validTo",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "744:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 64,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "744:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 67,
+								indexed: false,
+								name: "previousChange",
+								nodeType: "VariableDeclaration",
+								scope: 69,
+								src: "762:19:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 66,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "762:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "673:112:0"
+					},
+					src: "648:138:0"
+				},
+				{
+					body: {
+						id: 91,
+						nodeType: "Block",
+						src: "860:119:0",
+						statements: [
+							{
+								assignments: [
+									77
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 77,
+										name: "owner",
+										nodeType: "VariableDeclaration",
+										scope: 92,
+										src: "867:13:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										},
+										typeName: {
+											id: 76,
+											name: "address",
+											nodeType: "ElementaryTypeName",
+											src: "867:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 81,
+								initialValue: {
+									argumentTypes: null,
+									baseExpression: {
+										argumentTypes: null,
+										id: 78,
+										name: "owners",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 5,
+										src: "883:6:0",
+										typeDescriptions: {
+											typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+											typeString: "mapping(address => address)"
+										}
+									},
+									id: 80,
+									indexExpression: {
+										argumentTypes: null,
+										id: 79,
+										name: "identity",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 71,
+										src: "890:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									isConstant: false,
+									isLValue: true,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "IndexAccess",
+									src: "883:16:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "867:32:0"
+							},
+							{
+								condition: {
+									argumentTypes: null,
+									commonType: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									},
+									id: 84,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftExpression: {
+										argumentTypes: null,
+										id: 82,
+										name: "owner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 77,
+										src: "910:5:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									nodeType: "BinaryOperation",
+									operator: "!=",
+									rightExpression: {
+										argumentTypes: null,
+										hexValue: "307830",
+										id: 83,
+										isConstant: false,
+										isLValue: false,
+										isPure: true,
+										kind: "number",
+										lValueRequested: false,
+										nodeType: "Literal",
+										src: "919:3:0",
+										subdenomination: null,
+										typeDescriptions: {
+											typeIdentifier: "t_rational_0_by_1",
+											typeString: "int_const 0"
+										},
+										value: "0x0"
+									},
+									src: "910:12:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								falseBody: null,
+								id: 88,
+								nodeType: "IfStatement",
+								src: "906:47:0",
+								trueBody: {
+									id: 87,
+									nodeType: "Block",
+									src: "924:29:0",
+									statements: [
+										{
+											expression: {
+												argumentTypes: null,
+												id: 85,
+												name: "owner",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 77,
+												src: "940:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											functionReturnParameters: 75,
+											id: 86,
+											nodeType: "Return",
+											src: "933:12:0"
+										}
+									]
+								}
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 89,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 71,
+									src: "966:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								functionReturnParameters: 75,
+								id: 90,
+								nodeType: "Return",
+								src: "959:15:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 92,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: true,
+					modifiers: [
+					],
+					name: "identityOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 72,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 71,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 92,
+								src: "813:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 70,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "813:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "812:18:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 75,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 74,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 92,
+								src: "851:7:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 73,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "851:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "850:9:0"
+					},
+					scope: 706,
+					src: "790:189:0",
+					stateMutability: "view",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 131,
+						nodeType: "Block",
+						src: "1105:151:0",
+						statements: [
+							{
+								assignments: [
+									108
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 108,
+										name: "signer",
+										nodeType: "VariableDeclaration",
+										scope: 132,
+										src: "1111:14:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										},
+										typeName: {
+											id: 107,
+											name: "address",
+											nodeType: "ElementaryTypeName",
+											src: "1111:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 115,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 110,
+											name: "hash",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 102,
+											src: "1138:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 111,
+											name: "sigV",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 96,
+											src: "1144:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint8",
+												typeString: "uint8"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 112,
+											name: "sigR",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 98,
+											src: "1150:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 113,
+											name: "sigS",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 100,
+											src: "1156:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_uint8",
+												typeString: "uint8"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										],
+										id: 109,
+										name: "ecrecover",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 713,
+										src: "1128:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_ecrecover_pure$_t_bytes32_$_t_uint8_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+											typeString: "function (bytes32,uint8,bytes32,bytes32) pure returns (address)"
+										}
+									},
+									id: 114,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1128:33:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1111:50:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											id: 121,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 117,
+												name: "signer",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 108,
+												src: "1175:6:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "==",
+											rightExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 119,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 94,
+														src: "1199:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 118,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "1185:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 120,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "1185:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											src: "1175:33:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										],
+										id: 116,
+										name: "require",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											724,
+											725
+										],
+										referencedDeclaration: 724,
+										src: "1167:7:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_require_pure$_t_bool_$returns$__$",
+											typeString: "function (bool) pure"
+										}
+									},
+									id: 122,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1167:42:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 123,
+								nodeType: "ExpressionStatement",
+								src: "1167:42:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 127,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "UnaryOperation",
+									operator: "++",
+									prefix: false,
+									src: "1215:17:0",
+									subExpression: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 124,
+											name: "nonce",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 21,
+											src: "1215:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 126,
+										indexExpression: {
+											argumentTypes: null,
+											id: 125,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 94,
+											src: "1221:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1215:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 128,
+								nodeType: "ExpressionStatement",
+								src: "1215:17:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 129,
+									name: "signer",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 108,
+									src: "1245:6:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								functionReturnParameters: 106,
+								id: 130,
+								nodeType: "Return",
+								src: "1238:13:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 132,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "checkSignature",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 103,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 94,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1007:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 93,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1007:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 96,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1025:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 95,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "1025:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 98,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1037:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 97,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1037:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 100,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1051:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 99,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1051:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 102,
+								name: "hash",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1065:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 101,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1065:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1006:72:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 106,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 105,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 132,
+								src: "1096:7:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 104,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1096:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1095:9:0"
+					},
+					scope: 706,
+					src: "983:273:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 160,
+						nodeType: "Block",
+						src: "1367:110:0",
+						statements: [
+							{
+								assignments: [
+									144
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 144,
+										name: "validity",
+										nodeType: "VariableDeclaration",
+										scope: 161,
+										src: "1373:13:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										},
+										typeName: {
+											id: 143,
+											name: "uint",
+											nodeType: "ElementaryTypeName",
+											src: "1373:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 154,
+								initialValue: {
+									argumentTypes: null,
+									baseExpression: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 145,
+												name: "delegates",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 13,
+												src: "1389:9:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+													typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+												}
+											},
+											id: 147,
+											indexExpression: {
+												argumentTypes: null,
+												id: 146,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 134,
+												src: "1399:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "1389:19:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+												typeString: "mapping(bytes32 => mapping(address => uint256))"
+											}
+										},
+										id: 151,
+										indexExpression: {
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 149,
+													name: "delegateType",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 136,
+													src: "1419:12:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 148,
+												name: "keccak256",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 715,
+												src: "1409:9:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+													typeString: "function () pure returns (bytes32)"
+												}
+											},
+											id: 150,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "1409:23:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: false,
+										nodeType: "IndexAccess",
+										src: "1389:44:0",
+										typeDescriptions: {
+											typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+											typeString: "mapping(address => uint256)"
+										}
+									},
+									id: 153,
+									indexExpression: {
+										argumentTypes: null,
+										id: 152,
+										name: "delegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 138,
+										src: "1434:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									isConstant: false,
+									isLValue: true,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "IndexAccess",
+									src: "1389:54:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1373:70:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									components: [
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 157,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 155,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 144,
+												src: "1457:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: ">",
+											rightExpression: {
+												argumentTypes: null,
+												id: 156,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "1468:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "1457:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bool",
+												typeString: "bool"
+											}
+										}
+									],
+									id: 158,
+									isConstant: false,
+									isInlineArray: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									nodeType: "TupleExpression",
+									src: "1456:16:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								functionReturnParameters: 142,
+								id: 159,
+								nodeType: "Return",
+								src: "1449:23:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 161,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: true,
+					modifiers: [
+					],
+					name: "validDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 139,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 134,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1283:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 133,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1283:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 136,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1301:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 135,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1301:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 138,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1323:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 137,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1323:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1282:58:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 142,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 141,
+								name: "",
+								nodeType: "VariableDeclaration",
+								scope: 161,
+								src: "1361:4:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bool",
+									typeString: "bool"
+								},
+								typeName: {
+									id: 140,
+									name: "bool",
+									nodeType: "ElementaryTypeName",
+									src: "1361:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bool",
+										typeString: "bool"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1360:6:0"
+					},
+					scope: 706,
+					src: "1260:217:0",
+					stateMutability: "view",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 195,
+						nodeType: "Block",
+						src: "1589:141:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 178,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 174,
+											name: "owners",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 5,
+											src: "1595:6:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_address_$",
+												typeString: "mapping(address => address)"
+											}
+										},
+										id: 176,
+										indexExpression: {
+											argumentTypes: null,
+											id: 175,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1602:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1595:16:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										id: 177,
+										name: "newOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 167,
+										src: "1614:8:0",
+										typeDescriptions: {
+											typeIdentifier: "t_address",
+											typeString: "address"
+										}
+									},
+									src: "1595:27:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								id: 179,
+								nodeType: "ExpressionStatement",
+								src: "1595:27:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 181,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1649:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 182,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 167,
+											src: "1659:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 183,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "1669:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 185,
+											indexExpression: {
+												argumentTypes: null,
+												id: 184,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 163,
+												src: "1677:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "1669:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 180,
+										name: "DIDOwnerChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 45,
+										src: "1633:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,uint256)"
+										}
+									},
+									id: 186,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1633:54:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 187,
+								nodeType: "EmitStatement",
+								src: "1628:59:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 193,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 188,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "1693:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 190,
+										indexExpression: {
+											argumentTypes: null,
+											id: 189,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 163,
+											src: "1701:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "1693:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 191,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "1713:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 192,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "1713:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "1693:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 194,
+								nodeType: "ExpressionStatement",
+								src: "1693:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 196,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 170,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 163,
+									src: "1572:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 171,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 165,
+									src: "1582:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 172,
+							modifierName: {
+								argumentTypes: null,
+								id: 169,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "1562:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "1562:26:0"
+						}
+					],
+					name: "changeOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 168,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 163,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1502:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 162,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1502:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 165,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1520:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 164,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1520:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 167,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 196,
+								src: "1535:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 166,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1535:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1501:51:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 173,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1589:0:0"
+					},
+					scope: 706,
+					src: "1481:249:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 210,
+						nodeType: "Block",
+						src: "1798:54:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 204,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 198,
+											src: "1816:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 205,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "1826:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 206,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "1826:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 207,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 200,
+											src: "1838:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 203,
+										name: "changeOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											196,
+											211
+										],
+										referencedDeclaration: 196,
+										src: "1804:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_address_$returns$__$",
+											typeString: "function (address,address,address)"
+										}
+									},
+									id: 208,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1804:43:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 209,
+								nodeType: "ExpressionStatement",
+								src: "1804:43:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 211,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "changeOwner",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 201,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 198,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 211,
+								src: "1755:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 197,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1755:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 200,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 211,
+								src: "1773:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 199,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1773:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1754:36:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 202,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1798:0:0"
+					},
+					scope: 706,
+					src: "1734:118:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 256,
+						nodeType: "Block",
+						src: "1966:216:0",
+						statements: [
+							{
+								assignments: [
+									225
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 225,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 257,
+										src: "1972:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 224,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "1972:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 243,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 228,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2002:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 227,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "1997:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 229,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "1997:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 231,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2014:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 230,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2009:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 232,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2009:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 233,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "2018:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 234,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "2024:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 238,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 236,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 213,
+														src: "2044:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 235,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "2030:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 237,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2030:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2024:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 239,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 213,
+											src: "2056:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "6368616e67654f776e6572",
+											id: 240,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "2066:13:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_497a2d03cc86298e55cb693e1ab1fe854c7b50c0aa5aad6229104986e0bf69c9",
+												typeString: "literal_string \"changeOwner\""
+											},
+											value: "changeOwner"
+										},
+										{
+											argumentTypes: null,
+											id: 241,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 221,
+											src: "2081:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_497a2d03cc86298e55cb693e1ab1fe854c7b50c0aa5aad6229104986e0bf69c9",
+												typeString: "literal_string \"changeOwner\""
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 226,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "1987:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 242,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "1987:103:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "1972:118:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 245,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 213,
+											src: "2108:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 247,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 213,
+													src: "2133:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 248,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 215,
+													src: "2143:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 249,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 217,
+													src: "2149:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 250,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 219,
+													src: "2155:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 251,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 225,
+													src: "2161:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 246,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "2118:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 252,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2118:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 253,
+											name: "newOwner",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 221,
+											src: "2168:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 244,
+										name: "changeOwner",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											196,
+											211
+										],
+										referencedDeclaration: 196,
+										src: "2096:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_address_$returns$__$",
+											typeString: "function (address,address,address)"
+										}
+									},
+									id: 254,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2096:81:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 255,
+								nodeType: "ExpressionStatement",
+								src: "2096:81:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 257,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "changeOwnerSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 222,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 213,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1883:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 212,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1883:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 215,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1901:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 214,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "1901:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 217,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1913:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 216,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1913:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 219,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1927:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 218,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "1927:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 221,
+								name: "newOwner",
+								nodeType: "VariableDeclaration",
+								scope: 257,
+								src: "1941:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 220,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "1941:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "1882:76:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 223,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "1966:0:0"
+					},
+					scope: 706,
+					src: "1856:326:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 307,
+						nodeType: "Block",
+						src: "2331:218:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 286,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												baseExpression: {
+													argumentTypes: null,
+													id: 274,
+													name: "delegates",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 13,
+													src: "2337:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+														typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+													}
+												},
+												id: 280,
+												indexExpression: {
+													argumentTypes: null,
+													id: 275,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 259,
+													src: "2347:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												isConstant: false,
+												isLValue: true,
+												isPure: false,
+												lValueRequested: false,
+												nodeType: "IndexAccess",
+												src: "2337:19:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+													typeString: "mapping(bytes32 => mapping(address => uint256))"
+												}
+											},
+											id: 281,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 277,
+														name: "delegateType",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 263,
+														src: "2367:12:0",
+														typeDescriptions: {
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													],
+													id: 276,
+													name: "keccak256",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 715,
+													src: "2357:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+														typeString: "function () pure returns (bytes32)"
+													}
+												},
+												id: 278,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2357:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_bytes32",
+													typeString: "bytes32"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2337:44:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 282,
+										indexExpression: {
+											argumentTypes: null,
+											id: 279,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 265,
+											src: "2382:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "2337:54:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										commonType: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										},
+										id: 285,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										leftExpression: {
+											argumentTypes: null,
+											id: 283,
+											name: "now",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 723,
+											src: "2394:3:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										nodeType: "BinaryOperation",
+										operator: "+",
+										rightExpression: {
+											argumentTypes: null,
+											id: 284,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 267,
+											src: "2400:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										src: "2394:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "2337:71:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 287,
+								nodeType: "ExpressionStatement",
+								src: "2337:71:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 289,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 259,
+											src: "2438:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 290,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 263,
+											src: "2448:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 291,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 265,
+											src: "2462:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 294,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 292,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "2472:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "+",
+											rightExpression: {
+												argumentTypes: null,
+												id: 293,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 267,
+												src: "2478:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "2472:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 295,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "2488:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 297,
+											indexExpression: {
+												argumentTypes: null,
+												id: 296,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 259,
+												src: "2496:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2488:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 288,
+										name: "DIDDelegateChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 57,
+										src: "2419:18:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,address,uint256,uint256)"
+										}
+									},
+									id: 298,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2419:87:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 299,
+								nodeType: "EmitStatement",
+								src: "2414:92:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 305,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 300,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "2512:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 302,
+										indexExpression: {
+											argumentTypes: null,
+											id: 301,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 259,
+											src: "2520:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "2512:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 303,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "2532:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 304,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "2532:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "2512:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 306,
+								nodeType: "ExpressionStatement",
+								src: "2512:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 308,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 270,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 259,
+									src: "2314:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 271,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 261,
+									src: "2324:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 272,
+							modifierName: {
+								argumentTypes: null,
+								id: 269,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "2304:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "2304:26:0"
+						}
+					],
+					name: "addDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 268,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 259,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2207:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 258,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2207:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 261,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2225:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 260,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2225:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 263,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2240:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 262,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2240:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 265,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2262:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 264,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2262:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 267,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 308,
+								src: "2280:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 266,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2280:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2206:88:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 273,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2331:0:0"
+					},
+					scope: 706,
+					src: "2186:363:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 328,
+						nodeType: "Block",
+						src: "2654:78:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 320,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 310,
+											src: "2672:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 321,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "2682:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 322,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "2682:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 323,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 312,
+											src: "2694:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 324,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 314,
+											src: "2708:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 325,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 316,
+											src: "2718:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 319,
+										name: "addDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											308,
+											329
+										],
+										referencedDeclaration: 308,
+										src: "2660:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,address,uint256)"
+										}
+									},
+									id: 326,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2660:67:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 327,
+								nodeType: "ExpressionStatement",
+								src: "2660:67:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 329,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "addDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 317,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 310,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2574:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 309,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2574:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 312,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2592:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 311,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2592:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 314,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2614:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 313,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2614:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 316,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 329,
+								src: "2632:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 315,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2632:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2573:73:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 318,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2654:0:0"
+					},
+					scope: 706,
+					src: "2553:179:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 382,
+						nodeType: "Block",
+						src: "2883:264:0",
+						statements: [
+							{
+								assignments: [
+									347
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 347,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 383,
+										src: "2889:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 346,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "2889:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 367,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 350,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2919:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 349,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2914:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 351,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2914:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 353,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "2931:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 352,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "2926:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 354,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "2926:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 355,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "2935:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 356,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "2941:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 360,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 358,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 331,
+														src: "2961:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 357,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "2947:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 359,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "2947:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "2941:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 361,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 331,
+											src: "2973:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "61646444656c6567617465",
+											id: 362,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "2983:13:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_debebbcfc53a895bddcfa7790235910fa4c752e6acb9c798d39f50a51a8429a2",
+												typeString: "literal_string \"addDelegate\""
+											},
+											value: "addDelegate"
+										},
+										{
+											argumentTypes: null,
+											id: 363,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 339,
+											src: "2998:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 364,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 341,
+											src: "3012:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 365,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 343,
+											src: "3022:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_debebbcfc53a895bddcfa7790235910fa4c752e6acb9c798d39f50a51a8429a2",
+												typeString: "literal_string \"addDelegate\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 348,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "2904:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 366,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "2904:127:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "2889:142:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 369,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 331,
+											src: "3049:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 371,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 331,
+													src: "3074:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 372,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 333,
+													src: "3084:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 373,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 335,
+													src: "3090:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 374,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 337,
+													src: "3096:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 375,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 347,
+													src: "3102:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 370,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "3059:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 376,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3059:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 377,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 339,
+											src: "3109:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 378,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 341,
+											src: "3123:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 379,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 343,
+											src: "3133:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 368,
+										name: "addDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											308,
+											329
+										],
+										referencedDeclaration: 308,
+										src: "3037:11:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,address,uint256)"
+										}
+									},
+									id: 380,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3037:105:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 381,
+								nodeType: "ExpressionStatement",
+								src: "3037:105:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 383,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "addDelegateSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 344,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 331,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2763:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 330,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2763:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 333,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2781:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 332,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "2781:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 335,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2793:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 334,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2793:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 337,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2807:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 336,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2807:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 339,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2821:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 338,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "2821:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 341,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2843:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 340,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "2843:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 343,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 383,
+								src: "2861:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 342,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "2861:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "2762:113:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 345,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "2883:0:0"
+					},
+					scope: 706,
+					src: "2736:411:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 427,
+						nodeType: "Block",
+						src: "3284:196:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									id: 408,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												baseExpression: {
+													argumentTypes: null,
+													id: 398,
+													name: "delegates",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 13,
+													src: "3290:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_mapping$_t_address_$_t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$_$",
+														typeString: "mapping(address => mapping(bytes32 => mapping(address => uint256)))"
+													}
+												},
+												id: 404,
+												indexExpression: {
+													argumentTypes: null,
+													id: 399,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 385,
+													src: "3300:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												isConstant: false,
+												isLValue: true,
+												isPure: false,
+												lValueRequested: false,
+												nodeType: "IndexAccess",
+												src: "3290:19:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_bytes32_$_t_mapping$_t_address_$_t_uint256_$_$",
+													typeString: "mapping(bytes32 => mapping(address => uint256))"
+												}
+											},
+											id: 405,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 401,
+														name: "delegateType",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 389,
+														src: "3320:12:0",
+														typeDescriptions: {
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_bytes32",
+															typeString: "bytes32"
+														}
+													],
+													id: 400,
+													name: "keccak256",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 715,
+													src: "3310:9:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+														typeString: "function () pure returns (bytes32)"
+													}
+												},
+												id: 402,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "3310:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_bytes32",
+													typeString: "bytes32"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3290:44:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 406,
+										indexExpression: {
+											argumentTypes: null,
+											id: 403,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 391,
+											src: "3335:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "3290:54:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										id: 407,
+										name: "now",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 723,
+										src: "3347:3:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "3290:60:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 409,
+								nodeType: "ExpressionStatement",
+								src: "3290:60:0"
+							},
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 411,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 385,
+											src: "3380:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 412,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 389,
+											src: "3390:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 413,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 391,
+											src: "3404:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 414,
+											name: "now",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 723,
+											src: "3414:3:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 415,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "3419:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 417,
+											indexExpression: {
+												argumentTypes: null,
+												id: 416,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 385,
+												src: "3427:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3419:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 410,
+										name: "DIDDelegateChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 57,
+										src: "3361:18:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_address_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,address,uint256,uint256)"
+										}
+									},
+									id: 418,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3361:76:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 419,
+								nodeType: "EmitStatement",
+								src: "3356:81:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 425,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 420,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "3443:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 422,
+										indexExpression: {
+											argumentTypes: null,
+											id: 421,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 385,
+											src: "3451:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "3443:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 423,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "3463:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 424,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "3463:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "3443:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 426,
+								nodeType: "ExpressionStatement",
+								src: "3443:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 428,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 394,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 385,
+									src: "3267:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 395,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 387,
+									src: "3277:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 396,
+							modifierName: {
+								argumentTypes: null,
+								id: 393,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "3257:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "3257:26:0"
+						}
+					],
+					name: "revokeDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 392,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 385,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3175:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 384,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3175:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 387,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3193:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 386,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3193:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 389,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3208:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 388,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3208:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 391,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 428,
+								src: "3230:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 390,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3230:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3174:73:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 397,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3284:0:0"
+					},
+					scope: 706,
+					src: "3151:329:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 445,
+						nodeType: "Block",
+						src: "3573:71:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 438,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 430,
+											src: "3594:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 439,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "3604:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 440,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "3604:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 441,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 432,
+											src: "3616:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 442,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 434,
+											src: "3630:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 437,
+										name: "revokeDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											428,
+											446
+										],
+										referencedDeclaration: 428,
+										src: "3579:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$returns$__$",
+											typeString: "function (address,address,bytes32,address)"
+										}
+									},
+									id: 443,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3579:60:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 444,
+								nodeType: "ExpressionStatement",
+								src: "3579:60:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 446,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeDelegate",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 435,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 430,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3508:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 429,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3508:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 432,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3526:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 431,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3526:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 434,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 446,
+								src: "3548:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 433,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3548:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3507:58:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 436,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3573:0:0"
+					},
+					scope: 706,
+					src: "3484:160:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 495,
+						nodeType: "Block",
+						src: "3783:250:0",
+						statements: [
+							{
+								assignments: [
+									462
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 462,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 496,
+										src: "3789:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 461,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "3789:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 481,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 465,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "3819:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 464,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "3814:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 466,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3814:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 468,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "3831:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 467,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "3826:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 469,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3826:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 470,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "3835:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 471,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "3841:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 475,
+											indexExpression: {
+												argumentTypes: null,
+												"arguments": [
+													{
+														argumentTypes: null,
+														id: 473,
+														name: "identity",
+														nodeType: "Identifier",
+														overloadedDeclarations: [
+														],
+														referencedDeclaration: 448,
+														src: "3861:8:0",
+														typeDescriptions: {
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													}
+												],
+												expression: {
+													argumentTypes: [
+														{
+															typeIdentifier: "t_address",
+															typeString: "address"
+														}
+													],
+													id: 472,
+													name: "identityOwner",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 92,
+													src: "3847:13:0",
+													typeDescriptions: {
+														typeIdentifier: "t_function_internal_view$_t_address_$returns$_t_address_$",
+														typeString: "function (address) view returns (address)"
+													}
+												},
+												id: 474,
+												isConstant: false,
+												isLValue: false,
+												isPure: false,
+												kind: "functionCall",
+												lValueRequested: false,
+												names: [
+												],
+												nodeType: "FunctionCall",
+												src: "3847:23:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "3841:30:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 476,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 448,
+											src: "3873:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "7265766f6b6544656c6567617465",
+											id: 477,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "3883:16:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_f63fea8fc7bd9fe254f7933b81fa1716b5a073ddd1aa14e432aa87d81784f86c",
+												typeString: "literal_string \"revokeDelegate\""
+											},
+											value: "revokeDelegate"
+										},
+										{
+											argumentTypes: null,
+											id: 478,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 456,
+											src: "3901:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 479,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 458,
+											src: "3915:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_f63fea8fc7bd9fe254f7933b81fa1716b5a073ddd1aa14e432aa87d81784f86c",
+												typeString: "literal_string \"revokeDelegate\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 463,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "3804:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 480,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3804:120:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "3789:135:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 483,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 448,
+											src: "3945:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 485,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 448,
+													src: "3970:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 486,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 450,
+													src: "3980:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 487,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 452,
+													src: "3986:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 488,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 454,
+													src: "3992:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 489,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 462,
+													src: "3998:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 484,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "3955:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 490,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "3955:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 491,
+											name: "delegateType",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 456,
+											src: "4005:12:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 492,
+											name: "delegate",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 458,
+											src: "4019:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										],
+										id: 482,
+										name: "revokeDelegate",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											428,
+											446
+										],
+										referencedDeclaration: 428,
+										src: "3930:14:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_address_$returns$__$",
+											typeString: "function (address,address,bytes32,address)"
+										}
+									},
+									id: 493,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "3930:98:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 494,
+								nodeType: "ExpressionStatement",
+								src: "3930:98:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 496,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeDelegateSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 459,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 448,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3678:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 447,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3678:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 450,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3696:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 449,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "3696:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 452,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3708:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 451,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3708:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 454,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3722:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 453,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3722:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 456,
+								name: "delegateType",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3736:20:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 455,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "3736:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 458,
+								name: "delegate",
+								nodeType: "VariableDeclaration",
+								scope: 496,
+								src: "3758:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 457,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "3758:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "3677:98:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 460,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "3783:0:0"
+					},
+					scope: 706,
+					src: "3648:385:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 532,
+						nodeType: "Block",
+						src: "4171:131:0",
+						statements: [
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 514,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 498,
+											src: "4202:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 515,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 502,
+											src: "4212:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 516,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 504,
+											src: "4218:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											commonType: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											id: 519,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											leftExpression: {
+												argumentTypes: null,
+												id: 517,
+												name: "now",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 723,
+												src: "4225:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											nodeType: "BinaryOperation",
+											operator: "+",
+											rightExpression: {
+												argumentTypes: null,
+												id: 518,
+												name: "validity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 506,
+												src: "4231:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_uint256",
+													typeString: "uint256"
+												}
+											},
+											src: "4225:14:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 520,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "4241:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 522,
+											indexExpression: {
+												argumentTypes: null,
+												id: 521,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 498,
+												src: "4249:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "4241:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 513,
+										name: "DIDAttributeChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 69,
+										src: "4182:19:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,bytes memory,uint256,uint256)"
+										}
+									},
+									id: 523,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4182:77:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 524,
+								nodeType: "EmitStatement",
+								src: "4177:82:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 530,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 525,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "4265:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 527,
+										indexExpression: {
+											argumentTypes: null,
+											id: 526,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 498,
+											src: "4273:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "4265:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 528,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "4285:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 529,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "4285:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "4265:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 531,
+								nodeType: "ExpressionStatement",
+								src: "4265:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 533,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 509,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 498,
+									src: "4154:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 510,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 500,
+									src: "4164:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 511,
+							modifierName: {
+								argumentTypes: null,
+								id: 508,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "4144:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "4144:26:0"
+						}
+					],
+					name: "setAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 507,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 498,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4059:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 497,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4059:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 500,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4077:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 499,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4077:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 502,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4092:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 501,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4092:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 504,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4106:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 503,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4106:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 506,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 533,
+								src: "4119:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 505,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4119:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4058:76:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 512,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4171:0:0"
+					},
+					scope: 706,
+					src: "4037:265:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 553,
+						nodeType: "Block",
+						src: "4395:68:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 545,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 535,
+											src: "4414:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 546,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "4424:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 547,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "4424:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 548,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 537,
+											src: "4436:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 549,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 539,
+											src: "4442:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 550,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 541,
+											src: "4449:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 544,
+										name: "setAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											533,
+											554
+										],
+										referencedDeclaration: 533,
+										src: "4401:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory,uint256)"
+										}
+									},
+									id: 551,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4401:57:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 552,
+								nodeType: "ExpressionStatement",
+								src: "4401:57:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 554,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "setAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 542,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 535,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4328:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 534,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4328:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 537,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4346:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 536,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4346:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 539,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4360:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 538,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4360:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 541,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 554,
+								src: "4373:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 540,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4373:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4327:60:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 543,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4395:0:0"
+					},
+					scope: 706,
+					src: "4306:157:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 605,
+						nodeType: "Block",
+						src: "4602:229:0",
+						statements: [
+							{
+								assignments: [
+									572
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 572,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 606,
+										src: "4608:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 571,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "4608:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 590,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 575,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "4638:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 574,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "4633:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 576,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4633:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 578,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "4650:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 577,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "4645:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 579,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4645:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 580,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "4654:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 581,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "4660:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 583,
+											indexExpression: {
+												argumentTypes: null,
+												id: 582,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 556,
+												src: "4666:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "4660:15:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 584,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 556,
+											src: "4677:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "736574417474726962757465",
+											id: 585,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "4687:14:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_e5bbb0cf2a185ea034bc61efc4cb764352403a5c06c1da63a3fd765abbac4ea6",
+												typeString: "literal_string \"setAttribute\""
+											},
+											value: "setAttribute"
+										},
+										{
+											argumentTypes: null,
+											id: 586,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 564,
+											src: "4703:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 587,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 566,
+											src: "4709:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 588,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 568,
+											src: "4716:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_e5bbb0cf2a185ea034bc61efc4cb764352403a5c06c1da63a3fd765abbac4ea6",
+												typeString: "literal_string \"setAttribute\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 573,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "4623:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 589,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4623:102:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "4608:117:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 592,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 556,
+											src: "4744:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 594,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 556,
+													src: "4769:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 595,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 558,
+													src: "4779:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 596,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 560,
+													src: "4785:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 597,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 562,
+													src: "4791:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 598,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 572,
+													src: "4797:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 593,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "4754:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 599,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "4754:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 600,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 564,
+											src: "4804:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 601,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 566,
+											src: "4810:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 602,
+											name: "validity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 568,
+											src: "4817:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 591,
+										name: "setAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											533,
+											554
+										],
+										referencedDeclaration: 533,
+										src: "4731:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory,uint256)"
+										}
+									},
+									id: 603,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4731:95:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 604,
+								nodeType: "ExpressionStatement",
+								src: "4731:95:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 606,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "setAttributeSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 569,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 556,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4495:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 555,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4495:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 558,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4513:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 557,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "4513:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 560,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4525:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 559,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4525:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 562,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4539:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 561,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4539:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 564,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4553:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 563,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4553:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 566,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4567:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 565,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4567:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 568,
+								name: "validity",
+								nodeType: "VariableDeclaration",
+								scope: 606,
+								src: "4580:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint256",
+									typeString: "uint256"
+								},
+								typeName: {
+									id: 567,
+									name: "uint",
+									nodeType: "ElementaryTypeName",
+									src: "4580:4:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4494:100:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 570,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4602:0:0"
+					},
+					scope: 706,
+					src: "4467:364:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 638,
+						nodeType: "Block",
+						src: "4957:118:0",
+						statements: [
+							{
+								eventCall: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 622,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 608,
+											src: "4988:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 623,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 612,
+											src: "4998:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 624,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 614,
+											src: "5004:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "30",
+											id: 625,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "number",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "5011:1:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_rational_0_by_1",
+												typeString: "int_const 0"
+											},
+											value: "0"
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 626,
+												name: "changed",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 17,
+												src: "5014:7:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 628,
+											indexExpression: {
+												argumentTypes: null,
+												id: 627,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 608,
+												src: "5022:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "5014:17:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											},
+											{
+												typeIdentifier: "t_rational_0_by_1",
+												typeString: "int_const 0"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										],
+										id: 621,
+										name: "DIDAttributeChanged",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 69,
+										src: "4968:19:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_event_nonpayable$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$_t_uint256_$_t_uint256_$returns$__$",
+											typeString: "function (address,bytes32,bytes memory,uint256,uint256)"
+										}
+									},
+									id: 629,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "4968:64:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 630,
+								nodeType: "EmitStatement",
+								src: "4963:69:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									id: 636,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									lValueRequested: false,
+									leftHandSide: {
+										argumentTypes: null,
+										baseExpression: {
+											argumentTypes: null,
+											id: 631,
+											name: "changed",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 17,
+											src: "5038:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+												typeString: "mapping(address => uint256)"
+											}
+										},
+										id: 633,
+										indexExpression: {
+											argumentTypes: null,
+											id: 632,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 608,
+											src: "5046:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										isConstant: false,
+										isLValue: true,
+										isPure: false,
+										lValueRequested: true,
+										nodeType: "IndexAccess",
+										src: "5038:17:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									nodeType: "Assignment",
+									operator: "=",
+									rightHandSide: {
+										argumentTypes: null,
+										expression: {
+											argumentTypes: null,
+											id: 634,
+											name: "block",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 711,
+											src: "5058:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_magic_block",
+												typeString: "block"
+											}
+										},
+										id: 635,
+										isConstant: false,
+										isLValue: false,
+										isPure: false,
+										lValueRequested: false,
+										memberName: "number",
+										nodeType: "MemberAccess",
+										referencedDeclaration: null,
+										src: "5058:12:0",
+										typeDescriptions: {
+											typeIdentifier: "t_uint256",
+											typeString: "uint256"
+										}
+									},
+									src: "5038:32:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint256",
+										typeString: "uint256"
+									}
+								},
+								id: 637,
+								nodeType: "ExpressionStatement",
+								src: "5038:32:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 639,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+						{
+							"arguments": [
+								{
+									argumentTypes: null,
+									id: 617,
+									name: "identity",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 608,
+									src: "4940:8:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								{
+									argumentTypes: null,
+									id: 618,
+									name: "actor",
+									nodeType: "Identifier",
+									overloadedDeclarations: [
+									],
+									referencedDeclaration: 610,
+									src: "4950:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								}
+							],
+							id: 619,
+							modifierName: {
+								argumentTypes: null,
+								id: 616,
+								name: "onlyOwner",
+								nodeType: "Identifier",
+								overloadedDeclarations: [
+								],
+								referencedDeclaration: 37,
+								src: "4930:9:0",
+								typeDescriptions: {
+									typeIdentifier: "t_modifier$_t_address_$_t_address_$",
+									typeString: "modifier (address,address)"
+								}
+							},
+							nodeType: "ModifierInvocation",
+							src: "4930:26:0"
+						}
+					],
+					name: "revokeAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 615,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 608,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4860:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 607,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4860:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 610,
+								name: "actor",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4878:13:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 609,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "4878:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 612,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4893:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 611,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "4893:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 614,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 639,
+								src: "4907:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 613,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "4907:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "4859:61:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 620,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "4957:0:0"
+					},
+					scope: 706,
+					src: "4835:240:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "internal"
+				},
+				{
+					body: {
+						id: 656,
+						nodeType: "Block",
+						src: "5156:61:0",
+						statements: [
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 649,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 641,
+											src: "5178:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											expression: {
+												argumentTypes: null,
+												id: 650,
+												name: "msg",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 721,
+												src: "5188:3:0",
+												typeDescriptions: {
+													typeIdentifier: "t_magic_message",
+													typeString: "msg"
+												}
+											},
+											id: 651,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											lValueRequested: false,
+											memberName: "sender",
+											nodeType: "MemberAccess",
+											referencedDeclaration: null,
+											src: "5188:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 652,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 643,
+											src: "5200:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 653,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 645,
+											src: "5206:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 648,
+										name: "revokeAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											639,
+											657
+										],
+										referencedDeclaration: 639,
+										src: "5162:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory)"
+										}
+									},
+									id: 654,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5162:50:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 655,
+								nodeType: "ExpressionStatement",
+								src: "5162:50:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 657,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeAttribute",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 646,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 641,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5104:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 640,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "5104:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 643,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5122:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 642,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5122:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 645,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 657,
+								src: "5136:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 644,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "5136:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "5103:45:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 647,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "5156:0:0"
+					},
+					scope: 706,
+					src: "5079:138:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				},
+				{
+					body: {
+						id: 704,
+						nodeType: "Block",
+						src: "5343:216:0",
+						statements: [
+							{
+								assignments: [
+									673
+								],
+								declarations: [
+									{
+										constant: false,
+										id: 673,
+										name: "hash",
+										nodeType: "VariableDeclaration",
+										scope: 705,
+										src: "5349:12:0",
+										stateVariable: false,
+										storageLocation: "default",
+										typeDescriptions: {
+											typeIdentifier: "t_bytes32",
+											typeString: "bytes32"
+										},
+										typeName: {
+											id: 672,
+											name: "bytes32",
+											nodeType: "ElementaryTypeName",
+											src: "5349:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										value: null,
+										visibility: "internal"
+									}
+								],
+								id: 690,
+								initialValue: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30783139",
+													id: 676,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "5379:4:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													},
+													value: "0x19"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_25_by_1",
+														typeString: "int_const 25"
+													}
+												],
+												id: 675,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "5374:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 677,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5374:10:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													hexValue: "30",
+													id: 679,
+													isConstant: false,
+													isLValue: false,
+													isPure: true,
+													kind: "number",
+													lValueRequested: false,
+													nodeType: "Literal",
+													src: "5391:1:0",
+													subdenomination: null,
+													typeDescriptions: {
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													},
+													value: "0"
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_rational_0_by_1",
+														typeString: "int_const 0"
+													}
+												],
+												id: 678,
+												isConstant: false,
+												isLValue: false,
+												isPure: true,
+												lValueRequested: false,
+												nodeType: "ElementaryTypeNameExpression",
+												src: "5386:4:0",
+												typeDescriptions: {
+													typeIdentifier: "t_type$_t_bytes1_$",
+													typeString: "type(bytes1)"
+												},
+												typeName: "byte"
+											},
+											id: 680,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "typeConversion",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5386:7:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 681,
+											name: "this",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 734,
+											src: "5395:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											}
+										},
+										{
+											argumentTypes: null,
+											baseExpression: {
+												argumentTypes: null,
+												id: 682,
+												name: "nonce",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 21,
+												src: "5401:5:0",
+												typeDescriptions: {
+													typeIdentifier: "t_mapping$_t_address_$_t_uint256_$",
+													typeString: "mapping(address => uint256)"
+												}
+											},
+											id: 684,
+											indexExpression: {
+												argumentTypes: null,
+												id: 683,
+												name: "identity",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 659,
+												src: "5407:8:0",
+												typeDescriptions: {
+													typeIdentifier: "t_address",
+													typeString: "address"
+												}
+											},
+											isConstant: false,
+											isLValue: true,
+											isPure: false,
+											lValueRequested: false,
+											nodeType: "IndexAccess",
+											src: "5401:15:0",
+											typeDescriptions: {
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 685,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 659,
+											src: "5418:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											hexValue: "7265766f6b65417474726962757465",
+											id: 686,
+											isConstant: false,
+											isLValue: false,
+											isPure: true,
+											kind: "string",
+											lValueRequested: false,
+											nodeType: "Literal",
+											src: "5428:17:0",
+											subdenomination: null,
+											typeDescriptions: {
+												typeIdentifier: "t_stringliteral_168e4cc0ad03cc4b6896d89f8a470b9997cd8bbe87ac639c5474674fa958f860",
+												typeString: "literal_string \"revokeAttribute\""
+											},
+											value: "revokeAttribute"
+										},
+										{
+											argumentTypes: null,
+											id: 687,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 667,
+											src: "5447:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 688,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 669,
+											src: "5453:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_bytes1",
+												typeString: "bytes1"
+											},
+											{
+												typeIdentifier: "t_contract$_EthereumDIDRegistry_$706",
+												typeString: "contract EthereumDIDRegistry"
+											},
+											{
+												typeIdentifier: "t_uint256",
+												typeString: "uint256"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_stringliteral_168e4cc0ad03cc4b6896d89f8a470b9997cd8bbe87ac639c5474674fa958f860",
+												typeString: "literal_string \"revokeAttribute\""
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 674,
+										name: "keccak256",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+										],
+										referencedDeclaration: 715,
+										src: "5364:9:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_sha3_pure$__$returns$_t_bytes32_$",
+											typeString: "function () pure returns (bytes32)"
+										}
+									},
+									id: 689,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5364:95:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								nodeType: "VariableDeclarationStatement",
+								src: "5349:110:0"
+							},
+							{
+								expression: {
+									argumentTypes: null,
+									"arguments": [
+										{
+											argumentTypes: null,
+											id: 692,
+											name: "identity",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 659,
+											src: "5482:8:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											"arguments": [
+												{
+													argumentTypes: null,
+													id: 694,
+													name: "identity",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 659,
+													src: "5507:8:0",
+													typeDescriptions: {
+														typeIdentifier: "t_address",
+														typeString: "address"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 695,
+													name: "sigV",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 661,
+													src: "5517:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 696,
+													name: "sigR",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 663,
+													src: "5523:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 697,
+													name: "sigS",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 665,
+													src: "5529:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												},
+												{
+													argumentTypes: null,
+													id: 698,
+													name: "hash",
+													nodeType: "Identifier",
+													overloadedDeclarations: [
+													],
+													referencedDeclaration: 673,
+													src: "5535:4:0",
+													typeDescriptions: {
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												}
+											],
+											expression: {
+												argumentTypes: [
+													{
+														typeIdentifier: "t_address",
+														typeString: "address"
+													},
+													{
+														typeIdentifier: "t_uint8",
+														typeString: "uint8"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													},
+													{
+														typeIdentifier: "t_bytes32",
+														typeString: "bytes32"
+													}
+												],
+												id: 693,
+												name: "checkSignature",
+												nodeType: "Identifier",
+												overloadedDeclarations: [
+												],
+												referencedDeclaration: 132,
+												src: "5492:14:0",
+												typeDescriptions: {
+													typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_uint8_$_t_bytes32_$_t_bytes32_$_t_bytes32_$returns$_t_address_$",
+													typeString: "function (address,uint8,bytes32,bytes32,bytes32) returns (address)"
+												}
+											},
+											id: 699,
+											isConstant: false,
+											isLValue: false,
+											isPure: false,
+											kind: "functionCall",
+											lValueRequested: false,
+											names: [
+											],
+											nodeType: "FunctionCall",
+											src: "5492:48:0",
+											typeDescriptions: {
+												typeIdentifier: "t_address",
+												typeString: "address"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 700,
+											name: "name",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 667,
+											src: "5542:4:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											}
+										},
+										{
+											argumentTypes: null,
+											id: 701,
+											name: "value",
+											nodeType: "Identifier",
+											overloadedDeclarations: [
+											],
+											referencedDeclaration: 669,
+											src: "5548:5:0",
+											typeDescriptions: {
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										}
+									],
+									expression: {
+										argumentTypes: [
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_address",
+												typeString: "address"
+											},
+											{
+												typeIdentifier: "t_bytes32",
+												typeString: "bytes32"
+											},
+											{
+												typeIdentifier: "t_bytes_memory_ptr",
+												typeString: "bytes memory"
+											}
+										],
+										id: 691,
+										name: "revokeAttribute",
+										nodeType: "Identifier",
+										overloadedDeclarations: [
+											639,
+											657
+										],
+										referencedDeclaration: 639,
+										src: "5466:15:0",
+										typeDescriptions: {
+											typeIdentifier: "t_function_internal_nonpayable$_t_address_$_t_address_$_t_bytes32_$_t_bytes_memory_ptr_$returns$__$",
+											typeString: "function (address,address,bytes32,bytes memory)"
+										}
+									},
+									id: 702,
+									isConstant: false,
+									isLValue: false,
+									isPure: false,
+									kind: "functionCall",
+									lValueRequested: false,
+									names: [
+									],
+									nodeType: "FunctionCall",
+									src: "5466:88:0",
+									typeDescriptions: {
+										typeIdentifier: "t_tuple$__$",
+										typeString: "tuple()"
+									}
+								},
+								id: 703,
+								nodeType: "ExpressionStatement",
+								src: "5466:88:0"
+							}
+						]
+					},
+					documentation: null,
+					id: 705,
+					implemented: true,
+					isConstructor: false,
+					isDeclaredConst: false,
+					modifiers: [
+					],
+					name: "revokeAttributeSigned",
+					nodeType: "FunctionDefinition",
+					parameters: {
+						id: 670,
+						nodeType: "ParameterList",
+						parameters: [
+							{
+								constant: false,
+								id: 659,
+								name: "identity",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5251:16:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_address",
+									typeString: "address"
+								},
+								typeName: {
+									id: 658,
+									name: "address",
+									nodeType: "ElementaryTypeName",
+									src: "5251:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_address",
+										typeString: "address"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 661,
+								name: "sigV",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5269:10:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_uint8",
+									typeString: "uint8"
+								},
+								typeName: {
+									id: 660,
+									name: "uint8",
+									nodeType: "ElementaryTypeName",
+									src: "5269:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_uint8",
+										typeString: "uint8"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 663,
+								name: "sigR",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5281:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 662,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5281:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 665,
+								name: "sigS",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5295:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 664,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5295:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 667,
+								name: "name",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5309:12:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes32",
+									typeString: "bytes32"
+								},
+								typeName: {
+									id: 666,
+									name: "bytes32",
+									nodeType: "ElementaryTypeName",
+									src: "5309:7:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes32",
+										typeString: "bytes32"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							},
+							{
+								constant: false,
+								id: 669,
+								name: "value",
+								nodeType: "VariableDeclaration",
+								scope: 705,
+								src: "5323:11:0",
+								stateVariable: false,
+								storageLocation: "default",
+								typeDescriptions: {
+									typeIdentifier: "t_bytes_memory_ptr",
+									typeString: "bytes"
+								},
+								typeName: {
+									id: 668,
+									name: "bytes",
+									nodeType: "ElementaryTypeName",
+									src: "5323:5:0",
+									typeDescriptions: {
+										typeIdentifier: "t_bytes_storage_ptr",
+										typeString: "bytes"
+									}
+								},
+								value: null,
+								visibility: "internal"
+							}
+						],
+						src: "5250:85:0"
+					},
+					payable: false,
+					returnParameters: {
+						id: 671,
+						nodeType: "ParameterList",
+						parameters: [
+						],
+						src: "5343:0:0"
+					},
+					scope: 706,
+					src: "5220:339:0",
+					stateMutability: "nonpayable",
+					superFunction: null,
+					visibility: "public"
+				}
+			],
+			scope: 707,
+			src: "25:5537:0"
+		}
+	],
+	src: "0:5563:0"
+};
+var compiler = {
+	name: "solc",
+	version: "0.4.24+commit.e67f0147.Emscripten.clang"
+};
+var networks = {
+	"1": {
+		events: {
+		},
+		links: {
+		},
+		address: "0xdca7ef03e98e0dc2b855be647c39abe984fcf21b"
+	},
+	"3": {
+		events: {
+		},
+		links: {
+		},
+		address: "0xdca7ef03e98e0dc2b855be647c39abe984fcf21b"
+	},
+	"4": {
+		events: {
+		},
+		links: {
+		},
+		address: "0xdca7ef03e98e0dc2b855be647c39abe984fcf21b"
+	},
+	"42": {
+		events: {
+		},
+		links: {
+		},
+		address: "0xdca7ef03e98e0dc2b855be647c39abe984fcf21b"
+	}
+};
+var schemaVersion = "2.0.0";
+var updatedAt = "2018-06-15T00:50:05.725Z";
+var DidRegistryContract = {
+	contractName: contractName,
+	abi: abi,
+	bytecode: bytecode,
+	deployedBytecode: deployedBytecode,
+	sourceMap: sourceMap,
+	deployedSourceMap: deployedSourceMap,
+	source: source,
+	sourcePath: sourcePath,
+	ast: ast,
+	legacyAST: legacyAST,
+	compiler: compiler,
+	networks: networks,
+	schemaVersion: schemaVersion,
+	updatedAt: updatedAt
+};
+
+const identifierMatcher = /^(.*)?(0x[0-9a-fA-F]{40}|0x[0-9a-fA-F]{66})$/;
+const nullAddress = '0x0000000000000000000000000000000000000000';
+const DEFAULT_REGISTRY_ADDRESS = '0xdca7ef03e98e0dc2b855be647c39abe984fcf21b';
+var verificationMethodTypes;
+(function (verificationMethodTypes) {
+    verificationMethodTypes["EcdsaSecp256k1VerificationKey2019"] = "EcdsaSecp256k1VerificationKey2019";
+    verificationMethodTypes["EcdsaSecp256k1RecoveryMethod2020"] = "EcdsaSecp256k1RecoveryMethod2020";
+    verificationMethodTypes["Ed25519VerificationKey2018"] = "Ed25519VerificationKey2018";
+    verificationMethodTypes["RSAVerificationKey2018"] = "RSAVerificationKey2018";
+    verificationMethodTypes["X25519KeyAgreementKey2019"] = "X25519KeyAgreementKey2019";
+})(verificationMethodTypes || (verificationMethodTypes = {}));
+var eventNames;
+(function (eventNames) {
+    eventNames["DIDOwnerChanged"] = "DIDOwnerChanged";
+    eventNames["DIDAttributeChanged"] = "DIDAttributeChanged";
+    eventNames["DIDDelegateChanged"] = "DIDDelegateChanged";
+})(eventNames || (eventNames = {}));
+const legacyAttrTypes = {
+    sigAuth: 'SignatureAuthentication2018',
+    veriKey: 'VerificationKey2018',
+    enc: 'KeyAgreementKey2019',
+};
+const legacyAlgoMap = {
+    /**@deprecated */
+    Secp256k1VerificationKey2018: verificationMethodTypes.EcdsaSecp256k1VerificationKey2019,
+    /**@deprecated */
+    Ed25519SignatureAuthentication2018: verificationMethodTypes.Ed25519VerificationKey2018,
+    /**@deprecated */
+    Secp256k1SignatureAuthentication2018: verificationMethodTypes.EcdsaSecp256k1VerificationKey2019,
+    //keep legacy mapping
+    RSAVerificationKey2018: verificationMethodTypes.RSAVerificationKey2018,
+    Ed25519VerificationKey2018: verificationMethodTypes.Ed25519VerificationKey2018,
+    X25519KeyAgreementKey2019: verificationMethodTypes.X25519KeyAgreementKey2019,
+};
+function bytes32toString(input) {
+    const buff = typeof input === 'string' ? Buffer.from(input.slice(2), 'hex') : Buffer.from(input);
+    return buff.toString('utf8').replace(/\0+$/, '');
+}
+function stringToBytes32(str) {
+    const buffStr = '0x' + Buffer.from(str).slice(0, 32).toString('hex');
+    return buffStr + '0'.repeat(66 - buffStr.length);
+}
+function interpretIdentifier(identifier) {
+    let id = identifier;
+    let network = undefined;
+    if (id.startsWith('did:ethr')) {
+        id = id.split('?')[0];
+        const components = id.split(':');
+        id = components[components.length - 1];
+        if (components.length >= 4) {
+            network = components.splice(2, components.length - 3).join(':');
+        }
+    }
+    if (id.length > 42) {
+        return { address: transactions.computeAddress(id), publicKey: id, network };
+    }
+    else {
+        return { address: address.getAddress(id), network }; // checksum address
+    }
+}
+const knownInfuraNetworks = {
+    mainnet: '0x1',
+    ropsten: '0x3',
+    rinkeby: '0x4',
+    goerli: '0x5',
+    kovan: '0x2a',
+};
+const knownNetworks = {
+    ...knownInfuraNetworks,
+    rsk: '0x1e',
+    'rsk:testnet': '0x1f',
+    artis_t1: '0x03c401',
+    artis_s1: '0x03c301',
+    matic: '0x89',
+    maticmum: '0x13881',
+};
+var Errors;
+(function (Errors) {
+    /**
+     * The resolver has failed to construct the DID document.
+     * This can be caused by a network issue, a wrong registry address or malformed logs while parsing the registry history.
+     * Please inspect the `DIDResolutionMetadata.message` to debug further.
+     */
+    Errors["notFound"] = "notFound";
+    /**
+     * The resolver does not know how to resolve the given DID. Most likely it is not a `did:ethr`.
+     */
+    Errors["invalidDid"] = "invalidDid";
+    /**
+     * The resolver is misconfigured or is being asked to resolve a DID anchored on an unknown network
+     */
+    Errors["unknownNetwork"] = "unknownNetwork";
+})(Errors || (Errors = {}));
+
+function configureNetworksWithInfura(projectId) {
+    if (!projectId) {
+        return {};
+    }
+    const networks = [
+        { name: 'mainnet', chainId: '0x1', provider: new providers.InfuraProvider('homestead', projectId) },
+        { name: 'ropsten', chainId: '0x3', provider: new providers.InfuraProvider('ropsten', projectId) },
+        { name: 'rinkeby', chainId: '0x4', provider: new providers.InfuraProvider('rinkeby', projectId) },
+        { name: 'goerli', chainId: '0x5', provider: new providers.InfuraProvider('goerli', projectId) },
+        { name: 'kovan', chainId: '0x2a', provider: new providers.InfuraProvider('kovan', projectId) },
+    ];
+    return configureNetworks({ networks });
+}
+function getContractForNetwork(conf) {
+    let provider = conf.provider || conf.web3?.currentProvider;
+    if (!provider) {
+        if (conf.rpcUrl) {
+            const chainIdRaw = conf.chainId ? conf.chainId : knownNetworks[conf.name || ''];
+            const chainId = chainIdRaw ? bignumber.BigNumber.from(chainIdRaw).toNumber() : chainIdRaw;
+            const networkName = knownInfuraNetworks[conf.name || ''] ? conf.name?.replace('mainnet', 'homestead') : 'any';
+            provider = new providers.JsonRpcProvider(conf.rpcUrl, chainId || networkName);
+        }
+        else {
+            throw new Error(`invalid_config: No web3 provider could be determined for network ${conf.name || conf.chainId}`);
+        }
+    }
+    const contract = contracts.ContractFactory.fromSolidity(DidRegistryContract)
+        .attach(conf.registry || DEFAULT_REGISTRY_ADDRESS)
+        .connect(provider);
+    return contract;
+}
+function configureNetwork(net) {
+    const networks = {};
+    const chainId = net.chainId || knownNetworks[net.name || ''];
+    if (chainId) {
+        if (net.name) {
+            networks[net.name] = getContractForNetwork(net);
+        }
+        const id = typeof chainId === 'number' ? `0x${chainId.toString(16)}` : chainId;
+        networks[id] = getContractForNetwork(net);
+    }
+    else if (net.provider || net.web3 || net.rpcUrl) {
+        networks[net.name || ''] = getContractForNetwork(net);
+    }
+    return networks;
+}
+function configureNetworks(conf) {
+    return {
+        ...configureNetwork(conf),
+        ...conf.networks?.reduce((networks, net) => {
+            return { ...networks, ...configureNetwork(net) };
+        }, {}),
+    };
+}
+/**
+ * Generates a configuration that maps ethereum network names and chainIDs to the respective ERC1056 contracts deployed on them.
+ * @returns a record of ERC1056 `Contract` instances
+ * @param conf configuration options for the resolver. An array of network details.
+ * Each network entry should contain at least one of `name` or `chainId` AND one of `provider`, `web3`, or `rpcUrl`
+ * For convenience, you can also specify an `infuraProjectId` which will create a mapping for all the networks supported by https://infura.io.
+ * @example ```js
+ * [
+ *   { name: 'development', registry: '0x9af37603e98e0dc2b855be647c39abe984fc2445', rpcUrl: 'http://127.0.0.1:8545/' },
+ *   { name: 'goerli', chainId: 5, provider: new InfuraProvider('goerli') },
+ *   { name: 'rinkeby', provider: new AlchemyProvider('rinkeby') },
+ *   { name: 'rsk:testnet', chainId: '0x1f', rpcUrl: 'https://public-node.testnet.rsk.co' },
+ * ]
+ * ```
+ */
+function configureResolverWithNetworks(conf = {}) {
+    const networks = {
+        ...configureNetworksWithInfura(conf.infuraProjectId),
+        ...configureNetworks(conf),
+    };
+    if (Object.keys(networks).length === 0) {
+        throw new Error('invalid_config: Please make sure to have at least one network');
+    }
+    return networks;
+}
+
+/**
+ * A class that can be used to interact with the ERC1056 contract on behalf of a local controller key-pair
+ */
+class EthrDidController {
+    /**
+     * Creates an EthrDidController instance.
+     *
+     * @param identifier - required - a `did:ethr` string or a publicKeyHex or an ethereum address
+     * @param signer - optional - a Signer that represents the current controller key (owner) of the identifier. If a 'signer' is not provided, then a 'contract' with an attached signer can be used.
+     * @param contract - optional - a Contract instance representing a ERC1056 contract. At least one of `contract`, `provider`, or `rpcUrl` is required
+     * @param chainNameOrId - optional - the network name or chainID, defaults to 'mainnet'
+     * @param provider - optional - a web3 Provider. At least one of `contract`, `provider`, or `rpcUrl` is required
+     * @param rpcUrl - optional - a JSON-RPC URL that can be used to connect to an ethereum network. At least one of `contract`, `provider`, or `rpcUrl` is required
+     * @param registry - optional - The ERC1056 registry address. Defaults to '0xdca7ef03e98e0dc2b855be647c39abe984fcf21b'. Only used with 'provider' or 'rpcUrl'
+     */
+    constructor(identifier, contract, signer, chainNameOrId = 'mainnet', provider, rpcUrl, registry = DEFAULT_REGISTRY_ADDRESS) {
+        // initialize identifier
+        const { address, publicKey, network } = interpretIdentifier(identifier);
+        const net = network || chainNameOrId;
+        // initialize contract connection
+        if (contract) {
+            this.contract = contract;
+        }
+        else if (provider || signer?.provider || rpcUrl) {
+            const prov = provider || signer?.provider;
+            this.contract = getContractForNetwork({ name: net, provider: prov, registry, rpcUrl });
+        }
+        else {
+            throw new Error(' either a contract instance or a provider or rpcUrl is required to initialize');
+        }
+        this.signer = signer;
+        this.address = address;
+        let networkString = net ? `${net}:` : '';
+        if (networkString in ['mainnet:', '0x1:']) {
+            networkString = '';
+        }
+        this.did = publicKey ? `did:ethr:${networkString}${publicKey}` : `did:ethr:${networkString}${address}`;
+    }
+    async getOwner(address, blockTag) {
+        const result = await this.contract.functions.identityOwner(address, { blockTag });
+        return result[0];
+    }
+    async attachContract(controller) {
+        const currentOwner = controller ? await controller : await this.getOwner(this.address, 'latest');
+        const signer = this.signer
+            ? this.signer
+            : this.contract.provider.getSigner(currentOwner) || this.contract.signer;
+        return this.contract.connect(signer);
+    }
+    async changeOwner(newOwner, options = {}) {
+        // console.log(`changing owner for ${oldOwner} on registry at ${registryContract.address}`)
+        const overrides = {
+            gasLimit: 123456,
+            gasPrice: 1000000000,
+            ...options,
+        };
+        const contract = await this.attachContract(overrides.from);
+        delete overrides.from;
+        const ownerChange = await contract.functions.changeOwner(this.address, newOwner, overrides);
+        return await ownerChange.wait();
+    }
+    async addDelegate(delegateType, delegateAddress, exp, options = {}) {
+        const overrides = {
+            gasLimit: 123456,
+            gasPrice: 1000000000,
+            ...options,
+        };
+        const contract = await this.attachContract(overrides.from);
+        delete overrides.from;
+        const delegateTypeBytes = stringToBytes32(delegateType);
+        const addDelegateTx = await contract.functions.addDelegate(this.address, delegateTypeBytes, delegateAddress, exp, overrides);
+        return await addDelegateTx.wait();
+    }
+    async revokeDelegate(delegateType, delegateAddress, options = {}) {
+        const overrides = {
+            gasLimit: 123456,
+            gasPrice: 1000000000,
+            ...options,
+        };
+        delegateType = delegateType.startsWith('0x') ? delegateType : stringToBytes32(delegateType);
+        const contract = await this.attachContract(overrides.from);
+        delete overrides.from;
+        const addDelegateTx = await contract.functions.revokeDelegate(this.address, delegateType, delegateAddress, overrides);
+        return await addDelegateTx.wait();
+    }
+    async setAttribute(attrName, attrValue, exp, options = {}) {
+        const overrides = {
+            gasLimit: 123456,
+            gasPrice: 1000000000,
+            controller: undefined,
+            ...options,
+        };
+        attrName = attrName.startsWith('0x') ? attrName : stringToBytes32(attrName);
+        attrValue = attrValue.startsWith('0x') ? attrValue : '0x' + Buffer.from(attrValue, 'utf-8').toString('hex');
+        const contract = await this.attachContract(overrides.from);
+        delete overrides.from;
+        const setAttrTx = await contract.functions.setAttribute(this.address, attrName, attrValue, exp, overrides);
+        return await setAttrTx.wait();
+    }
+    async revokeAttribute(attrName, attrValue, options = {}) {
+        // console.log(`revoking attribute ${attrName}(${attrValue}) for ${identity}`)
+        const overrides = {
+            gasLimit: 123456,
+            gasPrice: 1000000000,
+            ...options,
+        };
+        attrName = attrName.startsWith('0x') ? attrName : stringToBytes32(attrName);
+        attrValue = attrValue.startsWith('0x') ? attrValue : '0x' + Buffer.from(attrValue, 'utf-8').toString('hex');
+        const contract = await this.attachContract(overrides.from);
+        delete overrides.from;
+        const revokeAttributeTX = await contract.functions.revokeAttribute(this.address, attrName, attrValue, overrides);
+        return await revokeAttributeTX.wait();
+    }
+}
+
+function populateEventMetaClass(logResult, blockNumber) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = {};
+    if (logResult.eventFragment.inputs.length !== logResult.args.length) {
+        throw new TypeError('malformed event input. wrong number of arguments');
+    }
+    logResult.eventFragment.inputs.forEach((input, index) => {
+        let val = logResult.args[index];
+        if (typeof val === 'object') {
+            val = bignumber.BigNumber.from(val);
+        }
+        if (input.type === 'bytes32') {
+            val = bytes32toString(val);
+        }
+        result[input.name] = val;
+    });
+    result._eventName = logResult.name;
+    result.blockNumber = blockNumber;
+    return result;
+}
+function logDecoder(contract, logs) {
+    const results = logs.map((log) => {
+        const res = contract.interface.parseLog(log);
+        const event = populateEventMetaClass(res, log.blockNumber);
+        return event;
+    });
+    return results;
+}
+
+class EthrDidResolver {
+    constructor(options) {
+        this.contracts = configureResolverWithNetworks(options);
+    }
+    /**
+     * returns the current owner of a DID (represented by an address or public key)
+     *
+     * @param address
+     */
+    async getOwner(address, networkId, blockTag) {
+        //TODO: check if address or public key
+        return new EthrDidController(address, this.contracts[networkId]).getOwner(address, blockTag);
+    }
+    /**
+     * returns the previous change
+     *
+     * @param address
+     */
+    async previousChange(address, networkId, blockTag) {
+        const result = await this.contracts[networkId].functions.changed(address, { blockTag });
+        // console.log(`last change result: '${BigNumber.from(result['0'])}'`)
+        return bignumber.BigNumber.from(result['0']);
+    }
+    async getBlockMetadata(blockHeight, networkId) {
+        const block = await this.contracts[networkId].provider.getBlock(blockHeight);
+        return {
+            height: block.number.toString(),
+            isoDate: new Date(block.timestamp * 1000).toISOString().replace('.000', ''),
+        };
+    }
+    async changeLog(identity, networkId, blockTag = 'latest') {
+        const contract = this.contracts[networkId];
+        const provider = contract.provider;
+        const hexChainId = networkId.startsWith('0x') ? networkId : knownNetworks[networkId];
+        //TODO: this can be used to check if the configuration is ok
+        const chainId = hexChainId ? bignumber.BigNumber.from(hexChainId).toNumber() : (await provider.getNetwork()).chainId;
+        const history = [];
+        const { address, publicKey } = interpretIdentifier(identity);
+        const controllerKey = publicKey;
+        let previousChange = await this.previousChange(address, networkId, blockTag);
+        while (previousChange) {
+            const blockNumber = previousChange;
+            // console.log(`gigel ${previousChange}`)
+            const logs = await provider.getLogs({
+                address: contract.address,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                topics: [null, `0x000000000000000000000000${address.slice(2)}`],
+                fromBlock: previousChange.toHexString(),
+                toBlock: previousChange.toHexString(),
+            });
+            const events = logDecoder(contract, logs);
+            events.reverse();
+            previousChange = null;
+            for (const event of events) {
+                history.unshift(event);
+                if (event.previousChange.lt(blockNumber)) {
+                    previousChange = event.previousChange;
+                }
+            }
+        }
+        return { address, history, controllerKey, chainId };
+    }
+    wrapDidDocument(did, address, controllerKey, history, chainId, blockHeight, now) {
+        const baseDIDDocument = {
+            '@context': [
+                'https://www.w3.org/ns/did/v1',
+                'https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld',
+            ],
+            id: did,
+            verificationMethod: [],
+            authentication: [],
+            assertionMethod: [],
+        };
+        let controller = address;
+        const authentication = [`${did}#controller`];
+        const keyAgreement = [];
+        let versionId = 0;
+        let nextVersionId = Number.POSITIVE_INFINITY;
+        let deactivated = false;
+        let delegateCount = 0;
+        let serviceCount = 0;
+        const auth = {};
+        const keyAgreementRefs = {};
+        const pks = {};
+        const services = {};
+        for (const event of history) {
+            if (blockHeight !== -1 && event.blockNumber > blockHeight) {
+                if (nextVersionId > event.blockNumber) {
+                    nextVersionId = event.blockNumber;
+                }
+                continue;
+            }
+            else {
+                if (versionId < event.blockNumber) {
+                    versionId = event.blockNumber;
+                }
+            }
+            const validTo = event.validTo || bignumber.BigNumber.from(0);
+            const eventIndex = `${event._eventName}-${event.delegateType || event.name}-${event.delegate || event.value}`;
+            if (validTo && validTo.gte(now)) {
+                if (event._eventName === eventNames.DIDDelegateChanged) {
+                    const currentEvent = event;
+                    delegateCount++;
+                    const delegateType = currentEvent.delegateType; //conversion from bytes32 is done in logParser
+                    switch (delegateType) {
+                        case 'sigAuth':
+                            auth[eventIndex] = `${did}#delegate-${delegateCount}`;
+                        // eslint-disable-line no-fallthrough
+                        case 'veriKey':
+                            pks[eventIndex] = {
+                                id: `${did}#delegate-${delegateCount}`,
+                                type: verificationMethodTypes.EcdsaSecp256k1RecoveryMethod2020,
+                                controller: did,
+                                blockchainAccountId: `${currentEvent.delegate}@eip155:${chainId}`,
+                            };
+                            break;
+                    }
+                }
+                else if (event._eventName === eventNames.DIDAttributeChanged) {
+                    const currentEvent = event;
+                    const name = currentEvent.name; //conversion from bytes32 is done in logParser
+                    const match = name.match(/^did\/(pub|svc)\/(\w+)(\/(\w+))?(\/(\w+))?$/);
+                    if (match) {
+                        const section = match[1];
+                        const algorithm = match[2];
+                        const type = legacyAttrTypes[match[4]] || match[4];
+                        const encoding = match[6];
+                        switch (section) {
+                            case 'pub': {
+                                delegateCount++;
+                                const pk = {
+                                    id: `${did}#delegate-${delegateCount}`,
+                                    type: `${algorithm}${type}`,
+                                    controller: did,
+                                };
+                                pk.type = legacyAlgoMap[pk.type] || algorithm;
+                                switch (encoding) {
+                                    case null:
+                                    case undefined:
+                                    case 'hex':
+                                        pk.publicKeyHex = currentEvent.value.slice(2);
+                                        break;
+                                    case 'base64':
+                                        pk.publicKeyBase64 = Buffer.from(currentEvent.value.slice(2), 'hex').toString('base64');
+                                        break;
+                                    case 'base58':
+                                        pk.publicKeyBase58 = basex.Base58.encode(Buffer.from(currentEvent.value.slice(2), 'hex'));
+                                        break;
+                                    case 'pem':
+                                        pk.publicKeyPem = Buffer.from(currentEvent.value.slice(2), 'hex').toString();
+                                        break;
+                                    default:
+                                        pk.value = currentEvent.value;
+                                }
+                                pks[eventIndex] = pk;
+                                if (match[4] === 'sigAuth') {
+                                    auth[eventIndex] = pk.id;
+                                }
+                                else if (match[4] === 'enc') {
+                                    keyAgreementRefs[eventIndex] = pk.id;
+                                }
+                                break;
+                            }
+                            case 'svc':
+                                serviceCount++;
+                                services[eventIndex] = {
+                                    id: `${did}#service-${serviceCount}`,
+                                    type: algorithm,
+                                    serviceEndpoint: Buffer.from(currentEvent.value.slice(2), 'hex').toString(),
+                                };
+                                break;
+                        }
+                    }
+                }
+            }
+            else if (event._eventName === eventNames.DIDOwnerChanged) {
+                const currentEvent = event;
+                controller = currentEvent.owner;
+                if (currentEvent.owner === nullAddress) {
+                    deactivated = true;
+                    break;
+                }
+            }
+            else {
+                if (event._eventName === eventNames.DIDDelegateChanged ||
+                    (event._eventName === eventNames.DIDAttributeChanged &&
+                        event.name.match(/^did\/pub\//))) {
+                    delegateCount++;
+                }
+                else if (event._eventName === eventNames.DIDAttributeChanged &&
+                    event.name.match(/^did\/svc\//)) {
+                    serviceCount++;
+                }
+                delete auth[eventIndex];
+                delete pks[eventIndex];
+                delete services[eventIndex];
+            }
+        }
+        const publicKeys = [
+            {
+                id: `${did}#controller`,
+                type: verificationMethodTypes.EcdsaSecp256k1RecoveryMethod2020,
+                controller: did,
+                blockchainAccountId: `${controller}@eip155:${chainId}`,
+            },
+        ];
+        if (controllerKey && controller == address) {
+            publicKeys.push({
+                id: `${did}#controllerKey`,
+                type: verificationMethodTypes.EcdsaSecp256k1VerificationKey2019,
+                controller: did,
+                publicKeyHex: controllerKey,
+            });
+            authentication.push(`${did}#controllerKey`);
+        }
+        const didDocument = {
+            ...baseDIDDocument,
+            verificationMethod: publicKeys.concat(Object.values(pks)),
+            authentication: authentication.concat(Object.values(auth)),
+        };
+        if (Object.values(services).length > 0) {
+            didDocument.service = Object.values(services);
+        }
+        if (Object.values(keyAgreementRefs).length > 0) {
+            didDocument.keyAgreement = keyAgreement.concat(Object.values(keyAgreementRefs));
+        }
+        didDocument.assertionMethod = [...(didDocument.verificationMethod?.map((pk) => pk.id) || [])];
+        return deactivated
+            ? {
+                didDocument: { ...baseDIDDocument, '@context': 'https://www.w3.org/ns/did/v1' },
+                deactivated,
+                versionId,
+                nextVersionId,
+            }
+            : { didDocument, deactivated, versionId, nextVersionId };
+    }
+    async resolve(did, parsed, 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _unused, options) {
+        const fullId = parsed.id.match(identifierMatcher);
+        if (!fullId) {
+            return {
+                didResolutionMetadata: {
+                    error: Errors.invalidDid,
+                    message: `Not a valid did:ethr: ${parsed.id}`,
+                },
+                didDocumentMetadata: {},
+                didDocument: null,
+            };
+        }
+        const id = fullId[2];
+        const networkId = !fullId[1] ? 'mainnet' : fullId[1].slice(0, -1);
+        let blockTag = options.blockTag || 'latest';
+        if (typeof parsed.query === 'string') {
+            const qParams = qs__namespace.decode(parsed.query);
+            blockTag = typeof qParams['versionId'] === 'string' ? qParams['versionId'] : blockTag;
+            try {
+                blockTag = Number.parseInt(blockTag);
+            }
+            catch (e) {
+                blockTag = 'latest';
+                // invalid versionId parameters are ignored
+            }
+        }
+        if (!this.contracts[networkId]) {
+            return {
+                didResolutionMetadata: {
+                    error: Errors.unknownNetwork,
+                    message: `The DID resolver does not have a configuration for network: ${networkId}`,
+                },
+                didDocumentMetadata: {},
+                didDocument: null,
+            };
+        }
+        let now = bignumber.BigNumber.from(Math.floor(new Date().getTime() / 1000));
+        if (typeof blockTag === 'number') {
+            const block = await this.getBlockMetadata(blockTag, networkId);
+            now = bignumber.BigNumber.from(Date.parse(block.isoDate) / 1000);
+        }
+        const { address, history, controllerKey, chainId } = await this.changeLog(id, networkId, 'latest');
+        try {
+            const { didDocument, deactivated, versionId, nextVersionId } = this.wrapDidDocument(did, address, controllerKey, history, chainId, blockTag, now);
+            const status = deactivated ? { deactivated: true } : {};
+            let versionMeta = {};
+            let versionMetaNext = {};
+            if (versionId !== 0) {
+                const block = await this.getBlockMetadata(versionId, networkId);
+                versionMeta = {
+                    versionId: block.height,
+                    updated: block.isoDate,
+                };
+            }
+            if (nextVersionId !== Number.POSITIVE_INFINITY) {
+                const block = await this.getBlockMetadata(nextVersionId, networkId);
+                versionMetaNext = {
+                    nextVersionId: block.height,
+                    nextUpdate: block.isoDate,
+                };
+            }
+            return {
+                didDocumentMetadata: { ...status, ...versionMeta, ...versionMetaNext },
+                didResolutionMetadata: { contentType: 'application/did+ld+json' },
+                didDocument,
+            };
+        }
+        catch (e) {
+            return {
+                didResolutionMetadata: {
+                    error: Errors.notFound,
+                    message: e.toString(), // This is not in spec, nut may be helpful
+                },
+                didDocumentMetadata: {},
+                didDocument: null,
+            };
+        }
+    }
+    build() {
+        return { ethr: this.resolve.bind(this) };
+    }
+}
+
+function getResolver(options) {
+    return new EthrDidMultipleRpcResolver(options).build();
+}
+class EthrDidMultipleRpcResolver {
+    constructor(options) {
+        this.options = options;
+        this.resolvers = [];
+        const providerConfs = [];
+        options.networks.forEach(conf => {
+            if (conf.rpcUrl instanceof Array) {
+                conf.rpcUrl.forEach((rpcUrl, index) => {
+                    if (providerConfs[index] === undefined)
+                        providerConfs[index] = [];
+                    providerConfs[index].push({
+                        name: conf.network,
+                        rpcUrl: rpcUrl
+                    });
+                });
+            }
+            else {
+                if (providerConfs[0] === undefined)
+                    providerConfs[0] = [];
+                providerConfs[0].push({
+                    name: conf.network,
+                    rpcUrl: conf.rpcUrl
+                });
+            }
+        });
+        providerConfs.forEach(conf => {
+            const resolver = new EthrDidResolver({
+                networks: conf
+            });
+            this.resolvers.push(resolver);
+        });
+        if (this.resolvers.length === 0) {
+            throw new Error('no networks');
+        }
+        this.networks = options.networks;
+        this.multiRpcOptions = options.multiRpcOptions ?? {};
+    }
+    async getOwner(address, networkId, blockTag) {
+        // return await this.resolvers[0].getOwner(address, networkId, blockTag)
+        return await this.multiproviderFnExec('getOwner', address, networkId, blockTag);
+    }
+    async previousChange(address, networkId, blockTag) {
+        return await this.multiproviderFnExec('previousChange', address, networkId, blockTag);
+    }
+    async getBlockMetadata(blockHeight, networkId) {
+        return await this.multiproviderFnExec('getBlockMetadata', blockHeight, networkId);
+    }
+    async changeLog(identity, networkId, blockTag) {
+        return await this.multiproviderFnExec('changeLog', identity, networkId, blockTag);
+    }
+    wrapDidDocument(did, address, controllerKey, history, chainId, blockHeight, now) {
+        return this.resolvers[0].wrapDidDocument(did, address, controllerKey, history, chainId, blockHeight, now);
+    }
+    async resolve(did, parsed, _unused, options) {
+        return await this.multiproviderFnExec('resolve', did, parsed, _unused, options);
+    }
+    build() {
+        return { ethr: this.resolve.bind(this) };
+    }
+    async multiproviderFnExec(fnName, ...args) {
+        const results = await multipleExecutions(this.multiRpcOptions, this.resolvers, fnName, ...args);
+        if (allEqual(results))
+            return results[0];
+        throw new Error('not all responses are equal, please consider removing the missbehaving/malicious RPC endpoint.');
+    }
+}
+function allEqual(arr) {
+    return arr.every(v => ___default["default"].isEqual(v, arr[0]));
+}
+
 const debug$7 = Debug__default["default"]('base-wallet:DidWalletStore');
 class DIDWalletStore extends didManager.AbstractDIDStore {
     constructor(store) {
@@ -592,39 +21901,38 @@ class KeyWalletStore extends keyManager.AbstractKeyStore {
 // Core interfaces
 const DEFAULT_PROVIDER = 'did:ethr:i3m';
 const DEFAULT_PROVIDERS_DATA = {
-    'did:ethr:rinkeby': {
-        network: 'rinkeby',
-        rpcUrl: 'https://rpc.ankr.com/eth_rinkeby'
-    },
     'did:ethr:i3m': {
         network: 'i3m',
-        rpcUrl: 'http://95.211.3.250:8545'
-    },
-    'did:ethr:ganache': {
-        network: 'ganache',
-        rpcUrl: 'http://127.0.0.1:7545'
+        rpcUrl: [
+            'http://95.211.3.244:8545',
+            'http://95.211.3.249:8545',
+            'http://95.211.3.250:8545',
+            'http://95.211.3.251:8545'
+        ]
     }
 };
 class Veramo {
     constructor(store, keyWallet, providersData) {
         this.defaultKms = 'keyWallet';
         this.providersData = providersData;
-        const ethrDidResolver$1 = ethrDidResolver.getResolver({
-            networks: Object.values(this.providersData)
-                .map(({ network, rpcUrl }) => ({
-                name: network,
-                rpcUrl
-            }))
+        const ethrDidResolver = getResolver({
+            networks: Object.values(this.providersData),
+            multiRpcOptions: {
+                successRate: 0.5
+            }
         });
         const webDidResolver$1 = webDidResolver.getResolver();
-        const resolver = new didResolver.Resolver({ ...ethrDidResolver$1, ...webDidResolver$1 });
+        const resolver = new didResolver.Resolver({ ...ethrDidResolver, ...webDidResolver$1 });
         this.providers = {
             'did:web': new didProviderWeb.WebDIDProvider({ defaultKms: this.defaultKms })
         };
         for (const [key, provider] of Object.entries(this.providersData)) {
             this.providers[key] = new didProviderEthr.EthrDIDProvider({
                 defaultKms: this.defaultKms,
-                ...provider
+                ...{
+                    ...provider,
+                    rpcUrl: (provider.rpcUrl !== undefined) ? ((typeof provider.rpcUrl === 'string') ? provider.rpcUrl : provider.rpcUrl[0]) : undefined
+                }
             });
         }
         this.agent = core.createAgent({
@@ -695,15 +22003,25 @@ class BaseWallet {
         if (transaction === undefined || !transaction.startsWith('0x')) {
             throw new WalletError(`Invalid transaction ${transaction ?? '<undefined>'}`);
         }
-        const provider = new ethers.ethers.providers.JsonRpcProvider(providerData.rpcUrl);
+        // TO-DO. FIX
+        const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl;
+        const provider = new ethers.ethers.providers.JsonRpcProvider(rpcUrl);
         const response = await provider.sendTransaction(transaction);
         if (notifyUser) {
-            const recipt = await response.wait();
-            this.toast.show({
-                message: 'Transaction properly executed!',
-                type: 'success'
+            response.wait().then(receipt => {
+                this.toast.show({
+                    message: 'Transaction properly executed',
+                    type: 'success'
+                });
+                console.log(receipt);
+            }).catch(err => {
+                const reason = err.reason ?? '';
+                this.toast.show({
+                    message: 'Error sending transaction to the ledger' + reason,
+                    type: 'error'
+                });
+                console.log(reason);
             });
-            console.log(recipt);
         }
         else {
             console.log(response);
@@ -725,7 +22043,9 @@ class BaseWallet {
         if (identity === undefined) {
             throw new WalletError('Query balance cancelled');
         }
-        const provider = new ethers.ethers.providers.JsonRpcProvider(providerData.rpcUrl);
+        // TO-DO. FIX
+        const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl;
+        const provider = new ethers.ethers.providers.JsonRpcProvider(rpcUrl);
         const address = ethers.ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`);
         const balance = await provider.getBalance(address);
         const ether = ethers.ethers.utils.formatEther(balance);
@@ -761,7 +22081,9 @@ class BaseWallet {
         if (transactionData === undefined) {
             throw new WalletError('Create transaction cancelled');
         }
-        const provider = new ethers.ethers.providers.JsonRpcProvider(providerData.rpcUrl);
+        // TO-DO. FIX
+        const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl;
+        const provider = new ethers.ethers.providers.JsonRpcProvider(rpcUrl);
         const from = ethers.ethers.utils.computeAddress(`0x${transactionData.from.keys[0].publicKeyHex}`);
         const nonce = await provider.getTransactionCount(from, 'latest');
         const gasPrice = await provider.getGasPrice();
@@ -1460,9 +22782,12 @@ class BaseWallet {
      */
     async providerinfoGet() {
         const providerData = this.veramo.providersData[this.provider];
+        // TO-DO. FIX
+        const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl;
         return {
             provider: this.provider,
-            ...providerData
+            ...providerData,
+            rpcUrl
         };
     }
 }
@@ -2323,6 +23648,8 @@ class ConsoleToast {
 
 exports.BaseWallet = BaseWallet;
 exports.ConsoleToast = ConsoleToast;
+exports.DEFAULT_PROVIDER = DEFAULT_PROVIDER;
+exports.DEFAULT_PROVIDERS_DATA = DEFAULT_PROVIDERS_DATA;
 exports.FileStore = FileStore;
 exports.NullDialog = NullDialog;
 exports.RamStore = RamStore;
@@ -2336,7 +23663,8 @@ exports.deriveKey = deriveKey;
 exports.didJwtVerify = didJwtVerify;
 exports.getCredentialClaims = getCredentialClaims;
 exports.jwkSecret = jwkSecret;
+exports.multipleExecutions = multipleExecutions;
 exports.parseAddress = parseAddress;
 exports.parseHex = parseHex;
 exports.verifyDataSharingAgreementSignature = verifyDataSharingAgreementSignature;
-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5janMiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy90cy91dGlscy9iYXNlNjR1cmwudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvandzLnRzIiwiLi4vLi4vc3JjL3RzL2Vycm9ycy50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS9rZXlQYWlyLXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy91dGlscy9jcmVkZW50aWFsLWNsYWltcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9kaWQtand0LXZlcmlmeS50cyIsIi4uLy4uL3NyYy90cy91dGlscy9kYXRhLXNoYXJpbmctYWdyZWVtZW50LXZhbGlkYXRpb24udHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvZ2VuZXJhdGUtc2VjcmV0LnRzIiwiLi4vLi4vc3JjL3RzL3V0aWxzL3BhcnNlQWRkcmVzcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUhleC50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS9jb250cmFjdC12YWxpZGF0b3IudHMiLCIuLi8uLi9zcmMvdHMvcmVzb3VyY2UvZGF0YUV4Y2hhbmdlLXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS9ucnAtdmFsaWRhdG9yLnRzIiwiLi4vLi4vc3JjL3RzL3Jlc291cmNlL29iamVjdC12YWxpZGF0b3IudHMiLCIuLi8uLi9zcmMvdHMvcmVzb3VyY2UvdmMtdmFsaWRhdG9yLnRzIiwiLi4vLi4vc3JjL3RzL3Jlc291cmNlL3Jlc291cmNlLXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy91dGlscy9kaXNwbGF5LWRpZC50cyIsIi4uLy4uL3NyYy90cy92ZXJhbW8vZGlkLXdhbGxldC1zdG9yZS50cyIsIi4uLy4uL3NyYy90cy92ZXJhbW8va2V5LXdhbGxldC1tYW5hZ2VtZW50LXN5c3RlbS50cyIsIi4uLy4uL3NyYy90cy92ZXJhbW8va2V5LXdhbGxldC1zdG9yZS50cyIsIi4uLy4uL3NyYy90cy92ZXJhbW8vdmVyYW1vLnRzIiwiLi4vLi4vc3JjL3RzL3dhbGxldC9iYXNlLXdhbGxldC50cyIsIi4uLy4uL3NyYy90cy90ZXN0L2RpYWxvZy50cyIsIi4uLy4uL25vZGVfbW9kdWxlcy9ldmVudHMvZXZlbnRzLmpzIiwiLi4vLi4vc3JjL3RzL2ltcGwvc3RvcmVzL2ZpbGUtc3RvcmUudHMiLCIuLi8uLi9zcmMvdHMvaW1wbC9zdG9yZXMvcmFtLXN0b3JlLnRzIiwiLi4vLi4vc3JjL3RzL3Rlc3QvdG9hc3QudHMiLCIuLi8uLi9zcmMvdHMvaW1wbC9kaWFsb2dzL251bGwtZGlhbG9nLnRzIiwiLi4vLi4vc3JjL3RzL2ltcGwvdG9hc3QvY29uc29sZS10b2FzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6bnVsbCwibmFtZXMiOlsiYmFzZTY0dXJsIiwidmVyaWZ5S2V5UGFpciIsInBhcnNlSndrIiwiZGlnZXN0IiwiXyIsInZlcmlmeUpXVCIsImNyeXB0byIsInV1aWR2NCIsImV0aGVycyIsInZhbGlkYXRlRGF0YVNoYXJpbmdBZ3JlZW1lbnRTY2hlbWEiLCJ2YWxpZGF0ZURhdGFFeGNoYW5nZUFncmVlbWVudCIsImRlYnVnIiwiRGVidWciLCJqd3NEZWNvZGUiLCJ2YWxpZGF0ZURhdGFFeGNoYW5nZSIsIkFic3RyYWN0RElEU3RvcmUiLCJBYnN0cmFjdEtleU1hbmFnZW1lbnRTeXN0ZW0iLCJ1OGEiLCJBYnN0cmFjdEtleVN0b3JlIiwidXRpbHMiLCJldGhyRGlkUmVzb2x2ZXIiLCJldGhyRGlkR2V0UmVzb2x2ZXIiLCJ3ZWJEaWRSZXNvbHZlciIsIndlYkRpZEdldFJlc29sdmVyIiwiUmVzb2x2ZXIiLCJXZWJESURQcm92aWRlciIsIkV0aHJESURQcm92aWRlciIsImNyZWF0ZUFnZW50IiwiS2V5TWFuYWdlciIsIkRJRE1hbmFnZXIiLCJDcmVkZW50aWFsSXNzdWVyIiwiU2VsZWN0aXZlRGlzY2xvc3VyZSIsIk1lc3NhZ2VIYW5kbGVyIiwiSnd0TWVzc2FnZUhhbmRsZXIiLCJTZHJNZXNzYWdlSGFuZGxlciIsIlczY01lc3NhZ2VIYW5kbGVyIiwiRElEUmVzb2x2ZXJQbHVnaW4iLCJ1dWlkIiwiZXhjaGFuZ2VJZCIsImRpZEp3dFZlcmlmeUZuIiwiZXZlbnRzTW9kdWxlIiwiZXZlbnRzIiwiRXZlbnRFbWl0dGVyIiwiS2V5T2JqZWN0IiwibWtkaXIiLCJkaXJuYW1lIiwicmFuZG9tQnl0ZXMiLCJyZWFkRmlsZVN5bmMiLCJ3cml0ZUZpbGVTeW5jIiwiY3JlYXRlQ2lwaGVyaXYiLCJjcmVhdGVEZWNpcGhlcml2Iiwicm0iLCJzY3J5cHQiLCJjcmVhdGVTZWNyZXRLZXkiXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSxNQUFNLE1BQU0sR0FBRyxDQUFDLEdBQVcsS0FBWTtJQUNyQyxPQUFPLEdBQUcsQ0FBQyxRQUFRLENBQUMsUUFBUSxDQUFDLENBQUMsT0FBTyxDQUFDLElBQUksRUFBRSxFQUFFLENBQUMsQ0FBQyxPQUFPLENBQUMsS0FBSyxFQUFFLEdBQUcsQ0FBQyxDQUFDLE9BQU8sQ0FBQyxLQUFLLEVBQUUsR0FBRyxDQUFDLENBQUE7QUFDekYsQ0FBQyxDQUFBO0FBRUQsTUFBTSxNQUFNLEdBQUcsQ0FBQyxHQUFXLEtBQVk7SUFDckMsT0FBTyxNQUFNLENBQUMsSUFBSSxDQUFDLEdBQUcsRUFBRSxRQUFRLENBQUMsQ0FBQTtBQUNuQyxDQUFDLENBQUE7QUFFRCxnQkFBZTtJQUNiLE1BQU07SUFDTixNQUFNO0NBQ1A7O0FDRkQ7Ozs7Ozs7QUFPRztTQUNhLFlBQVksQ0FBRSxNQUFjLEVBQUUsT0FBZSxFQUFFLFFBQXlCLEVBQUE7SUFDdEYsTUFBTSxhQUFhLEdBQUdBLFNBQVMsQ0FBQyxNQUFNLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLE1BQU0sQ0FBQyxFQUFFLFFBQVEsQ0FBQyxDQUFDLENBQUE7SUFDckYsTUFBTSxjQUFjLEdBQUdBLFNBQVMsQ0FBQyxNQUFNLENBQUMsTUFBTSxDQUFDLElBQUksQ0FB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
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXgubm9kZS5janMiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy90cy91dGlscy9iYXNlNjR1cmwudHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvandzLnRzIiwiLi4vLi4vc3JjL3RzL2Vycm9ycy50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS9rZXlQYWlyLXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy91dGlscy9jcmVkZW50aWFsLWNsYWltcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9kaWQtand0LXZlcmlmeS50cyIsIi4uLy4uL3NyYy90cy91dGlscy9kYXRhLXNoYXJpbmctYWdyZWVtZW50LXZhbGlkYXRpb24udHMiLCIuLi8uLi9zcmMvdHMvdXRpbHMvZ2VuZXJhdGUtc2VjcmV0LnRzIiwiLi4vLi4vc3JjL3RzL3V0aWxzL3BhcnNlQWRkcmVzcy50cyIsIi4uLy4uL3NyYy90cy91dGlscy9wYXJzZUhleC50cyIsIi4uLy4uL3NyYy90cy91dGlscy9tdWx0aXBsZS1leGVjdXRpb25zLnRzIiwiLi4vLi4vc3JjL3RzL3Jlc291cmNlL2NvbnRyYWN0LXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS9kYXRhRXhjaGFuZ2UtdmFsaWRhdG9yLnRzIiwiLi4vLi4vc3JjL3RzL3Jlc291cmNlL25ycC12YWxpZGF0b3IudHMiLCIuLi8uLi9zcmMvdHMvcmVzb3VyY2Uvb2JqZWN0LXZhbGlkYXRvci50cyIsIi4uLy4uL3NyYy90cy9yZXNvdXJjZS92Yy12YWxpZGF0b3IudHMiLCIuLi8uLi9zcmMvdHMvcmVzb3VyY2UvcmVzb3VyY2UtdmFsaWRhdG9yLnRzIiwiLi4vLi4vc3JjL3RzL3V0aWxzL2Rpc3BsYXktZGlkLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmFtby9ldGhyLWRpZC1yZXNvbHZlcl9ETy1OT1QtRURJVC9oZWxwZXJzLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmFtby9ldGhyLWRpZC1yZXNvbHZlcl9ETy1OT1QtRURJVC9jb25maWd1cmF0aW9uLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmFtby9ldGhyLWRpZC1yZXNvbHZlcl9ETy1OT1QtRURJVC9jb250cm9sbGVyLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmFtby9ldGhyLWRpZC1yZXNvbHZlcl9ETy1OT1QtRURJVC9sb2dQYXJzZXIudHMiLCIuLi8uLi9zcmMvdHMvdmVyYW1vL2V0aHItZGlkLXJlc29sdmVyX0RPLU5PVC1FRElUL3Jlc29sdmVyLnRzIiwiLi4vLi4vc3JjL3RzL3ZlcmFtby9ldGhyLWRpZC1tdWx0aXBsZS1ycGMtcHJvdmlkZXIudHMiLCIuLi8uLi9zcmMvdHMvdmVyYW1vL2RpZC13YWxsZXQtc3RvcmUudHMiLCIuLi8uLi9zcmMvdHMvdmVyYW1vL2tleS13YWxsZXQtbWFuYWdlbWVudC1zeXN0ZW0udHMiLCIuLi8uLi9zcmMvdHMvdmVyYW1vL2tleS13YWxsZXQtc3RvcmUudHMiLCIuLi8uLi9zcmMvdHMvdmVyYW1vL3ZlcmFtby50cyIsIi4uLy4uL3NyYy90cy93YWxsZXQvYmFzZS13YWxsZXQudHMiLCIuLi8uLi9zcmMvdHMvdGVzdC9kaWFsb2cudHMiLCIuLi8uLi9ub2RlX21vZHVsZXMvZXZlbnRzL2V2ZW50cy5qcyIsIi4uLy4uL3NyYy90cy9pbXBsL3N0b3Jlcy9maWxlLXN0b3JlLnRzIiwiLi4vLi4vc3JjL3RzL2ltcGwvc3RvcmVzL3JhbS1zdG9yZS50cyIsIi4uLy4uL3NyYy90cy90ZXN0L3RvYXN0LnRzIiwiLi4vLi4vc3JjL3RzL2ltcGwvZGlhbG9ncy9udWxsLWRpYWxvZy50cyIsIi4uLy4uL3NyYy90cy9pbXBsL3RvYXN0L2NvbnNvbGUtdG9hc3QudHMiXSwic291cmNlc0NvbnRlbnQiOm51bGwsIm5hbWVzIjpbImJhc2U2NHVybCIsInZlcmlmeUtleVBhaXIiLCJwYXJzZUp3ayIsImRpZ2VzdCIsIl8iLCJ2ZXJpZnlKV1QiLCJjcnlwdG8iLCJ1dWlkdjQiLCJldGhlcnMiLCJkZWJ1ZyIsIkRlYnVnIiwiYmFzZW5hbWUiLCJPYnNlcnZhYmxlIiwiYnVmZmVyQ291bnQiLCJ0aW1lb3V0IiwidmFsaWRhdGVEYXRhU2hhcmluZ0FncmVlbWVudFNjaGVtYSIsInZhbGlkYXRlRGF0YUV4Y2hhbmdlQWdyZWVtZW50IiwiandzRGVjb2RlIiwidmFsaWRhdGVEYXRhRXhjaGFuZ2UiLCJjb21wdXRlQWRkcmVzcyIsImdldEFkZHJlc3MiLCJJbmZ1cmFQcm92aWRlciIsIkJpZ051bWJlciIsIkpzb25ScGNQcm92aWRlciIsIkNvbnRyYWN0RmFjdG9yeSIsIkJhc2U1OCIsInFzIiwiQWJzdHJhY3RESURTdG9yZSIsIkFic3RyYWN0S2V5TWFuYWdlbWVudFN5c3RlbSIsInU4YSIsIkFic3RyYWN0S2V5U3RvcmUiLCJ1dGlscyIsImV0aHJEaWRNdWx0aXBsZVJwY0dldFJlc29sdmVyIiwid2ViRGlkUmVzb2x2ZXIiLCJ3ZWJEaWRHZXRSZXNvbHZlciIsIlJlc29sdmVyIiwiV2ViRElEUHJvdmlkZXIiLCJFdGhyRElEUHJvdmlkZXIiLCJjcmVhdGVBZ2VudCIsIktleU1hbmFnZXIiLCJESURNYW5hZ2VyIiwiQ3JlZGVudGlhbElzc3VlciIsIlNlbGVjdGl2ZURpc2Nsb3N1cmUiLCJNZXNzYWdlSGFuZGxlciIsIkp3dE1lc3NhZ2VIYW5kbGVyIiwiU2RyTWVzc2FnZUhhbmRsZXIiLCJXM2NNZXNzYWdlSGFuZGxlciIsIkRJRFJlc29sdmVyUGx1Z2luIiwidXVpZCIsImV4Y2hhbmdlSWQiLCJkaWRKd3RWZXJpZnlGbiIsImV2ZW50c01vZHVsZSIsImV2ZW50cyIsIkV2ZW50RW1pdHRlciIsIktleU9iamVjdCIsIm1rZGlyIiwiZGlybmFtZSIsInJhbmRvbUJ5dGVzIiwicmVhZEZpbGVTeW5jIiwid3JpdGVGaWxlU3luYyIsImNyZWF0ZUNpcGhlcml2IiwiY3JlYXRlRGVjaXBoZXJpdiIsInJtIiwic2NyeXB0IiwiY3JlYXRlU2VjcmV0S2V5Il0sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7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Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7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

@@ -3,7 +3,7 @@ import { IMessage, VerifiablePresentation } from '@veramo/core';
 import { BaseWalletModel, Dialog, Identity, Store, Toast } from '../app';
 import { KeyWallet } from '../keywallet';
 import { ResourceValidator } from '../resource';
-import Veramo, { ProviderData } from '../veramo';
+import { Veramo, ProviderData } from '../veramo';
 import { Wallet } from './wallet';
 import { WalletFunctionMetadata } from './wallet-metadata';
 import { WalletOptions } from './wallet-options';

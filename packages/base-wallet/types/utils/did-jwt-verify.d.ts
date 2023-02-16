@@ -1,4 +1,4 @@
-import Veramo from '../veramo';
+import { Veramo } from '../veramo';
 import { WalletPaths } from '@i3m/wallet-desktop-openapi/types';
 /**
    * Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.

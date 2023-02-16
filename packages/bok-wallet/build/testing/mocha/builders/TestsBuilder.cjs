@@ -81,7 +81,6 @@ class TestsBuilder extends Builder {
     if (this.commonjs) {
       tsConfig.compilerOptions.module = 'commonjs'
     }
-    // "noResolve": true
     // tsConfig.compilerOptions.noResolve = true
 
     // we don't need declaration files

@@ -6,4 +6,5 @@ export * from './generate-secret';
 export * from './parseAddress';
 export * from './parseHex';
 export * from './types';
+export * from './multiple-executions';
 //# sourceMappingURL=index.d.ts.map

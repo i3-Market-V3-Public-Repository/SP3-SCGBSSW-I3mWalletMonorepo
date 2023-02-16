@@ -14,7 +14,7 @@ export interface ServerWallet extends BokWallet {
 export interface ServerWalletOptions {
   filepath?: string
   password?: string
-  provider?: string
+  provider?: BokWalletOptions['provider']
   providerData?: BokWalletOptions['providersData']
   reset?: boolean
 }

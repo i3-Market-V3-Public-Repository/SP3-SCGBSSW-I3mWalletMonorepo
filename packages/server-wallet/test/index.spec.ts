@@ -22,14 +22,16 @@ describe('@i3m/server-wallet', function () {
     wallet = await serverWalletBuilder({
       password: 'aestqwerwwec42134642ewdqcAADFEe&/1',
       reset: true,
-      filepath: join(homedir(), '.server-wallet', 'testStore'),
-      provider: 'did:ethr:i3m',
-      providerData: {
-        'did:ethr:i3m': {
-          network: 'i3m',
-          rpcUrl: 'http://95.211.3.249:8545'
-        }
-      }
+      filepath: join(homedir(), '.server-wallet', 'testStore')
+      // provider: 'did:ethr:i3m',
+      // providerData: {
+      //   'did:ethr:i3m': {
+      //     network: 'i3m',
+      //     // rpcUrl: ['http://95.211.3.249:8545', 'http://95.211.3.250:8545']
+      //     // rpcUrl: ['http://95.215.3.249:8545', 'http://87.211.3.249:8545', 'http://95.211.3.249:8545', 'http://95.211.3.250:8545'] // the two first are not RPC endpoints
+      //     rpcUrl: ['http://95.215.3.249:8545', 'http://87.211.3.249:8545', 'http://95.211.3.249:8545'] // the two first are not RPC endpoints
+      //   }
+      // }
     })
   })
 

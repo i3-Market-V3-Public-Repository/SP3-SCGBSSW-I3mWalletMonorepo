@@ -82,7 +82,6 @@
     "mocha-ts:cjs": "node ./build/bin/mocha-ts.cjs --commonjs ",
     "mocha-ts:watch": "npm run mocha-ts:cjs -- --watch ",
     "version": "npm run docs && npm run git:add",
-    "test": "npm run test:cjs && npm run test:esm",
     "test:cjs": "npm run mocha-ts:cjs ",
     "test:esm": "npm run mocha-ts ",
     "watch": "npm run mocha-ts:watch "

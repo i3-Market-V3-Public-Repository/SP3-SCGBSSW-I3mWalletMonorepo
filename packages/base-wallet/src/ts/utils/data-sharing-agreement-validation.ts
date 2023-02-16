@@ -1,7 +1,7 @@
 import { WalletPaths } from '@i3m/wallet-desktop-openapi/types'
 import { BaseWalletModel, ContractResource } from '../app'
 import { didJwtVerify } from '../utils/did-jwt-verify'
-import Veramo from '../veramo'
+import { Veramo } from '../veramo'
 
 export async function verifyDataSharingAgreementSignature (agreement: ContractResource['resource']['dataSharingAgreement'], veramo: Veramo<BaseWalletModel>, signer: 'provider' | 'consumer'): Promise<Error[]> {
   const errors: Error[] = []

@@ -15,7 +15,7 @@ import { ResourceValidator } from '../resource'
 import { getCredentialClaims } from '../utils'
 import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
-import Veramo, { DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
+import { Veramo, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
 
 import { exchangeId, NrProofPayload } from '@i3m/non-repudiation-library'
 import Debug from 'debug'
@@ -114,15 +114,25 @@ export class BaseWallet<
       throw new WalletError(`Invalid transaction ${transaction ?? '<undefined>'}`)
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    // TO-DO. FIX
+    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     const response = await provider.sendTransaction(transaction)
     if (notifyUser) {
-      const recipt = await response.wait()
-      this.toast.show({
-        message: 'Transaction properly executed!',
-        type: 'success'
+      response.wait().then(receipt => {
+        this.toast.show({
+          message: 'Transaction properly executed',
+          type: 'success'
+        })
+        console.log(receipt)
+      }).catch(err => {
+        const reason: string = err.reason ?? ''
+        this.toast.show({
+          message: 'Error sending transaction to the ledger' + reason,
+          type: 'error'
+        })
+        console.log(reason)
       })
-      console.log(recipt)
     } else {
       console.log(response)
     }
@@ -146,7 +156,9 @@ export class BaseWallet<
       throw new WalletError('Query balance cancelled')
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    // TO-DO. FIX
+    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
     const balance = await provider.getBalance(address)
     const ether = ethers.utils.formatEther(balance)
@@ -186,7 +198,9 @@ export class BaseWallet<
       throw new WalletError('Create transaction cancelled')
     }
 
-    const provider = new ethers.providers.JsonRpcProvider(providerData.rpcUrl)
+    // TO-DO. FIX
+    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
     const from = ethers.utils.computeAddress(`0x${transactionData.from.keys[0].publicKeyHex}`)
     const nonce = await provider.getTransactionCount(from, 'latest')
     const gasPrice = await provider.getGasPrice()
@@ -943,9 +957,13 @@ export class BaseWallet<
    */
   async providerinfoGet (): Promise<WalletPaths.ProviderinfoGet.Responses.$200> {
     const providerData = this.veramo.providersData[this.provider]
+    // TO-DO. FIX
+    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
+
     return {
       provider: this.provider,
-      ...providerData
+      ...providerData,
+      rpcUrl
     }
   }
 }

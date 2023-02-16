@@ -17,7 +17,7 @@ import { BaseWalletModel, Store } from '../app'
 //
 import { DIDResolverPlugin } from '@veramo/did-resolver'
 import { Resolver } from 'did-resolver'
-import { getResolver as ethrDidGetResolver } from 'ethr-did-resolver'
+import { getResolver as ethrDidMultipleRpcGetResolver } from './ethr-did-multiple-rpc-provider'
 import { getResolver as webDidGetResolver } from 'web-did-resolver'
 
 // SDR
@@ -36,25 +36,31 @@ type PluginMap =
   IDIDManager & IKeyManager & IResolver & IMessageHandler &
   ISelectiveDisclosure & ICredentialIssuer
 
-export type ProviderData = Omit<ConstructorParameters<typeof EthrDIDProvider>[0], 'defaultKms'>
+// export type ProviderData = Omit<ConstructorParameters<typeof EthrDIDProvider>[0], 'defaultKms'>
+
+export interface ProviderData {
+  network: string
+  rpcUrl?: string | string[]
+  web3Provider?: object
+  ttl?: number
+  gas?: number
+  registry?: string
+}
 
 export const DEFAULT_PROVIDER = 'did:ethr:i3m'
 export const DEFAULT_PROVIDERS_DATA = {
-  'did:ethr:rinkeby': {
-    network: 'rinkeby',
-    rpcUrl: 'https://rpc.ankr.com/eth_rinkeby'
-  },
   'did:ethr:i3m': {
     network: 'i3m',
-    rpcUrl: 'http://95.211.3.250:8545'
-  },
-  'did:ethr:ganache': {
-    network: 'ganache',
-    rpcUrl: 'http://127.0.0.1:7545'
+    rpcUrl: [
+      'http://95.211.3.244:8545',
+      'http://95.211.3.249:8545',
+      'http://95.211.3.250:8545',
+      'http://95.211.3.251:8545'
+    ]
   }
 }
 
-export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
+export class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   public agent: TAgent<PluginMap>
   public providers: Record<string, AbstractIdentifierProvider>
   public defaultKms = 'keyWallet'
@@ -63,12 +69,11 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
   constructor (store: Store<T>, keyWallet: KeyWallet, providersData: Record<string, ProviderData>) {
     this.providersData = providersData
 
-    const ethrDidResolver = ethrDidGetResolver({
-      networks: Object.values(this.providersData)
-        .map(({ network, rpcUrl }) => ({
-          name: network,
-          rpcUrl
-        }))
+    const ethrDidResolver = ethrDidMultipleRpcGetResolver({
+      networks: Object.values(this.providersData),
+      multiRpcOptions: {
+        successRate: 0.5
+      }
     })
 
     const webDidResolver = webDidGetResolver()
@@ -81,7 +86,10 @@ export default class Veramo<T extends BaseWalletModel = BaseWalletModel> {
     for (const [key, provider] of Object.entries(this.providersData)) {
       this.providers[key] = new EthrDIDProvider({
         defaultKms: this.defaultKms,
-        ...provider
+        ...{
+          ...provider,
+          rpcUrl: (provider.rpcUrl !== undefined) ? ((typeof provider.rpcUrl === 'string') ? provider.rpcUrl : provider.rpcUrl[0]) : undefined
+        }
       })
     }
 

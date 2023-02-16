@@ -53,6 +53,7 @@
     "build": "npm run lint && npm run build:iwallet && npm run build:js && npm run docs",
     "prebuild:iwallet": "tsc --esModuleInterop --resolveJsonModule prebuild/walletInterface.cts",
     "build:iwallet": "node prebuild/walletInterface.cjs",
+    "prebuild:js": "cp -r node_modules/ethr-did-resolver/src/*.ts src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/",
     "build:js": "rollup -c build/rollup.config.js",
     "clean": "rimraf .mocha-ts coverage dist types docs",
     "coverage": "c8 --clean --check-coverage --exclude '{src/ts/**/*.spec.ts,test,test-vectors,build}' --exclude-after-remap --reporter=text --reporter=lcov node ./build/bin/mocha-ts.cjs --commonjs ",
@@ -90,7 +91,8 @@
       "types/**/*",
       "benchmark/**/*",
       "build/testing/mocha/mocha-init.js",
-      "prebuild/walletInterface.cjs"
+      "prebuild/walletInterface.cjs",
+      "src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/**/*"
     ]
   },
   "devDependencies": {
@@ -143,6 +145,7 @@
     "ethr-did-resolver": "^4.3.3",
     "lodash": "^4.17.21",
     "object-sha": "^2.0.7",
+    "rxjs": "^7.8.0",
     "uuid": "^8.3.2",
     "web-did-resolver": "^2.0.4"
   }

@@ -5,5 +5,5 @@ export * from './utils';
 export * from './test';
 export * from './errors';
 export * from './impl';
-export { default as Veramo, ProviderData } from './veramo';
+export * from './veramo';
 //# sourceMappingURL=index.d.ts.map

@@ -1,5 +1,5 @@
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
-import Veramo from '../veramo'
+import { Veramo } from '../veramo'
 import { keyPairValidator } from './keyPair-validator'
 import { contractValidator } from './contract-validator'
 import { dataExchangeValidator } from './dataExchange-validator'

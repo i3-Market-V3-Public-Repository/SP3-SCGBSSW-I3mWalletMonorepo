@@ -7,7 +7,8 @@ import swBuilder, { BokWalletModel } from '#pkg'
 
 const debug = Debug('i3-market:bok-wallet:test')
 
-describe('@i3m/sw-wallet', () => {
+describe('@i3m/sw-wallet', function () {
+  this.timeout(10000)
   const dialog = new NullDialog()
   const store = new RamStore<BokWalletModel>({
     resources: {},

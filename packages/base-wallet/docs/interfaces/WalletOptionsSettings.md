@@ -24,7 +24,7 @@
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/wallet/wallet-options.ts#L9)
+[src/ts/wallet/wallet-options.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/src/ts/wallet/wallet-options.ts#L9)
 
 ___
 
@@ -34,17 +34,17 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/wallet/wallet-options.ts#L12)
+[src/ts/wallet/wallet-options.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/src/ts/wallet/wallet-options.ts#L12)
 
 ___
 
 ### providersData
 
-• `Optional` **providersData**: `Record`<`string`, [`ProviderData`](../API.md#providerdata)\>
+• `Optional` **providersData**: `Record`<`string`, [`ProviderData`](ProviderData.md)\>
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/wallet/wallet-options.ts#L13)
+[src/ts/wallet/wallet-options.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/src/ts/wallet/wallet-options.ts#L13)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/wallet/wallet-options.ts#L10)
+[src/ts/wallet/wallet-options.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/src/ts/wallet/wallet-options.ts#L10)
 
 ___
 
@@ -64,4 +64,4 @@ ___
 
 #### Defined in
 
-[src/ts/wallet/wallet-options.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5a72ec4/packages/base-wallet/src/ts/wallet/wallet-options.ts#L11)
+[src/ts/wallet/wallet-options.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/src/ts/wallet/wallet-options.ts#L11)
