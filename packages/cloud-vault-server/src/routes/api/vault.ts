@@ -154,7 +154,8 @@ export default function (router: Router): void {
         const token = jwtSign({
           username
         }, jwt.secret, {
-          algorithm: jwt.alg
+          algorithm: jwt.alg,
+          expiresIn: jwt.expiresIn
         })
         res.status(200).json({
           token

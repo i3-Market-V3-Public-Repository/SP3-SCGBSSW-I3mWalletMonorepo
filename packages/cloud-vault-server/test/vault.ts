@@ -104,6 +104,7 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
     expect(res).to.have.status(200)
     expect(res.body.token).to.not.be.undefined
     token = res.body.token
+    console.log(token)
   })
 
   describe(`Testing /api/${apiVersion}/vault/events`, function () {

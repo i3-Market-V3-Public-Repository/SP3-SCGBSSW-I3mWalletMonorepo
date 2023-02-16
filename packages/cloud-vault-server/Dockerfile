@@ -8,10 +8,6 @@ FROM node:18-alpine
 # VERSION can be used to build docker with a specific NPM version of the @i3m/cloud-vault-server
 ARG VERSION=${VERSION:-latest}
 
-ENV NODE_ENV=${NODE_ENV:-production}
-
-ENV CORS_ACCESS_CONTROL_ALLOW_ORIGIN=${CORS_ACCESS_CONTROL_ALLOW_ORIGIN:-*}
-
 WORKDIR /app
 
 RUN chown node.node /app &&\
