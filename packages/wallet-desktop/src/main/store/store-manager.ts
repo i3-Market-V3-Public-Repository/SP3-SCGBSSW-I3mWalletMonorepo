@@ -1,45 +1,30 @@
 import { app } from 'electron'
-import { promises as fs, rmSync, existsSync } from 'fs'
+import { existsSync, promises as fs, rmSync } from 'fs'
 import _ from 'lodash'
 import path from 'path'
 
 import { Store } from '@i3m/base-wallet'
 import {
   createDefaultPrivateSettings,
-  PrivateSettings,
-  PublicSettings,
   StoreSettings,
   StoreType,
   WalletInfo
 } from '@wallet/lib'
 import {
   EncryptionKeys,
+  handleError,
   Locals,
   logger,
   MainContext,
   PublicSettingsOptions,
   softwareVersion,
-  StoreFeatureOptions,
-  StoreModel,
-  WalletDesktopError,
+  StoreFeatureOptions, WalletDesktopError,
   WalletStoreOptions
 } from '@wallet/main/internal'
 import { currentStoreType, getPath, loadStoreBuilder, StoreOptions } from './builders'
 import { StoreBuilder } from './migration'
-
-export interface StoreClasses {
-  wallet: [
-    walletName: string
-  ]
-  'public-settings': never
-  'private-settings': never
-}
-export interface StoreModels {
-  wallet: StoreModel
-  'public-settings': PublicSettings
-  'private-settings': PrivateSettings
-}
-export type StoreClass = keyof StoreClasses
+import { StoreClass, StoreClasses, StoreModels } from './store-class'
+import { StoreBundleData, StoreMetadata, StoresBundle } from './store-bundle'
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = {
   type: 'electron-store'
@@ -158,9 +143,9 @@ export class StoreManager {
 
   protected getStoreId <T extends StoreClass>(type: T, ...args: StoreClasses[T]): string {
     if (type === 'wallet') {
-      return `wallet-${args[0]}`
+      return `wallet$$${args[0]}`
     } else {
-      return type
+      return `${type}$$`
     }
   }
 
@@ -170,6 +155,18 @@ export class StoreManager {
       throw new WalletDesktopError(`The store '${storeId}' is not initialized yet.`)
     }
     return store
+  }
+
+  public deconstructId <T extends StoreClass>(storeId: string): [type: T, ...args: StoreClasses[T]] {
+    // type: T, ...args: StoreClasses[T]
+    const regex = /([^$]+)\$\$(.+)?/
+    const match = storeId.match(regex)
+    if (match === null) {
+      throw new WalletDesktopError(`Invalid store id '${storeId}'`)
+    }
+
+    const [ , ...storeData] = match
+    return storeData as any
   }
 
   public setStoreById <T extends StoreClass>(store: Store<StoreModels[T]>, storeId: string): void {
@@ -254,7 +251,47 @@ export class StoreManager {
     this.setStoreById(newStore, optionsBuilder.id)
   }
 
-  public onStoreChange (store: Store<any>): void {
+  protected async bundleStores (): Promise<StoresBundle> {
+    const { versionManager } = this.locals
+    const storesBundle: StoresBundle = {
+      version: versionManager.softwareVersion,
+      stores: {}
+    }
+    for (const [storeId, store] of Object.entries(this.stores)) {
+      let metadata: StoreMetadata
+      const [type, ...args] = this.deconstructId(storeId)
+      if (type === 'wallet') {
+        metadata = { type, walletName: args[0] }
+      } else if (type === 'private-settings') {
+        metadata = { type }
+      } else {
+        // Skip other stores
+        continue
+      }
+
+      const storeBundle: StoreBundleData<any> = {
+        metadata,
+        data: await store.getStore()
+      }
+      storesBundle.stores[storeId] = storeBundle
+    }
+    return storesBundle
+  }
+
+  protected async synchronizeStores (): Promise<void> {
+    const { sharedMemoryManager: sh } = this.locals
+    if (sh.memory.settings.cloud === undefined) {
+      return
+    }
+
+    const bundle = await this.bundleStores()
+    console.log(bundle.stores)
+  }
+
+  public onStoreChange <T extends StoreClasses>(store: Store<any>): void {
     logger.debug(`The store has been changed ${store.getPath()}`)
+    this
+      .synchronizeStores()
+      .catch(...handleError(this.locals))
   }
 }
