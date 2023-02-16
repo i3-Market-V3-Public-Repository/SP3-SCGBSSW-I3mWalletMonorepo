@@ -18,8 +18,8 @@ export class CloudVaultManager {
   constructor (protected locals: Locals) { }
 
   async initialize (): Promise<void> {
-    const { settings } = this.locals
-    const cloud = await settings.get('cloud')
+    const privateSettings = this.locals.storeManager.getStore('private-settings')
+    const cloud = await privateSettings.get('cloud')
 
     const client = new VaultClient(CLOUD_URL, cloud?.token)
     client.on('connected', (t) => {
@@ -61,10 +61,12 @@ export class CloudVaultManager {
       await this.client.login(loginData.username, loginData.password)
       sharedMemoryManager.update(mem => ({
         ...mem,
+        cloudVaultData: {
+          state: 'in-progress'
+        },
         settings: {
           ...mem.settings,
           cloud: {
-            state: 'in-progress',
             token: this.client.token as string
           }
         }
@@ -120,7 +122,7 @@ export class CloudVaultManager {
     }))
   }
 
-  async registerUser (loginData: LoginData, task: LabeledTaskHandler) {
+  async registerUser (loginData: LoginData, task: LabeledTaskHandler): Promise<void> {
     const { dialog } = this.locals
     const errorMessage = 'Vault user registration error'
 

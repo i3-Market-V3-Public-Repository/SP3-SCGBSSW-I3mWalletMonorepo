@@ -64,7 +64,8 @@ export class Pbkdf2EncKeys implements EncryptionKeys {
   }
 
   async storeSettings (locals: Locals, keyCtx: KeyContext): Promise<void> {
-    await locals.publicSettings.set('enc', {
+    const publicSettings = locals.storeManager.getStore('public-settings')
+    await publicSettings.set('enc', {
       algorithm: 'pbkdf.2',
       salt: this.salt.toString('base64')
     })

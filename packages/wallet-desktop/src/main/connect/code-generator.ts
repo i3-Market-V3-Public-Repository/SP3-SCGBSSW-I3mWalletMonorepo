@@ -6,7 +6,8 @@ export class JwtCodeGenerator implements CodeGenerator {
   constructor (protected key: KeyLike | Uint8Array, protected locals: Locals) { }
 
   async generate (masterKey: MasterKey): Promise<Uint8Array> {
-    const { settings } = this.locals
+    const { storeManager } = this.locals
+    const privateSettings = storeManager.getStore('private-settings')
     const payload = masterKey.toJSON()
     const iat = Math.trunc(new Date().getTime() / 1000)
     const token = new EncryptJWT(payload)
@@ -16,7 +17,7 @@ export class JwtCodeGenerator implements CodeGenerator {
       .setSubject(masterKey.to.name)
       .setIssuedAt(iat)
 
-    const connect = await settings.get('connect')
+    const connect = await privateSettings.get('connect')
     if (connect.enableTokenExpiration) {
       const exp = iat + connect.tokenTTL
       token.setExpirationTime(exp)

@@ -54,7 +54,8 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
       salt: this.salt.toString('base64'),
       localAuth: this.localAuth.export().toString('base64')
     }
-    await locals.publicSettings.set('auth', auth)
+    const publicSettings = locals.storeManager.getStore('public-settings')
+    await publicSettings.set('auth', auth)
   }
 
   async migrationNeeded (): Promise<boolean> {

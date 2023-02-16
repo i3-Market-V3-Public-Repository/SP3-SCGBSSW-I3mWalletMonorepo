@@ -29,7 +29,7 @@ export function CloudVault (): JSX.Element | null {
 
   return (
     <StatusBarItem onClick={onClick}>
-      <FontAwesomeIcon icon={icon} className='icon'/>
+      <FontAwesomeIcon icon={icon} className='icon' />
       <span>{title}</span>
     </StatusBarItem>
   )

@@ -1,5 +1,5 @@
 import { StoreType } from '@wallet/lib'
-import { EncryptionKeys } from '@wallet/main/internal'
+import { EncryptionKeys, StoreOptions } from '@wallet/main/internal'
 
 export interface StoreMigration {
   cwd?: string
@@ -15,6 +15,11 @@ export interface StoreMigrationProxy {
   to: StoreMigration
 
   migrations: MigrationFunction[]
+}
+
+export interface StoreBuilder<T = any> {
+  id: string
+  options: (migration: StoreMigration) => Promise<Partial<StoreOptions<T>>>
 }
 
 export const createStoreMigrationProxy = (): StoreMigrationProxy => {

@@ -7,3 +7,5 @@ export type WalletStoreOptions = StoreOptions<StoreModel>
 export interface FeatureContext {
   store?: WalletStore
 }
+export type FeatureType = keyof FeatureContext
+export type FeatureForType<T extends FeatureType = FeatureType> = FeatureContext[T]

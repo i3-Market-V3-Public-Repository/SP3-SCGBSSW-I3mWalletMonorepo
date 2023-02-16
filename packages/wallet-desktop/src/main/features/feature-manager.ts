@@ -34,7 +34,8 @@ export class FeatureManager {
       return walletName
     }
 
-    const walletSettings = await this.locals.settings.get('wallet')
+    const privateSettings = this.locals.storeManager.getStore('private-settings')
+    const walletSettings = await privateSettings.get('wallet')
     if (walletSettings.current === undefined) {
       throw new Error('Wallet settings is undefined')
     }

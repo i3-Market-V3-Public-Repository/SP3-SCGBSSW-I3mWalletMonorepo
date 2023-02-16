@@ -3,7 +3,7 @@ import path from 'path'
 import { importJWK, JWK } from 'jose'
 import packageJson from '../../package.json'
 
-import { initContext } from '@wallet/lib'
+import { initContext, TaskDescription } from '@wallet/lib'
 
 import {
   logger,
@@ -21,12 +21,14 @@ import {
   KeysManager,
   ConnectManager,
   VersionManager,
-  initPrivateSettings,
-  initPublicSettings,
+  fixPrivateSettings,
   StoreManager,
   handleError,
   CloudVaultManager,
-  TaskManager
+  TaskManager,
+  fixPublicSettings,
+  executeSharedMemoryBindings,
+  LabeledTaskHandler
 } from './internal'
 import { createStoreMigrationProxy } from './store/migration'
 
@@ -38,11 +40,11 @@ async function initApplication (ctx: MainContext, locals: Locals): Promise<void>
   locals.taskManager = taskManager
 
   const storeManager = new StoreManager(ctx, locals)
-  await storeManager.initialize()
+  await storeManager.loadPublicStores()
   locals.storeManager = storeManager
 
-  const publicSettings = await initPublicSettings({ cwd: ctx.settingsPath }, locals)
-  locals.publicSettings = publicSettings
+  // const publicSettings = await initPublicSettings({ cwd: ctx.settingsPath }, locals)
+  // locals.publicSettings = publicSettings
 }
 
 async function initActions (ctx: MainContext, locals: Locals): Promise<void> {
@@ -92,7 +94,7 @@ async function initVersionManager (ctx: MainContext, locals: Locals): Promise<vo
   versionManager.verifyLatestVersion().catch(...handleError(locals))
 }
 
-async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
+async function initAuth (ctx: MainContext, locals: Locals, task: LabeledTaskHandler): Promise<void> {
   // Keys manager
   const keysManager = new KeysManager(ctx, locals)
   locals.keysManager = keysManager
@@ -100,14 +102,15 @@ async function initAuth (ctx: MainContext, locals: Locals): Promise<void> {
   await keysManager.initialize()
   await keysManager.authenticate()
 
+  // Load encrypted settings
+  task.setDetails('Migrating and loading encrypted stores')
+  await locals.storeManager.loadEncryptedStores()
+
   // Migrate stores (if needed)
   await locals.storeManager.migrate()
 
-  // Load encrypted settings
-  const settings = await initPrivateSettings({
-    cwd: ctx.settingsPath
-  }, locals)
-  locals.settings = settings
+  await fixPublicSettings(locals)
+  await fixPrivateSettings(locals)
 
   // Cloud vault manager
   const cvManagger = new CloudVaultManager(locals)
@@ -126,7 +129,8 @@ async function initApi (
   locals: Locals
 ): Promise<void> {
   // Create and initialize connect manager
-  const jwk = await locals.settings.get('secret') as JWK
+  const privateSettings = locals.storeManager.getStore('private-settings')
+  const jwk = await privateSettings.get('secret') as JWK
   const key = await importJWK(jwk, 'HS256')
   locals.connectManager = new ConnectManager(locals, key)
   await locals.connectManager.initialize()
@@ -148,26 +152,34 @@ async function initWalletFactory (
  * Desktop Wallet startup function
  */
 async function onReady (ctx: MainContext, locals: Locals): Promise<void> {
-  // Preauthentication initialization
+  // Prepare the application
   await initApplication(ctx, locals)
-  await initActions(ctx, locals)
-  await initUI(ctx, locals)
-  await initVersionManager(ctx, locals)
-  await initFeatureManager(ctx, locals)
+
+  // Preauthentication initialization
+  const initTask: TaskDescription = { title: 'Initializing' }
+  await locals.taskManager.createTask('labeled', initTask, async () => {
+    await initActions(ctx, locals)
+    await initUI(ctx, locals)
+    await initVersionManager(ctx, locals)
+    await initFeatureManager(ctx, locals)
+    await initWalletFactory(ctx, locals)
+  })
 
   // Authentication
-  await initAuth(ctx, locals)
+  const authTask: TaskDescription = { title: 'Authenticating' }
+  await locals.taskManager.createTask('labeled', authTask, async (task) => {
+    await initAuth(ctx, locals, task)
+  })
 
   // Postauthentication initialization
   await initApi(ctx, locals)
-  await initWalletFactory(ctx, locals)
 
-  // Finish migration
-  const { versionManager } = locals
+  // Start application main mode
+  const { versionManager, walletFactory, windowManager } = locals
   await versionManager.finishMigration()
+  await executeSharedMemoryBindings(locals)
+  await walletFactory.loadCurrentWallet()
 
-  // Launch UI
-  const { windowManager } = locals
   windowManager.openMainWindow('/wallet')
 }
 

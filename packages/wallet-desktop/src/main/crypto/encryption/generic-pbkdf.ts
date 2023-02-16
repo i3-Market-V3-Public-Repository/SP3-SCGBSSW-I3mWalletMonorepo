@@ -95,7 +95,8 @@ export class GenericPbkdfEncKeys implements EncryptionKeys {
       salt: this.salt.toString('base64'),
       key_derivation: this.kd
     }
-    await locals.publicSettings.set('enc', encSettings)
+    const publicSettings = locals.storeManager.getStore('public-settings')
+    await publicSettings.set('enc', encSettings)
   }
 
   async migrationNeeded (): Promise<boolean> {

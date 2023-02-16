@@ -35,9 +35,13 @@ export interface WalletConnectSettings {
 }
 
 export interface CloudVaultSettings {
-  state: 'complete' | 'in-progress'
   token: string
 }
+
+export const DEFAULT_WALLET_PACKAGES = [
+  '@i3m/sw-wallet',
+  '@i3m/bok-wallet'
+]
 
 export interface PrivateSettings {
   wallet: WalletSettings
@@ -65,7 +69,7 @@ export function createDefaultPrivateSettings (): PrivateSettings {
   return {
     wallet: {
       wallets: {},
-      packages: ['@i3m/sw-wallet']
+      packages: DEFAULT_WALLET_PACKAGES
     },
     providers: [],
     connect: {

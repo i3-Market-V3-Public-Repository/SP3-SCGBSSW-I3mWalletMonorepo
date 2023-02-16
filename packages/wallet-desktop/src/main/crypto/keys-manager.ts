@@ -26,7 +26,8 @@ export class KeysManager {
   }
 
   public async initialize (): Promise<void> {
-    const auth = await this.locals.publicSettings.get('auth')
+    const publicSettings = this.locals.storeManager.getStore('public-settings')
+    const auth = await publicSettings.get('auth')
     this.registered = auth !== undefined
   }
 
@@ -128,7 +129,7 @@ export class KeysManager {
   }
 
   private async localAuthentication (): Promise<KeyContext> {
-    const { publicSettings } = this.locals
+    const publicSettings = this.locals.storeManager.getStore('public-settings')
     const auth = await publicSettings.get('auth')
     const authKeys = loadAuthKeyAlgorithm(auth)
 
@@ -207,14 +208,15 @@ export class KeysManager {
       })
     }
 
-    const auth = await this.locals.publicSettings.get('auth')
+    const publicSettings = this.locals.storeManager.getStore('public-settings')
+    const auth = await publicSettings.get('auth')
     if (auth?.algorithm !== currentAuthAlgorithm) {
       await migrateAuth()
     } else if (await oldCtx.authKeys.migrationNeeded()) {
       await migrateAuth()
     }
 
-    const enc = await this.locals.publicSettings.get('enc')
+    const enc = await publicSettings.get('enc')
     if (enc?.algorithm !== currentEncAlgorithm) {
       await migrateEnc()
     } else if (await oldCtx.encKeys.migrationNeeded()) {

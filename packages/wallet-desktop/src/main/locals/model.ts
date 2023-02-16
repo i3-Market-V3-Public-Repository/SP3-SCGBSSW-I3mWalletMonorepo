@@ -5,8 +5,6 @@ import {
   Tray,
   WalletFactory,
   FeatureContext,
-  PrivateSettingsStore,
-  PublicSettingsStore,
   SharedMemoryManager,
   WindowManager,
   ApiManager,
@@ -24,8 +22,8 @@ export interface Locals {
   tray: Tray
   walletFactory: WalletFactory
   sharedMemoryManager: SharedMemoryManager
-  settings: PrivateSettingsStore
-  publicSettings: PublicSettingsStore
+  // settings: PrivateSettingsStore
+  // publicSettings: PublicSettingsStore
   windowManager: WindowManager
   apiManager: ApiManager
   featureManager: FeatureManager

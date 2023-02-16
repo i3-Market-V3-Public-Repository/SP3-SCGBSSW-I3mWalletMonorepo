@@ -35,7 +35,8 @@ export class GeneralMcfAuthKeys implements AuthenticationKeys {
       algorithm: 'general-mcf',
       localAuth: this.localAuth
     }
-    await locals.publicSettings.set('auth', auth)
+    const publicSettings = locals.storeManager.getStore('public-settings')
+    await publicSettings.set('auth', auth)
   }
 
   async migrationNeeded (): Promise<boolean> {

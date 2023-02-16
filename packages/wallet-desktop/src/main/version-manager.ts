@@ -19,7 +19,8 @@ export class VersionManager {
   }
 
   async initialize (): Promise<void> {
-    this.settingsVersion = `${await this.locals.publicSettings.get('version')}`
+    const publicSettings = this.locals.storeManager.getStore('public-settings')
+    this.settingsVersion = `${await publicSettings.get('version')}`
   }
 
   async verifySettingsVersion (): Promise<void> {
@@ -163,7 +164,8 @@ export class VersionManager {
   }
 
   async finishMigration (): Promise<void> {
-    await this.locals.publicSettings.set('version', this.softwareVersion)
+    const publicSettings = this.locals.storeManager.getStore('public-settings')
+    await publicSettings.set('version', this.softwareVersion)
     this.settingsVersion = this.softwareVersion
 
     logger.debug('Migration finished')

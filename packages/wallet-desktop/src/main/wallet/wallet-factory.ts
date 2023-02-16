@@ -8,7 +8,9 @@ import {
   storeFeature,
   FeatureHandler,
   StartFeatureError,
-  LabeledTaskHandler
+  LabeledTaskHandler,
+  WalletDesktopError,
+  FeatureType
 } from '@wallet/main/internal'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -34,27 +36,15 @@ export class WalletFactory {
   constructor (protected locals: Locals) {
     this._walletName = undefined
     this.featuresByWallet = {}
-
-    // Change wallet if global state changes
-    const { sharedMemoryManager } = locals
-    sharedMemoryManager.on('change', (mem, oldMem) => {
-      const current = mem.settings.wallet.current
-      const old = oldMem.settings.wallet.current
-
-      // Update current wallet
-      if (current !== undefined && current !== old) {
-        const { walletFactory } = locals
-        walletFactory.changeWallet(current).catch((err) => {
-          console.log(err)
-        })
-      }
-    })
   }
 
   async initialize (): Promise<void> {
     await this.loadWalletsMetadata()
+  }
 
-    const wallet = await this.locals.settings.get('wallet')
+  async loadCurrentWallet (): Promise<void> {
+    const privateSettings = this.locals.storeManager.getStore('private-settings')
+    const wallet = await privateSettings.get('wallet')
     if (wallet.current === undefined) {
       logger.debug('No wallets stored into the configuration')
       return
@@ -90,9 +80,10 @@ export class WalletFactory {
   }
 
   async buildWalletTask (walletName: string, task: LabeledTaskHandler): Promise<Wallet> {
-    const { settings, featureContext, featureManager, dialog, toast } = this.locals
-    const { wallets } = await settings.get('wallet')
-    const providers = await settings.get('providers')
+    const { storeManager, featureContext, featureManager, dialog, toast } = this.locals
+    const privateSettings = storeManager.getStore('private-settings')
+    const { wallets } = await privateSettings.get('wallet')
+    const providers = await privateSettings.get('providers')
     const providersData = providers.reduce<Record<string, ProviderData>>(
       (prev, curr) => {
         prev[curr.provider] = curr
@@ -154,8 +145,9 @@ export class WalletFactory {
   }
 
   async deleteWallet (walletName: string): Promise<void> {
-    const { settings } = this.locals
-    const { wallets, current } = await settings.get('wallet')
+    const { storeManager } = this.locals
+    const privateSettings = storeManager.getStore('private-settings')
+    const { wallets, current } = await privateSettings.get('wallet')
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
     if (walletInfo === undefined) {
@@ -196,15 +188,16 @@ export class WalletFactory {
     }
 
     logger.info(`Change wallet to ${walletName}`)
-    const { settings, sharedMemoryManager, apiManager } = this.locals
+    const { storeManager, sharedMemoryManager, apiManager } = this.locals
+    const privateSettings = storeManager.getStore('private-settings')
 
     // Stop API
     await apiManager.close()
 
     // Build the current wallet
-    this._walletName = walletName
     try {
       this._wallet = await this.buildWallet(walletName)
+      this._walletName = walletName
     } catch (err) {
       this._wallet = undefined
       this._walletName = undefined
@@ -229,15 +222,34 @@ export class WalletFactory {
     // Setup the resource list inside shared memory
     const identities = await this.wallet.getIdentities()
     const resources = await this.wallet.getResources()
-    await sharedMemoryManager.update((mem) => ({
+    sharedMemoryManager.update((mem) => ({
       ...mem, identities, resources
     }))
 
     // Update current wallet
-    await settings.set('wallet.current', walletName)
+    await privateSettings.set('wallet.current', walletName)
 
     // Start API
     await apiManager.listen()
+  }
+
+  getWalletFeatures <T>(walletPackage: string): Array<Feature<T>> {
+    const features = this.featuresByWallet[walletPackage]
+    if (features === undefined) {
+      throw new WalletDesktopError('Wallet features not defined')
+    }
+    return features
+  }
+
+  getWalletFeature <T>(walletPackage: string, featureName: FeatureType): Feature<T> | undefined {
+    const features = this.getWalletFeatures<T>(walletPackage)
+    const feature = features.reduce<Feature<T> | undefined>((prev, curr) => {
+      if (curr.handler.name === featureName) {
+        return curr
+      }
+      return prev
+    }, undefined)
+    return feature
   }
 
   get walletNames (): string[] {
