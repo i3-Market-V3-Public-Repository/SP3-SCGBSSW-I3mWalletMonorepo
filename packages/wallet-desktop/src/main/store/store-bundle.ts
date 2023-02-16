@@ -18,4 +18,4 @@ export interface StoreBundleData<T> {
 export interface StoresBundle<T = unknown> {
   version: string
   stores: Record<string, StoreBundleData<T>>
-} 
+}

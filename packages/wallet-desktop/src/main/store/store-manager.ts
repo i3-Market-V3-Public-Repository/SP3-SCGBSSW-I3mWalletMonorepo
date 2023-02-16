@@ -173,7 +173,7 @@ export class StoreManager {
     if (this.stores[storeId] !== undefined) {
       throw new WalletDesktopError(`The store '${storeId}' is already initialized.`)
     }
-    store.on('change', () => this.onStoreChange(storeId, store))
+    store.on('changed', () => this.onStoreChange(storeId, store))
     this.stores[storeId] = store
   }
 

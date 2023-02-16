@@ -25,7 +25,7 @@ export class FileStoreBuilder<T extends Record<string, any> = Record<string, unk
       await store.initialized
     } catch (err: unknown) {
       if (err instanceof Error) {
-        if (err.message = 'Unsupported state or unable to authenticate data') {
+        if (err.message === 'Unsupported state or unable to authenticate data') {
           throw new FormatError(`Invalid format on file: '${filepath}'.`, true, true)
         }
       }

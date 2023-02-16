@@ -55,14 +55,14 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     this.initialized = this.init()
   }
 
-  on (eventName: 'change', listener: (changedAt: number) => void): this
+  on (eventName: 'changed', listener: (changedAt: number) => void): this
   on (eventName: 'cleared', listener: (changedAt: number) => void): this
   on (eventName: string | symbol, listener: (...args: any[]) => void): this
   on (eventName: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(eventName, listener)
   }
 
-  emit (eventName: 'change', changedAt: number): boolean
+  emit (eventName: 'changed', changedAt: number): boolean
   emit (eventName: 'cleared', changedAt: number): boolean
   emit (eventName: string | symbol, ...args: any[]): boolean
   emit (eventName: string | symbol, ...args: any[]): boolean {
@@ -189,7 +189,7 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     }
 
     await this.setModel(model)
-    this.emit('change', Date.now())
+    this.emit('changed', Date.now())
   }
 
   async has<Key extends 'accounts'>(key: Key): Promise<boolean> {
@@ -205,7 +205,7 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     let model = await this.getModel()
     model = _.omit(model, key) as any
     await this.setModel(model)
-    this.emit('change', Date.now())
+    this.emit('changed', Date.now())
   }
 
   async clear (): Promise<void> {

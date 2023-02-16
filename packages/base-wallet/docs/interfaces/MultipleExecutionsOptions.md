@@ -15,7 +15,7 @@
 
 #### Defined in
 
-src/ts/utils/multiple-executions.ts:8
+[src/ts/utils/multiple-executions.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38c9552/packages/base-wallet/src/ts/utils/multiple-executions.ts#L8)
 
 ___
 
@@ -25,4 +25,4 @@ ___
 
 #### Defined in
 
-src/ts/utils/multiple-executions.ts:9
+[src/ts/utils/multiple-executions.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/38c9552/packages/base-wallet/src/ts/utils/multiple-executions.ts#L9)

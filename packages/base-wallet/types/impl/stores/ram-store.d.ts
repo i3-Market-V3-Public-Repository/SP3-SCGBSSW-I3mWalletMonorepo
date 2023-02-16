@@ -9,10 +9,10 @@ export declare class RamStore<T extends Record<string, any> = Record<string, unk
     protected defaultModel: T;
     model: T;
     constructor(defaultModel: T);
-    on(eventName: 'change', listener: (changedAt: number) => void): this;
+    on(eventName: 'changed', listener: (changedAt: number) => void): this;
     on(eventName: 'cleared', listener: (changedAt: number) => void): this;
     on(eventName: string | symbol, listener: (...args: any[]) => void): this;
-    emit(eventName: 'change', changedAt: number): boolean;
+    emit(eventName: 'changed', changedAt: number): boolean;
     emit(eventName: 'cleared', changedAt: number): boolean;
     emit(eventName: string | symbol, ...args: any[]): boolean;
     get(key: any, defaultValue?: any): any;
