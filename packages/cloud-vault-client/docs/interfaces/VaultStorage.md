@@ -15,7 +15,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/cloud-vault-client/src/ts/vault-client.ts#L16)
+[cloud-vault-client/src/ts/vault-client.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5b446aa/packages/cloud-vault-client/src/ts/vault-client.ts#L16)
 
 ___
 
@@ -25,4 +25,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/cloud-vault-client/src/ts/vault-client.ts#L17)
+[cloud-vault-client/src/ts/vault-client.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/5b446aa/packages/cloud-vault-client/src/ts/vault-client.ts#L17)

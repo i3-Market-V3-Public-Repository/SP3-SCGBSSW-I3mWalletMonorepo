@@ -14,10 +14,11 @@ export declare class VaultClient extends EventEmitter {
     name: string;
     serverUrl: string;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
-    readonly initialized: Promise<void>;
+    private _initialized;
     private keyManager?;
     private es?;
     constructor(serverUrl: string, token?: string, name?: string);
+    get initialized(): Promise<void>;
     emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean;
     emit(eventName: string | symbol, ...args: any[]): boolean;
     on<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;

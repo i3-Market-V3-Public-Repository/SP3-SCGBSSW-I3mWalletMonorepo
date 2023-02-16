@@ -23,7 +23,7 @@ export class VaultClient extends EventEmitter {
   name: string
   serverUrl: string
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
-  readonly initialized: Promise<void>
+  private _initialized: Promise<void>
   private keyManager?: KeyManager
 
   private es?: EventSource
@@ -35,7 +35,21 @@ export class VaultClient extends EventEmitter {
     this.serverUrl = serverUrl
     this.token = token
 
-    this.initialized = this.init()
+    this._initialized = this.init()
+  }
+
+  get initialized (): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this._initialized.then(() => {
+        resolve()
+      }).catch(() => {
+        this._initialized = this.init().then(() => {
+          resolve()
+        }).catch((reason) => {
+          reject(reason)
+        })
+      })
+    })
   }
 
   emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean
