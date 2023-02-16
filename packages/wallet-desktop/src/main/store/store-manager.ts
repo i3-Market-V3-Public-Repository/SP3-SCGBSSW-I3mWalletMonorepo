@@ -278,20 +278,37 @@ export class StoreManager {
     return storesBundle
   }
 
-  protected async synchronizeStores (): Promise<void> {
+  protected async uploadStores (): Promise<void> {
     const { sharedMemoryManager: sh } = this.locals
     if (sh.memory.settings.cloud === undefined) {
       return
     }
 
     const bundle = await this.bundleStores()
-    console.log(bundle.stores)
+    const bundleJSON = JSON.stringify(bundle)
+    const buffer = Buffer.from(bundleJSON, 'ascii')
+
+  }
+
+  protected async restoreStoreBundle (bundle: StoresBundle): Promise<void> {
+    const { versionManager } = this.locals
+    if (bundle.version !== versionManager.softwareVersion) {
+      // TODO: Handle version conflict!!
+      return
+    }
+
+    for (const [storeId, storeBundle] of Object.entries(bundle.stores)) {
+      if (storeBundle.metadata.type === 'private-settings') {
+        // Update shared memory with the
+
+      }
+    }
   }
 
   public onStoreChange <T extends StoreClasses>(store: Store<any>): void {
     logger.debug(`The store has been changed ${store.getPath()}`)
     this
-      .synchronizeStores()
+      .uploadStores()
       .catch(...handleError(this.locals))
   }
 }
