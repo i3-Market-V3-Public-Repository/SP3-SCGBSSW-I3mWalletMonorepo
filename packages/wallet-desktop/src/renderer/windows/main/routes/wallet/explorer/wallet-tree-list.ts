@@ -110,7 +110,7 @@ function getResourceProperties (props: TreeListProps, resource: Resource, dispat
         icon: faKey,
         menu
       }
-      
+
     case 'Contract':
       return {
         icon: faFileSignature,
@@ -231,7 +231,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
       dids.forEach((did) => {
         const identity = sharedMemory.identities[did] as Identity
         const text = identity?.alias as string
-        const identityId = `${walletId}.${text}`
+        const identityId = `${walletId}.${identity.did}`
         const identityItem: TreeListItem<any> = {
           item: identity,
           type: 'identity',

@@ -165,7 +165,7 @@ export class StoreManager {
       throw new WalletDesktopError(`Invalid store id '${storeId}'`)
     }
 
-    const [ , ...storeData] = match
+    const [, ...storeData] = match
     return storeData as any
   }
 
@@ -173,7 +173,7 @@ export class StoreManager {
     if (this.stores[storeId] !== undefined) {
       throw new WalletDesktopError(`The store '${storeId}' is already initialized.`)
     }
-    store.on('change', () => this.onStoreChange(store))
+    store.on('change', () => this.onStoreChange(storeId, store))
     this.stores[storeId] = store
   }
 
@@ -279,15 +279,23 @@ export class StoreManager {
   }
 
   protected async uploadStores (): Promise<void> {
-    const { sharedMemoryManager: sh } = this.locals
+    const { sharedMemoryManager: sh, cloudVaultManager } = this.locals
     if (sh.memory.settings.cloud === undefined) {
       return
     }
 
     const bundle = await this.bundleStores()
     const bundleJSON = JSON.stringify(bundle)
-    const buffer = Buffer.from(bundleJSON, 'ascii')
+    const buffer = Buffer.from(bundleJSON)
 
+    const newTimestamp = await cloudVaultManager.updateStorage(buffer)
+
+    // Update timestamp
+    const publicSettings = this.getStore('public-settings')
+    await publicSettings.set('cloud', {
+      timestamp: newTimestamp,
+      unsyncedChanges: false
+    })
   }
 
   protected async restoreStoreBundle (bundle: StoresBundle): Promise<void> {
@@ -297,7 +305,7 @@ export class StoreManager {
       return
     }
 
-    for (const [storeId, storeBundle] of Object.entries(bundle.stores)) {
+    for (const [, storeBundle] of Object.entries(bundle.stores)) {
       if (storeBundle.metadata.type === 'private-settings') {
         // Update shared memory with the
 
@@ -305,10 +313,17 @@ export class StoreManager {
     }
   }
 
-  public onStoreChange <T extends StoreClasses>(store: Store<any>): void {
+  public async onStoreChangeAsync (storeId: string, store: Store<any>): Promise<void> {
     logger.debug(`The store has been changed ${store.getPath()}`)
-    this
-      .uploadStores()
-      .catch(...handleError(this.locals))
+    const [type] = this.deconstructId(storeId)
+    if (type !== 'public-settings') {
+      const publicSettings = this.getStore('public-settings')
+      await publicSettings.set('cloud.unsyncedChanges', true)
+      await this.uploadStores()
+    }
+  }
+
+  public onStoreChange (storeId: string, store: Store<any>): void {
+    this.onStoreChangeAsync(storeId, store).catch(...handleError(this.locals))
   }
 }

@@ -6,9 +6,12 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "env": { "DEBUG": "*" },
-      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-      "args" : ["--no-sandbox", "."],
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/ts-node",
+      "args" : ["-r", "dotenv/config", "build/start.ts"],
       "outputCapture": "std"
     }
   ]

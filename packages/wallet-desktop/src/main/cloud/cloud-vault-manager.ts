@@ -109,7 +109,7 @@ export class CloudVaultManager {
       })
     }
 
-    let publicJwk = await this.client.getServerPublicKey()
+    const publicJwk = await this.client.getServerPublicKey()
 
     const data = await jweEncrypt(
       Buffer.from(JSON.stringify({
@@ -230,6 +230,13 @@ export class CloudVaultManager {
     const taskInfo: TaskDescription = { title: 'Register Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
       return await this.registerUserTask(task)
+    })
+  }
+
+  async updateStorage (storage: Buffer, timestamp?: number): Promise<number> {
+    return await this.client.updateStorage({
+      storage: storage,
+      timestamp
     })
   }
 

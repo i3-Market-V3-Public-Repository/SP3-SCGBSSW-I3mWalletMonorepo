@@ -227,7 +227,7 @@ export class VaultClient extends EventEmitter {
     }
   }
 
-  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<void> {
+  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<number> {
     await this.initialized
 
     if (this.token === undefined || this.keyManager === undefined) {
@@ -263,6 +263,7 @@ export class VaultClient extends EventEmitter {
       }
     )
     this.timestamp = data.timestamp
+    return this.timestamp
   }
 
   async deleteStorage (): Promise<void> {

@@ -40,7 +40,7 @@ function App (props: MainArgs): JSX.Element {
         <Route path='/wallet'>
           <Wallet />
         </Route>
-      <FreezeOverlay />
+        <FreezeOverlay />
       </ContextMenu>
     </div>
   )

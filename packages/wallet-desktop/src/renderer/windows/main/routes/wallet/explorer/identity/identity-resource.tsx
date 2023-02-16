@@ -7,7 +7,7 @@ interface Props {
 export function IdentityResource (props: Props): JSX.Element {
   const { resource } = props
   const resourceProps: Map<string, string> = new Map()
-  switch(resource.type) {
+  switch (resource.type) {
     case 'VerifiableCredential':
       resourceProps.set('Claims',
         Object.keys(resource.resource.credentialSubject)
@@ -25,7 +25,7 @@ export function IdentityResource (props: Props): JSX.Element {
         <div className='identity-param inline'>
           <span>Type: {resource.type}</span>
         </div>
-        { [...resourceProps.entries()].map(([key, value]) => (
+        {[...resourceProps.entries()].map(([key, value]) => (
           <div key={key} className='identity-param inline'>
             <span>{key}: </span>
             <input type='text' disabled value={value} />
