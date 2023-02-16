@@ -12,7 +12,7 @@ const validProvider = (provider: Provider, oldProvider: Provider, settings: Shar
   // If there are multiple providers with the same provider you can delete one of them
   const providersWithSameProvider = oldSettings.providers
     .reduce((count, p) => p.provider === oldProvider.provider ? count + 1 : count, 0)
-  console.log(providersWithSameProvider)
+
   if (providersWithSameProvider <= 1) {
     // You cannot delete providers that are already used in the wallet
     const requiredProviders = Object
@@ -22,9 +22,6 @@ const validProvider = (provider: Provider, oldProvider: Provider, settings: Shar
         dict[provider] = true
         return dict
       }, {})
-
-    console.log('new', provider, Object.keys(requiredProviders).includes(provider.provider))
-    console.log('old', oldProvider, Object.keys(requiredProviders).includes(oldProvider.provider))
 
     if (Object.keys(requiredProviders).includes(oldProvider.provider)) {
       dispatch(showToastAction.create({

@@ -48,7 +48,7 @@ export interface ProviderData {
 }
 
 export const DEFAULT_PROVIDER = 'did:ethr:i3m'
-export const DEFAULT_PROVIDERS_DATA = {
+export const DEFAULT_PROVIDERS_DATA: Record<string, ProviderData> = {
   'did:ethr:i3m': {
     network: 'i3m',
     rpcUrl: [

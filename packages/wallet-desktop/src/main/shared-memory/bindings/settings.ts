@@ -1,4 +1,4 @@
-import { digest } from 'object-sha'
+import _ from 'lodash'
 import { Locals, handleCanBePromise } from '@wallet/main/internal'
 
 export const bindSettings = async (locals: Locals): Promise<void> => {
@@ -11,11 +11,9 @@ export const bindSettings = async (locals: Locals): Promise<void> => {
     settings: store
   }))
 
-  sharedMemoryManager.on('change', (mem, oldMem) => {
-    const newSha = digest(mem)
-    const oldSha = digest(mem)
-    if (oldSha !== newSha) {
-      const promise = settings.set(mem.settings)
+  sharedMemoryManager.on('change', (newMem, oldMem) => {
+    if (!_.isEqual(newMem.settings, oldMem.settings)) {
+      const promise = settings.set(newMem.settings)
       handleCanBePromise(locals, promise)
     }
   })

@@ -1,5 +1,5 @@
 import crypto, { KeyObject } from 'crypto'
-import { digest } from 'object-sha'
+import _ from 'lodash'
 
 import { GenericPbkdfEncSettings, KeyDerivationContext } from '@wallet/lib'
 import { AuthenticationError, deriveKey, isKeyObject, Locals } from '@wallet/main/internal'
@@ -100,9 +100,7 @@ export class GenericPbkdfEncKeys implements EncryptionKeys {
   }
 
   async migrationNeeded (): Promise<boolean> {
-    const defaultKd = await digest(DEFAULT_KD)
-    const thisKd = await digest(this.kd)
-    return defaultKd !== thisKd
+    return _.isEqual(DEFAULT_KD, this.kd)
   }
 
   static initialize (): GenericPbkdfEncKeys {

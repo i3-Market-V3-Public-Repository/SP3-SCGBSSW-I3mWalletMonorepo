@@ -1,4 +1,4 @@
-import { ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
+import { ProviderData, Wallet, WalletBuilder, WalletMetadata, DEFAULT_PROVIDERS_DATA } from '@i3m/base-wallet'
 import { TaskDescription, WalletMetadataMap } from '@wallet/lib'
 import {
   logger,
@@ -88,7 +88,7 @@ export class WalletFactory {
       (prev, curr) => {
         prev[curr.provider] = curr
         return prev
-      }, {})
+      }, DEFAULT_PROVIDERS_DATA)
 
     const walletInfo = wallets[walletName]
     if (walletInfo === undefined) {
@@ -188,8 +188,7 @@ export class WalletFactory {
     }
 
     logger.info(`Change wallet to ${walletName}`)
-    const { storeManager, sharedMemoryManager, apiManager } = this.locals
-    const privateSettings = storeManager.getStore('private-settings')
+    const { sharedMemoryManager, apiManager } = this.locals
 
     // Stop API
     await apiManager.close()
@@ -225,9 +224,6 @@ export class WalletFactory {
     sharedMemoryManager.update((mem) => ({
       ...mem, identities, resources
     }))
-
-    // Update current wallet
-    await privateSettings.set('wallet.current', walletName)
 
     // Start API
     await apiManager.listen()

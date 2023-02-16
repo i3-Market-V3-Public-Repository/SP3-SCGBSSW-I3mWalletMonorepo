@@ -1,11 +1,12 @@
 
-import { IconDefinition, faWallet, faCog, faLink } from '@fortawesome/free-solid-svg-icons'
+import { IconDefinition, faWallet, faCog, faLink, faCloud } from '@fortawesome/free-solid-svg-icons'
 import { Nav, NavIcon, Content } from '@wallet/renderer/components'
 
 import { StatusBar } from './status-bar'
 import { Explorer } from './explorer'
 import { Settings } from './settings'
 import { Connect } from './connect'
+import { CloudVault } from './cloud-vault'
 
 import './wallet.scss'
 
@@ -22,6 +23,7 @@ export function Wallet (): JSX.Element {
   const routes: WalletRoutes[] = [
     { icon: faWallet, path: '/wallet/explorer', title: 'Explorer', children: <Explorer /> },
     { icon: faLink, path: '/wallet/connect', title: 'Connect', children: <Connect /> },
+    { icon: faCloud, path: '/wallet/cloud-vault', title: 'Cloud Vault', children: <CloudVault /> },
     { icon: faCog, path: '/wallet/settings', title: 'Settings', children: <Settings /> }
   ]
   const defaultPath = routes[0].path
