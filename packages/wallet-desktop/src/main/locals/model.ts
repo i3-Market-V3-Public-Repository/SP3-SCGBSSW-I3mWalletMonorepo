@@ -1,5 +1,5 @@
 
-import { Dialog, Toast } from '@i3m/base-wallet'
+import { Toast } from '@i3m/base-wallet'
 import packageJson from '../../../package.json'
 import {
   Tray,
@@ -15,7 +15,8 @@ import {
   VersionManager,
   StoreManager,
   CloudVaultManager,
-  TaskManager
+  TaskManager,
+  ElectronDialog
 } from '@wallet/main/internal'
 
 export interface Locals {
@@ -28,7 +29,7 @@ export interface Locals {
   apiManager: ApiManager
   featureManager: FeatureManager
   featureContext: FeatureContext
-  dialog: Dialog
+  dialog: ElectronDialog
   toast: Toast
   actionReducer: ActionReducer
   keysManager: KeysManager

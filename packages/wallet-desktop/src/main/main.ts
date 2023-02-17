@@ -23,12 +23,13 @@ import {
   VersionManager,
   fixPrivateSettings,
   StoreManager,
-  handleError,
   CloudVaultManager,
   TaskManager,
   fixPublicSettings,
-  executeSharedMemoryBindings,
-  LabeledTaskHandler
+  sharedMemoryBindingsAfterAuth,
+  LabeledTaskHandler,
+  handlePromise,
+  sharedMemoryBindingsBeforeAuth
 } from './internal'
 import { createStoreMigrationProxy } from './store/migration'
 
@@ -91,7 +92,7 @@ async function initVersionManager (ctx: MainContext, locals: Locals): Promise<vo
 
   // Do not await verifyLatestVersion!
   // If there is no internet connection it will freeze the application
-  versionManager.verifyLatestVersion().catch(...handleError(locals))
+  handlePromise(locals, versionManager.verifyLatestVersion())
 }
 
 async function initAuth (ctx: MainContext, locals: Locals, task: LabeledTaskHandler): Promise<void> {
@@ -163,6 +164,7 @@ async function onReady (ctx: MainContext, locals: Locals): Promise<void> {
     await initVersionManager(ctx, locals)
     await initFeatureManager(ctx, locals)
     await initWalletFactory(ctx, locals)
+    await sharedMemoryBindingsBeforeAuth(locals)
   })
 
   // Authentication
@@ -177,7 +179,7 @@ async function onReady (ctx: MainContext, locals: Locals): Promise<void> {
   // Start application main mode
   const { versionManager, walletFactory, windowManager } = locals
   await versionManager.finishMigration()
-  await executeSharedMemoryBindings(locals)
+  await sharedMemoryBindingsAfterAuth(locals)
   await walletFactory.loadCurrentWallet()
 
   windowManager.openMainWindow('/wallet')
@@ -203,6 +205,7 @@ export default async (argv: string[]): Promise<void> => {
       storeMigrationProxy: createStoreMigrationProxy()
     })
 
-    onReady(ctx, locals).catch(...handleError(locals))
+    const readyPromise = onReady(ctx, locals)
+    handlePromise(locals, readyPromise)
   })
 }

@@ -3,9 +3,9 @@ import { Locals } from '@wallet/main/locals'
 export const bindWalletFactory = async (locals: Locals): Promise<void> => {
   // Change wallet if global state changes
   const { sharedMemoryManager } = locals
-  sharedMemoryManager.on('change', (mem, oldMem) => {
-    const current = mem.settings.wallet.current
-    const old = oldMem.settings.wallet.current
+  sharedMemoryManager.on('change', ({ curr, prev }) => {
+    const current = curr.settings.wallet.current
+    const old = prev.settings.wallet.current
 
     // Update current wallet
     if (current !== undefined && current !== old) {

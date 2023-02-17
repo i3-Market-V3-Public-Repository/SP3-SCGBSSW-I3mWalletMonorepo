@@ -3,6 +3,21 @@ import { EventEmitter } from 'events'
 
 import { SharedMemory, createDefaultSharedMemory } from '@wallet/lib'
 
+export interface ChangeEvent {
+  curr: SharedMemory
+  prev: SharedMemory
+
+  // Optionals
+  ctx?: {
+    emitter?: BrowserWindow
+  }
+}
+
+export interface SharedMemoryManagerEvents {
+  change: ChangeEvent
+}
+export type SharedMemoryManagerEventNames = keyof SharedMemoryManagerEvents
+
 export class SharedMemoryManager extends EventEmitter {
   private _memory: SharedMemory
 
@@ -11,24 +26,24 @@ export class SharedMemoryManager extends EventEmitter {
     this._memory = createDefaultSharedMemory(values)
   }
 
-  on (event: 'change', listener: (sharedMemory: SharedMemory, oldSharedMemory: SharedMemory, emitter: BrowserWindow | undefined) => void): this
+  on <T extends SharedMemoryManagerEventNames>(event: T, listener: (ev: SharedMemoryManagerEvents[T]) => void): this
   on (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(event, listener)
   }
 
-  once (event: 'change', listener: (mem: SharedMemory, oldSharedMemory: SharedMemory) => void): this
+  once <T extends SharedMemoryManagerEventNames>(event: T, listener: (ev: SharedMemoryManagerEvents[T]) => void): this
   once (event: string | symbol, listener: (...args: any[]) => void): this {
     return super.once(event, listener)
   }
 
-  emit (event: 'change', sharedMemory: SharedMemory, oldSharedMemory: SharedMemory, emitter?: BrowserWindow): boolean
+  emit <T extends SharedMemoryManagerEventNames>(event: T, ev: SharedMemoryManagerEvents[T]): boolean
   emit (event: string | symbol, ...args: any[]): boolean {
     return super.emit(event, ...args)
   }
 
-  update (cb: (sharedMemory: SharedMemory) => SharedMemory, emitter?: BrowserWindow): void
-  update (sharedMemory: SharedMemory, emitter?: BrowserWindow): void
-  update (modifier: any, emitter?: BrowserWindow): void {
+  update (cb: (sharedMemory: SharedMemory) => SharedMemory, ctx?: ChangeEvent['ctx']): void
+  update (sharedMemory: SharedMemory, ctx?: ChangeEvent['ctx']): void
+  update (modifier: any, ctx?: ChangeEvent['ctx']): void {
     let sharedMemory: SharedMemory | undefined
     const oldSharedMemory = this._memory
     if (typeof modifier === 'function') {
@@ -44,7 +59,11 @@ export class SharedMemoryManager extends EventEmitter {
     }
     this._memory = sharedMemory
 
-    this.emit('change', this._memory, oldSharedMemory, emitter)
+    this.emit('change', {
+      curr: this._memory,
+      prev: oldSharedMemory,
+      ctx
+    })
   }
 
   get memory (): SharedMemory {

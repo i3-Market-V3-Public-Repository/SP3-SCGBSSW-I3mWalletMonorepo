@@ -5,42 +5,12 @@ import { DialogData, DialogDescriptors, createDialogId } from '@wallet/lib'
 import { Locals } from '@wallet/main/internal'
 
 export class ElectronDialog implements Dialog {
-  protected resolvers: Map<string, (values: {} | undefined) => void>
-
-  protected dialogQueue: string[]
+  public resolvers: Map<string, (values: {} | undefined) => void>
+  public dialogQueue: string[]
 
   constructor (protected locals: Locals) {
     this.resolvers = new Map()
     this.dialogQueue = []
-    locals.sharedMemoryManager.on('change', (sharedMemory) => {
-      const dialogId = sharedMemory.dialogs.current
-      if (dialogId === undefined) {
-        return
-      }
-
-      const { [dialogId]: dialog, ...otherDialogs } = sharedMemory.dialogs.data
-      if (dialog === undefined || !('response' in dialog)) {
-        return
-      }
-
-      locals.sharedMemoryManager.update((mem) => ({
-        ...mem,
-        dialogs: {
-          ...mem.dialogs,
-          current: this.dialogQueue.shift(),
-          data: otherDialogs
-        }
-      }))
-
-      const resolver = this.resolvers.get(dialog.id)
-      if (resolver !== undefined) {
-        this.resolvers.delete(dialog.id)
-        resolver(dialog.response)
-      } else {
-        // TODO: Handle error
-        throw new Error('Dialog not found')
-      }
-    })
   }
 
   async launchDialog<T>(dialogData: DialogData): Promise<T | undefined> {

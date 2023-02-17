@@ -5,7 +5,7 @@ import { selectWalletAction } from '@wallet/lib'
 
 import { getResourcePath, Locals } from '@wallet/main/internal'
 
-interface WalletItem {
+export interface WalletItem {
   name: string
 }
 
@@ -15,15 +15,6 @@ export class Tray {
 
   constructor (protected locals: Locals) {
     this.iconPath = getResourcePath('img/tray.png')
-    const { sharedMemoryManager } = locals
-    sharedMemoryManager.on('change', (sharedMemory) => {
-      const wallets: WalletItem[] = Object
-        .keys(sharedMemory.settings.wallet.wallets)
-        .map(name => ({ name }))
-
-      this.updateContextMenu(wallets)
-    })
-
     this.tray = new ElectronTray(this.iconPath)
     this.tray.setToolTip('i3Market wallet')
     this.updateContextMenu([])

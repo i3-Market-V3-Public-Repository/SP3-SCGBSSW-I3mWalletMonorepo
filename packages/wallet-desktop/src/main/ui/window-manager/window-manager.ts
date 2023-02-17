@@ -16,13 +16,6 @@ export class WindowManager {
     Menu.setApplicationMenu(menuBar)
 
     this.windows = new Map()
-
-    const { sharedMemoryManager } = locals
-    sharedMemoryManager.on('change', (sharedMemory, oldSharedMemory, emitter) => {
-      for (const [, window] of this.windows) {
-        window.updateSharedMemory(emitter)
-      }
-    })
   }
 
   convertToArgs (args: WindowArgs): string {

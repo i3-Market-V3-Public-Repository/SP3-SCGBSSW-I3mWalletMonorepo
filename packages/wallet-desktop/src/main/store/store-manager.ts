@@ -2,10 +2,11 @@ import { Store } from '@i3m/base-wallet'
 
 import {
   createDefaultPrivateSettings,
+  PrivateSettings,
   StoreSettings
 } from '@wallet/lib'
 import {
-  handleError,
+  handleErrorSync,
   Locals,
   logger,
   MainContext,
@@ -20,7 +21,7 @@ import { StoreOptionsBuilder } from './migration'
 import { StoreBag } from './store-bag'
 import { StoreBuilder } from './store-builder'
 import { StoreBundleData, StoreMetadata, StoresBundle } from './store-bundle'
-import { StoreClasses, StoreModels } from './store-class'
+import { StoreClass, StoreClasses } from './store-class'
 import { StoreProxy } from './store-proxy'
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = { type: 'electron-store' }
@@ -63,12 +64,11 @@ export class StoreManager extends StoreBag {
     const publicSettings = this.getStore('public-settings')
     const publicSettingsValues = await publicSettings.getStore()
 
-    const id = StoreBag.getStoreId('private-settings')
-    await this.executeOptionsBuilders(id, async (migration) => ({
+    await this.executeOptionsBuilders(async (migration) => ({
       defaults: Object.assign({}, createDefaultPrivateSettings(), publicSettingsValues),
       encryptionKey: await keysManager.computeSettingsKey(migration.encKeys),
       fileExtension: 'enc.json'
-    }))
+    }), 'private-settings')
 
     const privateSettings = this.getStore('private-settings')
     const walletSettings = await privateSettings.get('wallet')
@@ -83,13 +83,13 @@ export class StoreManager extends StoreBag {
         const optionBuilder: StoreOptionsBuilder<any> = async (migration) => await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts, migration.encKeys)
 
         return {
-          id: StoreBag.getStoreId('wallet', wallet.name),
+          walletName: wallet.name,
           optionBuilder
         }
       })
 
-    for (const { id, optionBuilder } of walletOptionsBuilders) {
-      await this.executeOptionsBuilders(id, optionBuilder)
+    for (const { walletName, optionBuilder } of walletOptionsBuilders) {
+      await this.executeOptionsBuilders(optionBuilder, 'wallet', walletName)
     }
 
     const ps = this.silentBag.getStore('private-settings')
@@ -116,34 +116,45 @@ export class StoreManager extends StoreBag {
       throw new WalletDesktopError('Wallet metadata not found')
     }
     const storeFeature = walletFactory.getWalletFeature<StoreFeatureOptions>(wallet.package, 'store')
-    const id = StoreBag.getStoreId('wallet', walletName)
     const builder: StoreOptionsBuilder<StoreModel> = async (migration) => {
       return await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts, migration.encKeys)
     }
 
-    await this.executeOptionsBuilders(id, builder)
+    await this.executeOptionsBuilders(builder, 'wallet', walletName)
   }
 
   //
+  // (): Store<StoreModels[T]> {
+  protected async executeOptionsBuilders <T extends StoreClass>(
+    optionsBuilder: StoreOptionsBuilder<any>,
+    type: T,
+    ...args: StoreClasses[T]
+  ): Promise<void> {
+    const store = await this.builder.buildOptionsBuilder(optionsBuilder)
 
-  protected async executeOptionsBuilders (id: string, optionsBuilder: StoreOptionsBuilder<any>): Promise<void> {
-    for (const bag of [this, this.silentBag]) {
-      const store = await this.builder.buildOptionsBuilder(optionsBuilder, bag === this)
-      bag.setStoreById(store, id)
+    const storeProxy = new StoreProxy(store)
+    const beforeChange = async (): Promise<void> => {
+      await this.onBeforeChange(type, store)
     }
+    const afterChange = async (): Promise<void> => {
+      await this.onAfterChange(type, store)
+    }
+    const afterDelete = async (): Promise<void> => {
+      storeProxy.off('before-set', beforeChange)
+      storeProxy.off('after-set', afterChange)
+      storeProxy.off('after-delete', afterDelete)
+    }
+
+    storeProxy.on('before-set', beforeChange)
+    storeProxy.on('after-set', afterChange)
+    storeProxy.on('after-delete', afterDelete)
+
+    const id = StoreBag.getStoreId(type, ...args)
+    this.setStoreById(storeProxy.proxy, id)
+    this.silentBag.setStoreById(store, id)
   }
 
   // Cloud Sync
-
-  public setStoreById<T extends keyof StoreClasses>(store: Store<StoreModels[T]>, storeId: string): void {
-    const storeProxy = new StoreProxy(store)
-    storeProxy.on('before-set', async () => {
-      console.log('Before set!!')
-    })
-
-    super.setStoreById(storeProxy.proxy, storeId)
-    store.on('changed', () => this.onStoreChange(storeId, store))
-  }
 
   protected async bundleStores (): Promise<StoresBundle> {
     const { versionManager } = this.locals
@@ -152,18 +163,18 @@ export class StoreManager extends StoreBag {
       stores: {}
     }
     for (const [storeId, store] of Object.entries(this.stores)) {
-      let metadata: StoreMetadata
-      const [type, ...args] = StoreBag.deconstructId(storeId)
-      if (type === 'wallet') {
-        metadata = { type, walletName: args[0] }
-      } else if (type === 'private-settings') {
-        metadata = { type }
-      } else {
-        // Skip other stores
+      const idMetadata = StoreBag.deconstructId(storeId)
+      const type = idMetadata[0]
+
+      if (type === 'public-settings') {
         continue
       }
 
-      const storeBundle: StoreBundleData<any> = {
+      const metadata: StoreMetadata = {
+        idMetadata
+      }
+
+      const storeBundle: StoreBundleData = {
         metadata,
         data: await store.getStore()
       }
@@ -193,33 +204,60 @@ export class StoreManager extends StoreBag {
   }
 
   public async restoreStoreBundle (bundle: StoresBundle): Promise<void> {
-    const { versionManager } = this.locals
+    const { versionManager, sharedMemoryManager: sh } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
       // TODO: Handle version conflict!!
       return
     }
 
     for (const [, storeBundle] of Object.entries(bundle.stores)) {
-      if (storeBundle.metadata.type === 'private-settings') {
-        // Update shared memory with the
+      const { idMetadata } = storeBundle.metadata
+      const type = idMetadata[0]
+      if (!this.hasStore(...idMetadata)) {
+        // Create the store first
+      }
 
+      const store = this.silentBag.getStore(...idMetadata)
+      await store.set(storeBundle.data)
+
+      if (type === 'private-settings') {
+        sh.update(mem => ({
+          ...mem,
+          settings: storeBundle.data as PrivateSettings
+        }))
       }
     }
   }
 
   //
+  protected async onBeforeChange (type: StoreClass, store: Store<any>): Promise<void> {
+    console.log('Store changed!', store.getPath())
 
-  protected onStoreChange (storeId: string, store: Store<any>): void {
-    const onStoreChangeAsync = async (): Promise<void> => {
-      logger.debug(`The store has been changed ${store.getPath()}`)
-      const [type] = StoreBag.deconstructId(storeId)
-      if (type !== 'public-settings') {
-        const publicSettings = this.getStore('public-settings')
-        await publicSettings.set('cloud.unsyncedChanges', true)
-        await this.uploadStores()
-      }
+    if (isEncryptedStore(type)) {
+      const publicSettings = this.getStore('public-settings')
+      await publicSettings.set('cloud.unsyncedChanges', true)
     }
-
-    onStoreChangeAsync().catch(...handleError(this.locals))
   }
+
+  protected async onAfterChange (type: StoreClass, store: Store<any>): Promise<void> {
+    logger.debug(`The store has been changed ${store.getPath()}`)
+    if (isEncryptedStore(type)) {
+      await this.uploadStores().catch((err: Error) => {
+        let fixedError = err
+        if (!(err instanceof WalletDesktopError)) {
+          fixedError = new WalletDesktopError('Could not uplaod stores', {
+            severity: 'error',
+            message: 'Upload store error',
+            details: `Could not upload store due to '${err.message}'`
+          })
+        }
+        handleErrorSync(this.locals, fixedError)
+      })
+    }
+  }
+}
+
+type EncryptedStoreClass = 'wallet' | 'private-settings'
+function isEncryptedStore (type: StoreClass): type is EncryptedStoreClass {
+  return type !== 'public-settings'
 }

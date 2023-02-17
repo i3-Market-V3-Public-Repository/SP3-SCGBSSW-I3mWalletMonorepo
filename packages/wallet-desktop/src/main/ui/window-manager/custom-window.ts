@@ -4,7 +4,7 @@ import { Observable, Subject } from 'rxjs'
 import { catchError, first, pluck, switchMap } from 'rxjs/operators'
 
 import { ActionRequest, SharedMemorySync, TypedObject, WindowInput, WindowOutput, withType } from '@wallet/lib'
-import { handleError, Locals } from '@wallet/main/internal'
+import { handleErrorSync, Locals } from '@wallet/main/internal'
 
 export type Mapper<T> = (...args: any[]) => T
 
@@ -45,20 +45,17 @@ export class CustomWindow<
     this.output$
       .pipe(withType('memory-sync'))
       .subscribe((memorySync) => {
-        sharedMemoryManager.update((memorySync as any as SharedMemorySync).memory, this)
+        sharedMemoryManager.update((memorySync as any as SharedMemorySync).memory, { emitter: this })
       })
 
     this.output$
       .pipe(
         withType('action'),
         switchMap(async (actionRequest) => {
-          await this.locals.actionReducer.reduce((actionRequest as any as ActionRequest).action)
+          await locals.actionReducer.reduce((actionRequest as any as ActionRequest).action)
         }),
         catchError((err, caught) => {
-          const errorHandler = handleError(this.locals)[0]
-          if (errorHandler !== undefined && errorHandler !== null) {
-            errorHandler(err)
-          }
+          handleErrorSync(locals, err)
           return caught
         })
       )

@@ -49,6 +49,16 @@ export class StoreBag {
     this.stores[storeId] = store
   }
 
+  public deleteStoreById (storeId: string): void {
+    const store = this.getStoreById(storeId)
+    delete this.stores[storeId] // eslint-disable-line @typescript-eslint/no-dynamic-delete
+
+    const path = store.getPath()
+    if (existsSync(path)) {
+      rmSync(path)
+    }
+  }
+
   //
 
   public getStore <T extends StoreClass>(type: T, ...args: StoreClasses[T]): Store<StoreModels[T]> {
@@ -68,12 +78,6 @@ export class StoreBag {
 
   public deleteStore <T extends StoreClass>(type: T, ...args: StoreClasses[T]): void {
     const storeId = StoreBag.getStoreId(type, ...args)
-    const store = this.getStoreById(storeId)
-    delete this.stores[storeId] // eslint-disable-line @typescript-eslint/no-dynamic-delete
-
-    const path = store.getPath()
-    if (existsSync(path)) {
-      rmSync(path)
-    }
+    this.deleteStoreById(storeId)
   }
 }

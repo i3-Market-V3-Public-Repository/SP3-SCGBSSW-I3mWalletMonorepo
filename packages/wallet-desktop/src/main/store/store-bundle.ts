@@ -1,21 +1,21 @@
 
-interface WalletStoreMetadata {
-  type: 'wallet'
-  walletName: string
+// type WalletStoreMetadata = [type: 'wallet', walletName: string]
+// type PrivateSettingsStoreMetadata = [type: 'private-settings']
+
+import { StoreClass, StoreClasses, StoreModels } from './store-class'
+
+export type StoreIdMetadata<T extends StoreClass> = [type: T, ...args: StoreClasses[T]]
+
+export interface StoreMetadata<T extends StoreClass = StoreClass> {
+  idMetadata: StoreIdMetadata<T>
 }
 
-interface PrivateSettingsStoreMetadata {
-  type: 'private-settings'
+export interface StoreBundleData<T extends StoreClass = StoreClass> {
+  metadata: StoreMetadata<T>
+  data: StoreModels[T]
 }
 
-export type StoreMetadata = WalletStoreMetadata | PrivateSettingsStoreMetadata
-
-export interface StoreBundleData<T> {
-  metadata: StoreMetadata
-  data: T
-}
-
-export interface StoresBundle<T = unknown> {
+export interface StoresBundle<T extends StoreClass = StoreClass> {
   version: string
   stores: Record<string, StoreBundleData<T>>
 }

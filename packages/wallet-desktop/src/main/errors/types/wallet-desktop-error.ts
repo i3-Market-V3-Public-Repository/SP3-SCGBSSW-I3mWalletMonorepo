@@ -1,5 +1,5 @@
 import { ToastType } from '@i3m/base-wallet'
-import { Locals } from '../internal'
+import { Locals } from '@wallet/main/internal'
 
 export interface WalletDesktopOptions {
   critical: boolean

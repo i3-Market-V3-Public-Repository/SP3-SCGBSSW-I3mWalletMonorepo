@@ -11,9 +11,9 @@ export const bindSettings = async (locals: Locals): Promise<void> => {
     settings: store
   }))
 
-  sharedMemoryManager.on('change', (newMem, oldMem) => {
-    if (!_.isEqual(newMem.settings, oldMem.settings)) {
-      const promise = settings.set(newMem.settings)
+  sharedMemoryManager.on('change', ({ curr, prev }) => {
+    if (!_.isEqual(curr.settings, prev.settings)) {
+      const promise = settings.set(curr.settings)
       handleCanBePromise(locals, promise)
     }
   })

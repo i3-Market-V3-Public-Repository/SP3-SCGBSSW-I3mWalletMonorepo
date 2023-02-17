@@ -1,2 +1,5 @@
 export * from './settings'
 export * from './wallet-factory'
+export * from './window-manager'
+export * from './dialog'
+export * from './tray'
