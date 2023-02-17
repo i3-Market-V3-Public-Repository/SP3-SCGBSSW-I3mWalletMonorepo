@@ -14,12 +14,7 @@ export interface ProviderData {
     registry?: string;
 }
 export declare const DEFAULT_PROVIDER = "did:ethr:i3m";
-export declare const DEFAULT_PROVIDERS_DATA: {
-    'did:ethr:i3m': {
-        network: string;
-        rpcUrl: string[];
-    };
-};
+export declare const DEFAULT_PROVIDERS_DATA: Record<string, ProviderData>;
 export declare class Veramo<T extends BaseWalletModel = BaseWalletModel> {
     agent: TAgent<PluginMap>;
     providers: Record<string, AbstractIdentifierProvider>;

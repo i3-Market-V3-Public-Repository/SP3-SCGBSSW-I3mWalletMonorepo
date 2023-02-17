@@ -7,7 +7,6 @@ import { getPath } from './get-path'
 
 class ElectronStoreExtra<T extends Record<string, any> = Record<string, unknown>>
   extends ElectronStore<T> implements Store<T> {
-
   getStore (): CanBePromise<T> {
     return this.store
   }
@@ -37,7 +36,7 @@ export class ElectronStoreBuilder<T extends Record<string, any> = Record<string,
         ...electronStoreOptions
       })
       store.onDidAnyChange(() => {
-        store.emit('changed', 0)
+        store.emit('changed', Date.now())
       })
       return store
     } catch (e) {

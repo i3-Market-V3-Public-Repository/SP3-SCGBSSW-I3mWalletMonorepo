@@ -142,7 +142,7 @@ export class StoreManager extends StoreBag {
     })
 
     super.setStoreById(storeProxy.proxy, storeId)
-    store.on('change', () => this.onStoreChange(storeId, store))
+    store.on('changed', () => this.onStoreChange(storeId, store))
   }
 
   protected async bundleStores (): Promise<StoresBundle> {

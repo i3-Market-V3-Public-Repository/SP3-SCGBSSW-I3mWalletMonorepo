@@ -1,8 +1,8 @@
 import type { BlockTag } from '@ethersproject/abstract-provider';
 import type { DIDDocument, DIDResolutionOptions, DIDResolutionResult, DIDResolver, ParsedDID, Resolvable } from 'did-resolver';
 import type { BigNumber } from 'ethers';
-import type { ERC1056Event } from './ethr-did-resolver_DO-NOT-EDIT/helpers';
 import { MultipleExecutionsOptions } from '../utils';
+import type { ERC1056Event } from './ethr-did-resolver_DO-NOT-EDIT/helpers';
 import { EthrDidResolver } from './ethr-did-resolver_DO-NOT-EDIT/resolver';
 import type { ProviderData } from './veramo';
 export interface ConfigurationOptions {

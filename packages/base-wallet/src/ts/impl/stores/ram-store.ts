@@ -13,14 +13,14 @@ export class RamStore<T extends Record<string, any> = Record<string, unknown>> e
     this.model = _.cloneDeep(defaultModel)
   }
 
-  on (eventName: 'change', listener: (changedAt: number) => void): this
+  on (eventName: 'changed', listener: (changedAt: number) => void): this
   on (eventName: 'cleared', listener: (changedAt: number) => void): this
   on (eventName: string | symbol, listener: (...args: any[]) => void): this
   on (eventName: string | symbol, listener: (...args: any[]) => void): this {
     return super.on(eventName, listener)
   }
 
-  emit (eventName: 'change', changedAt: number): boolean
+  emit (eventName: 'changed', changedAt: number): boolean
   emit (eventName: 'cleared', changedAt: number): boolean
   emit (eventName: string | symbol, ...args: any[]): boolean
   emit (eventName: string | symbol, ...args: any[]): boolean {
@@ -37,7 +37,7 @@ export class RamStore<T extends Record<string, any> = Record<string, unknown>> e
       return
     }
     _.set(this.model, keyOrStore, value)
-    this.emit('change', Date.now())
+    this.emit('changed', Date.now())
   }
 
   has<Key extends 'accounts'>(key: Key): CanBePromise<boolean> {
@@ -46,7 +46,7 @@ export class RamStore<T extends Record<string, any> = Record<string, unknown>> e
 
   delete <Key extends 'accounts'>(key: Key): CanBePromise<void> {
     this.model = _.omit(this.model, key) as any
-    this.emit('change', Date.now())
+    this.emit('changed', Date.now())
   }
 
   clear (): CanBePromise<void> {

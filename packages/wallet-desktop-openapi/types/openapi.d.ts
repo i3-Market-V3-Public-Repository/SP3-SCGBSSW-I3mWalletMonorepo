@@ -482,11 +482,7 @@ export namespace WalletComponents {
              * i3m
              */
       network?: string
-      /**
-             * example:
-             * http://95.211.3.250:8545
-             */
-      rpcUrl?: string
+      rpcUrl?: string | string[]
     }
     /**
          * Receipt

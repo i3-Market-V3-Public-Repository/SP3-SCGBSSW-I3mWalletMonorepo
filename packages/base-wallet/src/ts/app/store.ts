@@ -95,7 +95,7 @@ export interface Store<T extends Record<string, any> = Record<string, unknown>> 
    * @param listener
    * @returns
    */
-  on(eventName: 'change', listener: (changedAt: number) => void): this
+  on(eventName: 'changed', listener: (changedAt: number) => void): this
   /**
    * Adds the `listener` function to the end of the listeners array for the
    * 'cleared' event, which is emitted when the store contents are cleared.
@@ -148,7 +148,7 @@ export interface Store<T extends Record<string, any> = Record<string, unknown>> 
    * @param changedAt timestamp (in milliseconds ellapsed from EPOCH)
    * when the change happened
    */
-  emit(eventName: 'change', changedAt: number): boolean
+  emit(eventName: 'changed', changedAt: number): boolean
   /**
    * Synchronously calls each of the listeners registered for the 'cleared'
    * event, in the order they were registered, passing the `changedAt`argument

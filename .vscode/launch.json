@@ -6,9 +6,12 @@
       "type": "node",
       "request": "launch",
       "cwd": "${workspaceFolder}/packages/wallet-desktop",
-      "env": { "DEBUG": "*" },
-      "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/electron",
-      "args" : ["--no-sandbox", "."],
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "runtimeExecutable": "${workspaceFolder}/packages/wallet-desktop/node_modules/.bin/ts-node",
+      "args" : ["-r", "dotenv/config", "build/start.ts"],
       "outputCapture": "std"
     }
   ]

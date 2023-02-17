@@ -40,7 +40,14 @@ components:
           type: string
           example: i3m
         rpcUrl:
-          type: string
-          example: http://95.211.3.250:8545
+          oneOf:
+            - type: string
+              example: http://95.211.3.250:8545
+            - type: array
+              items:
+                type: string
+              uniqueItems: true
+              example: [http://95.211.3.249:8545, http://95.211.3.250:8545]
+
       additionalProperties: true
 

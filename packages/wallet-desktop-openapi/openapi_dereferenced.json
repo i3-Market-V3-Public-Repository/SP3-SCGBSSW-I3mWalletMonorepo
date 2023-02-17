@@ -2508,8 +2508,23 @@
                       "example": "i3m"
                     },
                     "rpcUrl": {
-                      "type": "string",
-                      "example": "http://95.211.3.250:8545"
+                      "oneOf": [
+                        {
+                          "type": "string",
+                          "example": "http://95.211.3.250:8545"
+                        },
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "uniqueItems": true,
+                          "example": [
+                            "http://95.211.3.249:8545",
+                            "http://95.211.3.250:8545"
+                          ]
+                        }
+                      ]
                     }
                   },
                   "additionalProperties": true
@@ -5239,28 +5254,26 @@
             "example": "i3m"
           },
           "rpcUrl": {
-            "type": "string",
-            "example": "http://95.211.3.250:8545"
+            "oneOf": [
+              {
+                "type": "string",
+                "example": "http://95.211.3.250:8545"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "uniqueItems": true,
+                "example": [
+                  "http://95.211.3.249:8545",
+                  "http://95.211.3.250:8545"
+                ]
+              }
+            ]
           }
         },
         "additionalProperties": true
-      },
-      "ApiError": {
-        "type": "object",
-        "title": "Error",
-        "required": [
-          "code",
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
       },
       "EthereumAddress": {
         "description": "Ethereum Address in EIP-55 format (with checksum)",
@@ -5306,6 +5319,23 @@
         "required": [
           "did"
         ]
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
       },
       "JwkPair": {
         "type": "object",
