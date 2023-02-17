@@ -17,10 +17,8 @@ export interface StoreMigrationProxy {
   migrations: MigrationFunction[]
 }
 
-export interface StoreBuilder<T = any> {
-  id: string
-  options: (migration: StoreMigration) => Promise<Partial<StoreOptions<T>>>
-}
+export type StoreOptionsBuilder<T extends Record<string, any> = Record<string, unknown>> =
+  (migration: StoreMigration) => Promise<Partial<StoreOptions<T>>>
 
 export const createStoreMigrationProxy = (): StoreMigrationProxy => {
   let needed = false

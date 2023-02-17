@@ -18,13 +18,15 @@ export class CloudVaultManager {
   constructor (protected locals: Locals) { }
 
   async initialize (): Promise<void> {
-    const privateSettings = this.locals.storeManager.getStore('private-settings')
+    const { storeManager } = this.locals
+    const privateSettings = storeManager.getStore('private-settings')
     const cloud = await privateSettings.get('cloud')
 
     const client = new VaultClient(CLOUD_URL, cloud?.token)
     client.on('connected', (t) => {
 
     })
+
     this._client = client
   }
 

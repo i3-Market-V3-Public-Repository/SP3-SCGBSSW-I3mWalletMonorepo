@@ -20,7 +20,8 @@ export class VersionManager {
 
   async initialize (): Promise<void> {
     const publicSettings = this.locals.storeManager.getStore('public-settings')
-    this.settingsVersion = `${await publicSettings.get('version')}`
+    const version = await publicSettings.get('version')
+    this.settingsVersion = `${version}`
   }
 
   async verifySettingsVersion (): Promise<void> {
