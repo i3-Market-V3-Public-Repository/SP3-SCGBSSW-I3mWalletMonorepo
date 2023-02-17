@@ -1,12 +1,12 @@
 import type { BlockTag } from '@ethersproject/abstract-provider'
 import type { DIDDocument, DIDResolutionOptions, DIDResolutionResult, DIDResolver, ParsedDID, Resolvable } from 'did-resolver'
 import type { BigNumber } from 'ethers'
+import { multipleExecutions, MultipleExecutionsOptions } from '../utils'
+import { allEqual } from '../utils/all-equal'
 import type { ProviderConfiguration } from './ethr-did-resolver_DO-NOT-EDIT/configuration'
 import type { ERC1056Event } from './ethr-did-resolver_DO-NOT-EDIT/helpers'
-import { multipleExecutions, MultipleExecutionsOptions } from '../utils'
 import { EthrDidResolver } from './ethr-did-resolver_DO-NOT-EDIT/resolver'
 import type { ProviderData } from './veramo'
-import _ from 'lodash'
 
 export interface ConfigurationOptions {
   networks: ProviderData[]
@@ -90,8 +90,4 @@ export class EthrDidMultipleRpcResolver implements Omit<EthrDidResolver, 'contra
     if (allEqual(results)) return results[0]
     throw new Error('not all responses are equal, please consider removing the missbehaving/malicious RPC endpoint.')
   }
-}
-
-function allEqual (arr: any[]): boolean {
-  return arr.every(v => _.isEqual(v, arr[0]))
 }

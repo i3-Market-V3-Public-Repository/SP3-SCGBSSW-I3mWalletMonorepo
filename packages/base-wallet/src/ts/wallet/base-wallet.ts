@@ -12,7 +12,7 @@ import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, Identity
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
-import { getCredentialClaims } from '../utils'
+import { getCredentialClaims, multipleExecutions } from '../utils'
 import { didJwtVerify as didJwtVerifyFn } from '../utils/did-jwt-verify'
 import { displayDid } from '../utils/display-did'
 import { Veramo, DEFAULT_PROVIDER, DEFAULT_PROVIDERS_DATA, ProviderData } from '../veramo'
@@ -23,6 +23,7 @@ import { digest } from 'object-sha'
 import { Wallet } from './wallet'
 import { WalletFunctionMetadata } from './wallet-metadata'
 import { WalletOptions } from './wallet-options'
+import { shuffleArray } from '../utils/shuffle-array'
 
 const debug = Debug('base-wallet:base-wallet.ts')
 
@@ -114,27 +115,51 @@ export class BaseWallet<
       throw new WalletError(`Invalid transaction ${transaction ?? '<undefined>'}`)
     }
 
-    // TO-DO. FIX
-    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
-    const response = await provider.sendTransaction(transaction)
-    if (notifyUser) {
+    const notifyUserFn = async (response: ethers.providers.TransactionResponse): Promise<void> => {
       response.wait().then(receipt => {
         this.toast.show({
           message: 'Transaction properly executed',
           type: 'success'
         })
-        console.log(receipt)
+        debug(receipt)
       }).catch(err => {
         const reason: string = err.reason ?? ''
         this.toast.show({
           message: 'Error sending transaction to the ledger' + reason,
           type: 'error'
         })
-        console.log(reason)
+        debug(reason)
       })
-    } else {
-      console.log(response)
+    }
+
+    const sendTransaction = async (provider: ethers.providers.JsonRpcProvider, transaction: string): Promise<void> => {
+      const response = await provider.sendTransaction(transaction)
+      if (notifyUser) {
+        notifyUserFn(response).catch((reason) => {
+          debug(reason)
+        })
+      } else {
+        debug(response)
+      }
+    }
+
+    // Let us shuffle the array of rpcUrls
+    const rpcUrls: string[] = shuffleArray((providerData.rpcUrl instanceof Array) ? providerData.rpcUrl : [providerData.rpcUrl])
+    const providers = rpcUrls.map(rpcUrl => new ethers.providers.JsonRpcProvider(rpcUrl))
+
+    let success = false
+    for (const provider of providers) {
+      try {
+        await sendTransaction(provider, transaction)
+        success = true
+        break
+      } catch (error) {
+        debug(error)
+      }
+    }
+
+    if (!success) {
+      throw new WalletError('Error sending transaction to the blockchain')
     }
   }
 
@@ -156,12 +181,13 @@ export class BaseWallet<
       throw new WalletError('Query balance cancelled')
     }
 
-    // TO-DO. FIX
-    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+    // Let us shuffle the array of rpcUrls
+    const rpcUrls: string[] = shuffleArray((providerData.rpcUrl instanceof Array) ? providerData.rpcUrl : [providerData.rpcUrl])
+    const providers = rpcUrls.map(rpcUrl => new ethers.providers.JsonRpcProvider(rpcUrl))
+
     const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
-    const balance = await provider.getBalance(address)
-    const ether = ethers.utils.formatEther(balance)
+    const balances = await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getBalance', address)
+    const ether = ethers.utils.formatEther(balances[0])
 
     this.toast.show({
       message: 'Balance',
@@ -198,17 +224,18 @@ export class BaseWallet<
       throw new WalletError('Create transaction cancelled')
     }
 
-    // TO-DO. FIX
-    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+    // We ask to the fastest RPC endpoint
+    const rpcUrls: string[] = shuffleArray((providerData.rpcUrl instanceof Array) ? providerData.rpcUrl : [providerData.rpcUrl])
+    const providers = rpcUrls.map(rpcUrl => new ethers.providers.JsonRpcProvider(rpcUrl))
+
     const from = ethers.utils.computeAddress(`0x${transactionData.from.keys[0].publicKeyHex}`)
-    const nonce = await provider.getTransactionCount(from, 'latest')
-    const gasPrice = await provider.getGasPrice()
+    const nonce = (await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getTransactionCount', from, 'latest'))[0]
+    const gasPrice = (await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getGasPrice'))[0]
 
     const tx = {
       to: transactionData.to,
       value: ethers.utils.parseEther(transactionData.value),
-      nonce,
+      nonce: Number(nonce),
       gasLimit: ethers.utils.hexlify(100000),
       gasPrice
     }
@@ -957,13 +984,9 @@ export class BaseWallet<
    */
   async providerinfoGet (): Promise<WalletPaths.ProviderinfoGet.Responses.$200> {
     const providerData = this.veramo.providersData[this.provider]
-    // TO-DO. FIX
-    const rpcUrl = (providerData.rpcUrl instanceof Array) ? providerData.rpcUrl[0] : providerData.rpcUrl
-
     return {
       provider: this.provider,
-      ...providerData,
-      rpcUrl
+      ...providerData
     }
   }
 }
