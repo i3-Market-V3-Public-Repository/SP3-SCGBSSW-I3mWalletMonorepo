@@ -117,7 +117,8 @@ async function initAuth (ctx: MainContext, locals: Locals, task: LabeledTaskHand
   const cvManagger = new CloudVaultManager(locals)
   locals.cloudVaultManager = cvManagger
 
-  await cvManagger.initialize()
+  const cvmPromise = cvManagger.initialize()
+  handlePromise(locals, cvmPromise)
 }
 
 async function initFeatureManager (ctx: MainContext, locals: Locals): Promise<void> {

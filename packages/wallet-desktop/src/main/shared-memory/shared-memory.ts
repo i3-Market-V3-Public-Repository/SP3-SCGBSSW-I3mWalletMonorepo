@@ -10,6 +10,7 @@ export interface ChangeEvent {
   // Optionals
   ctx?: {
     emitter?: BrowserWindow
+    reason?: 'cloud-sync'
   }
 }
 

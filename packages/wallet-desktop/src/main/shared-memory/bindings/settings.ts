@@ -11,8 +11,8 @@ export const bindSettings = async (locals: Locals): Promise<void> => {
     settings: store
   }))
 
-  sharedMemoryManager.on('change', ({ curr, prev }) => {
-    if (!_.isEqual(curr.settings, prev.settings)) {
+  sharedMemoryManager.on('change', ({ curr, prev, ctx }) => {
+    if (ctx?.reason !== 'cloud-sync' && !_.isEqual(curr.settings, prev.settings)) {
       const promise = settings.set(curr.settings)
       handleCanBePromise(locals, promise)
     }

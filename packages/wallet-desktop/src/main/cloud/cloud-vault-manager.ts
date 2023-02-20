@@ -3,18 +3,14 @@ import { checkErrorType, VaultClient, VaultError } from '@i3m/cloud-vault-client
 import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
-import { TaskDescription } from '@wallet/lib'
-import { LabeledTaskHandler, Locals, WalletDesktopError } from '@wallet/main/internal'
-
-interface LoginData {
-  username: string
-  password: string
-}
+import { CloudVaultSettings, TaskDescription } from '@wallet/lib'
+import { handleErrorCatch, LabeledTaskHandler, Locals, WalletDesktopError } from '@wallet/main/internal'
 
 const CLOUD_URL = 'http://localhost:3000'
 
 export class CloudVaultManager {
   _client?: VaultClient
+  failed = false
   constructor (protected locals: Locals) { }
 
   async initialize (): Promise<void> {
@@ -22,17 +18,38 @@ export class CloudVaultManager {
     const privateSettings = storeManager.getStore('private-settings')
     const cloud = await privateSettings.get('cloud')
 
-    const client = new VaultClient(CLOUD_URL, cloud?.token)
-    client.on('connected', (t) => {
+    const client = new VaultClient(CLOUD_URL)
+    this._client = client
+    if (cloud !== undefined) {
+      await client.login(cloud.username, cloud.password, cloud.token)
+    }
 
+    client.on('connected', (t) => {
+      this.locals.toast.show({
+        message: 'Cloud Vault connected',
+        details: 'Your cloud vault has been sucessfully connected!',
+        type: 'success'
+      })
+      if (this.failed) {
+        this.failed = false
+      }
     })
 
-    this._client = client
+    client.on('connection-error', (err) => {
+      if (!this.failed) {
+        this.locals.toast.show({
+          message: 'Cloud Vault disconnected',
+          details: 'Your cloud vault has been disconnected!',
+          type: 'error'
+        })
+        this.failed = true
+      }
+    })
   }
 
-  async getLoginData (errorMessage: string): Promise<LoginData> {
+  async getLoginData (errorMessage: string): Promise<CloudVaultSettings> {
     const { dialog } = this.locals
-    const loginData = await dialog.form<LoginData>({
+    const loginData = await dialog.form<CloudVaultSettings>({
       title: 'Cloud Vault',
       descriptors: {
         username: { type: 'text', message: 'Introduce your username' },
@@ -50,7 +67,7 @@ export class CloudVaultManager {
     return loginData
   }
 
-  async registerUserTask (task: LabeledTaskHandler, loginData?: LoginData): Promise<void> {
+  async registerUserTask (task: LabeledTaskHandler, cloud?: CloudVaultSettings): Promise<void> {
     const { dialog } = this.locals
     const errorMessage = 'Vault user registration error'
 
@@ -69,8 +86,8 @@ export class CloudVaultManager {
       }
     }
 
-    if (loginData === undefined) {
-      loginData = await this.getLoginData(errorMessage)
+    if (cloud === undefined) {
+      cloud = await this.getLoginData(errorMessage)
     }
 
     const resources = Object.values(this.locals.sharedMemoryManager.memory.resources)
@@ -116,8 +133,8 @@ export class CloudVaultManager {
     const data = await jweEncrypt(
       Buffer.from(JSON.stringify({
         did: vc.identity,
-        username: loginData.username,
-        authkey: await VaultClient.computeAuthKey(CLOUD_URL, loginData.username, loginData.password)
+        username: cloud.username,
+        authkey: await VaultClient.computeAuthKey(CLOUD_URL, cloud.username, cloud.password)
       })),
       publicJwk as JWK,
       'A256GCM'
@@ -156,10 +173,10 @@ export class CloudVaultManager {
       return
     }
 
-    const loginData = await this.getLoginData(errorMessage)
+    const cloud = await this.getLoginData(errorMessage)
 
     try {
-      await this.client.login(loginData.username, loginData.password)
+      await this.client.login(cloud.username, cloud.password)
       sharedMemoryManager.update(mem => ({
         ...mem,
         cloudVaultData: {
@@ -168,6 +185,7 @@ export class CloudVaultManager {
         settings: {
           ...mem.settings,
           cloud: {
+            ...cloud,
             token: this.client.token as string
           }
         }
@@ -182,7 +200,7 @@ export class CloudVaultManager {
             rejectMsg: 'No'
           })
           if (confirm === true) {
-            await this.registerUserTask(task, loginData)
+            await this.registerUserTask(task, cloud)
             return
           }
         } else if (checkErrorType(err, 'not-initialized') || checkErrorType(err, 'http-connection-error')) {
@@ -209,7 +227,7 @@ export class CloudVaultManager {
     const { dialog } = this.locals
     const confirm = await dialog.confirmation({
       title: 'Cloud Vault',
-      message: 'Do you want to stop the cloud vault synchronization?',
+      message: 'Do you want to remove all the data of your vault?',
       acceptMsg: 'Yes',
       rejectMsg: 'No'
     })
@@ -217,14 +235,9 @@ export class CloudVaultManager {
       return
     }
 
+    await this.client.deleteStorage().catch(...handleErrorCatch(this.locals))
     this.client.logout()
-    this.locals.sharedMemoryManager.update(mem => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        cloud: undefined
-      }
-    }))
+    this.locals.storeManager.stopCloudService()
   }
 
   async registerUser (): Promise<void> {

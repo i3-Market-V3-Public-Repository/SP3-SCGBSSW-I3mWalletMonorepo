@@ -19,7 +19,8 @@ export async function fixPublicSettings (locals: Locals): Promise<void> {
     version: publicSettingsValues.version,
     auth: publicSettingsValues.auth,
     enc: publicSettingsValues.enc,
-    store: publicSettingsValues.store ?? { type: 'electron-store' }
+    store: publicSettingsValues.store ?? { type: 'electron-store' },
+    cloud: publicSettingsValues.cloud
   })
 }
 

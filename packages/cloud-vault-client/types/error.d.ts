@@ -18,7 +18,7 @@ export type VaultErrorData = {
         };
     };
     'no-uploaded-storage': any;
-    'sse-connection-error': Event;
+    'sse-connection-error': any;
     conflict: {
         localTimestamp?: number;
         remoteTimestamp?: number;

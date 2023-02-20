@@ -35,7 +35,9 @@ export interface WalletConnectSettings {
 }
 
 export interface CloudVaultSettings {
-  token: string
+  username: string
+  password: string
+  token?: string
 }
 
 export const DEFAULT_WALLET_PACKAGES = [

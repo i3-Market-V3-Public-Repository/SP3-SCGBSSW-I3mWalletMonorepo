@@ -183,20 +183,36 @@ export class StoreManager extends StoreBag {
     return storesBundle
   }
 
+  public async stopCloudService (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+
+    shm.update(mem => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        cloud: undefined
+      }
+    }))
+    const publicSettings = this.getStore('public-settings')
+    await publicSettings.delete('cloud')
+  }
+
   protected async uploadStores (): Promise<void> {
     const { sharedMemoryManager: sh, cloudVaultManager } = this.locals
     if (sh.memory.settings.cloud === undefined) {
       return
     }
 
+    const publicSettings = this.getStore('public-settings')
+    const cloud = await publicSettings.get('cloud')
+
     const bundle = await this.bundleStores()
     const bundleJSON = JSON.stringify(bundle)
     const buffer = Buffer.from(bundleJSON)
 
-    const newTimestamp = await cloudVaultManager.updateStorage(buffer)
+    const newTimestamp = await cloudVaultManager.updateStorage(buffer, cloud?.timestamp)
 
     // Update timestamp
-    const publicSettings = this.getStore('public-settings')
     await publicSettings.set('cloud', {
       timestamp: newTimestamp,
       unsyncedChanges: false
@@ -224,7 +240,7 @@ export class StoreManager extends StoreBag {
         sh.update(mem => ({
           ...mem,
           settings: storeBundle.data as PrivateSettings
-        }))
+        }), { reason: 'cloud-sync' })
       }
     }
   }
@@ -245,6 +261,7 @@ export class StoreManager extends StoreBag {
       await this.uploadStores().catch((err: Error) => {
         let fixedError = err
         if (!(err instanceof WalletDesktopError)) {
+          console.trace(err)
           fixedError = new WalletDesktopError('Could not uplaod stores', {
             severity: 'error',
             message: 'Upload store error',

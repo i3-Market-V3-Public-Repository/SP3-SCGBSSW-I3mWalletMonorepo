@@ -77,6 +77,7 @@ export async function setStorage (username: string, storage: string, timestamp?:
   }
   const res = await db.query(query, values)
   if (res.rows.length !== 1) throw new Error(`Can't set storage. User ${username} not registered`)
+  if (res.rows[0].last_uploaded === null) throw new Error('Cannot update non-existing storage')
   return Number(res.rows[0].last_uploaded)
 }
 

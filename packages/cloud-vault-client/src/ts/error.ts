@@ -1,5 +1,6 @@
 import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
 import { AxiosError } from 'axios'
+import { } from 'eventsource'
 
 export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consistent-type-definitions
   'not-initialized': any
@@ -17,7 +18,7 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
     }
   }
   'no-uploaded-storage': any
-  'sse-connection-error': Event
+  'sse-connection-error': any
   conflict: {
     localTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been downloaded by this client
     remoteTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been uploaded by any client
@@ -48,7 +49,7 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
 
   static from (error: unknown): VaultError {
     if (error instanceof VaultError) return error
-    if (error instanceof Event) { // SSE problem
+    if (error instanceof Object && error.constructor.name === 'Event') { // SSE problem
       return new VaultError('sse-connection-error', error, { cause: 'Likely issues connecting to the events endpoint of the cloud vault server' })
     }
     if (error instanceof AxiosError) {

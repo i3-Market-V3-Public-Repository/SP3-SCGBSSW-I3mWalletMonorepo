@@ -117,20 +117,27 @@ export default function (router: Router): void {
         if (error instanceof DatabaseError) {
           switch (error.code) {
             case '22001':
-              throw new HttpError({
+              return next(new HttpError({
                 name: 'error',
                 path: req.path,
                 status: 400,
                 message: `encrypted storage in base64url cannot be more than ${dbConfig.storageCharLength} long (${dbConfig.storageByteLength} in binary format)`
-              })
+              }))
             default:
-              throw new HttpError({
+              return next(new HttpError({
                 name: 'error',
                 path: req.path,
                 status: 400,
                 message: 'couldn\'t update storage'
-              })
+              }))
           }
+        } else if ((error instanceof Error && error.message === 'Cannot update non-existing storage')) {
+          return next(new HttpError({
+            name: 'no storage',
+            path: req.path,
+            status: 404,
+            message: 'couldn\'t update storage: ' + error.message
+          }))
         }
         return next(error)
       }
