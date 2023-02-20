@@ -33,8 +33,8 @@ describe('Wallet Cloud-Vault', function () {
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
   before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
-    client1 = new VaultClient(serverUrl, undefined, '1')
-    client2 = new VaultClient(serverUrl, undefined, '2')
+    client1 = new VaultClient(serverUrl, '1')
+    client2 = new VaultClient(serverUrl, '2')
 
     client1.on('connection-error', error => {
       console.log(client1.name, ': ', error)

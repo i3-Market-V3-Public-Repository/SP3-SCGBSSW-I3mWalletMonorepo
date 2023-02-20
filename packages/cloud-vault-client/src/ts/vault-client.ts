@@ -28,12 +28,11 @@ export class VaultClient extends EventEmitter {
 
   private es?: EventSource
 
-  constructor (serverUrl: string, token?: string, name?: string) {
+  constructor (serverUrl: string, name?: string) {
     super({ captureRejections: true })
 
     this.name = name ?? randomBytes(16).toString('hex')
     this.serverUrl = serverUrl
-    this.token = token
 
     this._initialized = this.init()
   }
@@ -147,23 +146,25 @@ export class VaultClient extends EventEmitter {
     this.emit('logged-out')
   }
 
-  async login (username: string, password: string): Promise<void> {
+  async login (username: string, password: string, token?: string): Promise<void> {
     await this.initialized
-
-    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
     await this.initKeyManager(username, password)
 
-    const reqBody: OpenApiPaths.ApiV2VaultToken.Post.RequestBody = {
-      username,
-      authkey: (this.keyManager as KeyManager).authKey
+    if (token === undefined) {
+      const reqBody: OpenApiPaths.ApiV2VaultToken.Post.RequestBody = {
+        username,
+        authkey: (this.keyManager as KeyManager).authKey
+      }
+      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+      const data = await request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
+        this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody,
+        { responseStatus: 200 }
+      )
+
+      this.token = data.token
+    } else {
+      this.token = token
     }
-
-    const data = await request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
-      this.serverUrl + cvsConf.vault_configuration.v2.token_endpoint, reqBody,
-      { responseStatus: 200 }
-    )
-
-    this.token = data.token
 
     await this.initEventSourceClient().catch((error) => { throw VaultError.from(error) })
   }

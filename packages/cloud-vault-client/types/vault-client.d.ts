@@ -17,7 +17,7 @@ export declare class VaultClient extends EventEmitter {
     private _initialized;
     private keyManager?;
     private es?;
-    constructor(serverUrl: string, token?: string, name?: string);
+    constructor(serverUrl: string, name?: string);
     get initialized(): Promise<void>;
     emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean;
     emit(eventName: string | symbol, ...args: any[]): boolean;
@@ -30,7 +30,7 @@ export declare class VaultClient extends EventEmitter {
     private emitError;
     private initKeyManager;
     logout(): void;
-    login(username: string, password: string): Promise<void>;
+    login(username: string, password: string, token?: string): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
     updateStorage(storage: VaultStorage, force?: boolean): Promise<number>;
