@@ -4,16 +4,16 @@ import http from 'http'
 import { logger, Locals, MainContext } from '@wallet/main/internal'
 import { createServer, initServer } from './server'
 
-interface Params { 
+interface Params {
   app: Express
 }
+
 export class ApiManager {
   protected server: http.Server
   protected app: Express
   protected locals: Locals
   protected port: number
   protected host: string
-
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<ApiManager> {
     const app = express()

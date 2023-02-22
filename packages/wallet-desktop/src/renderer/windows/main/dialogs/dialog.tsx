@@ -20,8 +20,8 @@ interface FormIndicatorProps {
   formValues: Array<DialogOption<any> | undefined>
 }
 
-function escapeRegExp (str: string) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+function escapeRegExp (str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& means the whole matched string
 }
 
 function FormIndicator (props: FormIndicatorProps): JSX.Element {

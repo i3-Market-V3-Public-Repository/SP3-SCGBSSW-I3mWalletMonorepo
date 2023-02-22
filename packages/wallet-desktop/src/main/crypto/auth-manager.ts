@@ -30,10 +30,10 @@ export class AuthManager {
     this._registered = params.registered
     this._authenticated = false
 
-    this.bindRuntimeEvents ()
+    this.bindRuntimeEvents()
   }
 
-  bindRuntimeEvents () {
+  bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     runtimeManager.on('auth', async (task) => {
       await this.authenticate(task)

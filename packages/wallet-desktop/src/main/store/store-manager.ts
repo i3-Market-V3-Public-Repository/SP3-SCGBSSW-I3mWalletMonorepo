@@ -38,7 +38,7 @@ export class StoreManager extends StoreBag {
     this.bindRuntimeEvents()
   }
 
-  protected bindRuntimeEvents (): void{
+  protected bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     runtimeManager.on('after-launch', async () => {
       await this.loadPublicSettings()
@@ -223,7 +223,10 @@ export class StoreManager extends StoreBag {
     })
   }
 
-  public async restoreStoreBundle (bundle: StoresBundle): Promise<void> {
+  public async restoreStoreBundle (buffer: Buffer): Promise<void> {
+    const bundleJSON = buffer.toString()
+    const bundle = JSON.parse(bundleJSON) as StoresBundle
+
     const { versionManager, sharedMemoryManager: sh } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
       // TODO: Handle version conflict!!
@@ -281,7 +284,7 @@ export class StoreManager extends StoreBag {
         let fixedError = err
         if (!(err instanceof WalletDesktopError)) {
           console.trace(err)
-          fixedError = new WalletDesktopError('Could not uplaod stores', {
+          fixedError = new WalletDesktopError('Could not upload stores', {
             severity: 'error',
             message: 'Upload store error',
             details: `Could not upload store due to '${err.message}'`

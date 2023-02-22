@@ -1,5 +1,5 @@
-import { logoutCloudAction, stopCloudSyncAction } from "@wallet/lib"
-import { useAction } from "@wallet/renderer/communication"
+import { logoutCloudAction, stopCloudSyncAction } from '@wallet/lib'
+import { useAction } from '@wallet/renderer/communication'
 
 export function Authenticated (): JSX.Element {
   const dispatch = useAction()

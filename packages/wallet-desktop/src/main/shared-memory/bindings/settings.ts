@@ -4,8 +4,9 @@ import { Locals, handleCanBePromise } from '@wallet/main/internal'
 export const bindWithSettings = async (locals: Locals): Promise<void> => {
   const { sharedMemoryManager, storeManager } = locals
   const settings = storeManager.getStore('private-settings')
-
   const store = await settings.getStore()
+
+  // Update private settings
   sharedMemoryManager.update((mem) => ({
     ...mem,
     settings: store

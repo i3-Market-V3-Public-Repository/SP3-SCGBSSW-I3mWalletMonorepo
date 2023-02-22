@@ -7,6 +7,6 @@ export const systemModule = new Module({
   handlersBuilders: [
     reset,
     closeToast,
-    showToast,
+    showToast
   ]
 })

@@ -34,10 +34,10 @@ export interface WalletConnectSettings {
   tokenTTL: number // in seconds
 }
 
-export interface CloudVaultSettings {
+export interface CloudVaultPrivateSettings {
   username: string
   password: string
-  token?: string
+  login?: boolean
 }
 
 export const DEFAULT_WALLET_PACKAGES = [
@@ -50,7 +50,7 @@ export interface PrivateSettings {
   providers: Provider[]
   developer: DeveloperSettings
   connect: WalletConnectSettings
-  cloud?: CloudVaultSettings
+  cloud?: CloudVaultPrivateSettings
   secret?: JWK
 }
 

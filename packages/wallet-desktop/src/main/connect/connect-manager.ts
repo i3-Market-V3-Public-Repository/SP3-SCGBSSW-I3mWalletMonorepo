@@ -39,7 +39,7 @@ export class ConnectManager {
     this.bindWalletProtocolEvents()
   }
 
-  bindWalletProtocolEvents () {
+  bindWalletProtocolEvents (): void {
     const { sharedMemoryManager } = this.locals
 
     this.walletProtocol

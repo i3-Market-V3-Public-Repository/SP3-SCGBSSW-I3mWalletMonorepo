@@ -11,7 +11,7 @@ export interface ProgressTaskHandler extends IBasicTaskHandler<'progress'> {
 }
 
 export interface LabeledTaskHandler extends IBasicTaskHandler<'labeled'> {
-  setDetails (label: string): void
+  setDetails: (label: string) => void
 }
 
 export type TaskHandlers = ProgressTaskHandler | LabeledTaskHandler
@@ -20,7 +20,6 @@ export type TaskHandlerFor<T extends WalletTaskTypes> = TaskHandlers & { type: T
 export type AddTaskMethod = (task: WalletTask) => void
 export type UpdateTaskMethod = (task: WalletTask) => void
 export type FinishTaskMethod = (task: WalletTask) => void
-
 
 export interface TaskMethods {
   addTask: AddTaskMethod

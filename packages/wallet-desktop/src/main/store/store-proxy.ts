@@ -16,14 +16,13 @@ import { AsyncEventHandler } from '../events'
 // export type StoreEventCallback<E extends StoreEventTypes = StoreEventTypes> =
 //   (...args: StoreEventFor<E>['args']) => Promise<void>
 
-type StoreEvents = {
+interface StoreEvents {
   'before-set': []
   'after-set': []
   'after-delete': []
 }
 
 export class StoreProxy<T extends Record<string, any> = Record<string, unknown>> extends AsyncEventHandler<StoreEvents> {
-
   constructor (protected store: Store<T>) {
     super()
     this.emit = this.emit.bind(this)

@@ -33,9 +33,9 @@ export interface Pbkdf2EncSettings {
 
 export type PbkdfAlgorithms = 'scrypt' | 'pbkdf2'
 export type PbkdfInput = 'password' | 'master'
-export type HashFunction = "sha256" | "sha512"
+export type HashFunction = 'sha256' | 'sha512'
 export type KeyIdentifiers = 'master' | 'settings' | 'wallet'
-export type Pbkdf2Params = {
+export interface Pbkdf2Params {
   iterations: number
 }
 
@@ -45,7 +45,7 @@ export type AlgorithmOptionsFor<Alg extends PbkdfAlgorithms> = {
 }[Alg]
 
 export type KeyDerivationContext = Record<string, string | KeyObject | Buffer | undefined>
-export type KeyDerivation<Alg extends PbkdfAlgorithms = PbkdfAlgorithms> = {
+export interface KeyDerivation<Alg extends PbkdfAlgorithms = PbkdfAlgorithms> {
   alg: Alg
   alg_options: AlgorithmOptionsFor<Alg>
   derived_key_length: number

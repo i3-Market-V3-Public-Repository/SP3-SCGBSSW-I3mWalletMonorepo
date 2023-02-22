@@ -19,7 +19,7 @@ export class WindowManager {
     this.bindRuntimeEvents()
   }
 
-  bindRuntimeEvents () {
+  bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     runtimeManager.on('start', async () => {
       if (process.env.REACT_DEVTOOLS !== undefined) {

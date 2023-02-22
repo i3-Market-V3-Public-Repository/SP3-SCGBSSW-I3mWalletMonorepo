@@ -6,12 +6,12 @@ export function StatusBar (): JSX.Element {
   return (
     <div className='status-bar'>
       <CurrentWallet />
-      <Pairing/>
-      <CloudVault/>
+      <Pairing />
+      <CloudVault />
 
-      <div style={{ flex: 1 }}/>
+      <div style={{ flex: 1 }} />
 
-      <TaskManager/>
+      <TaskManager />
     </div>
   )
 }

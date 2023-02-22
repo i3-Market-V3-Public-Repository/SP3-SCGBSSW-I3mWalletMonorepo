@@ -10,12 +10,12 @@ const COLOR = '#3BBD59'
 export function FreezeOverlay (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
 
-  let task: WalletTask | undefined = sharedMemory.tasks
+  const task: WalletTask | undefined = sharedMemory.tasks
     .filter((task) => task.description.freezing === true)[0]
 
   return task !== undefined ? (
     <div className='freeze-overlay'>
-      <div className='overlay' style={{color: COLOR}}>
+      <div className='overlay' style={{ color: COLOR }}>
         <Loader color={COLOR} />
         <span className='title'>{task.description.details}...</span>
       </div>

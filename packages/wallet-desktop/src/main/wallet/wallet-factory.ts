@@ -36,10 +36,10 @@ export class WalletFactory {
   constructor (protected locals: Locals) {
     this._walletName = undefined
     this.featuresByWallet = {}
-    this.bindRuntimeEvents ()
+    this.bindRuntimeEvents()
   }
 
-  protected bindRuntimeEvents () {
+  protected bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     runtimeManager.on('after-private-settings', async () => {
       await this.loadWalletsMetadata()
@@ -47,7 +47,7 @@ export class WalletFactory {
 
     runtimeManager.on('ui', async () => {
       await this.loadCurrentWallet()
-    }) 
+    })
   }
 
   async loadWalletsMetadata (): Promise<void> {

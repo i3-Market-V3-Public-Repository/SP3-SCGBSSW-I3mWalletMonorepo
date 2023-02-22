@@ -21,9 +21,9 @@ export function TaskManager (): JSX.Element | null {
   }
 
   if (tasks.length > 0) {
-    icon = <Loader className='loader' color='white'/>
+    icon = <Loader className='loader' color='white' />
   } else {
-    icon = <FontAwesomeIcon icon={faBarsProgress} className='icon'/>
+    icon = <FontAwesomeIcon icon={faBarsProgress} className='icon' />
   }
 
   return (

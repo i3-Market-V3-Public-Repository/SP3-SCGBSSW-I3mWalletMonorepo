@@ -7,7 +7,7 @@ export const developerApi = (locals: Locals): RequestHandler => {
 
   return (req: any, res, next) => {
     const developerApi = sharedMemoryManager.memory.settings.developer.enableDeveloperApi
-    if (developerApi === false) {
+    if (!developerApi) {
       if (req.walletProtocol !== true) {
         next(new WalletError('the request must use wallet protocol', { status: 400 }))
       }

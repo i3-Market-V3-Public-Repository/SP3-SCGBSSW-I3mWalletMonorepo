@@ -19,7 +19,7 @@ export class LabeledTaskHandlerImpl implements LabeledTaskHandler {
     }
   }
 
-  setDetails(label: string): void {
+  setDetails (label: string): void {
     this.description.details = label
     this.methods.updateTask(this.task)
   }

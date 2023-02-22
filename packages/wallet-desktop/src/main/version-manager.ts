@@ -34,7 +34,7 @@ export class VersionManager {
     this.bindRuntimeEvents()
   }
 
-  bindRuntimeEvents () {
+  bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
 
     runtimeManager.on('after-start', async () => {

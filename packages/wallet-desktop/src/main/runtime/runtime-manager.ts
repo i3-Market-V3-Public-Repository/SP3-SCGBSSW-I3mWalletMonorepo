@@ -20,16 +20,13 @@ import {
   WindowManager
 } from '@wallet/main/internal'
 
-
 /**
  * Application launch events
- * 
+ *
  * launch
- * 
- * 
  */
 
-type RuntimeEvents = {
+interface RuntimeEvents {
   // Launch: launch the basic modules. This phase is the fastest
   'before-launch': []
   'launch': []
@@ -58,7 +55,6 @@ type RuntimeEvents = {
 }
 
 export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
-
   constructor (protected ctx: MainContext, protected locals: Locals, protected setLocals: LocalsSetter) {
     super()
     this.start = this.start.bind(this)
@@ -68,7 +64,6 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
   }
 
   async run (): Promise<void> {
-
     await this.launch()
 
     const { taskManager } = this.locals
@@ -106,8 +101,8 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     await this.setLocals('featureManager', new FeatureManager(locals))
     await this.setLocals('featureContext', {})
 
-    this.emit('start')
-    this.emit('after-start')
+    await this.emit('start')
+    await this.emit('after-start')
   }
 
   async auth (task: LabeledTaskHandler): Promise<void> {
@@ -122,7 +117,6 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     await this.emit('after-auth', task)
   }
 
-  
   async load (task: LabeledTaskHandler): Promise<void> {
     const { storeMigrationProxy } = this.ctx
     logger.debug('[RuntimeManager] Load!')

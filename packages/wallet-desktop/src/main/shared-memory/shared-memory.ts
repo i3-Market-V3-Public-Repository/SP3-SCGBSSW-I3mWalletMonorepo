@@ -27,10 +27,10 @@ export class SharedMemoryManager extends EventEmitter {
   constructor (protected locals: Locals, values?: Partial<SharedMemory>) {
     super()
     this._memory = createDefaultSharedMemory(values)
-    this.bindRuntimeEvents ()
+    this.bindRuntimeEvents()
   }
 
-  bindRuntimeEvents () {
+  bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     // Before auth
     runtimeManager.on('start', async () => {

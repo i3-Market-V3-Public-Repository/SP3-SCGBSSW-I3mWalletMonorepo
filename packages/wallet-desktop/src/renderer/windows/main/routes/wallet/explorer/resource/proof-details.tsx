@@ -29,7 +29,7 @@ export function ProofDetails (props: Props): JSX.Element {
       </div>
       <div className='details-param expand'>
         <span>Data:</span>
-        <textarea disabled value={JSON.stringify({claims: proofPayload, jws: resource.resource}, undefined, 2)} />
+        <textarea disabled value={JSON.stringify({ claims: proofPayload, jws: resource.resource }, undefined, 2)} />
       </div>
     </div>
   )

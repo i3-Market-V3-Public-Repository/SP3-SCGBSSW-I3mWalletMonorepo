@@ -15,7 +15,7 @@ export function Password (): JSX.Element {
 
   const output$ = useOutput()
   const [sharedMemory] = useSharedMemory()
-  if (sharedMemory.hasStore === true) {
+  if (sharedMemory.hasStore) {
     console.log('Redirect, password already set')
     return <Redirect to='/wallet' />
   }

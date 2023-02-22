@@ -21,9 +21,9 @@ export function Pairing (): JSX.Element | null {
 
   if (walletProtocol.connectString === undefined) {
     title = 'Start Pairing'
-    icon = <FontAwesomeIcon icon={faLink} className='icon'/>
+    icon = <FontAwesomeIcon icon={faLink} className='icon' />
   } else {
-    icon = <Loader size='8px' className='loader' color='white'/>
+    icon = <Loader size='8px' className='loader' color='white' />
     title = walletProtocol.connectString
     textStyle.fontFamily = 'monospace'
   }

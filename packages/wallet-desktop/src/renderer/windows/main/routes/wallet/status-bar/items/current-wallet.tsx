@@ -17,7 +17,7 @@ export function CurrentWallet (): JSX.Element | null {
 
   return wallet.current !== undefined ? (
     <StatusBarItem onClick={onClick}>
-      <FontAwesomeIcon icon={faWallet} className='icon'/>
+      <FontAwesomeIcon icon={faWallet} className='icon' />
       <span>{wallet.current}</span>
     </StatusBarItem>
   ) : null

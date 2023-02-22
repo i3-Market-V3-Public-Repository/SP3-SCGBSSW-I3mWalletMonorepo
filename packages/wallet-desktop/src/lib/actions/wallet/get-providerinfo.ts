@@ -3,8 +3,7 @@ import { Action as BaseAction } from '../action'
 import { ActionBuilder } from '../action-builder'
 
 const type = 'wallet::providerinfo.get'
-interface Payload {
-}
+type Payload = undefined
 type Response = WalletPaths.IdentitySign.Responses.$200
 type Action = BaseAction<typeof type, Payload>
 

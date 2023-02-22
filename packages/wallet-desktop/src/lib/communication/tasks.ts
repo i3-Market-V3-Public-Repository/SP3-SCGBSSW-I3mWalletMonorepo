@@ -1,5 +1,4 @@
 
-
 export interface TaskDescription {
   readonly title: string
   readonly freezing?: boolean
@@ -13,7 +12,7 @@ export interface BaseTask<T extends string> {
 }
 
 export interface ProgressTask extends BaseTask<'progress'> {
-  get progress(): number
+  progress: () => number
 }
 
 export interface LabeledTask extends BaseTask<'labeled'> {
