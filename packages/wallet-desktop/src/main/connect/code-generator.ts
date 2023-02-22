@@ -1,6 +1,7 @@
 import { CodeGenerator, MasterKey } from '@i3m/wallet-protocol'
 import { EncryptJWT, jwtDecrypt, KeyLike } from 'jose'
-import { Locals } from '../locals'
+
+import { Locals } from '@wallet/main/internal'
 
 export class JwtCodeGenerator implements CodeGenerator {
   constructor (protected key: KeyLike | Uint8Array, protected locals: Locals) { }

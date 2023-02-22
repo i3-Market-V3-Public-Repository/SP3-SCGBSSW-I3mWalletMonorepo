@@ -1,6 +1,6 @@
 import { Locals } from '@wallet/main/internal'
 
-export const bindWindowManager = async (locals: Locals): Promise<void> => {
+export const bindWithWindowManager = async (locals: Locals): Promise<void> => {
   const { sharedMemoryManager, windowManager } = locals
 
   // Update the shared memory on the views

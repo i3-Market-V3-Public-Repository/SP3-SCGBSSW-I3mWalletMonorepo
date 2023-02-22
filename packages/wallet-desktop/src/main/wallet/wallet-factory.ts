@@ -36,22 +36,18 @@ export class WalletFactory {
   constructor (protected locals: Locals) {
     this._walletName = undefined
     this.featuresByWallet = {}
+    this.bindRuntimeEvents ()
   }
 
-  async initialize (): Promise<void> {
-    await this.loadWalletsMetadata()
-  }
+  protected bindRuntimeEvents () {
+    const { runtimeManager } = this.locals
+    runtimeManager.on('after-private-settings', async () => {
+      await this.loadWalletsMetadata()
+    })
 
-  async loadCurrentWallet (): Promise<void> {
-    const privateSettings = this.locals.storeManager.getStore('private-settings')
-    const wallet = await privateSettings.get('wallet')
-    if (wallet.current === undefined) {
-      logger.debug('No wallets stored into the configuration')
-      return
-    }
-    logger.debug(`The current configuration has the following wallets: ${Object.keys(wallet.wallets).join(', ')}`)
-
-    await this.changeWallet(wallet.current)
+    runtimeManager.on('ui', async () => {
+      await this.loadCurrentWallet()
+    }) 
   }
 
   async loadWalletsMetadata (): Promise<void> {
@@ -77,6 +73,18 @@ export class WalletFactory {
       ...mem,
       walletsMetadata
     }))
+  }
+
+  async loadCurrentWallet (): Promise<void> {
+    const privateSettings = this.locals.storeManager.getStore('private-settings')
+    const wallet = await privateSettings.get('wallet')
+    if (wallet.current === undefined) {
+      logger.debug('No wallets stored into the configuration')
+      return
+    }
+    logger.debug(`The current configuration has the following wallets: ${Object.keys(wallet.wallets).join(', ')}`)
+
+    await this.changeWallet(wallet.current)
   }
 
   async buildWalletTask (walletName: string, task: LabeledTaskHandler): Promise<Wallet> {
@@ -200,6 +208,7 @@ export class WalletFactory {
     } catch (err) {
       this._wallet = undefined
       this._walletName = undefined
+      console.trace(err)
       this.locals.toast.show({
         message: 'Wallet initialization',
         details: `Could not initialize the wallet '${walletName}'`,
@@ -217,6 +226,12 @@ export class WalletFactory {
       }))
       return
     }
+
+    this.locals.toast.show({
+      message: 'Wallet change',
+      type: 'info',
+      details: `Using wallet '${walletName}'`
+    })
 
     // Setup the resource list inside shared memory
     const identities = await this.wallet.getIdentities()

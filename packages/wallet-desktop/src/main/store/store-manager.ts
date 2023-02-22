@@ -6,6 +6,8 @@ import {
   StoreSettings
 } from '@wallet/lib'
 import {
+  fixPrivateSettings,
+  fixPublicSettings,
   handleErrorSync,
   Locals,
   logger,
@@ -33,11 +35,35 @@ export class StoreManager extends StoreBag {
     super()
     this.builder = new StoreBuilder(ctx, locals)
     this.silentBag = new StoreBag()
+    this.bindRuntimeEvents()
+  }
+
+  protected bindRuntimeEvents (): void{
+    const { runtimeManager } = this.locals
+    runtimeManager.on('after-launch', async () => {
+      await this.loadPublicSettings()
+    })
+
+    runtimeManager.on('private-settings', async () => {
+      // Load encrypted settings
+      // task.setDetails('Migrating and loading encrypted stores')
+      await this.loadPrivateSettings()
+
+      // Fix setting files
+      await fixPublicSettings(this.locals)
+      await fixPrivateSettings(this.locals)
+    })
+
+    runtimeManager.on('wallet-stores', async () => {
+      // Load encrypted settings
+      // task.setDetails('Migrating and loading encrypted stores')
+      await this.loadWalletStores()
+    })
   }
 
   // Class utils
 
-  public async loadPublicStores (): Promise<void> {
+  public async loadPublicSettings (): Promise<void> {
     const options: PublicSettingsOptions = {
       defaults: { version: softwareVersion(this.locals) }
     }
@@ -50,17 +76,20 @@ export class StoreManager extends StoreBag {
     // Migrate to last store type
     this.builder.storeInfo = await publicSettings.get('store') ?? DEFAULT_STORE_SETTINGS
     if (this.builder.storeInfo.type !== currentStoreType) {
-      this.ctx.storeMigrationProxy.from.storeType = this.builder.storeInfo.type
-      this.ctx.storeMigrationProxy.to.storeType = currentStoreType
-      this.ctx.storeMigrationProxy.migrations.push(async (to) => {
-        this.builder.storeInfo.type = to.storeType
-        await publicSettings.set('store', { type: to.storeType })
+      const { storeMigrationProxy } = this.ctx
+      const { runtimeManager } = this.locals
+
+      storeMigrationProxy.from.storeType = this.builder.storeInfo.type
+      storeMigrationProxy.to.storeType = currentStoreType
+      runtimeManager.on('migration', async (to) => {
+        this.builder.storeInfo.type = currentStoreType
+        await publicSettings.set('store', { type: currentStoreType })
       })
     }
   }
 
-  public async loadEncryptedStores (): Promise<void> {
-    const { keysManager, walletFactory } = this.locals
+  public async loadPrivateSettings (): Promise<void> {
+    const { keysManager } = this.locals
     const publicSettings = this.getStore('public-settings')
     const publicSettingsValues = await publicSettings.getStore()
 
@@ -69,7 +98,10 @@ export class StoreManager extends StoreBag {
       encryptionKey: await keysManager.computeSettingsKey(migration.encKeys),
       fileExtension: 'enc.json'
     }), 'private-settings')
+  }
 
+  public async loadWalletStores (): Promise<void> {
+    const { walletFactory } = this.locals
     const privateSettings = this.getStore('private-settings')
     const walletSettings = await privateSettings.get('wallet')
     const walletOptionsBuilders = Object
@@ -90,20 +122,6 @@ export class StoreManager extends StoreBag {
 
     for (const { walletName, optionBuilder } of walletOptionsBuilders) {
       await this.executeOptionsBuilders(optionBuilder, 'wallet', walletName)
-    }
-
-    const ps = this.silentBag.getStore('private-settings')
-    await ps.set<'developer'>('developer', {
-      enableDeveloperApi: true,
-      enableDeveloperFunctions: true
-    })
-  }
-
-  public async migrate (): Promise<void> {
-    const { to, migrations } = this.ctx.storeMigrationProxy
-
-    for (const migration of migrations) {
-      await migration(to)
     }
   }
 
@@ -183,20 +201,6 @@ export class StoreManager extends StoreBag {
     return storesBundle
   }
 
-  public async stopCloudService (): Promise<void> {
-    const { sharedMemoryManager: shm } = this.locals
-
-    shm.update(mem => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        cloud: undefined
-      }
-    }))
-    const publicSettings = this.getStore('public-settings')
-    await publicSettings.delete('cloud')
-  }
-
   protected async uploadStores (): Promise<void> {
     const { sharedMemoryManager: sh, cloudVaultManager } = this.locals
     if (sh.memory.settings.cloud === undefined) {
@@ -245,7 +249,21 @@ export class StoreManager extends StoreBag {
     }
   }
 
-  //
+  // Events
+  public async onStopCloudService (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+
+    shm.update(mem => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        cloud: undefined
+      }
+    }))
+    const publicSettings = this.getStore('public-settings')
+    await publicSettings.delete('cloud')
+  }
+
   protected async onBeforeChange (type: StoreClass, store: Store<any>): Promise<void> {
     console.log('Store changed!', store.getPath())
 
@@ -257,7 +275,8 @@ export class StoreManager extends StoreBag {
 
   protected async onAfterChange (type: StoreClass, store: Store<any>): Promise<void> {
     logger.debug(`The store has been changed ${store.getPath()}`)
-    if (isEncryptedStore(type)) {
+    const { cloudVaultManager: cvm } = this.locals
+    if (isEncryptedStore(type) && cvm.isConnected) {
       await this.uploadStores().catch((err: Error) => {
         let fixedError = err
         if (!(err instanceof WalletDesktopError)) {

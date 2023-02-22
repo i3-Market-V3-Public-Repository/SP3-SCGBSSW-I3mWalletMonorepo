@@ -31,6 +31,7 @@ $error-color: #F5426B;
 
     &.toast-transition-exit-active {
       animation: fadeout 0.5s;
+      overflow: hidden;
     }
 
     &.toast-transition-enter {
@@ -39,6 +40,7 @@ $error-color: #F5426B;
 
     &.toast-transition-exit {
       opacity: 0;
+      overflow: hidden;
     }
 
     &.toast-transition-enter-done {
@@ -121,11 +123,21 @@ $error-color: #F5426B;
 }
 
 @keyframes fadein {
-  0% { opacity:  0;}
+  0% { opacity:  0; }
   100% { opacity:  1;}
 }
 
 @keyframes fadeout {
-  0% { opacity:  1;}
-  100% { opacity:  0;}
+  0% {
+    opacity:  1;
+    max-height: 100px;
+  }
+  100% {
+    opacity:  0;
+    max-height: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
 }

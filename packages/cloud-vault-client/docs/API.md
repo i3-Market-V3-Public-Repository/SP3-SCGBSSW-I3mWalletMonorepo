@@ -47,7 +47,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/error.ts#L37)
+[cloud-vault-client/src/ts/error.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/error.ts#L37)
 
 ___
 
@@ -86,7 +86,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/error.ts#L5)
+[cloud-vault-client/src/ts/error.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/error.ts#L5)
 
 ___
 
@@ -96,7 +96,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/error.ts#L36)
+[cloud-vault-client/src/ts/error.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/error.ts#L36)
 
 ## Variables
 
@@ -106,7 +106,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/vault-client.ts#L20)
+[cloud-vault-client/src/ts/vault-client.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/vault-client.ts#L20)
 
 ___
 
@@ -116,7 +116,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/vault-client.ts#L21)
+[cloud-vault-client/src/ts/vault-client.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/vault-client.ts#L21)
 
 ## Functions
 
@@ -143,7 +143,7 @@ err is VaultError<T\>
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:95](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/error.ts#L95)
+[cloud-vault-client/src/ts/error.ts:95](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/error.ts#L95)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
+[cloud-vault-client/src/ts/key-manager.ts:74](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/key-manager.ts#L74)
 
 ▸ **deriveKey**(`key`, `opts`): `Promise`<`KeyObject`\>
 
@@ -181,4 +181,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/key-manager.ts#L75)
+[cloud-vault-client/src/ts/key-manager.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0a37054/packages/cloud-vault-client/src/ts/key-manager.ts#L75)

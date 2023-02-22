@@ -1,50 +1,114 @@
-import { VerifiableCredentialResource } from '@i3m/base-wallet'
+import { DialogOptionContext, VerifiableCredentialResource } from '@i3m/base-wallet'
 import { checkErrorType, VaultClient, VaultError } from '@i3m/cloud-vault-client'
 import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
 import { CloudVaultSettings, TaskDescription } from '@wallet/lib'
-import { handleErrorCatch, LabeledTaskHandler, Locals, WalletDesktopError } from '@wallet/main/internal'
+import { handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, MainContext, WalletDesktopError } from '@wallet/main/internal'
 
 const CLOUD_URL = 'http://localhost:3000'
 
+interface DialogOption {
+  id: number
+  text: string
+  context: DialogOptionContext
+}
+
 export class CloudVaultManager {
-  _client?: VaultClient
-  failed = false
-  constructor (protected locals: Locals) { }
+  // Static initialization
+  static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
+    return new CloudVaultManager(ctx, locals, {})
+  }
 
-  async initialize (): Promise<void> {
-    const { storeManager } = this.locals
-    const privateSettings = storeManager.getStore('private-settings')
-    const cloud = await privateSettings.get('cloud')
+  client: VaultClient
+  failed: boolean
+  constructor (protected ctx: MainContext, protected locals: Locals, params: {}) {
+    this.client = new VaultClient(CLOUD_URL)
+    this.failed = false
+    this.bindClientEvents()
+    this.bindRuntimeEvents()
+  }
 
-    const client = new VaultClient(CLOUD_URL)
-    this._client = client
-    if (cloud !== undefined) {
-      await client.login(cloud.username, cloud.password, cloud.token)
-    }
+  protected bindRuntimeEvents (): void {
+    const { authManager, runtimeManager, dialog, storeManager } = this.locals
+    let justRegistered = false
+    runtimeManager.on('before-auth', async (task) => {
+      justRegistered = !authManager.registered
+    })
 
-    client.on('connected', (t) => {
+    runtimeManager.on('after-private-settings', async (task) => {
+      if (justRegistered) {
+        const confirm = await dialog.confirmation({
+          message: 'If you already have a cloud vault account, you can start the wallet using your cloud data. \nDo you want to login into the cloud vault?',
+          title: 'Authentication'
+        })
+        if (confirm === true) {
+          await this.loginTask(task)
+        }
+      } else {
+        const privateSettings = storeManager.getStore('private-settings')
+        const cloud = await privateSettings.get('cloud')
+        if (cloud) {
+          const asyncLogin = this.loginTask(task, cloud)
+          handlePromise(this.locals, asyncLogin)
+        }
+      }
+    })
+  }
+
+  protected bindClientEvents (): void {
+    const { sharedMemoryManager: shm } = this.locals
+
+    this.client.on('connected', (t) => {
       this.locals.toast.show({
         message: 'Cloud Vault connected',
         details: 'Your cloud vault has been sucessfully connected!',
         type: 'success'
       })
-      if (this.failed) {
-        this.failed = false
-      }
+
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          state: 'connected'
+        }
+      }))
     })
 
-    client.on('connection-error', (err) => {
-      if (!this.failed) {
-        this.locals.toast.show({
-          message: 'Cloud Vault disconnected',
-          details: 'Your cloud vault has been disconnected!',
-          type: 'error'
-        })
-        this.failed = true
-      }
+    this.client.on('disconnected', () => {
+      this.locals.toast.show({
+        message: 'Cloud Vault disconnected',
+        details: 'Your cloud vault has been disconnected!',
+        type: 'error'
+      })
+
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          state: 'disconnected'
+        }
+      }))
     })
+  }
+
+  async clientInitialized (errorMessage: string): Promise<void> {
+    try {
+      await this.client.initialized
+    } catch (err: unknown) {
+      if (err instanceof VaultError) {
+        if (checkErrorType(err, 'not-initialized')) {
+          throw new WalletDesktopError('Not initialized', {
+            severity: 'error',
+            message: errorMessage,
+            details: 'Cannot connect to the vault server.'
+          })
+        }
+        throw new WalletDesktopError('Something went wrong...')
+      }
+    }
+  }
+
+  get isConnected(): boolean {
+    return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'connected'
   }
 
   async getLoginData (errorMessage: string): Promise<CloudVaultSettings> {
@@ -67,28 +131,8 @@ export class CloudVaultManager {
     return loginData
   }
 
-  async registerUserTask (task: LabeledTaskHandler, cloud?: CloudVaultSettings): Promise<void> {
+  async getRegistrationCredential (errorMessage: string): Promise<VerifiableCredentialResource> {
     const { dialog } = this.locals
-    const errorMessage = 'Vault user registration error'
-
-    try {
-      await this.client.initialized
-    } catch (err: unknown) {
-      if (err instanceof VaultError) {
-        if (checkErrorType(err, 'not-initialized')) {
-          throw new WalletDesktopError('Not initialized', {
-            severity: 'error',
-            message: errorMessage,
-            details: 'Cannot connect to the vault server.'
-          })
-        }
-        throw new WalletDesktopError('Something went wrong...')
-      }
-    }
-
-    if (cloud === undefined) {
-      cloud = await this.getLoginData(errorMessage)
-    }
 
     const resources = Object.values(this.locals.sharedMemoryManager.memory.resources)
     const vcs = resources.filter((resource) => {
@@ -128,6 +172,18 @@ export class CloudVaultManager {
       })
     }
 
+    return vc
+  }
+
+  async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultSettings): Promise<void> {
+    const errorMessage = 'Vault user registration error'
+
+    await this.clientInitialized(errorMessage)
+
+    if (cloud === undefined) {
+      cloud = await this.getLoginData(errorMessage)
+    }
+    const vc = await this.getRegistrationCredential(errorMessage)
     const publicJwk = await this.client.getServerPublicKey()
 
     const data = await jweEncrypt(
@@ -144,48 +200,30 @@ export class CloudVaultManager {
     await shell.openExternal(res)
   }
 
-  async startVaultSyncTask (task: LabeledTaskHandler): Promise<void> {
-    const { dialog, sharedMemoryManager } = this.locals
-    const errorMessage = 'Vault synchronization error'
+  async loginTask (task: LabeledTaskHandler, cloud?: CloudVaultSettings): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    const errorMessage = 'Vault login error'
 
-    try {
-      await this.client.initialized
-    } catch (err: unknown) {
-      if (err instanceof VaultError) {
-        if (checkErrorType(err, 'not-initialized') || checkErrorType(err, 'http-connection-error')) {
-          throw new WalletDesktopError('No vault connection', {
-            severity: 'error',
-            message: errorMessage,
-            details: 'Cannot connect to the vault server.'
-          })
-        }
-        throw new WalletDesktopError('Something went wrong...')
-      }
+    await this.clientInitialized(errorMessage)
+
+    let fixedCloud: CloudVaultSettings
+    if (cloud === undefined) {
+      fixedCloud = await this.getLoginData(errorMessage)
+    } else {
+      fixedCloud = cloud
     }
 
-    const confirm = await dialog.confirmation({
-      title: 'Cloud Vault',
-      message: 'Bla bla. Do you want to sync your wallet?',
-      acceptMsg: 'Yes',
-      rejectMsg: 'No'
-    })
-    if (confirm !== true) {
-      return
-    }
-
-    const cloud = await this.getLoginData(errorMessage)
-
     try {
-      await this.client.login(cloud.username, cloud.password)
-      sharedMemoryManager.update(mem => ({
+      await this.client.login(fixedCloud.username, fixedCloud.password)
+      shm.update(mem => ({
         ...mem,
         cloudVaultData: {
-          state: 'in-progress'
+          state: 'connected'
         },
         settings: {
           ...mem.settings,
           cloud: {
-            ...cloud,
+            ...fixedCloud,
             token: this.client.token as string
           }
         }
@@ -193,16 +231,11 @@ export class CloudVaultManager {
     } catch (err) {
       if (err instanceof VaultError) {
         if (checkErrorType(err, 'invalid-credentials')) {
-          const confirm = await dialog.confirmation({
-            title: 'Cloud Vault',
-            message: 'Invalid credentials. Do you want to proceed with the registration of this credentials?',
-            acceptMsg: 'Yes',
-            rejectMsg: 'No'
+          throw new WalletDesktopError('Invalid credentials', {
+            severity: 'error',
+            message: errorMessage,
+            details: 'Invalid credentials.'
           })
-          if (confirm === true) {
-            await this.registerUserTask(task, cloud)
-            return
-          }
         } else if (checkErrorType(err, 'not-initialized') || checkErrorType(err, 'http-connection-error')) {
           throw new WalletDesktopError('No vault connection', {
             severity: 'error',
@@ -212,6 +245,37 @@ export class CloudVaultManager {
         }
       }
       throw new WalletDesktopError('Something went wrong')
+    }
+  }
+
+  async startVaultSyncTask (task: LabeledTaskHandler): Promise<void> {
+    const { dialog } = this.locals
+    const errorMessage = 'Vault synchronization error'
+
+    const login: DialogOption = { id: 0, text: 'Yes, start login', context: 'success' }
+    const register: DialogOption = { id: 1, text: 'No, register a new account', context: 'success' }
+    const cancel: DialogOption = { id: 2, text: 'Cancel', context: 'danger' }
+
+    const loginOrRegister = await dialog.select({
+      title: 'Cloud Vault',
+      message: 'To start the cloud vault synchronization you need a valid cloud vault account. ',
+      values: [login, register, cancel],
+      allowCancel: true,
+      getText: (v) => v.text,
+      getContext: (v) => v.context
+    })
+
+    let cloud: CloudVaultSettings
+    switch (loginOrRegister?.id) {
+      case login.id:
+        cloud = await this.getLoginData(errorMessage)
+        await this.loginTask(task, cloud)
+        break
+
+      case register.id:
+        cloud = await this.getLoginData(errorMessage)
+        await this.registerTask(task, cloud)
+        break
     }
   }
 
@@ -236,15 +300,27 @@ export class CloudVaultManager {
     }
 
     await this.client.deleteStorage().catch(...handleErrorCatch(this.locals))
-    this.client.logout()
-    this.locals.storeManager.stopCloudService()
+    await this.logout()
   }
 
-  async registerUser (): Promise<void> {
+  async register (): Promise<void> {
     const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Register Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.registerUserTask(task)
+      return await this.registerTask(task)
+    })
+  }
+
+  async logout (): Promise<void> {
+    this.client.logout()
+    await this.locals.storeManager.onStopCloudService()
+  }
+
+  async login (): Promise<void> {
+    const { taskManager } = this.locals
+    const taskInfo: TaskDescription = { title: 'Login Cloud User' }
+    await taskManager.createTask('labeled', taskInfo, async (task) => {
+      return await this.loginTask(task)
     })
   }
 
@@ -253,14 +329,5 @@ export class CloudVaultManager {
       storage: storage,
       timestamp
     })
-  }
-
-  get client (): VaultClient {
-    if (this._client === undefined) {
-      throw new WalletDesktopError('The vault client is not initialized', {
-        critical: false
-      })
-    }
-    return this._client
   }
 }

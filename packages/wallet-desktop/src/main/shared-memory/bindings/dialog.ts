@@ -1,6 +1,6 @@
 import { Locals } from '@wallet/main/internal'
 
-export const bindDialog = async (locals: Locals): Promise<void> => {
+export const bindWithDialog = async (locals: Locals): Promise<void> => {
   const { sharedMemoryManager, dialog: dialogManager } = locals
 
   sharedMemoryManager.on('change', ({ curr: mem }) => {

@@ -16,28 +16,73 @@ import {
   StoreManager,
   CloudVaultManager,
   TaskManager,
-  ElectronDialog
+  ElectronDialog,
+  AuthManager,
+  WalletDesktopError,
+  MainContext,
+  RuntimeManager
 } from '@wallet/main/internal'
 
 export interface Locals {
-  tray: Tray
-  walletFactory: WalletFactory
-  sharedMemoryManager: SharedMemoryManager
-  // settings: PrivateSettingsStore
-  // publicSettings: PublicSettingsStore
-  windowManager: WindowManager
-  apiManager: ApiManager
-  featureManager: FeatureManager
-  featureContext: FeatureContext
-  dialog: ElectronDialog
-  toast: Toast
-  actionReducer: ActionReducer
-  keysManager: KeysManager
-  connectManager: ConnectManager
-  password: string
-  versionManager: VersionManager
-  storeManager: StoreManager
-  cloudVaultManager: CloudVaultManager
-  taskManager: TaskManager
-  packageJson: typeof packageJson
+  readonly packageJson: typeof packageJson
+
+  // Application
+  readonly runtimeManager: RuntimeManager
+  readonly sharedMemoryManager: SharedMemoryManager
+  readonly versionManager: VersionManager
+  readonly storeManager: StoreManager
+  readonly actionReducer: ActionReducer
+  readonly taskManager: TaskManager
+
+  // UI
+  readonly tray: Tray
+  readonly dialog: ElectronDialog
+  readonly toast: Toast
+
+  // Wallet
+  readonly walletFactory: WalletFactory
+  readonly featureManager: FeatureManager
+  readonly featureContext: FeatureContext
+  readonly windowManager: WindowManager
+  readonly apiManager: ApiManager
+  readonly cloudVaultManager: CloudVaultManager
+
+  // Security
+  readonly keysManager: KeysManager
+  readonly authManager: AuthManager
+  readonly connectManager: ConnectManager
+}
+
+export type LocalsKey = keyof Locals
+export type PropInitializer<T> = ((ctx: MainContext, locals: Locals) => Promise<T>) | T
+export type LocalsSetter = <T extends LocalsKey>(prop: T, initializer: PropInitializer<Locals[T]>) => Promise<void>
+
+export function createLocalsProxy (ctx: MainContext): [Locals, LocalsSetter] {
+  const locals: Partial<Locals> = { packageJson }
+  const localsProxy = new Proxy(locals, {
+    get (target, p: LocalsKey, receiver) {
+      const value = target[p]
+      if (value === undefined) {
+        throw new WalletDesktopError(`Locals not initialized yet! (trying to get property '${p}')`)
+      }
+      return value
+    },
+
+    set (target, p: LocalsKey) {
+      throw new WalletDesktopError(`Locals cannot be set! (trying to set property '${p}')`)
+    }
+  }) as Locals
+  const setLocals: LocalsSetter = async (p, initializer) => {
+    if (locals[p] !== undefined) {
+      throw new WalletDesktopError(`Locals cannot be set! (trying to reset property '${p}')`)
+    }
+
+    if (typeof initializer === 'function') {
+      locals[p] = await initializer(ctx, localsProxy)
+    } else {
+      locals[p] = initializer
+    }
+  }
+
+  return [localsProxy, setLocals]
 }

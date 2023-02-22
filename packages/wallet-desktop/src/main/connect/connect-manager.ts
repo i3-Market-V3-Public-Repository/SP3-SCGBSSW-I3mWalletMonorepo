@@ -2,20 +2,32 @@ import http from 'http'
 import { WalletError } from '@i3m/base-wallet'
 import { WalletProtocol, HttpResponderTransport, Identity } from '@i3m/wallet-protocol'
 
-import { Locals } from '@wallet/main/internal'
+import { Locals, MainContext } from '@wallet/main/internal'
 import { cors } from './cors'
 import { JwtCodeGenerator } from './code-generator'
-import { KeyLike, errors } from 'jose'
+import { KeyLike, errors, JWK, importJWK } from 'jose'
+
+interface Params {
+  key: KeyLike | Uint8Array
+}
 
 export class ConnectManager {
   protected walletProtocol: WalletProtocol
   public walletProtocolTransport: HttpResponderTransport
 
-  constructor (protected locals: Locals, key: KeyLike | Uint8Array) {
+  static async initialize (ctx: MainContext, locals: Locals): Promise<ConnectManager> {
+    const { storeManager } = locals
+    const privateSettings = storeManager.getStore('private-settings')
+    const jwk = await privateSettings.get('secret') as JWK
+    const key = await importJWK(jwk, 'HS256')
+    return new ConnectManager(locals, { key }) // no se puede
+  }
+
+  constructor (protected locals: Locals, params: Params) {
     const id: Identity = {
       name: 'Wallet desktop'
     }
-    const codeGenerator = new JwtCodeGenerator(key, locals)
+    const codeGenerator = new JwtCodeGenerator(params.key, locals)
     const httpTransport = new HttpResponderTransport({
       id,
       codeGenerator,
@@ -24,6 +36,37 @@ export class ConnectManager {
     this.walletProtocol = new WalletProtocol(httpTransport)
     this.walletProtocolTransport = httpTransport
     this.handleRequest = this.handleRequest.bind(this)
+    this.bindWalletProtocolEvents()
+  }
+
+  bindWalletProtocolEvents () {
+    const { sharedMemoryManager } = this.locals
+
+    this.walletProtocol
+      .on('connString', (connString) => {
+        sharedMemoryManager.update((mem) => ({
+          ...mem,
+          connectData: {
+            ...mem.connectData,
+            walletProtocol: {
+              ...mem.connectData.walletProtocol,
+              connectString: connString.toString()
+            }
+          }
+        }))
+      })
+      .on('finished', () => {
+        sharedMemoryManager.update((mem) => ({
+          ...mem,
+          connectData: {
+            ...mem.connectData,
+            walletProtocol: {
+              ...mem.connectData.walletProtocol,
+              connectString: undefined
+            }
+          }
+        }))
+      })
   }
 
   handleRequest (req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -57,36 +100,6 @@ export class ConnectManager {
       }
       throw err
     })
-  }
-
-  async initialize (): Promise<void> {
-    const { sharedMemoryManager } = this.locals
-
-    this.walletProtocol
-      .on('connString', (connString) => {
-        sharedMemoryManager.update((mem) => ({
-          ...mem,
-          connectData: {
-            ...mem.connectData,
-            walletProtocol: {
-              ...mem.connectData.walletProtocol,
-              connectString: connString.toString()
-            }
-          }
-        }))
-      })
-      .on('finished', () => {
-        sharedMemoryManager.update((mem) => ({
-          ...mem,
-          connectData: {
-            ...mem.connectData,
-            walletProtocol: {
-              ...mem.connectData.walletProtocol,
-              connectString: undefined
-            }
-          }
-        }))
-      })
   }
 
   startWalletProtocol (): void {

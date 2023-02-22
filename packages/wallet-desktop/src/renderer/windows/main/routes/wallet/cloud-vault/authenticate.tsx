@@ -1,11 +1,11 @@
-import { registerCloudAction, startCloudSyncAction } from '@wallet/lib'
+import { loginCloudAction, registerCloudAction } from '@wallet/lib'
 import { useAction } from '@wallet/renderer/communication'
 
 export function Authenticate (): JSX.Element {
   const dispatch = useAction()
 
   const onLogin = (): void => {
-    dispatch(startCloudSyncAction.create())
+    dispatch(loginCloudAction.create())
   }
 
   const onRegister = (): void => {

@@ -1,9 +1,9 @@
 import {
-  registerCloudAction as actionBuilder
+  loginCloudAction as actionBuilder
 } from '@wallet/lib'
 import { ActionHandlerBuilder } from '../action-handler'
 
-export const registerCloud: ActionHandlerBuilder<typeof actionBuilder> = (
+export const loginCloud: ActionHandlerBuilder<typeof actionBuilder> = (
   locals
 ) => {
   return {
@@ -12,7 +12,7 @@ export const registerCloud: ActionHandlerBuilder<typeof actionBuilder> = (
       const { cloudVaultManager } = locals
 
       // Call the internal function
-      await cloudVaultManager.register()
+      await cloudVaultManager.login()
 
       return { response: undefined, status: 200 }
     }

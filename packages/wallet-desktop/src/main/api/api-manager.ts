@@ -1,9 +1,12 @@
 import express, { Express } from 'express'
 import http from 'http'
 
-import { logger, Locals } from '@wallet/main/internal'
+import { logger, Locals, MainContext } from '@wallet/main/internal'
 import { createServer, initServer } from './server'
 
+interface Params { 
+  app: Express
+}
 export class ApiManager {
   protected server: http.Server
   protected app: Express
@@ -11,21 +14,25 @@ export class ApiManager {
   protected port: number
   protected host: string
 
-  constructor (locals: Locals) {
-    this.app = express()
-    locals.connectManager.walletProtocolTransport.use(this.app)
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<ApiManager> {
+    const app = express()
+    locals.connectManager.walletProtocolTransport.use(app)
+    await initServer(app, locals)
+
+    return new ApiManager(locals, { app })
+  }
+
+  constructor (locals: Locals, params: Params) {
     this.server = createServer(locals.connectManager.handleRequest, {
       useHttps: false
     })
     this.locals = locals
+    this.app = params.app
 
     // Network settings
     this.port = locals.connectManager.walletProtocolTransport.port
     this.host = '::1'
-  }
-
-  async initialize (): Promise<void> {
-    await initServer(this.app, this.locals)
   }
 
   async listen (): Promise<void> {

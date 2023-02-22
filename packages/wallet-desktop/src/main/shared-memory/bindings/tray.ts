@@ -1,6 +1,6 @@
 import { Locals, WalletItem } from '@wallet/main/internal'
 
-export const bindTray = async (locals: Locals): Promise<void> => {
+export const bindWithTray = async (locals: Locals): Promise<void> => {
   const { sharedMemoryManager, tray } = locals
   sharedMemoryManager.on('change', ({ curr: mem }) => {
     const wallets: WalletItem[] = Object

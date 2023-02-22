@@ -2,6 +2,8 @@ import { BrowserWindow } from 'electron'
 import { EventEmitter } from 'events'
 
 import { SharedMemory, createDefaultSharedMemory } from '@wallet/lib'
+import { Locals } from '../locals'
+import { bindWithDialog, bindWithSettings, bindWithTray, bindWithWalletFactory, bindWithWindowManager } from './bindings'
 
 export interface ChangeEvent {
   curr: SharedMemory
@@ -22,9 +24,25 @@ export type SharedMemoryManagerEventNames = keyof SharedMemoryManagerEvents
 export class SharedMemoryManager extends EventEmitter {
   private _memory: SharedMemory
 
-  constructor (values?: Partial<SharedMemory>) {
+  constructor (protected locals: Locals, values?: Partial<SharedMemory>) {
     super()
     this._memory = createDefaultSharedMemory(values)
+    this.bindRuntimeEvents ()
+  }
+
+  bindRuntimeEvents () {
+    const { runtimeManager } = this.locals
+    // Before auth
+    runtimeManager.on('start', async () => {
+      await bindWithDialog(this.locals)
+      await bindWithTray(this.locals)
+      await bindWithWindowManager(this.locals)
+    })
+
+    runtimeManager.on('after-private-settings', async () => {
+      await bindWithSettings(this.locals)
+      await bindWithWalletFactory(this.locals)
+    })
   }
 
   on <T extends SharedMemoryManagerEventNames>(event: T, listener: (ev: SharedMemoryManagerEvents[T]) => void): this

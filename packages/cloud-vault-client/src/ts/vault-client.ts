@@ -51,7 +51,8 @@ export class VaultClient extends EventEmitter {
       }).catch(() => {
         this._initialized = this.init().then(() => {
           resolve()
-        }).catch((reason) => {
+        })
+        this._initialized.catch((reason) => {
           reject(reason)
         })
       })

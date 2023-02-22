@@ -12,18 +12,18 @@ export function CloudVault (): JSX.Element | null {
   let title: string
   let icon: IconDefinition
   let onClick: (() => void) | undefined
-  const cloud = sharedMemory.settings.cloud
-  if (cloud === undefined) {
-    title = 'Cloud Vault'
-    icon = faXmark
-    onClick = () => {
-      dispatch(startCloudSyncAction.create())
-    }
-  } else {
+  const { state } = sharedMemory.cloudVaultData
+  if (state === 'connected') {
     title = 'Cloud Vault'
     icon = faCheck
     onClick = () => {
       dispatch(stopCloudSyncAction.create())
+    }
+  } else {
+    title = 'Cloud Vault'
+    icon = faXmark
+    onClick = () => {
+      dispatch(startCloudSyncAction.create())
     }
   }
 

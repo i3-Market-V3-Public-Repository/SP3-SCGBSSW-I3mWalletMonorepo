@@ -1,25 +1,31 @@
 import { Store } from '@i3m/base-wallet'
+import { AsyncEventHandler } from '../events'
 
-export interface StoreEvent<E extends string, A extends []> {
-  event: E
-  args: A
+// export interface StoreEvent<E extends string, A extends []> {
+//   event: E
+//   args: A
+// }
+
+// export type StoreEvents =
+//   StoreEvent<'before-set', []> |
+//   StoreEvent<'after-set', []> |
+//   StoreEvent<'after-delete', []>
+
+// export type StoreEventTypes = StoreEvents['event']
+// export type StoreEventFor<E extends StoreEventTypes> = StoreEvents & { event: E }
+// export type StoreEventCallback<E extends StoreEventTypes = StoreEventTypes> =
+//   (...args: StoreEventFor<E>['args']) => Promise<void>
+
+type StoreEvents = {
+  'before-set': []
+  'after-set': []
+  'after-delete': []
 }
 
-export type StoreEvents =
-  StoreEvent<'before-set', []> |
-  StoreEvent<'after-set', []> |
-  StoreEvent<'after-delete', []>
-
-export type StoreEventTypes = StoreEvents['event']
-export type StoreEventFor<E extends StoreEventTypes> = StoreEvents & { event: E }
-export type StoreEventCallback<E extends StoreEventTypes = StoreEventTypes> =
-  (...args: StoreEventFor<E>['args']) => Promise<void>
-
-export class StoreProxy<T extends Record<string, any> = Record<string, unknown>> {
-  eventListeners: Record<string, StoreEventCallback[] | undefined>
+export class StoreProxy<T extends Record<string, any> = Record<string, unknown>> extends AsyncEventHandler<StoreEvents> {
 
   constructor (protected store: Store<T>) {
-    this.eventListeners = {}
+    super()
     this.emit = this.emit.bind(this)
   }
 
@@ -77,33 +83,6 @@ export class StoreProxy<T extends Record<string, any> = Record<string, unknown>>
         // @ts-expect-error
         return store.on(...arguments)
       }
-    }
-  }
-
-  on <E extends StoreEventTypes>(event: E, cb: StoreEventCallback<E>): void {
-    let listeners = this.eventListeners[event]
-    if (listeners === undefined) {
-      listeners = []
-      this.eventListeners[event] = listeners
-    }
-    listeners.push(cb)
-  }
-
-  off <E extends StoreEventTypes>(event: E, cb: StoreEventCallback<E>): void {
-    const listeners = this.eventListeners[event]
-    if (listeners === undefined) {
-      return
-    }
-    this.eventListeners[event] = listeners.filter(listener => listener !== cb)
-  }
-
-  async emit <E extends StoreEventTypes>(event: E, ...args: StoreEventFor<E>['args']): Promise<void> {
-    const listeners = this.eventListeners[event]
-    if (listeners === undefined) {
-      return
-    }
-    for (const listener of listeners) {
-      await listener(...args)
     }
   }
 }

@@ -1,27 +1,52 @@
 import { get, RequestOptions } from 'https'
 
 import {
+  handlePromise,
   InvalidSettingsError,
   Locals,
   logger,
+  MainContext,
   NoConnectionError,
   softwareVersion,
   wait
 } from './internal'
 
+interface Props {
+  settingsVersion: string
+}
+
 export class VersionManager {
   softwareVersion: string
   settingsVersion: string
 
-  constructor (protected locals: Locals) {
-    this.softwareVersion = softwareVersion(locals)
-    this.settingsVersion = ''
+  static async initialize (ctx: MainContext, locals: Locals): Promise<VersionManager> {
+    const publicSettings = locals.storeManager.getStore('public-settings')
+    const version = await publicSettings.get('version')
+
+    return new VersionManager(locals, {
+      settingsVersion: version
+    })
   }
 
-  async initialize (): Promise<void> {
-    const publicSettings = this.locals.storeManager.getStore('public-settings')
-    const version = await publicSettings.get('version')
-    this.settingsVersion = `${version}`
+  constructor (protected locals: Locals, props: Props) {
+    this.softwareVersion = softwareVersion(locals)
+    this.settingsVersion = props.settingsVersion
+    this.bindRuntimeEvents()
+  }
+
+  bindRuntimeEvents () {
+    const { runtimeManager } = this.locals
+
+    runtimeManager.on('after-start', async () => {
+      await this.verifySettingsVersion()
+      // Do not await verifyLatestVersion!
+      // If there is no internet connection it will freeze the application
+      handlePromise(this.locals, this.verifyLatestVersion())
+    })
+
+    runtimeManager.on('after-migration', async () => {
+      await this.finishMigration()
+    })
   }
 
   async verifySettingsVersion (): Promise<void> {

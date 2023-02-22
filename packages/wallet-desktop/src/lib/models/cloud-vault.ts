@@ -1,5 +1,5 @@
 
-export type CloudVaultState = 'in-progress' | 'complete' | 'not-logged'
+export type CloudVaultState = 'connected' | 'disconnected' | 'sync'
 
 export interface CloudVaultData {
   state: CloudVaultState

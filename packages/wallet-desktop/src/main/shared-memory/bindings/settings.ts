@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Locals, handleCanBePromise } from '@wallet/main/internal'
 
-export const bindSettings = async (locals: Locals): Promise<void> => {
+export const bindWithSettings = async (locals: Locals): Promise<void> => {
   const { sharedMemoryManager, storeManager } = locals
   const settings = storeManager.getStore('private-settings')
 

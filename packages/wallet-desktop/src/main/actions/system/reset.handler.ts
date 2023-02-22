@@ -16,7 +16,7 @@ export const reset: ActionHandlerBuilder<typeof actionBuilder> = (
     type: actionBuilder.type,
     async handle (action) {
       // Call the internal function
-      if (!locals.keysManager.authenticated) {
+      if (!locals.authManager.authenticated) {
         return { response: undefined, status: 400 }
       }
 

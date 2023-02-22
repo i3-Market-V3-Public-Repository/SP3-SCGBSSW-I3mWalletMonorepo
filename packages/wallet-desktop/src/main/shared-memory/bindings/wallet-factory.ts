@@ -1,6 +1,6 @@
 import { Locals } from '@wallet/main/locals'
 
-export const bindWalletFactory = async (locals: Locals): Promise<void> => {
+export const bindWithWalletFactory = async (locals: Locals): Promise<void> => {
   // Change wallet if global state changes
   const { sharedMemoryManager } = locals
   sharedMemoryManager.on('change', ({ curr, prev }) => {

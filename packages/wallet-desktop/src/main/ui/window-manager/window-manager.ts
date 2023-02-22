@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, session } from 'electron'
 import path from 'path'
 
 import { WindowArgs } from '@wallet/lib'
@@ -16,6 +16,40 @@ export class WindowManager {
     Menu.setApplicationMenu(menuBar)
 
     this.windows = new Map()
+    this.bindRuntimeEvents()
+  }
+
+  bindRuntimeEvents () {
+    const { runtimeManager } = this.locals
+    runtimeManager.on('start', async () => {
+      if (process.env.REACT_DEVTOOLS !== undefined) {
+        await session.defaultSession.loadExtension(process.env.REACT_DEVTOOLS)
+      }
+
+      // // Quit when all windows are closed, except on macOS. There, it's common
+      // // for applications and their menu bar to stay active until the user quits
+      // // explicitly with Cmd + Q.
+      app.on('window-all-closed', () => {
+        // if (process.platform !== 'darwin') {
+        //   app.quit()
+        // }
+        // Do not close the application even if all windows are closed
+        logger.debug('All windows are closed')
+      })
+
+      //
+      app.on('activate', () => {
+        // On macOS it's common to re-create a window in the app when the
+        // dock icon is clicked and there are no other windows open.
+        if (BrowserWindow.getAllWindows().length === 0) {
+          this.openMainWindow()
+        }
+      })
+    })
+
+    runtimeManager.on('ui', async () => {
+      this.openMainWindow('/wallet')
+    })
   }
 
   convertToArgs (args: WindowArgs): string {

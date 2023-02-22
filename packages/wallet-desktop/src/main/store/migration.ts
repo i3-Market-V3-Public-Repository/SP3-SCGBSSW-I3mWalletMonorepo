@@ -7,14 +7,10 @@ export interface StoreMigration {
   storeType?: StoreType
 }
 
-type MigrationFunction = (to: StoreMigration) => Promise<void>
-
 export interface StoreMigrationProxy {
   needed: boolean
   from: StoreMigration
   to: StoreMigration
-
-  migrations: MigrationFunction[]
 }
 
 export type StoreOptionsBuilder<T extends Record<string, any> = Record<string, unknown>> =
@@ -38,8 +34,7 @@ export const createStoreMigrationProxy = (): StoreMigrationProxy => {
   const baseProxy: StoreMigrationProxy = {
     needed: false,
     from: new Proxy({}, changeNeededProxyHandler),
-    to: new Proxy({}, changeNeededProxyHandler),
-    migrations: []
+    to: new Proxy({}, changeNeededProxyHandler)
   }
   return new Proxy<StoreMigrationProxy>(baseProxy, changeNeededProxyHandler)
 }

@@ -51,7 +51,7 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
     toasts: [],
     tasks: [],
     cloudVaultData: {
-      state: 'not-logged'
+      state: 'disconnected'
     },
     ...values
   }

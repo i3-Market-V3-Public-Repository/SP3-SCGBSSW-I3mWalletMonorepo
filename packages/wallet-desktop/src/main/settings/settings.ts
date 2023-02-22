@@ -3,6 +3,7 @@ import { exportJWK, generateSecret } from 'jose'
 
 import { DEFAULT_WALLET_PACKAGES, Provider, PublicSettings } from '@wallet/lib'
 import { Locals, StoreOptions } from '@wallet/main/internal'
+import _ from 'lodash'
 
 export type PublicSettingsStore = Store<PublicSettings>
 export type PublicSettingsOptions = Partial<StoreOptions<PublicSettings>>
@@ -15,13 +16,12 @@ export async function fixPublicSettings (locals: Locals): Promise<void> {
 
   // Clean public settings
   await publicSettings.clear()
-  await publicSettings.set({
-    version: publicSettingsValues.version,
-    auth: publicSettingsValues.auth,
-    enc: publicSettingsValues.enc,
-    store: publicSettingsValues.store ?? { type: 'electron-store' },
-    cloud: publicSettingsValues.cloud
-  })
+  await publicSettings.set(
+    _<PublicSettings>(publicSettingsValues)
+      .pick('version', 'auth', 'enc', 'store', 'cloud')
+      .omitBy(_.isUndefined)
+      .value()
+  )
 }
 
 // ** PRIVATE SETTINGS **
