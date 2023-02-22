@@ -8,12 +8,15 @@ export interface VaultStorage {
     storage: Buffer;
     timestamp?: number;
 }
+export declare const VAULT_CONNECTED: 1;
+export declare const VAULT_DISCONNECTED: 0;
 export declare class VaultClient extends EventEmitter {
     timestamp?: number;
     token?: string;
     name: string;
     serverUrl: string;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
+    status: typeof VAULT_CONNECTED | typeof VAULT_DISCONNECTED;
     private _initialized;
     private keyManager?;
     private es?;
@@ -27,7 +30,6 @@ export declare class VaultClient extends EventEmitter {
     once(eventName: string | symbol, listener: (...args: any[]) => void): this;
     private init;
     private initEventSourceClient;
-    private emitError;
     private initKeyManager;
     logout(): void;
     login(username: string, password: string, token?: string): Promise<void>;

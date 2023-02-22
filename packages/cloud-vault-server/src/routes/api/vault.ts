@@ -10,6 +10,35 @@ import { vaultEvents } from '../../vault'
 
 export default function (router: Router): void {
   router.use(passport.initialize())
+  router.post('/token',
+    async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultToken.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
+      try {
+        const username = req.body.username
+        const authkey = req.body.authkey
+        const verified = await db.verifyCredentials(username, authkey)
+        if (!verified) {
+          const error = new HttpError({
+            name: 'invalid-credentials',
+            message: 'invalid username and/or authkey',
+            path: req.path,
+            status: 404
+          })
+          throw error
+        }
+        const token = jwtSign({
+          username
+        }, jwt.secret, {
+          algorithm: jwt.alg,
+          expiresIn: jwt.expiresIn
+        })
+        res.status(200).json({
+          token
+        })
+      } catch (error) {
+        return next(error)
+      }
+    }
+  )
   router.get('/events',
     passport.authenticate('jwtBearer', { session: false }),
     async (req: Request, res: Response, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
@@ -40,7 +69,7 @@ export default function (router: Router): void {
         const timestamp = await db.getTimestamp(username)
         if (timestamp === null) {
           const error = new HttpError({
-            name: 'no storage',
+            name: 'no-storage',
             message: "you haven't upload storage yet",
             path: req.path,
             status: 404
@@ -63,7 +92,7 @@ export default function (router: Router): void {
         const storage = await db.getStorage(username)
         if (storage === null) {
           const error = new HttpError({
-            name: 'no storage',
+            name: 'no-storage',
             message: "you haven't upload storage yet",
             path: req.path,
             status: 404
@@ -81,16 +110,20 @@ export default function (router: Router): void {
     async (req: Request<{}, {}, {}, {}>, res: Response<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
         const { username } = req.user as User
-        const deleted = await db.deleteStorageByUsername(username)
-        if (!deleted) {
-          throw new HttpError({ name: 'cannot delete', path: req.path, status: 400 })
-        }
+        await db.deleteStorageByUsername(username)
         vaultEvents.sendEvent(username, {
           event: 'storage-deleted',
           data: {}
         })
         res.status(204).end()
       } catch (error) {
+        if (error instanceof Error && error.message === 'not-registered') {
+          return next(new HttpError({
+            name: 'not-registered',
+            path: req.path,
+            status: 404
+          }))
+        }
         return next(error)
       }
     }
@@ -118,7 +151,7 @@ export default function (router: Router): void {
           switch (error.code) {
             case '22001':
               return next(new HttpError({
-                name: 'error',
+                name: 'quota-exceeded',
                 path: req.path,
                 status: 400,
                 message: `encrypted storage in base64url cannot be more than ${dbConfig.storageCharLength} long (${dbConfig.storageByteLength} in binary format)`
@@ -131,43 +164,13 @@ export default function (router: Router): void {
                 message: 'couldn\'t update storage'
               }))
           }
-        } else if ((error instanceof Error && error.message === 'Cannot update non-existing storage')) {
+        } else if (error instanceof Error && (error.message === 'invalid-timestamp' || error.message === 'not-registered')) {
           return next(new HttpError({
-            name: 'no storage',
+            name: error.message,
             path: req.path,
-            status: 404,
-            message: 'couldn\'t update storage: ' + error.message
+            status: 400
           }))
         }
-        return next(error)
-      }
-    }
-  )
-  router.post('/token',
-    async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultToken.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
-      try {
-        const username = req.body.username
-        const authkey = req.body.authkey
-        const verified = await db.verifyCredentials(username, authkey)
-        if (!verified) {
-          const error = new HttpError({
-            name: 'invalid credentials',
-            message: 'invalid username and/or authkey',
-            path: req.path,
-            status: 404
-          })
-          throw error
-        }
-        const token = jwtSign({
-          username
-        }, jwt.secret, {
-          algorithm: jwt.alg,
-          expiresIn: jwt.expiresIn
-        })
-        res.status(200).json({
-          token
-        })
-      } catch (error) {
         return next(error)
       }
     }

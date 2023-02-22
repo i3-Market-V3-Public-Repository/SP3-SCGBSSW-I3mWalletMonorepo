@@ -34,13 +34,12 @@ export default function (router: Router): void {
         })
       } catch (error) {
         if (error !== null && typeof error === 'object' && 'code' in error && error.code === '23505') {
-          const err: HttpError = {
+          const err = new HttpError({
             status: 400,
             message: 'user already registered',
             name: 'already-registered',
-            errors: [],
             path: req.path
-          }
+          })
           return next(err)
         }
         return next(error)
@@ -52,7 +51,17 @@ export default function (router: Router): void {
     async (req: Request, res: Response<OpenApiPaths.ApiV2RegistrationDeregister.Get.Responses.$204>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       // TO-DO: get did from id_token
       const did = 'did:ethr:i3m:0x02c1e51dbe7fa3c3e89df33495f241316d9554b5206fcef16d8108486285e38c27'
-      await db.deleteStorageByDid(did).catch(err => {
+      await db.deleteStorageByDid(did).catch((err) => {
+        if (err instanceof Error && err.message === 'not-registered') {
+          const err = new HttpError({
+            status: 404,
+            message: 'this identity (DID) is not registered',
+            name: 'not-registered',
+            errors: [],
+            path: req.path
+          })
+          return next(err)
+        }
         return next(err)
       })
       res.status(204).end()

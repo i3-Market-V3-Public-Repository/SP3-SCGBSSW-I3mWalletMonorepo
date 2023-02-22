@@ -71,6 +71,30 @@ export namespace OpenApiComponents {
              */
             timestamp?: number;
         }
+        export interface ErrorAlreadyRegistered {
+            name: "already-registered";
+            description: string;
+        }
+        export interface ErrorInvalidCredentials {
+            name: "invalid-credentials";
+            description: string;
+        }
+        export interface ErrorNoStorage {
+            name: "no-storage";
+            description: string;
+        }
+        export interface ErrorNotRegistered {
+            name: "not-registered";
+            description: string;
+        }
+        export interface ErrorQuotaExceeded {
+            name: "quota-exceeded";
+            description: string;
+        }
+        export interface ErrorUnauthorized {
+            name: "unauthorized";
+            description: string;
+        }
         /**
          * JWK Elliptic-Curve Public Key Object
          * A JWK Key Object representing a public key generated with Elliptic-Curve cryptography.
@@ -345,7 +369,7 @@ export namespace OpenApiPaths {
             export namespace Responses {
                 export interface $204 {
                 }
-                export type $400 = /* Error */ OpenApiComponents.Schemas.ApiError;
+                export type $404 = OpenApiComponents.Schemas.ErrorNotRegistered;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -397,7 +421,7 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.RegistrationResponse;
-                export type $400 = /* Error */ OpenApiComponents.Schemas.ApiError;
+                export type $400 = OpenApiComponents.Schemas.ErrorAlreadyRegistered;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -407,6 +431,8 @@ export namespace OpenApiPaths {
             export namespace Responses {
                 export interface $204 {
                 }
+                export type $401 = OpenApiComponents.Schemas.ErrorUnauthorized;
+                export type $404 = OpenApiComponents.Schemas.ErrorNotRegistered;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -430,6 +456,8 @@ export namespace OpenApiPaths {
                      */
                     timestamp: number;
                 }
+                export type $401 = OpenApiComponents.Schemas.ErrorUnauthorized;
+                export type $404 = OpenApiComponents.Schemas.ErrorNoStorage;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -447,6 +475,8 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.Timestamp;
+                export type $400 = OpenApiComponents.Schemas.ErrorQuotaExceeded | OpenApiComponents.Schemas.ErrorNotRegistered | /* Error */ OpenApiComponents.Schemas.ApiError;
+                export type $401 = OpenApiComponents.Schemas.ErrorUnauthorized;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -456,6 +486,8 @@ export namespace OpenApiPaths {
             export namespace Responses {
                 export interface $200 {
                 }
+                export type $401 = OpenApiComponents.Schemas.ErrorUnauthorized;
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
     }
@@ -468,6 +500,8 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.Timestamp;
+                export type $401 = OpenApiComponents.Schemas.ErrorUnauthorized;
+                export type $404 = OpenApiComponents.Schemas.ErrorNoStorage;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -487,6 +521,7 @@ export namespace OpenApiPaths {
                  *
                  */
                 OpenApiComponents.Schemas.AuthToken;
+                export type $404 = OpenApiComponents.Schemas.ErrorInvalidCredentials;
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }

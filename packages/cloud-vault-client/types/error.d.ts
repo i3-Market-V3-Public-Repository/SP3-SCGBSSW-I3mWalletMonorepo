@@ -19,13 +19,14 @@ export type VaultErrorData = {
     };
     'no-uploaded-storage': any;
     'sse-connection-error': any;
+    'quota-exceeded': string;
     conflict: {
         localTimestamp?: number;
         remoteTimestamp?: number;
     };
     unauthorized: any;
     'invalid-credentials': any;
-    error: any;
+    error: Error;
     unknown: any;
     validation: {
         description?: string;

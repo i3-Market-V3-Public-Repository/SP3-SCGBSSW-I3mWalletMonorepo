@@ -2,21 +2,35 @@
 import { VaultClient, VaultError } from '#pkg'
 import { setTimeout as timersSetTimeout } from 'timers'
 import { promisify } from 'util'
-
+import { Server } from '@i3m/cloud-vault-server'
+import { spawn } from 'child_process'
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
 import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { config as loadEnvFile } from 'dotenv'
 import axios, { AxiosError } from 'axios'
 import { randomBytes } from 'crypto'
 import { expect } from 'chai'
+import { join as pathJoin } from 'path'
 
 loadEnvFile()
 
 const setTimeout = promisify(timersSetTimeout)
 
-const serverUrl = process.env.WCV_SERVER_URL ?? 'http://localhost:3000'
-const username = process.env.WCV_USERNAME ?? 'testUser'
-const password = process.env.WCV_PASSWORD ?? 'mysupersuperpassword'
+let serverUrl: string, username: string, password: string
+let localTesting: boolean
+
+if (process.env.WCV_SERVER_URL === undefined || process.env.WCV_USERNAME === undefined || process.env.WCV_PASSWORD === undefined) {
+  console.log('No server setup provided. Using local testing server. You need docker and docker compose for it to work')
+  serverUrl = 'http://localhost:3000'
+  username = 'testUser'
+  password = 'mysuperpassword'
+  localTesting = true
+} else {
+  serverUrl = process.env.WCV_SERVER_URL
+  username = process.env.WCV_USERNAME
+  password = process.env.WCV_PASSWORD
+  localTesting = false
+}
 
 const user = {
   did: 'did:ethr:i3m:0x02c1e51dbe7fa3c3e89df33495f241316d9554b5206fcef16d8108486285e38c27',
@@ -26,6 +40,56 @@ const user = {
 
 const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
+async function runCommand (cmd: string, args: string[]): Promise<{ code: number | null, stdout: string, stderr: string }> {
+  const command = spawn(cmd, args, {
+    cwd: pathJoin(__dirname, '..', '..', 'node_modules', '@i3m', 'cloud-vault-server', 'test', 'postgresql'),
+    env: {
+      DB_HOST: '127.0.0.1',
+      DB_PORT: '25432',
+      DB_NAME: 'myuser',
+      DB_USER: 'myuser',
+      DB_PASSWORD: 'mysuperpassword'
+    }
+  })
+
+  let stdout = ''
+  let stderr = ''
+  command.stdout.on('data', data => {
+    stdout += data as string
+  })
+
+  command.stderr.on('data', data => {
+    stderr += data as string
+  })
+
+  return await new Promise((resolve, reject) => {
+    command.on('error', (error) => {
+      console.log(stderr)
+      reject(error)
+    })
+    command.on('close', code => {
+      resolve({
+        code,
+        stderr,
+        stdout
+      })
+    })
+  })
+}
+async function runLocalDb (): Promise<void> {
+  // let { code, stderr, stdout } = await runCommand('sudo', ['systemctl', 'start', 'docker'])
+  // console.log(code, stdout, stderr);
+  let { code, stderr, stdout } = await runCommand('docker', ['compose', 'up', '-d'])
+  console.log(code, stdout, stderr);
+  ({ code, stderr, stdout } = await runCommand('sleep', ['3']))
+  console.log(code, stdout, stderr)
+}
+
+async function stopLocalDb (): Promise<void> {
+  const { code, stderr, stdout } = await runCommand('docker', ['compose', 'down'])
+  console.log(code, stdout, stderr)
+}
+
 describe('Wallet Cloud-Vault', function () {
   this.timeout(30000) // ms
   let client1: VaultClient
@@ -33,6 +97,20 @@ describe('Wallet Cloud-Vault', function () {
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
   before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
+    if (localTesting) {
+      await runLocalDb()
+      try {
+        const { serverPromise } = await import('@i3m/cloud-vault-server')
+        const server: Server = await serverPromise
+        this.server = server
+        await server.dbConnection.db.initialized
+      } catch (error) {
+        console.log(error)
+        console.log('\x1b[91mALL TEST SKIPPED: A connection to a DB has not been setup\x1b[0m')
+        this.skip()
+      }
+    }
+
     client1 = new VaultClient(serverUrl, '1')
     client2 = new VaultClient(serverUrl, '2')
 
@@ -57,7 +135,25 @@ describe('Wallet Cloud-Vault', function () {
   after('Close clients', function (done) {
     client1.logout()
     client2.logout()
-    done()
+
+    if (localTesting) {
+      const server: Server | undefined = this.server
+      if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
+        server.server.closeAllConnections()
+        server.server.close((err) => {
+          done(err)
+        })
+      } else {
+        done()
+      }
+      stopLocalDb().then(() => {
+        done()
+      }).catch((err) => {
+        done(err)
+      })
+    } else {
+      done()
+    }
   })
 
   it('it should register the test user', async function () {
@@ -161,7 +257,7 @@ describe('Wallet Cloud-Vault', function () {
             reject(new Error('remote storage does not equal the uploaded one'))
             return
           }
-          console.log(`Client ${client2.name}: dowloading done`)
+          console.log(`Client ${client2.name}: downloading done`)
           receivedEvents++
           if (receivedEvents === msgLimit) {
             resolve()

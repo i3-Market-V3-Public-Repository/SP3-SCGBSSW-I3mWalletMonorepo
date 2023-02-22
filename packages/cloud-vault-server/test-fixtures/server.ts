@@ -1,7 +1,7 @@
 import type { Server } from '../src'
 before(async function () {
   try {
-    const { default: serverPromise } = await import('../src')
+    const { serverPromise } = await import('../src')
     const server: Server | undefined = await serverPromise
     this.server = server
     await server.dbConnection.db.initialized

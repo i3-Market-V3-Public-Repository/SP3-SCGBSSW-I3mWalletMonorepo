@@ -47,18 +47,20 @@ function renameJsToCjs (dir, fileList = []) {
   })
 }
 
-function fixJsonAssertsInESMTests (dir, fileList = []) {
+function fixESMTests (dir, fileList = []) {
   const files = fs.readdirSync(dir)
 
   files.forEach(file => {
     const srcFile = path.join(dir, file)
     if (fs.statSync(srcFile).isDirectory()) {
-      fileList = fixJsonAssertsInESMTests(srcFile, fileList)
+      fileList = fixESMTests(srcFile, fileList)
     } else {
       const match = file.match(/(.*)\.js$/)
       if (match !== null) {
         const fileContents = fs.readFileSync(srcFile, 'utf8')
-        const updatedFileContents = fileContents.replace(/(import\([`'"]\..*\.json[`'"])\)/g, '$1, { assert: { type: "json" } })')
+        let updatedFileContents = fileContents.replace(/(import\([`'"]\..*\.json[`'"])\)/g, '$1, { assert: { type: "json" } })')
+        updatedFileContents = updatedFileContents.replace(/([^\w])__filename([^\w])/g, `$1'${pkgJson.exports['.'].node.import}'$2`)
+        updatedFileContents = updatedFileContents.replace(/([^\w])__dirname([^\w])/g, `$1'${path.dirname(pkgJson.exports['.'].node.import)}'$2`)
         fs.writeFileSync(srcFile, updatedFileContents, { encoding: 'utf8' })
       }
     }
@@ -148,7 +150,7 @@ class TestsBuilder extends Builder {
         if (this.commonjs) {
           renameJsToCjs(mochaTsDir)
         } else {
-          fixJsonAssertsInESMTests(mochaTsDir)
+          fixESMTests(mochaTsDir)
         }
         this.emit('ready', updateSemaphore)
       } else {

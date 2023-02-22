@@ -111,7 +111,7 @@ export default [
   //   ]
   // },
   { // Node CJS
-    input: input,
+    input,
     output: [
       {
         file: join(rootDir, exports['.'].node.require),
@@ -141,7 +141,7 @@ export default [
     ]
   },
   { // Node ESM and type declarations
-    input: input,
+    input,
     output: [
       {
         file: join(rootDir, exports['.'].node.import),

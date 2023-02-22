@@ -30,7 +30,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.alg
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:120](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L120)
+[cloud-vault-server/types/openapi.d.ts:144](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L144)
 
 ___
 
@@ -44,7 +44,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.alg\_options
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L148)
+[cloud-vault-server/types/openapi.d.ts:172](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L172)
 
 ___
 
@@ -60,7 +60,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.derived\_key\_length
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L124)
+[cloud-vault-server/types/openapi.d.ts:148](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L148)
 
 ___
 
@@ -77,7 +77,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.input
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L129)
+[cloud-vault-server/types/openapi.d.ts:153](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L153)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-client/src/ts/key-manager.ts#L13)
+[cloud-vault-client/src/ts/key-manager.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-client/src/ts/key-manager.ts#L13)
 
 ___
 
@@ -106,7 +106,7 @@ OpenApiComponents.Schemas.KeyDerivationOptions.salt\_hashing\_algorithm
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:147](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L147)
+[cloud-vault-server/types/openapi.d.ts:171](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L171)
 
 ___
 
@@ -129,4 +129,4 @@ OpenApiComponents.Schemas.KeyDerivationOptions.salt\_pattern
 
 #### Defined in
 
-[cloud-vault-server/types/openapi.d.ts:140](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d3e88fc/packages/cloud-vault-server/types/openapi.d.ts#L140)
+[cloud-vault-server/types/openapi.d.ts:164](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c168470/packages/cloud-vault-server/types/openapi.d.ts#L164)

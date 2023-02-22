@@ -23,3 +23,81 @@ components:
           type: string
         description:
           type: string
+    
+    ErrorUnauthorized:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - unauthorized
+        description:
+          type: string
+
+    ErrorInvalidCredentials:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - invalid-credentials
+        description:
+          type: string
+
+    ErrorAlreadyRegistered:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - already-registered
+        description:
+          type: string
+
+    ErrorNotRegistered:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - not-registered
+        description:
+          type: string
+
+    ErrorNoStorage:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - no-storage
+        description:
+          type: string
+    
+    ErrorQuotaExceeded:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - quota-exceeded
+        description:
+          type: string

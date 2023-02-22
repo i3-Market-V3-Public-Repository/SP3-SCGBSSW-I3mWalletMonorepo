@@ -36,7 +36,7 @@ export async function verifyCredentials (username: string, authkey: string): Pro
 export async function getStorage (username: string): Promise<Required<OpenApiComponents.Schemas.EncryptedStorage> | null> {
   const query = 'SELECT last_uploaded, storage FROM vault WHERE username=$1'
   const { rows } = await db.query(query, [username])
-  if (rows.length !== 1) throw new Error('DB: failed getting storage')
+  if (rows.length !== 1) throw new Error('not-registered')
   if (rows[0].last_uploaded === null) {
     return null
   }
@@ -55,7 +55,7 @@ export async function getStorage (username: string): Promise<Required<OpenApiCom
 export async function getTimestamp (username: string): Promise<number | null> {
   const query = 'SELECT last_uploaded FROM vault WHERE username=$1'
   const { rows, rowCount } = await db.query(query, [username])
-  if (rowCount !== 1) throw new Error(`Can't get timestamp. User ${username} not registered`)
+  if (rowCount !== 1) throw new Error('not-registered')
   return (rows[0].last_uploaded !== null) ? Number(rows[0].last_uploaded) : null
 }
 
@@ -76,8 +76,13 @@ export async function setStorage (username: string, storage: string, timestamp?:
     values = [storage, username]
   }
   const res = await db.query(query, values)
-  if (res.rows.length !== 1) throw new Error(`Can't set storage. User ${username} not registered`)
-  if (res.rows[0].last_uploaded === null) throw new Error('Cannot update non-existing storage')
+  if (res.rows[0].last_uploaded === null) {
+    if (timestamp !== undefined) {
+      throw new Error('invalid-timestamp') // it could also be that it is an invalid user, but let us assume that this function is only called for registered users
+    } else {
+      throw new Error('not-registered')
+    }
+  }
   return Number(res.rows[0].last_uploaded)
 }
 
@@ -85,20 +90,24 @@ export async function setStorage (username: string, storage: string, timestamp?:
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export async function deleteStorageByUsername (username: string): Promise<boolean> {
+export async function deleteStorageByUsername (username: string): Promise<void> {
   const query = 'SELECT delete_user($1) AS deleted'
   const res = await db.query(query, [username])
-  if (res.rows.length !== 1) throw new Error('Can\'t delete storage')
-  return res.rows[0].deleted
+  const deleted = res.rows[0].deleted as boolean
+  if (!deleted) {
+    throw new Error('not-registered')
+  }
 }
 
 /**
  * Deletes storage (and user) data for the specified username
  * @param username
  */
-export async function deleteStorageByDid (did: string): Promise<boolean> {
+export async function deleteStorageByDid (did: string): Promise<void> {
   const query = 'SELECT delete_did($1) AS deleted'
   const res = await db.query(query, [did])
-  if (res.rows.length !== 1) throw new Error('Can\'t delete storage')
-  return res.rows[0].deleted
+  const deleted = res.rows[0].deleted as boolean
+  if (!deleted) {
+    throw new Error('not-registered')
+  }
 }

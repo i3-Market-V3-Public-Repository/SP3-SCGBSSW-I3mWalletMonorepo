@@ -1,3 +1,4 @@
+// import { HttpError } from 'express-openapi-validator/dist/framework/types'
 import { Passport } from 'passport'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { jwt } from '../config'
@@ -17,8 +18,12 @@ passport.use('jwtBearer', new Strategy(
       const user: User = {
         username: jwtPayload.username
       }
-      // console.log(JSON.stringify(user));
       return done(null, user)
+      // return done(new HttpError({
+      //   status: 401,
+      //   name: 'unauthorized',
+      //   path: ''
+      // }))
     } catch (error) {
       return done(error)
     }

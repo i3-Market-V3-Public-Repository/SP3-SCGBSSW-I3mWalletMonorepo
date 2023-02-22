@@ -19,14 +19,15 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
   }
   'no-uploaded-storage': any
   'sse-connection-error': any
+  'quota-exceeded': string
   conflict: {
     localTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been downloaded by this client
     remoteTimestamp?: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been uploaded by any client
   }
   unauthorized: any
   'invalid-credentials': any
-  error: any
-  unknown: any
+  error: Error // unknown error generated as an instance of Error
+  unknown: any // unknown error not as an instance of Error
   validation: {
     description?: string
     data?: any
@@ -53,14 +54,19 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
       return new VaultError('sse-connection-error', error, { cause: 'Likely issues connecting to the events endpoint of the cloud vault server' })
     }
     if (error instanceof AxiosError) {
-      if ((error.response?.data as OpenApiComponents.Schemas.ApiError).name === 'Unauthorized') {
-        return new VaultError('unauthorized', undefined)
-      }
-      if (error.response?.status === 404 && error.response.data.name === 'no storage') {
-        return new VaultError('no-uploaded-storage', undefined)
-      }
-      if (error.response?.status === 404 && error.response.data.name === 'invalid credentials') {
-        return new VaultError('invalid-credentials', undefined)
+      const err = error.response?.data as OpenApiComponents.Schemas.ApiError | OpenApiComponents.Schemas.ErrorUnauthorized | OpenApiComponents.Schemas.ErrorAlreadyRegistered | OpenApiComponents.Schemas.ErrorInvalidCredentials | OpenApiComponents.Schemas.ErrorNoStorage | OpenApiComponents.Schemas.ErrorNotRegistered | OpenApiComponents.Schemas.ErrorQuotaExceeded | OpenApiComponents.Schemas.ErrorUnauthorized
+      switch (err.name) {
+        case 'no-storage':
+          return new VaultError('no-uploaded-storage', undefined)
+        case 'invalid-credentials':
+          return new VaultError('invalid-credentials', undefined)
+        case 'quota-exceeded':
+          return new VaultError('quota-exceeded', err.description)
+        case 'unauthorized':
+        case 'not-registered':
+          return new VaultError('unauthorized', undefined)
+        default:
+          break
       }
       const vaultConnError: VaultErrorData['http-connection-error'] = {
         request: {

@@ -33,12 +33,14 @@ async function startApp (): Promise<Express> {
   return app
 }
 
+export * from './vault'
+
 export interface Server {
   server: http.Server
   dbConnection: typeof import('./db')
 }
 
-const serverPromise = new Promise<Server>((resolve, reject) => {
+export const serverPromise = new Promise<Server>((resolve, reject) => {
   let dbConnection: typeof import('./db')
   import('./db').then(module => {
     dbConnection = module
@@ -79,6 +81,3 @@ const serverPromise = new Promise<Server>((resolve, reject) => {
     reject(e)
   })
 })
-
-export default serverPromise
-export * from './vault'

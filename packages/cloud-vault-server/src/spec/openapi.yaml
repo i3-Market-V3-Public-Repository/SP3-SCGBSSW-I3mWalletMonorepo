@@ -78,7 +78,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ErrorAlreadyRegistered'
         default:
           description: unexpected error
           content:
@@ -97,14 +97,14 @@ paths:
       responses:
         '204':
           description: Vault for logged in identity has been cleared
-        '400':
+        '404':
           description: >-
             the identity requesting to delete her/his vault has not previously
             registered to have one
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
+                $ref: '#/components/schemas/ErrorNotRegistered'
         default:
           description: unexpected error
           content:
@@ -131,27 +131,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AuthToken'
-        default:
-          description: unexpected error
+        '404':
+          description: invalid username and/or authkey
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ApiError'
-  /api/v2/vault/timestamp:
-    get:
-      summary: |
-        Get the timestamp when latest storage was uploaded to the cloud vault
-      tags:
-        - Cloud Vault
-      security:
-        - bearerAuth: []
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Timestamp'
+                $ref: '#/components/schemas/ErrorInvalidCredentials'
         default:
           description: unexpected error
           content:
@@ -191,6 +176,51 @@ paths:
                 type: string
                 enum:
                   - text/event-stream
+        '401':
+          description: missing, invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/vault/timestamp:
+    get:
+      summary: |
+        Get the timestamp when latest storage was uploaded to the cloud vault
+      tags:
+        - Cloud Vault
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Timestamp'
+        '401':
+          description: missing, invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '404':
+          description: no cloud storage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNoStorage'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /api/v2/vault:
     get:
       summary: |
@@ -210,8 +240,20 @@ paths:
                   - required:
                       - ciphertext
                       - timestamp
+        '401':
+          description: missing, invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '404':
+          description: no cloud storage
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNoStorage'
         default:
-          description: error
+          description: unexpected error
           content:
             application/json:
               schema:
@@ -226,6 +268,18 @@ paths:
       responses:
         '204':
           description: data deleted
+        '401':
+          description: missing, invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
+        '404':
+          description: username not registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotRegistered'
         default:
           description: unexpected error
           content:
@@ -254,6 +308,21 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Timestamp'
+        '400':
+          description: error
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ErrorQuotaExceeded'
+                  - $ref: '#/components/schemas/ErrorNotRegistered'
+                  - $ref: '#/components/schemas/ApiError'
+        '401':
+          description: missing, invalid or expired token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorUnauthorized'
         default:
           description: unexpected error
           content:
@@ -505,6 +574,78 @@ components:
       properties:
         name:
           type: string
+        description:
+          type: string
+    ErrorUnauthorized:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - unauthorized
+        description:
+          type: string
+    ErrorInvalidCredentials:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - invalid-credentials
+        description:
+          type: string
+    ErrorAlreadyRegistered:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - already-registered
+        description:
+          type: string
+    ErrorNotRegistered:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - not-registered
+        description:
+          type: string
+    ErrorNoStorage:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - no-storage
+        description:
+          type: string
+    ErrorQuotaExceeded:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          enum:
+            - quota-exceeded
         description:
           type: string
     JwkEcPublicKey:

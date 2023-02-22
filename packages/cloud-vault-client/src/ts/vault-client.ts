@@ -17,12 +17,17 @@ export interface VaultStorage {
   timestamp?: number // milliseconds elapsed since epoch of the last downloaded storage
 }
 
+export const VAULT_CONNECTED = 1 as const
+export const VAULT_DISCONNECTED = 0 as const
+
 export class VaultClient extends EventEmitter {
   timestamp?: number
   token?: string
   name: string
   serverUrl: string
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
+  status: typeof VAULT_CONNECTED | typeof VAULT_DISCONNECTED
+
   private _initialized: Promise<void>
   private keyManager?: KeyManager
 
@@ -33,6 +38,8 @@ export class VaultClient extends EventEmitter {
 
     this.name = name ?? randomBytes(16).toString('hex')
     this.serverUrl = serverUrl
+
+    this.status = VAULT_DISCONNECTED
 
     this._initialized = this.init()
   }
@@ -93,6 +100,7 @@ export class VaultClient extends EventEmitter {
     this.es.addEventListener('connected', (e) => {
       const msg = JSON.parse(e.data) as ConnectedEvent['data']
       this.timestamp = msg.timestamp
+      this.status = VAULT_CONNECTED
       this.emit('connected', msg.timestamp)
     })
 
@@ -111,23 +119,10 @@ export class VaultClient extends EventEmitter {
     })
 
     this.es.onerror = (e) => {
-      this.emitError(e)
-    }
-  }
-
-  private emitError (error: unknown): void {
-    const vaultError = VaultError.from(error)
-    switch (vaultError.message) {
-      case 'unauthorized':
-        this.logout()
-        this.emit('logged-out')
-        break
-      case 'sse-connection-error':
-        this.emit('connection-error', vaultError)
-        break
-      default:
-        this.emit('error', vaultError)
-        break
+      if (this.status === VAULT_CONNECTED) {
+        this.status = VAULT_DISCONNECTED
+        this.emit('disconnected')
+      }
     }
   }
 
@@ -143,7 +138,8 @@ export class VaultClient extends EventEmitter {
   logout (): void {
     this.es?.close()
     this.token = undefined
-    this.emit('logged-out')
+    this.emit('disconnected')
+    this.emit('unauthorized')
   }
 
   async login (username: string, password: string, token?: string): Promise<void> {
