@@ -8,33 +8,28 @@ export interface VaultStorage {
     storage: Buffer;
     timestamp?: number;
 }
-export declare const VAULT_NOT_INITIALIZED: 0;
-export declare const VAULT_INITIALIZED: 1;
-export declare const VAULT_LOGGED_IN: 2;
-export declare const VAULT_CONNECTED: 3;
 export declare class VaultClient extends EventEmitter {
     timestamp?: number;
     token?: string;
     name: string;
     serverUrl: string;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
-    status: typeof VAULT_NOT_INITIALIZED | typeof VAULT_INITIALIZED | typeof VAULT_LOGGED_IN | typeof VAULT_CONNECTED;
+    private _state;
     private _initialized;
     private keyManager?;
     private es?;
     constructor(serverUrl: string, name?: string);
     get initialized(): Promise<void>;
+    get state(): typeof this._state;
+    set state(newState: typeof this._state);
     emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean;
-    emit(eventName: string | symbol, ...args: any[]): boolean;
     on<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
-    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
     once<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
-    once(eventName: string | symbol, listener: (...args: any[]) => void): this;
     private init;
     private initEventSourceClient;
     private initKeyManager;
     logout(): void;
-    login(username: string, password: string, token?: string): Promise<void>;
+    login(username: string, password: string): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
     updateStorage(storage: VaultStorage, force?: boolean): Promise<number>;

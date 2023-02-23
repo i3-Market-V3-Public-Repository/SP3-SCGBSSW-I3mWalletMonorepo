@@ -114,11 +114,28 @@ describe('Wallet Cloud-Vault', function () {
     client1 = new VaultClient(serverUrl, '1')
     client2 = new VaultClient(serverUrl, '2')
 
-    client1.on('connection-error', error => {
-      console.log(client1.name, ': ', error)
+    function getTime (timestamp: number): string {
+      const date = new Date(timestamp)
+      return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    }
+    client1.on('state-changed', (state) => {
+      console.log(client1.name, '-> state: ', state)
     })
-    client2.on('connection-error', error => {
-      console.log(client1.name, ': ', error)
+    client1.on('sync-start', (startTs) => {
+      console.log(client1.name, '-> sync started: ', getTime(startTs))
+    })
+    client1.on('sync-stop', (startTs, stopTs) => {
+      console.log(client1.name, '-> sync stopped: ', getTime(startTs), getTime(stopTs))
+    })
+
+    client2.on('state-changed', (state) => {
+      console.log(client2.name, '-> state: ', state)
+    })
+    client2.on('sync-start', (startTs) => {
+      console.log(client2.name, '-> sync started: ', getTime(startTs))
+    })
+    client2.on('sync-stop', (startTs, stopTs) => {
+      console.log(client2.name, '-> sync stopped: ', getTime(startTs), getTime(stopTs))
     })
 
     const resPublicJwk = await client1.getServerPublicKey()

@@ -3,6 +3,7 @@
 import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { KeyObject } from 'crypto';
 import { SecretKey } from './secret-key';
+import './scrypt-thread';
 export interface ScryptOptions {
     N: number;
     r: number;

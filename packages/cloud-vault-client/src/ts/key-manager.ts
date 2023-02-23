@@ -2,6 +2,7 @@ import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
 import { createHash, createSecretKey, KeyObject } from 'crypto'
 import { Worker } from 'worker_threads'
 import { SecretKey } from './secret-key'
+import './scrypt-thread'
 
 export interface ScryptOptions {
   N: number
@@ -76,7 +77,7 @@ export async function deriveKey (password: string, opts: KeyDerivationOptions): 
 export async function deriveKey (key: KeyObject, opts: KeyDerivationOptions): Promise<KeyObject>
 export async function deriveKey (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<KeyObject> {
   return await new Promise((resolve, reject) => {
-    const worker = new Worker('./scrypt-thread', {
+    const worker = new Worker(__filename, {
       workerData: {
         passwordOrKey,
         opts
