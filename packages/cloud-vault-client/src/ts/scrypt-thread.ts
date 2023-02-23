@@ -2,8 +2,14 @@ import { isMainThread, parentPort, workerData } from 'worker_threads'
 import { KeyObject, scrypt } from 'crypto'
 import type { KeyDerivationOptions, ScryptOptions } from './key-manager'
 
-if (!isMainThread) {
-  const { passwordOrKey, opts } = workerData
+export interface scryptThreadWorkerData {
+  _name: 'scrypt-thread'
+  passwordOrKey: string | KeyObject
+  opts: KeyDerivationOptions
+}
+
+if (!isMainThread && typeof workerData === 'object' && workerData._name === 'scrypt-thread') {
+  const { passwordOrKey, opts } = workerData as scryptThreadWorkerData
 
   async function scryptThread (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<KeyObject> {
     const scryptOptions: ScryptOptions = {
