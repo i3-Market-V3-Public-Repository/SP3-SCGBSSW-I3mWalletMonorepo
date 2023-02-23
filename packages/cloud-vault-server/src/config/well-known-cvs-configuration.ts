@@ -19,7 +19,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
       vault_size: dbConfig.storageByteLength,
       vault_endpoint: '/api/v2/vault',
       events_endpoint: '/api/v2/vault/events',
-      timestamp_endpoint: 'api/v2/vault/timestamp',
+      timestamp_endpoint: '/api/v2/vault/timestamp',
       token_endpoint: '/api/v2/vault/token',
       token_endpoint_auth_methods_supported: [
         'client_secret_post'

@@ -247,17 +247,8 @@ export class VaultClient extends EventEmitter {
       throw new VaultError('unauthorized', undefined)
     }
 
-    if (this.timestamp !== undefined && (storage.timestamp ?? 0) < this.timestamp) {
-      throw new VaultError('conflict', {
-        localTimestamp: storage.timestamp,
-        remoteTimestamp: this.timestamp
-      })
-    }
-
     const startTs = Date.now()
     this.emit('sync-start', startTs)
-
-    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
     try {
       if (force) {
@@ -265,6 +256,14 @@ export class VaultClient extends EventEmitter {
         storage.timestamp = (remoteTimestamp !== null) ? remoteTimestamp : undefined
       }
 
+      if (this.timestamp !== undefined && (storage.timestamp ?? 0) < this.timestamp) {
+        throw new VaultError('conflict', {
+          localTimestamp: storage.timestamp,
+          remoteTimestamp: this.timestamp
+        })
+      }
+
+      const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
       const encryptedStorage = (this.keyManager as KeyManager).encKey.encrypt(storage.storage)
 
       const requestBody: OpenApiPaths.ApiV2Vault.Post.RequestBody = {
