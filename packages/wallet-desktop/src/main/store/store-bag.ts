@@ -3,19 +3,23 @@ import { existsSync, rmSync } from 'fs'
 
 import { WalletDesktopError } from '@wallet/main/internal'
 import { StoreClass, StoreClasses, StoreModels } from './store-class'
+import { StoreMetadata } from './store-bundle'
 
 export class StoreBag {
-  stores: Record<string, Store<any>>
+  protected stores: Record<string, Store<any>>
+  protected metadatas: Record<string, StoreMetadata<any>>
 
   constructor () {
     this.stores = {}
+    this.metadatas = {}
   }
 
   //
 
   static getStoreId <T extends StoreClass>(type: T, ...args: StoreClasses[T]): string {
     if (type === 'wallet') {
-      return `wallet$$${args[0]}`
+      // TODO: Typescript is not detecting the proper type??
+      return `wallet$$${args[0] as string}`
     } else {
       return `${type}$$`
     }
@@ -42,11 +46,20 @@ export class StoreBag {
     return store
   }
 
-  public setStoreById <T extends StoreClass>(store: Store<StoreModels[T]>, storeId: string): void {
+  public getStoreMetadataById <T extends StoreClass>(storeId: string): StoreMetadata<T> {
+    const metadata = this.metadatas[storeId]
+    if (metadata === undefined) {
+      throw new WalletDesktopError(`The store '${storeId}' is not initialized yet.`)
+    }
+    return metadata
+  }
+
+  public setStoreById <T extends StoreClass>(store: Store<StoreModels[T]>, metadata: StoreMetadata<T>, storeId: string): void {
     if (this.stores[storeId] !== undefined) {
       throw new WalletDesktopError(`The store '${storeId}' is already initialized.`)
     }
     this.stores[storeId] = store
+    this.metadatas[storeId] = metadata
   }
 
   public deleteStoreById (storeId: string): void {
@@ -66,9 +79,9 @@ export class StoreBag {
     return this.getStoreById(storeId)
   }
 
-  public setStore <T extends StoreClass>(store: Store<StoreModels[T]>, type: T, ...args: StoreClasses[T]): void {
+  public setStore <T extends StoreClass>(store: Store<StoreModels[T]>, metadata: StoreMetadata<T>, type: T, ...args: StoreClasses[T]): void {
     const storeId = StoreBag.getStoreId(type, ...args)
-    this.setStoreById(store, storeId)
+    this.setStoreById(store, metadata, storeId)
   }
 
   public hasStore <T extends StoreClass>(type: T, ...args: StoreClasses[T]): boolean {

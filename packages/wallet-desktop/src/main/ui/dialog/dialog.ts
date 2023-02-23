@@ -3,6 +3,13 @@ import { Dialog, ConfirmationOptions, SelectOptions, DialogResponse, TextOptions
 
 import { DialogData, DialogDescriptors, createDialogId } from '@wallet/lib'
 import { Locals } from '@wallet/main/internal'
+import { SelectBuilder } from './select-builder'
+
+interface BasicOption {
+  id: number
+  text: string
+  context: DialogOptionContext
+}
 
 export class ElectronDialog implements Dialog {
   public resolvers: Map<string, (values: {} | undefined) => void>
@@ -11,6 +18,16 @@ export class ElectronDialog implements Dialog {
   constructor (protected locals: Locals) {
     this.resolvers = new Map()
     this.dialogQueue = []
+  }
+
+  useOptionsBuilder (): SelectBuilder<BasicOption, [text: string, context?: DialogOptionContext]> {
+    let id = 0
+    return new SelectBuilder(
+      (text, context) => ({ id: id++, text, context: context ?? 'success' }),
+      (a, b) => a?.id === b?.id,
+      (opt) => opt.text,
+      (opt) => opt.context
+    )
   }
 
   async launchDialog<T>(dialogData: DialogData): Promise<T | undefined> {

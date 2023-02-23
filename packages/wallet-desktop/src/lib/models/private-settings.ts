@@ -1,8 +1,7 @@
 
+import { ProviderData } from '@i3m/base-wallet'
 import { JWK } from 'jose'
 import { JSONObject } from './json-object'
-import { ProviderData } from '@i3m/base-wallet'
-import { AuthSettings, EncSettings } from './key-algorithms'
 
 export interface WalletInfo {
   name: string
@@ -52,25 +51,6 @@ export interface PrivateSettings {
   connect: WalletConnectSettings
   cloud?: CloudVaultPrivateSettings
   secret?: JWK
-}
-
-export type StoreType = 'electron-store' | 'file-store'
-
-export interface StoreSettings {
-  type?: StoreType
-}
-
-export interface CloudVaultPublicSettings {
-  timestamp: number // timestamp (milliseconds elapsed since EPOCH) when the storage was registered in the vault cloud.
-  unsyncedChanges: boolean
-}
-
-export interface PublicSettings {
-  version: string
-  auth?: AuthSettings
-  enc?: EncSettings
-  store?: StoreSettings
-  cloud?: CloudVaultPublicSettings
 }
 
 export function createDefaultPrivateSettings (): PrivateSettings {

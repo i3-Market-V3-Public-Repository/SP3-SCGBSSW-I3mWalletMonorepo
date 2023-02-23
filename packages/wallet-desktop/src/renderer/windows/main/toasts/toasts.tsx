@@ -14,7 +14,7 @@ export function Toasts (props: ToastsProps): JSX.Element {
 
   return (
     <TransitionGroup component='div' className='toasts'>
-      {toasts.map((toast, i) => (
+      {toasts.reverse().map((toast, i) => (
         <CSSTransition key={i} classNames='toast-transition' timeout={500}>
           <Toast toast={toast} />
         </CSSTransition>

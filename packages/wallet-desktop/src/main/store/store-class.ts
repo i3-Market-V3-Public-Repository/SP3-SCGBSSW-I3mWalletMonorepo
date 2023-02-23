@@ -5,8 +5,8 @@ export interface StoreClasses {
   wallet: [
     walletName: string
   ]
-  'public-settings': never
-  'private-settings': never
+  'public-settings': []
+  'private-settings': []
 }
 export interface StoreModels {
   wallet: StoreModel

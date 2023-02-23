@@ -6,5 +6,5 @@ import { asyncHandler } from './async-handler'
 
 export const providerinfoGet = asyncHandler<never, WalletPaths.ProviderinfoGet.Responses.$200, never>(async (req, res) => {
   const { actionReducer } = extractLocals(req.app)
-  await actionReducer.fromApi(req, res, getProviderinfoAction.create({}))
+  await actionReducer.fromApi(req, res, getProviderinfoAction.create(undefined))
 })

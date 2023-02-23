@@ -12,7 +12,7 @@ export interface BaseTask<T extends string> {
 }
 
 export interface ProgressTask extends BaseTask<'progress'> {
-  progress: () => number
+  progress: number
 }
 
 export interface LabeledTask extends BaseTask<'labeled'> {

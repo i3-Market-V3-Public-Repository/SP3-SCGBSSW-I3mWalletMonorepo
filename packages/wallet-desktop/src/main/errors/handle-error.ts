@@ -2,6 +2,40 @@ import { app } from 'electron'
 
 import { Locals, logger, WalletDesktopError } from '@wallet/main/internal'
 import { CanBePromise } from '@i3m/base-wallet'
+import { checkErrorType, VaultError } from '@i3m/cloud-vault-client'
+
+export async function handleVaultErrors (locals: Locals, err: VaultError): Promise<void> {
+  const { toast } = locals
+  if (checkErrorType(err, 'not-initialized') || checkErrorType(err, 'http-connection-error')) {
+    toast.show({
+      type: 'error',
+      message: 'Cloud Vault',
+      details: 'Cannot connect to the vault server.'
+    })
+  } else if (checkErrorType(err, 'invalid-credentials')) {
+    toast.show({
+      type: 'error',
+      message: 'Cloud Vault',
+      details: 'Invalid credentials.'
+    })
+  }
+}
+
+export async function handleWalletDesktopErrors (locals: Locals, err: WalletDesktopError): Promise<void> {
+  if (err.resetSettings) {
+    // await locals.dialog.confirmation({
+    //   title: err.message,
+    //   message: [err.message, 'The '].join('\n\n')
+    // })
+  }
+
+  if (err.critical) {
+    await err.showDialog(locals)
+    return app.quit()
+  } else {
+    err.showToast(locals)
+  }
+}
 
 export async function handleError (locals: Locals, err: unknown): Promise<void> {
   if (err instanceof Error) {
@@ -10,20 +44,10 @@ export async function handleError (locals: Locals, err: unknown): Promise<void> 
     logger.error(err)
   }
 
-  if (err instanceof WalletDesktopError) {
-    if (err.resetSettings) {
-      // await locals.dialog.confirmation({
-      //   title: err.message,
-      //   message: [err.message, 'The '].join('\n\n')
-      // })
-    }
-
-    if (err.critical) {
-      await err.showDialog(locals)
-      return app.quit()
-    } else {
-      err.showToast(locals)
-    }
+  if (err instanceof VaultError) {
+    await handleVaultErrors(locals, err)
+  } else if (err instanceof WalletDesktopError) {
+    await handleWalletDesktopErrors(locals, err)
   }
 }
 

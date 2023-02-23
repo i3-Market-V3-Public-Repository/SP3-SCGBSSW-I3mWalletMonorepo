@@ -1,5 +1,6 @@
-import { faCheck, faXmark, IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Loader from 'react-spinners/PuffLoader'
 
 import { startCloudSyncAction, stopCloudSyncAction } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
@@ -9,19 +10,19 @@ export function CloudVault (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
 
-  let title: string
-  let icon: IconDefinition
+  const title = 'Cloud Vault'
+  let icon: JSX.Element
   let onClick: (() => void) | undefined
   const { state } = sharedMemory.cloudVaultData
   if (state === 'connected') {
-    title = 'Cloud Vault'
-    icon = faCheck
+    icon = <FontAwesomeIcon icon={faCheck} className='icon' />
     onClick = () => {
       dispatch(stopCloudSyncAction.create())
     }
+  } else if (state === 'sync') {
+    icon = <Loader size='8px' className='loader' color='white' />
   } else {
-    title = 'Cloud Vault'
-    icon = faXmark
+    icon = <FontAwesomeIcon icon={faXmark} className='icon' />
     onClick = () => {
       dispatch(startCloudSyncAction.create())
     }
@@ -29,7 +30,7 @@ export function CloudVault (): JSX.Element | null {
 
   return (
     <StatusBarItem onClick={onClick}>
-      <FontAwesomeIcon icon={icon} className='icon' />
+      {icon}
       <span>{title}</span>
     </StatusBarItem>
   )

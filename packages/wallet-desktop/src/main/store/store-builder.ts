@@ -25,6 +25,11 @@ export class StoreBuilder {
     const storeId = wallet.store
 
     const storeOpts: WalletStoreOptions = {
+      defaults: {
+        start: new Date(),
+        identities: {},
+        resources: {}
+      },
       name: `${name}.${storeId}`,
       cwd: storePath,
       fileExtension: encryptionEnabled ? 'enc.json' : 'json'
@@ -37,7 +42,7 @@ export class StoreBuilder {
     return storeOpts
   }
 
-  public async buildOptionsBuilder <T extends Record<string, any>>(optionsBuilder: StoreOptionsBuilder<T>, migrate = true): Promise<Store<T>> {
+  public async buildOptionsBuilder <T extends Record<string, any>>(optionsBuilder: StoreOptionsBuilder<T>, migrate = true): Promise<[store: Store<T>, options: StoreOptions<T>]> {
     const { to, needed } = this.ctx.storeMigrationProxy
     if (needed) {
       if (migrate) {
@@ -58,7 +63,7 @@ export class StoreBuilder {
     }
   }
 
-  public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>, storeType?: StoreType): Promise<Store<T>> {
+  public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>, storeType?: StoreType): Promise<[store: Store<T>, options: StoreOptions<T>]> {
     const fixedOptions = Object.assign({}, {
       cwd: this.ctx.settingsPath,
       fileExtension: 'json',
@@ -69,16 +74,16 @@ export class StoreBuilder {
     logger.debug(`Loading store on '${path}'`)
 
     // TODO: Check if the format is corret. If not fix corrupted data
-    return await builder.build(this.ctx, this.locals, fixedOptions)
+    return [await builder.build(this.ctx, this.locals, fixedOptions), fixedOptions]
   }
 
-  public async migrateStore <T extends Record<string, any>>(optionsBuilder: StoreOptionsBuilder<T>): Promise<Store<T>> {
+  public async migrateStore <T extends Record<string, any>>(optionsBuilder: StoreOptionsBuilder<T>): Promise<[store: Store<T>, options: StoreOptions<T>]> {
     const { from, to } = this.ctx.storeMigrationProxy
 
     // Read old data
     const oldOptions = await optionsBuilder(from)
     const filepath = getPath(this.ctx, this.locals, oldOptions)
-    const oldStore = await this.buildStore(oldOptions, from.storeType)
+    const [oldStore] = await this.buildStore(oldOptions, from.storeType)
     const storeData = await oldStore.getStore()
 
     // Remove old store
@@ -86,9 +91,9 @@ export class StoreBuilder {
 
     // Create new store
     const newOptions = await optionsBuilder(to)
-    const newStore = await this.buildStore(newOptions, to.storeType)
+    const [newStore, options] = await this.buildStore(newOptions, to.storeType)
     await newStore.set(storeData)
 
-    return newStore
+    return [newStore, options]
   }
 }
