@@ -1,5 +1,6 @@
 import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
-import { createHash, createSecretKey, KeyObject, scrypt } from 'crypto'
+import { createHash, createSecretKey, KeyObject } from 'crypto'
+import { Worker } from 'worker_threads'
 import { SecretKey } from './secret-key'
 
 export interface ScryptOptions {
@@ -74,16 +75,21 @@ function _salt (hashAlgorithm: OpenApiComponents.Schemas.KeyDerivationOptions['s
 export async function deriveKey (password: string, opts: KeyDerivationOptions): Promise<KeyObject>
 export async function deriveKey (key: KeyObject, opts: KeyDerivationOptions): Promise<KeyObject>
 export async function deriveKey (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<KeyObject> {
-  const scryptOptions: ScryptOptions = {
-    ...opts.alg_options,
-    maxmem: 256 * opts.alg_options.N * opts.alg_options.r
-  }
-  const password = (typeof passwordOrKey === 'string') ? passwordOrKey : passwordOrKey.export()
-  const keyPromise: Promise<any> = new Promise((resolve, reject) => {
-    scrypt(password, opts.salt, opts.derived_key_length, scryptOptions, (err, key) => {
-      if (err !== null) reject(err)
-      resolve(createSecretKey(key))
+  return await new Promise((resolve, reject) => {
+    const worker = new Worker('./scrypt-thread', {
+      workerData: {
+        passwordOrKey,
+        opts
+      }
+    })
+    worker.on('message', (derivedKey: Buffer) => {
+      resolve(createSecretKey(derivedKey))
+    })
+    worker.on('error', (err) => {
+      reject(err)
+    })
+    worker.on('messageerror', (err) => {
+      reject(err)
     })
   })
-  return await keyPromise
 }

@@ -26,7 +26,9 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 ### Variables
 
 - [VAULT\_CONNECTED](API.md#vault_connected)
-- [VAULT\_DISCONNECTED](API.md#vault_disconnected)
+- [VAULT\_INITIALIZED](API.md#vault_initialized)
+- [VAULT\_LOGGED\_IN](API.md#vault_logged_in)
+- [VAULT\_NOT\_INITIALIZED](API.md#vault_not_initialized)
 
 ### Functions
 
@@ -102,7 +104,7 @@ ___
 
 ### VAULT\_CONNECTED
 
-• `Const` **VAULT\_CONNECTED**: ``1``
+• `Const` **VAULT\_CONNECTED**: ``3``
 
 #### Defined in
 
@@ -110,9 +112,9 @@ ___
 
 ___
 
-### VAULT\_DISCONNECTED
+### VAULT\_INITIALIZED
 
-• `Const` **VAULT\_DISCONNECTED**: ``0``
+• `Const` **VAULT\_INITIALIZED**: ``1``
 
 #### Defined in
 
