@@ -11,13 +11,13 @@ export interface scryptThreadWorkerData {
 if (!isMainThread && typeof workerData === 'object' && workerData._name === 'scrypt-thread') {
   const { passwordOrKey, opts } = workerData as scryptThreadWorkerData
 
-  async function scryptThread (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<KeyObject> {
+  async function scryptThread (passwordOrKey: string | KeyObject, opts: KeyDerivationOptions): Promise<Buffer> {
     const scryptOptions: ScryptOptions = {
       ...opts.alg_options,
       maxmem: 256 * opts.alg_options.N * opts.alg_options.r
     }
     const password = (typeof passwordOrKey === 'string') ? passwordOrKey : passwordOrKey.export()
-    const keyPromise: Promise<any> = new Promise((resolve, reject) => {
+    const keyPromise: Promise<Buffer> = new Promise((resolve, reject) => {
       scrypt(password, opts.salt, opts.derived_key_length, scryptOptions, (err, key) => {
         if (err !== null) reject(err)
         resolve(key)
