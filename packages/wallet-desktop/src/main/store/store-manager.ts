@@ -3,8 +3,7 @@ import { VaultStorage } from '@i3m/cloud-vault-client'
 import { KeyObject } from 'crypto'
 
 import {
-  createDefaultPrivateSettings,
-  getObjectDifference, StoreSettings
+  createDefaultPrivateSettings, StoreSettings
 } from '@wallet/lib'
 import {
   fixPrivateSettings,
@@ -56,7 +55,7 @@ export class StoreManager extends StoreBag {
       // Fix setting files
       await fixPublicSettings(this.locals)
       await fixPrivateSettings(this.locals)
-    }) 
+    })
 
     runtimeManager.on('wallet-stores', async () => {
       // Load encrypted settings
@@ -73,7 +72,7 @@ export class StoreManager extends StoreBag {
 
     // NOTE: Public settings must always be not encrypted and using the electorn store.
     // This guarantees compatibilities with future versions!
-    const [publicSettings, fixedOptions] = await this.builder.buildStore(options, 'electron-store')
+    const [publicSettings, fixedOptions] = await this.builder.buildStore({ ...options, storeType: 'electron-store' })
     const publicMetadata: StoreMetadata<'public-settings'> = {
       type: 'public-settings',
       args: [],
@@ -100,7 +99,7 @@ export class StoreManager extends StoreBag {
   public async loadPrivateSettings (): Promise<void> {
     const { keysManager } = this.locals
     const publicSettings = this.getStore('public-settings')
-    const { version, auth, cloud, store, enc, ...rest} = await publicSettings.getStore()
+    const { version, auth, cloud, store, enc, ...rest } = await publicSettings.getStore()
 
     await this.executeOptionsBuilders(async (migration) => ({
       defaults: Object.assign({}, createDefaultPrivateSettings(), rest),
@@ -156,7 +155,7 @@ export class StoreManager extends StoreBag {
     options: StoreOptions<StoreModels[T]>,
     type: T,
     ...args: StoreClasses[T]
-  ): void  {
+  ): void {
     const metadata: StoreMetadata<T> = { type, args, options }
 
     const storeProxy = new StoreProxy(store)
@@ -207,7 +206,6 @@ export class StoreManager extends StoreBag {
       stores: {}
     }
     for (const [storeId, store] of Object.entries(this.stores)) {
-      // const idMetadata = StoreBag.deconstructId(storeId)
       const metadata = this.getStoreMetadataById(storeId)
       const type = metadata.type
 
@@ -250,14 +248,14 @@ export class StoreManager extends StoreBag {
 
   public async restoreStoreBundle (vault: VaultStorage): Promise<void> {
     logger.debug('restore from cloud vault')
+    const { to } = this.ctx.storeMigrationProxy
     const { storage } = vault
     const bundleJSON = storage.toString()
     const bundle = JSON.parse(bundleJSON) as StoresBundle
 
-    const { versionManager, sharedMemoryManager: shm, keysManager } = this.locals
+    const { versionManager, sharedMemoryManager: shm, keysManager, cloudVaultManager: cvm } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
-      // TODO: Handle version conflict!!
-      return
+      return await cvm.conflict({})
     }
 
     for (const [, storeBundle] of Object.entries(bundle.stores)) {
@@ -266,12 +264,12 @@ export class StoreManager extends StoreBag {
         // Create the store first
         let encryptionKey: KeyObject
         if (type === 'private-settings') {
-          encryptionKey = await keysManager.computeSettingsKey()
+          encryptionKey = await keysManager.computeSettingsKey(to.encKeys)
         } else {
           const [, uuid] = options.name.split('.')
-          encryptionKey = await keysManager.computeWalletKey(uuid)
+          encryptionKey = await keysManager.computeWalletKey(uuid, to.encKeys)
         }
-        await this.executeOptions({ ...options, encryptionKey }, type, ...args)
+        await this.executeOptions({ ...options, encryptionKey, storeType: to.storeType }, type, ...args)
       }
 
       const store = this.silentBag.getStore(type, ...args)
@@ -307,18 +305,8 @@ export class StoreManager extends StoreBag {
     await publicSettings.delete('cloud')
   }
 
-  oldStores: any = {}
   protected async onBeforeChange (type: StoreClass, store: Store<any>): Promise<void> {
     if (isEncryptedStore(type)) {
-      const storePath = store.getPath()
-      let oldStore = this.oldStores[storePath]
-      if (oldStore === undefined) {
-        oldStore = {}
-        this.stores[storePath]
-      }
-      const newStore = await store.getStore()
-      console.log(getObjectDifference(oldStore, newStore))
-      this.oldStores[storePath] = newStore
       const publicSettings = this.getStore('public-settings')
       await publicSettings.set('cloud.unsyncedChanges', true)
     }
@@ -329,15 +317,12 @@ export class StoreManager extends StoreBag {
     const { cloudVaultManager: cvm } = this.locals
     if (isEncryptedStore(type) && !cvm.isDisconnected) {
       await this.uploadStores().catch((err: Error) => {
-        let fixedError = err
-        if (!(err instanceof WalletDesktopError)) {
-          console.trace(err)
-          fixedError = new WalletDesktopError('Could not upload stores', {
-            severity: 'error',
-            message: 'Upload store error',
-            details: `Could not upload store due to '${err.message}'`
-          })
-        }
+        const fixedError = new WalletDesktopError('Could not upload stores', {
+          severity: 'error',
+          message: 'Upload store error',
+          details: `Could not upload store due to '${err.message}'`
+        })
+        console.trace(err)
         handleErrorSync(this.locals, fixedError)
       })
     }

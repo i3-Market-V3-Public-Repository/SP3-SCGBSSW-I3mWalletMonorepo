@@ -1,14 +1,21 @@
 import { SharedMemory } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 
-interface BaseSettingsMetadata<T = any> {
+export interface BaseMetadata<T = any> {
+  description?: {
+    message: ((item: ItemMetadata, value: T) => JSX.Element) | JSX.Element
+    visible?: ((item: ItemMetadata, value: T) => boolean) | boolean
+  }
+}
+
+export interface InfoMetadata extends BaseMetadata<never> {
+  type: 'info'
+}
+
+interface BaseSettingsMetadata<T = any> extends BaseMetadata<T> {
   label: string
   key: string
   canUpdate?: (key: string, value: any, metadata: SettingsMetadata, sharedMemory: SharedMemory, dispatch: ActionDispatcher) => boolean
-  description?: {
-    message: ((item: SettingsMetadata, value: T) => JSX.Element) | JSX.Element
-    visible?: ((item: SettingsMetadata, value: T) => boolean) | boolean
-  }
 }
 
 export interface CheckboxSettingsMetadata extends BaseSettingsMetadata<boolean> {
@@ -44,4 +51,6 @@ export type SettingsMetadata =
   ArraySettingsMetadata |
   ObjectSettingsMetadata
 
-export type SettingsMetadataRecord = Record<string, SettingsMetadata[]>
+export type ItemMetadata = SettingsMetadata | InfoMetadata
+
+export type MetadataRecord = Record<string, ItemMetadata[]>

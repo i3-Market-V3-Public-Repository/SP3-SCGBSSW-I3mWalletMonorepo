@@ -4,7 +4,7 @@ import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
 import { CloudVaultPrivateSettings, CloudVaultPublicSettings, TaskDescription } from '@wallet/lib'
-import { handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
+import { handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 
 const CLOUD_URL = 'http://localhost:3000'
 
@@ -39,7 +39,7 @@ export class CloudVaultManager {
   }
 
   protected bindRuntimeEvents (): void {
-    const { authManager, runtimeManager, dialog, storeManager } = this.locals
+    const { authManager, runtimeManager, storeManager } = this.locals
     let justRegistered = false
     runtimeManager.on('before-auth', async (task) => {
       justRegistered = !authManager.registered
@@ -47,17 +47,7 @@ export class CloudVaultManager {
 
     runtimeManager.on('cloud-auth', async (task) => {
       if (justRegistered) {
-        const confirm = await dialog.confirmation({
-          message: 'If you already have a cloud vault account, you can start the wallet using your cloud data. \nDo you want to login into the cloud vault?',
-          title: 'Authentication'
-        })
-        if (confirm === true) {
-          await this.loginTask(task)
-          await this.synchronize({
-            direction: 'pull',
-            force: true
-          })
-        }
+        await this.firstTimeSync(task)
       } else {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
@@ -74,11 +64,10 @@ export class CloudVaultManager {
 
     this.client.on('state-changed', (state) => {
       const prevState = shm.memory.cloudVaultData.state
-      
+
       if (prevState !== 'connected' && state === VAULT_STATE.CONNECTED) {
         this.locals.toast.show({
           message: 'Cloud Vault connected',
-          details: 'Your cloud vault has been sucessfully connected!',
           type: 'success'
         })
 
@@ -93,7 +82,7 @@ export class CloudVaultManager {
       if (prevState !== 'disconnected' && state === VAULT_STATE.LOGGED_IN) {
         this.locals.toast.show({
           message: 'Cloud Vault disconnected',
-          details: 'Your cloud vault has been disconnected!',
+          details: 'Check your internet connection please',
           type: 'error'
         })
 
@@ -104,7 +93,6 @@ export class CloudVaultManager {
           }
         }))
       }
-      // handlePromise(this.locals, this.synchronize({ remoteTimestamp: t }))
     })
 
     this.client.on('sync-start', (startTs) => {
@@ -133,6 +121,66 @@ export class CloudVaultManager {
         }))
       }
     })
+  }
+
+  async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
+    const { dialog } = this.locals
+
+    const loginRegisterBuilder = dialog.useOptionsBuilder()
+    const login = loginRegisterBuilder.add('Login')
+    const register = loginRegisterBuilder.add('Register')
+    loginRegisterBuilder.add('Omit', 'danger')
+
+    let sync = false
+    while (!sync) {
+      const option = await dialog.select({
+        title: 'Secure Cloud Vault',
+        message: 'Do you want to connect to your secure cloud vault? \nYour cloud vault storage will be restored in this wallet.',
+        ...loginRegisterBuilder
+      })
+
+      if (loginRegisterBuilder.compare(option, login)) {
+        try {
+          await this.loginTask(task)
+          sync = true
+          continue
+        } catch (err: unknown) {
+          await handleError(this.locals, err)
+        }
+      } else if (loginRegisterBuilder.compare(option, register)) {
+        while (true) {
+          const cloudPrivateSettings = await this.registerTask(task)
+          const loginBackBuilder = dialog.useOptionsBuilder()
+          const relogin = loginRegisterBuilder.add('Login with same credentials')
+          loginRegisterBuilder.add('Go back')
+          const option = await dialog.select({
+            title: 'Cloud Vault Registration',
+            message: 'Bla bla',
+            ...loginRegisterBuilder
+          })
+
+          if (loginBackBuilder.compare(relogin, option)) {
+            try {
+              await this.loginTask(task, cloudPrivateSettings)
+              sync = true
+            } catch (err: unknown) {
+              await handleError(this.locals, err)
+            }
+          } else {
+            break
+          }
+        }
+      } else {
+        break
+      }
+    }
+
+    if (sync) {
+      await this.synchronize({
+        direction: 'pull',
+        force: true
+      })
+    }
   }
 
   async conflict (syncCtx: SynchronizeContext): Promise<void> {
@@ -205,6 +253,7 @@ export class CloudVaultManager {
   get isConnected (): boolean {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'connected'
   }
+
   get isDisconnected (): boolean {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'disconnected'
   }
@@ -273,7 +322,7 @@ export class CloudVaultManager {
     return vc
   }
 
-  async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
+  async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<CloudVaultPrivateSettings> {
     const errorMessage = 'Vault user registration error'
 
     await this.client.initialized
@@ -296,6 +345,8 @@ export class CloudVaultManager {
 
     const res = `${CLOUD_URL}${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
     await shell.openExternal(res)
+
+    return cloud
   }
 
   async loginTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {

@@ -44,12 +44,12 @@ interface RuntimeEvents {
 
   // Load: load and migrate the stores if needed
   'private-settings': [task: LabeledTaskHandler]
+  'wallet-metadatas': [task: LabeledTaskHandler]
+  'wallet-stores': [task: LabeledTaskHandler]
   'cloud-auth': [task: LabeledTaskHandler]
   'fix-settings': [task: LabeledTaskHandler]
-  'after-private-settings': [task: LabeledTaskHandler]
 
-  'wallet-stores': [task: LabeledTaskHandler]
-  'after-wallet-stores': [task: LabeledTaskHandler]
+  'after-load': [task: LabeledTaskHandler]
 
   'migration': [to: StoreMigration, task: LabeledTaskHandler]
   'after-migration': [task: LabeledTaskHandler]
@@ -126,11 +126,11 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     logger.debug('[RuntimeManager] Load!')
 
     await this.emit('private-settings', task)
+    await this.emit('wallet-metadatas', task)
     await this.emit('wallet-stores', task)
     await this.emit('cloud-auth', task)
     await this.emit('fix-settings', task)
-    await this.emit('after-private-settings', task)
-    await this.emit('after-wallet-stores', task)
+    await this.emit('after-load', task)
 
     await this.setLocals('connectManager', ConnectManager.initialize)
     await this.setLocals('apiManager', ApiManager.initialize)

@@ -1,6 +1,6 @@
-import { SettingsMetadataRecord } from '../settings-metadata'
+import { MetadataRecord } from '../settings-metadata'
 
-export const walletProtocolMetadata: SettingsMetadataRecord = {
+export const walletProtocolMetadata: MetadataRecord = {
   'Wallet Protocol': [
     {
       label: 'Enable Token expiration',

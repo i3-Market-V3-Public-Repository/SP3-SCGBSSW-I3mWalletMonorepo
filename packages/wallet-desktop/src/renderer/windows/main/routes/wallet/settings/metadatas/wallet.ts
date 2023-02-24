@@ -4,12 +4,13 @@ import { v4 as uuid } from 'uuid'
 import { Provider, SharedMemory, showToastAction } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 
-import { ArraySettingsMetadata, ObjectSettingsMetadata, SettingsMetadataRecord } from '../settings-metadata'
+import { ArraySettingsMetadata, ObjectSettingsMetadata, MetadataRecord } from '../settings-metadata'
 
 const defaultProvider = { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' }
 
 const validProvider = (provider: Provider, oldProvider: Provider, settings: SharedMemory['settings'], oldSettings: SharedMemory['settings'], dispatch: ActionDispatcher): boolean => {
   // If there are multiple providers with the same provider you can delete one of them
+
   const providersWithSameProvider = oldSettings.providers
     .reduce((count, p) => p.provider === oldProvider.provider ? count + 1 : count, 0)
 
@@ -102,7 +103,7 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
   }
 }
 
-export const walletMetadata: SettingsMetadataRecord = {
+export const walletMetadata: MetadataRecord = {
   Wallet: [
     providersMetadata
   ]

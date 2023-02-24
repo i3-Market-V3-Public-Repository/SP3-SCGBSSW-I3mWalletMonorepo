@@ -41,7 +41,7 @@ export class WalletFactory {
 
   protected bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
-    runtimeManager.on('after-private-settings', async () => {
+    runtimeManager.on('wallet-metadatas', async () => {
       await this.loadWalletsMetadata()
     })
 

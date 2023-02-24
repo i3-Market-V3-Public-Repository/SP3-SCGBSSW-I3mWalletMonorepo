@@ -1,6 +1,7 @@
 import { KeyObject } from 'crypto'
-
 import { Store } from '@i3m/base-wallet'
+
+import { StoreType } from '@wallet/lib'
 import { Locals, MainContext } from '@wallet/main/internal'
 
 export interface StoreOptions<T> {
@@ -11,6 +12,7 @@ export interface StoreOptions<T> {
 
   //
   encryptionKey?: KeyObject
+  storeType?: StoreType
 }
 
 export interface StoreBuilder<T extends Record<string, any> = Record<string, unknown>> {

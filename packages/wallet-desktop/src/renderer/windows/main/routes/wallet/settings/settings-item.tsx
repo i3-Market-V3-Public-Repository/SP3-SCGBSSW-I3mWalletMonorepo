@@ -4,12 +4,12 @@ import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 
-import { ArraySettingsMetadata, ObjectSettingsMetadata, SettingsMetadata } from './settings-metadata'
+import { ArraySettingsMetadata, ItemMetadata, ObjectSettingsMetadata, SettingsMetadata } from './settings-metadata'
 import { SettingsCheckbox, SettingsInput, SettingsNumber } from './items'
 import { SettingsDescription } from './settings-description'
 
 interface Props {
-  metadata: SettingsMetadata
+  metadata: ItemMetadata
 }
 
 interface ArrayProps {
@@ -138,6 +138,9 @@ export function SettingsItem (props: Props): JSX.Element | null {
 
   let item: JSX.Element | null = null
   switch (metadata.type) {
+    case 'info':
+      break
+
     case 'checkbox':
       item = <SettingsCheckbox metadata={metadata} />
       break

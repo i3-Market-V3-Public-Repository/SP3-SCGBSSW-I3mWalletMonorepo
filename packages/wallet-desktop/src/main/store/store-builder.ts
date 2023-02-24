@@ -3,7 +3,7 @@ import { promises as fs } from 'fs'
 import _ from 'lodash'
 import path from 'path'
 
-import { StoreSettings, StoreType, WalletInfo } from '@wallet/lib'
+import { StoreSettings, WalletInfo } from '@wallet/lib'
 import { EncryptionKeys, Locals, logger, MainContext, StoreFeatureOptions, WalletStoreOptions } from '@wallet/main/internal'
 
 import { Store } from '@i3m/base-wallet'
@@ -52,24 +52,25 @@ export class StoreBuilder {
           cwd: to.cwd,
           encKeys: to.encKeys
         })
-        return await this.buildStore<T>(options, to.storeType)
+        return await this.buildStore<T>({ ...options, storeType: to.storeType })
       }
     } else {
       const options = await optionsBuilder({
         cwd: this.ctx.settingsPath,
         encKeys: this.locals.keysManager.encKeys
       })
-      return await this.buildStore<T>(options, to.storeType)
+      return await this.buildStore<T>({ ...options, storeType: to.storeType })
     }
   }
 
-  public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>, storeType?: StoreType): Promise<[store: Store<T>, options: StoreOptions<T>]> {
+  public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>): Promise<[store: Store<T>, options: StoreOptions<T>]> {
     const fixedOptions = Object.assign({}, {
       cwd: this.ctx.settingsPath,
       fileExtension: 'json',
-      name: 'config'
+      name: 'config',
+      storeType: this.storeInfo.type
     }, options)
-    const builder = loadStoreBuilder<T>(storeType ?? this.storeInfo.type)
+    const builder = loadStoreBuilder<T>(fixedOptions.storeType)
     const path = getPath(this.ctx, this.locals, options)
     logger.debug(`Loading store on '${path}'`)
 
@@ -83,7 +84,7 @@ export class StoreBuilder {
     // Read old data
     const oldOptions = await optionsBuilder(from)
     const filepath = getPath(this.ctx, this.locals, oldOptions)
-    const [oldStore] = await this.buildStore(oldOptions, from.storeType)
+    const [oldStore] = await this.buildStore({ ...oldOptions, storeType: from.storeType })
     const storeData = await oldStore.getStore()
 
     // Remove old store
@@ -91,7 +92,7 @@ export class StoreBuilder {
 
     // Create new store
     const newOptions = await optionsBuilder(to)
-    const [newStore, options] = await this.buildStore(newOptions, to.storeType)
+    const [newStore, options] = await this.buildStore({ ...newOptions, storeType: to.storeType })
     await newStore.set(storeData)
 
     return [newStore, options]

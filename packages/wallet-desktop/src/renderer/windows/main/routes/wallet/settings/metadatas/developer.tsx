@@ -1,8 +1,8 @@
 
 import { ExternalLink } from '@wallet/renderer/components'
-import { SettingsMetadataRecord } from '../settings-metadata'
+import { MetadataRecord } from '../settings-metadata'
 
-export const developerMetadata: SettingsMetadataRecord = {
+export const developerMetadata: MetadataRecord = {
   Developer: [
     {
       label: 'Developer Functions',

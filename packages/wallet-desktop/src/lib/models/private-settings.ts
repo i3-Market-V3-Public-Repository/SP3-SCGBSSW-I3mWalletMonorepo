@@ -36,8 +36,10 @@ export interface WalletConnectSettings {
 export interface CloudVaultPrivateSettings {
   username: string
   password: string
-  login?: boolean
+  url?: string
 }
+
+export const DEFAULT_CLOUD_URL = 'http://localhost:3000'
 
 export const DEFAULT_WALLET_PACKAGES = [
   '@i3m/sw-wallet',

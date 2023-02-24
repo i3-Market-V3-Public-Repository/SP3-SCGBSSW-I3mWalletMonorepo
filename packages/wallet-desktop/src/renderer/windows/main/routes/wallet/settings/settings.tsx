@@ -1,12 +1,12 @@
 import { HorizontalAccordion, Extendible, Section, ListSelector, Resizeable } from '@wallet/renderer/components'
 import { developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
 import { SettingsItem } from './settings-item'
-import { SettingsMetadata } from './settings-metadata'
+import { MetadataRecord } from './settings-metadata'
 
 import './settings.scss'
 
 export function Settings (): JSX.Element {
-  const settingsMetadatas: Record<string, SettingsMetadata[]> = {
+  const settingsMetadatas: MetadataRecord = {
     ...developerMetadata,
     ...walletProtocolMetadata,
     ...walletMetadata

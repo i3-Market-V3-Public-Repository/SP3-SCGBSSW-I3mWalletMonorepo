@@ -39,7 +39,7 @@ export class SharedMemoryManager extends EventEmitter {
       await bindWithWindowManager(this.locals)
     })
 
-    runtimeManager.on('after-private-settings', async () => {
+    runtimeManager.on('after-load', async () => {
       await bindWithSettings(this.locals)
       await bindWithWalletFactory(this.locals)
     })
