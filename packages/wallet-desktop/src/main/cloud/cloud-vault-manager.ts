@@ -102,6 +102,11 @@ export class CloudVaultManager {
       }
     })
 
+    this.client.on('storage-updated', (remoteTimestamp) => {
+      const promise = this.synchronize({ remoteTimestamp })
+      handlePromise(this.locals, promise)
+    })
+
     this.client.on('sync-start', (startTs) => {
       const prevState = shm.memory.cloudVaultData.state
       if (prevState !== 'sync') {
