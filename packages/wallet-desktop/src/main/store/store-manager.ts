@@ -267,6 +267,9 @@ export class StoreManager extends StoreBag {
       if (!this.hasStore(type, ...args)) {
         // Create the store first
         let encryptionKey: KeyObject
+
+        // TODO: Fix this better or juan kills you
+        delete options.cwd
         if (type === 'private-settings') {
           encryptionKey = await keysManager.computeSettingsKey(to.encKeys)
         } else {

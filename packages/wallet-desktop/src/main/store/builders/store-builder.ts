@@ -6,7 +6,7 @@ import { Locals, MainContext } from '@wallet/main/internal'
 
 export interface StoreOptions<T> {
   defaults?: Readonly<T>
-  cwd: string
+  cwd?: string
   fileExtension: string
   name: string
 
