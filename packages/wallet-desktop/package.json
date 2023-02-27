@@ -5,7 +5,7 @@
   "main": "dist/src/main",
   "scripts": {
     "start:watch": "ts-node -r dotenv/config build/start.ts",
-    "prebuild": "rimraf ./dist",
+    "prebuild": "npm run lint && rimraf ./dist",
     "build": "ts-node build/build.ts",
     "build:main": "tsc -p ./src/main",
     "build:renderer": "rollup -c build/rollup.renderer.js",
@@ -16,7 +16,7 @@
     "pack:lin": "npm run clean:rel && electron-builder --linux --x64 -p never",
     "pack:mac": "npm run clean:rel && electron-builder --mac -p never",
     "pack:win": "npm run clean:rel && electron-builder --win --x64 --arm64 --ia32 -p never",
-    "lint": "eslint -c .eslintrc --ext .ts ./src",
+    "lint": "ts-standard --fix",
     "start": "electron  --js-flags=\"--max_old_space_size=8192\" .",
     "test": "echo \"Warning: You must specify tests for this package\"",
     "preversion": "npm run build"

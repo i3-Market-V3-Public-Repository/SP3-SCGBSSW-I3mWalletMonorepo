@@ -105,7 +105,7 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
 
     this.addLocalsModule('after-start', [
       ['keysManager', KeysManager.initialize],
-      ['authManager', AuthManager.initialize],
+      ['authManager', AuthManager.initialize]
     ])
 
     this.addLocalsModule('after-private-settings', [
@@ -122,13 +122,13 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     return this.moduleRuntimes[prop] ?? 'never'
   }
 
-  addLocalsModule <T extends LocalsKey>(evType: RuntimeEvent, initializers: [prop: T, initializer: PropInitializer<Locals[T]>][]) {
+  addLocalsModule <T extends LocalsKey>(evType: RuntimeEvent, initializers: Array<[prop: T, initializer: PropInitializer<Locals[T]>]>): void {
     for (const [prop] of initializers) {
       this.moduleRuntimes[prop] = evType
     }
 
     this.on(evType, async () => {
-      for (const [prop, initializer ] of initializers) {
+      for (const [prop, initializer] of initializers) {
         await this.setLocals(prop, initializer)
       }
     })

@@ -11,7 +11,6 @@ const TOAST_TIMEOUT_MAP: Map<ToastType, number> = new Map([
 ])
 
 export class ToastManager implements Toast {
-
   static async initialize (ctx: MainContext, locals: Locals): Promise<ToastManager> {
     return new ToastManager(locals)
   }

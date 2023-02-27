@@ -15,7 +15,7 @@ export const cloudVaultMetadata: MetadataRecord = {
       label: 'Cloud URL',
       key: 'cloud.url',
       placeholder: DEFAULT_CLOUD_URL,
-      canUpdate(key, value, metadata, shm, dispatch) {
+      canUpdate (key, value, metadata, shm, dispatch) {
         const hasCredentials = shm.settings.cloud !== undefined
         if (hasCredentials) {
           dispatch(showToastAction.create({

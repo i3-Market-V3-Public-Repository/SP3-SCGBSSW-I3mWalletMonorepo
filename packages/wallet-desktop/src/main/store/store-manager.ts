@@ -32,7 +32,6 @@ export class StoreManager extends StoreBag {
   builder: StoreBuilder
   silentBag: StoreBag
 
-
   static async initialize (ctx: MainContext, locals: Locals): Promise<StoreManager> {
     return new StoreManager(ctx, locals)
   }

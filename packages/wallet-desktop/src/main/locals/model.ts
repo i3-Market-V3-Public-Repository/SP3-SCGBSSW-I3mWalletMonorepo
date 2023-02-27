@@ -64,8 +64,8 @@ export function createLocalsProxy (ctx: MainContext): [Locals, LocalsSetter] {
       const value = target[p]
       if (value === undefined) {
         const { runtimeManager } = locals
-        if (runtimeManager) {
-          throw new WalletDesktopError(`Trying to get property '${p}' on runtime ${runtimeManager.current}. It will be loaded on ${runtimeManager.whenIsLoadded(p)}`)
+        if (runtimeManager !== undefined) {
+          throw new WalletDesktopError(`Trying to get property '${p}' on runtime ${runtimeManager.current as string}. It will be loaded on ${runtimeManager.whenIsLoadded(p)}`)
         }
         throw new WalletDesktopError(`Trying to get property '${p}' before starting the runtime`)
       }
