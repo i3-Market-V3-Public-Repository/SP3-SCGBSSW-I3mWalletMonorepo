@@ -13,6 +13,7 @@ export class AuthManager {
 
   protected _registered: boolean
   protected _authenticated: boolean
+  readonly justRegistered: boolean
 
   public static async initialize (ctx: MainContext, locals: Locals): Promise<AuthManager> {
     const publicSettings = locals.storeManager.getStore('public-settings')
@@ -29,6 +30,7 @@ export class AuthManager {
     this.passwordRegexMessage = 'Password must fulfill: \n - Minimum eight characters.\n - At least one uppercase letter, one lowercase letter and one number. \n - Optional: Symbols '
     this._registered = params.registered
     this._authenticated = false
+    this.justRegistered = !params.registered
 
     this.bindRuntimeEvents()
   }

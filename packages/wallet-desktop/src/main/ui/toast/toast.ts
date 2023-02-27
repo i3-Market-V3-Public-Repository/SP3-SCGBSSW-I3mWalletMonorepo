@@ -1,7 +1,7 @@
 
 import { ToastOptions, ToastType, Toast } from '@i3m/base-wallet'
 import { createDialogId, ToastData } from '@wallet/lib'
-import { Locals } from '@wallet/main/internal'
+import { Locals, MainContext } from '@wallet/main/internal'
 
 const TOAST_TIMEOUT_MAP: Map<ToastType, number> = new Map([
   ['info', 2000],
@@ -11,6 +11,11 @@ const TOAST_TIMEOUT_MAP: Map<ToastType, number> = new Map([
 ])
 
 export class ToastManager implements Toast {
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<ToastManager> {
+    return new ToastManager(locals)
+  }
+
   constructor (protected locals: Locals) { }
 
   show (toastOptions: ToastOptions): void {

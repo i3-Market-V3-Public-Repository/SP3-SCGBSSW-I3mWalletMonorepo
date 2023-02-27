@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import Debug from 'debug'
 import { Action, ActionBuilder, GetAction, GetResponse } from '@wallet/lib'
 
-import { Locals, logger } from '../internal'
+import { Locals, logger, MainContext } from '@wallet/main/internal'
 import { Module } from './module'
 import { ActionHandler } from './action-handler'
 import { walletModule } from './wallet'
@@ -17,6 +17,10 @@ const debug = Debug('wallet-desktop:ActionReducer')
 export class ActionReducer {
   protected readonly action$: Subject<Action>
   protected handlers: Map<string, ActionHandler>
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<ActionReducer> {
+    return new ActionReducer(locals)
+  }
 
   constructor (protected locals: Locals) {
     this.action$ = new Subject<Action>()

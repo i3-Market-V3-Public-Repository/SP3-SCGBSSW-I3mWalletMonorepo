@@ -21,16 +21,27 @@ interface SynchronizeContext {
   force?: boolean
 }
 
-export class CloudVaultManager {
-  // Static initialization
-  static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
-    return new CloudVaultManager(ctx, locals, {})
-  }
+interface Params {
+  cloud?: CloudVaultPrivateSettings
+}
 
+export class CloudVaultManager {
   client: VaultClient
   failed: boolean
   pendingSyncs: number[]
-  constructor (protected ctx: MainContext, protected locals: Locals, params: {}) {
+
+  // Static initialization
+  static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
+    const { storeManager } = locals
+    const privSettings = storeManager.getStore('private-settings')
+    const cloud = await privSettings.get('cloud')
+
+    return new CloudVaultManager(ctx, locals, {
+      cloud
+    })
+  }
+
+  constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
     this.client = new VaultClient(CLOUD_URL)
     this.failed = false
     this.pendingSyncs = []
@@ -40,13 +51,9 @@ export class CloudVaultManager {
 
   protected bindRuntimeEvents (): void {
     const { authManager, runtimeManager, storeManager } = this.locals
-    let justRegistered = false
-    runtimeManager.on('before-auth', async (task) => {
-      justRegistered = !authManager.registered
-    })
 
     runtimeManager.on('cloud-auth', async (task) => {
-      if (justRegistered) {
+      if (authManager.justRegistered) {
         await this.firstTimeSync(task)
       } else {
         const privateSettings = storeManager.getStore('private-settings')

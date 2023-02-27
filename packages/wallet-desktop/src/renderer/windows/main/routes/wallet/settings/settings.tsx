@@ -1,5 +1,5 @@
-import { HorizontalAccordion, Extendible, Section, ListSelector, Resizeable } from '@wallet/renderer/components'
-import { developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
+import { Extendible, HorizontalAccordion, ListSelector, Resizeable, Section } from '@wallet/renderer/components'
+import { cloudVaultMetadata, developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
 import { SettingsItem } from './settings-item'
 import { MetadataRecord } from './settings-metadata'
 
@@ -9,7 +9,8 @@ export function Settings (): JSX.Element {
   const settingsMetadatas: MetadataRecord = {
     ...developerMetadata,
     ...walletProtocolMetadata,
-    ...walletMetadata
+    ...walletMetadata,
+    ...cloudVaultMetadata
   }
   const groups = Object.keys(settingsMetadatas)
     // Sort setting groups alphabetically

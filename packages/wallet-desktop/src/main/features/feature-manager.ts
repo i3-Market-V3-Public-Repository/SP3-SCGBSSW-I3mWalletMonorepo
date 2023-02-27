@@ -1,5 +1,5 @@
 
-import { Locals, logger } from '@wallet/main/internal'
+import { FeatureContext, Locals, logger, MainContext } from '@wallet/main/internal'
 import { FeatureHandler } from './feature-handler'
 
 export interface Feature<T> {
@@ -11,6 +11,15 @@ export interface Feature<T> {
 // It is difficult to understand how to use it because it is too dependent to the WalletFactory.
 export class FeatureManager {
   features: Map<string, Feature<any>>
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<FeatureManager> {
+    return new FeatureManager(locals)
+  }
+
+  static async initializeContext (ctx: MainContext, locals: Locals): Promise<FeatureContext> {
+    return {}
+  }
+
   constructor (protected locals: Locals) {
     this.features = new Map()
   }

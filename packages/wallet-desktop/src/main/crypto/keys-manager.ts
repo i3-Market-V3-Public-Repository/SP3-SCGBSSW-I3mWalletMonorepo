@@ -11,6 +11,10 @@ export class KeysManager {
   protected _authKeys?: AuthenticationKeys
   protected _encKeys?: EncryptionKeys
 
+  static async initialize (ctx: MainContext, locals: Locals): Promise<KeysManager> {
+    return new KeysManager(ctx, locals)
+  }
+
   constructor (protected ctx: MainContext, protected locals: Locals) { }
 
   get authKeys (): AuthenticationKeys {

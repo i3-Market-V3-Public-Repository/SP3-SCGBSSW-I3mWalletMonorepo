@@ -8,9 +8,11 @@ import {
   ElectronDialog, FeatureManager, KeysManager,
   LabeledTaskHandler,
   Locals,
+  LocalsKey,
   LocalsSetter,
   logger,
   MainContext,
+  PropInitializer,
   SharedMemoryManager,
   StoreManager, StoreMigration, TaskManager,
   ToastManager,
@@ -44,6 +46,7 @@ interface RuntimeEvents {
 
   // Load: load and migrate the stores if needed
   'private-settings': [task: LabeledTaskHandler]
+  'after-private-settings': [task: LabeledTaskHandler]
   'wallet-metadatas': [task: LabeledTaskHandler]
   'wallet-stores': [task: LabeledTaskHandler]
   'cloud-auth': [task: LabeledTaskHandler]
@@ -58,13 +61,82 @@ interface RuntimeEvents {
   'ui': []
 }
 
+type RuntimeEvent = keyof RuntimeEvents
+
+type ModuleRuntimes = {
+  [E in LocalsKey]?: RuntimeEvent
+}
+
 export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
+  current: RuntimeEvent
+  moduleRuntimes: ModuleRuntimes
+
   constructor (protected ctx: MainContext, protected locals: Locals, protected setLocals: LocalsSetter) {
     super()
+    this.current = 'before-launch'
+    this.moduleRuntimes = {}
+
     this.start = this.start.bind(this)
     this.auth = this.auth.bind(this)
     this.load = this.load.bind(this)
     this.ui = this.ui.bind(this)
+
+    this.setupModules(this.ctx, this.locals)
+  }
+
+  setupModules (ctx: MainContext, locals: Locals): void {
+    this.addLocalsModule('before-launch', [
+      ['taskManager', TaskManager.initialize],
+      ['sharedMemoryManager', SharedMemoryManager.initialize],
+      ['storeManager', StoreManager.initialize],
+      ['actionReducer', ActionReducer.initialize]
+    ])
+
+    this.addLocalsModule('before-start', [
+      ['versionManager', VersionManager.initialize],
+      ['windowManager', WindowManager.initialize],
+      ['tray', Tray.initialize],
+      ['dialog', ElectronDialog.initialize],
+      ['toast', ToastManager.initialize],
+      ['walletFactory', WalletFactory.initialize],
+      ['featureManager', FeatureManager.initialize],
+      ['featureContext', FeatureManager.initializeContext]
+    ])
+
+    this.addLocalsModule('after-start', [
+      ['keysManager', KeysManager.initialize],
+      ['authManager', AuthManager.initialize],
+    ])
+
+    this.addLocalsModule('after-private-settings', [
+      ['cloudVaultManager', CloudVaultManager.initialize]
+    ])
+
+    this.addLocalsModule('after-load', [
+      ['connectManager', ConnectManager.initialize],
+      ['apiManager', ApiManager.initialize]
+    ])
+  }
+
+  whenIsLoadded (prop: LocalsKey): RuntimeEvent | 'never' {
+    return this.moduleRuntimes[prop] ?? 'never'
+  }
+
+  addLocalsModule <T extends LocalsKey>(evType: RuntimeEvent, initializers: [prop: T, initializer: PropInitializer<Locals[T]>][]) {
+    for (const [prop] of initializers) {
+      this.moduleRuntimes[prop] = evType
+    }
+
+    this.on(evType, async () => {
+      for (const [prop, initializer ] of initializers) {
+        await this.setLocals(prop, initializer)
+      }
+    })
+  }
+
+  async emit<E extends keyof RuntimeEvents>(evType: E, ...args: RuntimeEvents[E]): Promise<void> {
+    this.current = evType
+    await super.emit(evType, ...args)
   }
 
   async run (): Promise<void> {
@@ -78,44 +150,21 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
   }
 
   async launch (): Promise<void> {
-    const { ctx, locals } = this
     logger.debug('[RuntimeManager] Launch!')
     await this.emit('before-launch')
-
-    await this.setLocals('taskManager', new TaskManager(this.locals))
-    await this.setLocals('sharedMemoryManager', new SharedMemoryManager(locals))
-    await this.setLocals('storeManager', new StoreManager(ctx, locals))
-    await this.setLocals('actionReducer', new ActionReducer(locals))
-
     await this.emit('launch')
     await this.emit('after-launch')
   }
 
   async start (): Promise<void> {
-    const { locals } = this
     logger.debug('[RuntimeManager] Start!')
     await this.emit('before-start')
-
-    await this.setLocals('versionManager', VersionManager.initialize) // After loading public store!!
-    await this.setLocals('windowManager', new WindowManager(locals))
-    await this.setLocals('tray', new Tray(locals))
-    await this.setLocals('dialog', new ElectronDialog(locals))
-    await this.setLocals('toast', new ToastManager(locals))
-    await this.setLocals('walletFactory', new WalletFactory(locals))
-    await this.setLocals('featureManager', new FeatureManager(locals))
-    await this.setLocals('featureContext', {})
-
     await this.emit('start')
     await this.emit('after-start')
   }
 
   async auth (task: LabeledTaskHandler): Promise<void> {
-    const { ctx, locals } = this
     logger.debug('[RuntimeManager] Auth!')
-    await this.setLocals('keysManager', new KeysManager(ctx, locals))
-    await this.setLocals('authManager', AuthManager.initialize)
-    await this.setLocals('cloudVaultManager', CloudVaultManager.initialize)
-
     await this.emit('before-auth', task)
     await this.emit('auth', task)
     await this.emit('after-auth', task)
@@ -126,15 +175,12 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     logger.debug('[RuntimeManager] Load!')
 
     await this.emit('private-settings', task)
+    await this.emit('after-private-settings', task)
     await this.emit('wallet-metadatas', task)
     await this.emit('wallet-stores', task)
     await this.emit('cloud-auth', task)
     await this.emit('fix-settings', task)
     await this.emit('after-load', task)
-
-    await this.setLocals('connectManager', ConnectManager.initialize)
-    await this.setLocals('apiManager', ApiManager.initialize)
-
     await this.emit('migration', storeMigrationProxy.to, task)
     await this.emit('after-migration', task)
   }

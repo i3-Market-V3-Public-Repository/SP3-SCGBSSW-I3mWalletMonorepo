@@ -3,7 +3,7 @@ import { MenuItemConstructorOptions } from 'electron/main'
 
 import { selectWalletAction } from '@wallet/lib'
 
-import { getResourcePath, Locals } from '@wallet/main/internal'
+import { getResourcePath, Locals, MainContext } from '@wallet/main/internal'
 
 export interface WalletItem {
   name: string
@@ -12,6 +12,10 @@ export interface WalletItem {
 export class Tray {
   private readonly tray: ElectronTray
   private readonly iconPath: string
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<Tray> {
+    return new Tray(locals)
+  }
 
   constructor (protected locals: Locals) {
     this.iconPath = getResourcePath('img/tray.png')

@@ -2,13 +2,17 @@ import { app, BrowserWindow, Menu, session } from 'electron'
 import path from 'path'
 
 import { WindowArgs } from '@wallet/lib'
-import { getResourcePath, logger, Locals } from '@wallet/main/internal'
+import { getResourcePath, logger, Locals, MainContext } from '@wallet/main/internal'
 import { CustomWindow, Mapper } from './custom-window'
 import { buildMenuBar } from './menu-bar'
 import { MainWindow } from './main-window'
 
 export class WindowManager {
   windows: Map<string, CustomWindow>
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<WindowManager> {
+    return new WindowManager(locals)
+  }
 
   constructor (protected locals: Locals) {
     // Setup menu bar

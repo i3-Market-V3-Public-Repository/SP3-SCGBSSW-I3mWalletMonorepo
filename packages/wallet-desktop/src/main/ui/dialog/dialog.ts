@@ -2,7 +2,7 @@
 import { Dialog, ConfirmationOptions, SelectOptions, DialogResponse, TextOptions, FormOptions, Descriptors, DialogOptionContext } from '@i3m/base-wallet'
 
 import { DialogData, DialogDescriptors, createDialogId } from '@wallet/lib'
-import { Locals } from '@wallet/main/internal'
+import { Locals, MainContext } from '@wallet/main/internal'
 import { SelectBuilder } from './select-builder'
 
 interface BasicOption {
@@ -14,6 +14,10 @@ interface BasicOption {
 export class ElectronDialog implements Dialog {
   public resolvers: Map<string, (values: {} | undefined) => void>
   public dialogQueue: string[]
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<ElectronDialog> {
+    return new ElectronDialog(locals)
+  }
 
   constructor (protected locals: Locals) {
     this.resolvers = new Map()

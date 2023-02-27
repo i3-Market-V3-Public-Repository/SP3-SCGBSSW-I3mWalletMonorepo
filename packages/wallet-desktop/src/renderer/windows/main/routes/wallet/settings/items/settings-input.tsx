@@ -30,7 +30,7 @@ export function SettingsInput (props: Props): JSX.Element {
   return (
     <div className='settings-input'>
       <label>{metadata.label}</label>
-      <input type='text' onChange={onChange} value={value} />
+      <input type='text' placeholder={metadata.placeholder} onChange={onChange} value={value} />
     </div>
   )
 }

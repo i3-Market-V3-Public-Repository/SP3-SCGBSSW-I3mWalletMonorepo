@@ -24,6 +24,7 @@ export interface CheckboxSettingsMetadata extends BaseSettingsMetadata<boolean> 
 
 export interface InputSettingsMetadata extends BaseSettingsMetadata<string> {
   type: 'input'
+  placeholder?: string
 }
 
 export interface NumberSettingsMetadata extends BaseSettingsMetadata<number> {

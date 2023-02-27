@@ -10,7 +10,8 @@ import {
   StartFeatureError,
   LabeledTaskHandler,
   WalletDesktopError,
-  FeatureType
+  FeatureType,
+  MainContext
 } from '@wallet/main/internal'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -32,6 +33,10 @@ export class WalletFactory {
   protected _walletName: string | undefined
 
   protected featuresByWallet: WalletFeatureMap
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<WalletFactory> {
+    return new WalletFactory(locals)
+  }
 
   constructor (protected locals: Locals) {
     this._walletName = undefined

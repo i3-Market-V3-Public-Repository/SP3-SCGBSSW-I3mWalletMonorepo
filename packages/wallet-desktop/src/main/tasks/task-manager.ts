@@ -1,9 +1,13 @@
 import { TaskDescription, WalletTaskTypes } from '@wallet/lib'
-import { Locals } from '@wallet/main/internal'
+import { Locals, MainContext } from '@wallet/main/internal'
 
 import { AddTaskMethod, FinishTaskMethod, LabeledTaskHandlerImpl, ProgressTaskHandlerImpl, TaskHandlerFor, TaskMethods, UpdateTaskMethod } from './handlers'
 
 export class TaskManager implements TaskMethods {
+  static async initialize (ctx: MainContext, locals: Locals): Promise<TaskManager> {
+    return new TaskManager(locals)
+  }
+
   constructor (protected locals: Locals) {}
 
   addTask: AddTaskMethod = (task) => {

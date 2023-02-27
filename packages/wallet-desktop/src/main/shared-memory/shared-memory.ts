@@ -4,6 +4,7 @@ import { EventEmitter } from 'events'
 import { SharedMemory, createDefaultSharedMemory } from '@wallet/lib'
 import { Locals } from '../locals'
 import { bindWithDialog, bindWithSettings, bindWithTray, bindWithWalletFactory, bindWithWindowManager } from './bindings'
+import { MainContext } from '../models'
 
 export interface ChangeEvent {
   curr: SharedMemory
@@ -23,6 +24,10 @@ export type SharedMemoryManagerEventNames = keyof SharedMemoryManagerEvents
 
 export class SharedMemoryManager extends EventEmitter {
   private _memory: SharedMemory
+
+  static async initialize (ctx: MainContext, locals: Locals): Promise<SharedMemoryManager> {
+    return new SharedMemoryManager(locals)
+  }
 
   constructor (protected locals: Locals, values?: Partial<SharedMemory>) {
     super()
