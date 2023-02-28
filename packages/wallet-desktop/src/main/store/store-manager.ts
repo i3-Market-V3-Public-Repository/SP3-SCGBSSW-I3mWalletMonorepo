@@ -3,7 +3,7 @@ import { VaultStorage } from '@i3m/cloud-vault-client'
 import { KeyObject } from 'crypto'
 
 import {
-  createDefaultPrivateSettings, StoreSettings
+  createDefaultPrivateSettings, Credentials, StoreSettings
 } from '@wallet/lib'
 import {
   fixPrivateSettings,
@@ -226,6 +226,22 @@ export class StoreManager extends StoreBag {
     return storesBundle
   }
 
+  public async storeCloudCredentials (credentials: Credentials): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    const silentPrivateSettings = this.silentBag.getStore('private-settings')
+    await silentPrivateSettings.set('cloud.credentials', credentials)
+    shm.update(mem => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        cloud: {
+          ...mem.settings.cloud,
+          credentials
+        }
+      }
+    }), { modifiers: { 'no-settings-update': true } })
+  }
+
   public async uploadStores (force = false): Promise<void> {
     const { sharedMemoryManager: sh, cloudVaultManager } = this.locals
     if (sh.memory.settings.cloud === undefined) {
@@ -288,7 +304,7 @@ export class StoreManager extends StoreBag {
     shm.update(mem => ({
       ...mem,
       settings: settingsBundle.data
-    }), { reason: 'cloud-sync' })
+    }), { modifiers: { 'no-settings-update': true } })
 
     const publicSettings = this.getStore('public-settings')
     await publicSettings.set('cloud', {

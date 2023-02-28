@@ -13,7 +13,8 @@ export const bindWithSettings = async (locals: Locals): Promise<void> => {
   }))
 
   sharedMemoryManager.on('change', ({ curr, prev, ctx }) => {
-    if (ctx?.reason !== 'cloud-sync' && !_.isEqual(curr.settings, prev.settings)) {
+    const modifiers = ctx?.modifiers ?? {}
+    if (modifiers['no-settings-update'] !== true && !_.isEqual(curr.settings, prev.settings)) {
       const promise = settings.set(curr.settings)
       handleCanBePromise(locals, promise)
     }

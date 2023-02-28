@@ -11,7 +11,7 @@ import { KeyManager } from './key-manager'
 import type { ArgsForEvent, VaultEventName } from './events'
 import { VAULT_STATE, VaultState, stateFromError } from './vault-state'
 
-type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void
+export type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void
 
 export interface VaultStorage {
   storage: Buffer

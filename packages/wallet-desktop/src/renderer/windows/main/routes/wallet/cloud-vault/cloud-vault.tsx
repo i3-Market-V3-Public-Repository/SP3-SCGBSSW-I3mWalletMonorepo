@@ -7,12 +7,12 @@ import './cloud-vault.scss'
 
 export function CloudVault (): JSX.Element {
   const [mem] = useSharedMemory()
-  const cloud = mem.settings.cloud
+  const { state } = mem.cloudVaultData
 
   return (
     <HorizontalAccordion className='cloud-vault'>
       <div className='center-vertically'>
-        {cloud === undefined ? <Authenticate /> : <Authenticated />}
+        {state === 'disconnected' ? <Authenticate /> : <Authenticated />}
       </div>
     </HorizontalAccordion>
   )

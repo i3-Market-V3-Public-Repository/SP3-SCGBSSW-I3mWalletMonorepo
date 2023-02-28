@@ -16,16 +16,17 @@ export const cloudVaultMetadata: MetadataRecord = {
       key: 'cloud.url',
       placeholder: DEFAULT_CLOUD_URL,
       canUpdate (key, value, metadata, shm, dispatch) {
-        const hasCredentials = shm.settings.cloud !== undefined
+        const hasCredentials = shm.settings.cloud?.credentials !== undefined
         if (hasCredentials) {
           dispatch(showToastAction.create({
             message: 'Cannot update cloud URL',
             details: 'You are already logged in a secure cloud vault. Please logout to modify the vault URL.',
             type: 'warning'
           }))
+          return false
         }
 
-        return !hasCredentials
+        return true
       }
     }
   ]

@@ -3,7 +3,7 @@
 import type { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { EventEmitter } from 'events';
 import type { ArgsForEvent, VaultEventName } from './events';
-type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void;
+export type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void;
 export interface VaultStorage {
     storage: Buffer;
     timestamp?: number;
@@ -38,5 +38,4 @@ export declare class VaultClient extends EventEmitter {
     static getWellKnownCvsConfiguration(serverUrl: string): Promise<OpenApiComponents.Schemas.CvsConfiguration>;
     static computeAuthKey(serverUrl: string, username: string, password: string): Promise<string>;
 }
-export {};
 //# sourceMappingURL=vault-client.d.ts.map

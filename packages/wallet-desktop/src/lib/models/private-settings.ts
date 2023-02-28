@@ -33,9 +33,13 @@ export interface WalletConnectSettings {
   tokenTTL: number // in seconds
 }
 
-export interface CloudVaultPrivateSettings {
+export interface Credentials {
   username: string
   password: string
+}
+
+export interface CloudVaultPrivateSettings {
+  credentials?: Credentials
   url?: string
 }
 

@@ -1,12 +1,10 @@
 import { DialogOptionContext, VerifiableCredentialResource } from '@i3m/base-wallet'
-import { checkErrorType, VaultClient, VaultError, VaultStorage, VAULT_STATE } from '@i3m/cloud-vault-client'
+import { checkErrorType, VaultClient, VaultError, VaultStorage, VAULT_STATE, CbOnEventFn as ClientCallback } from '@i3m/cloud-vault-client'
 import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
-import { CloudVaultPrivateSettings, CloudVaultPublicSettings, TaskDescription } from '@wallet/lib'
-import { handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
-
-const CLOUD_URL = 'http://localhost:3000'
+import { CloudVaultPrivateSettings, CloudVaultPublicSettings, TaskDescription, DEFAULT_CLOUD_URL, Credentials } from '@wallet/lib'
+import { filledString, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 
 interface DialogOption {
   id: number
@@ -26,9 +24,11 @@ interface Params {
 }
 
 export class CloudVaultManager {
-  client: VaultClient
-  failed: boolean
-  pendingSyncs: number[]
+  protected client: VaultClient
+  protected failed: boolean
+  protected pendingSyncs: number[]
+  protected url: string
+  protected unbindClientEvents: (() => void) | undefined
 
   // Static initialization
   static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
@@ -41,8 +41,13 @@ export class CloudVaultManager {
     })
   }
 
+  static buildCloudUrl (cloud?: CloudVaultPrivateSettings): string {
+    return filledString(cloud?.url, DEFAULT_CLOUD_URL)
+  }
+
   constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
-    this.client = new VaultClient(CLOUD_URL)
+    this.url = CloudVaultManager.buildCloudUrl(params.cloud)
+    this.client = new VaultClient(this.url)
     this.failed = false
     this.pendingSyncs = []
     this.bindClientEvents()
@@ -58,18 +63,28 @@ export class CloudVaultManager {
       } else {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
-        if (cloud !== undefined) {
-          const asyncLogin = this.loginTask(task, cloud)
+        if (cloud?.credentials !== undefined) {
+          const asyncLogin = this.loginTask(task, cloud.credentials)
           handlePromise(this.locals, asyncLogin)
         }
       }
     })
   }
 
+  protected resetClient (): void {
+    const { sharedMemoryManager: shm } = this.locals
+    const newUrl = CloudVaultManager.buildCloudUrl(shm.memory.settings.cloud)
+    if (this.url !== newUrl) {
+      if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
+      this.client = new VaultClient(this.url)
+      this.bindClientEvents()
+      this.url = newUrl
+    }
+  }
+
   protected bindClientEvents (): void {
     const { sharedMemoryManager: shm } = this.locals
-
-    this.client.on('state-changed', (state) => {
+    const onStateChange: ClientCallback<'state-changed'> = (state) => {
       const prevState = shm.memory.cloudVaultData.state
 
       if (prevState !== 'connected' && state === VAULT_STATE.CONNECTED) {
@@ -100,14 +115,14 @@ export class CloudVaultManager {
           }
         }))
       }
-    })
+    }
 
-    this.client.on('storage-updated', (remoteTimestamp) => {
+    const onStorageUpdated: ClientCallback<'storage-updated'> = (remoteTimestamp) => {
       const promise = this.synchronize({ remoteTimestamp })
       handlePromise(this.locals, promise)
-    })
+    }
 
-    this.client.on('sync-start', (startTs) => {
+    const onSyncStart: ClientCallback<'sync-start'> = (startTs) => {
       const prevState = shm.memory.cloudVaultData.state
       if (prevState !== 'sync') {
         shm.update(mem => ({
@@ -118,9 +133,9 @@ export class CloudVaultManager {
         }))
       }
       this.pendingSyncs.push(startTs)
-    })
+    }
 
-    this.client.on('sync-stop', (startTs) => {
+    const onSyncStop: ClientCallback<'sync-stop'> = (startTs) => {
       this.pendingSyncs = this
         .pendingSyncs
         .filter((thisStartTs) => thisStartTs !== startTs)
@@ -132,7 +147,19 @@ export class CloudVaultManager {
           }
         }))
       }
-    })
+    }
+
+    this.client.on('state-changed', onStateChange)
+    this.client.on('storage-updated', onStorageUpdated)
+    this.client.on('sync-start', onSyncStart)
+    this.client.on('sync-stop', onSyncStop)
+
+    this.unbindClientEvents = () => {
+      this.client.off('state-changed', onStateChange)
+      this.client.off('storage-updated', onStorageUpdated)
+      this.client.off('sync-start', onSyncStart)
+      this.client.off('sync-stop', onSyncStop)
+    }
   }
 
   async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
@@ -161,7 +188,7 @@ export class CloudVaultManager {
         }
       } else if (loginRegisterBuilder.compare(option, register)) {
         while (true) {
-          const cloudPrivateSettings = await this.registerTask(task)
+          const credentials = await this.registerTask(task)
           const loginBackBuilder = dialog.useOptionsBuilder()
           const relogin = loginRegisterBuilder.add('Login with same credentials')
           loginRegisterBuilder.add('Go back')
@@ -173,7 +200,7 @@ export class CloudVaultManager {
 
           if (loginBackBuilder.compare(relogin, option)) {
             try {
-              await this.loginTask(task, cloudPrivateSettings)
+              await this.loginTask(task, credentials)
               sync = true
             } catch (err: unknown) {
               await handleError(this.locals, err)
@@ -270,9 +297,9 @@ export class CloudVaultManager {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'disconnected'
   }
 
-  async getLoginData (errorMessage: string): Promise<CloudVaultPrivateSettings> {
+  async getCredentials (errorMessage: string): Promise<Credentials> {
     const { dialog } = this.locals
-    const loginData = await dialog.form<CloudVaultPrivateSettings>({
+    const loginData = await dialog.form<Credentials>({
       title: 'Cloud Vault',
       descriptors: {
         username: { type: 'text', message: 'Introduce your username' },
@@ -334,13 +361,14 @@ export class CloudVaultManager {
     return vc
   }
 
-  async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<CloudVaultPrivateSettings> {
+  async registerTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<Credentials> {
     const errorMessage = 'Vault user registration error'
 
+    this.resetClient()
     await this.client.initialized
 
-    if (cloud === undefined) {
-      cloud = await this.getLoginData(errorMessage)
+    if (credentials === undefined) {
+      credentials = await this.getCredentials(errorMessage)
     }
     const vc = await this.getRegistrationCredential(errorMessage)
     const publicJwk = await this.client.getServerPublicKey()
@@ -348,41 +376,36 @@ export class CloudVaultManager {
     const data = await jweEncrypt(
       Buffer.from(JSON.stringify({
         did: vc.identity,
-        username: cloud.username,
-        authkey: await VaultClient.computeAuthKey(CLOUD_URL, cloud.username, cloud.password)
+        username: credentials.username,
+        authkey: await VaultClient.computeAuthKey(DEFAULT_CLOUD_URL, credentials.username, credentials.password)
       })),
       publicJwk as JWK,
       'A256GCM'
     )
 
-    const res = `${CLOUD_URL}${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
+    const res = `${DEFAULT_CLOUD_URL}${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
     await shell.openExternal(res)
 
-    return cloud
+    return credentials
   }
 
-  async loginTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
-    const { sharedMemoryManager: shm } = this.locals
+  async loginTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<void> {
+    const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
+    this.resetClient()
     await this.client.initialized
 
-    let fixedCloud: CloudVaultPrivateSettings
-    if (cloud === undefined || cloud.username === undefined || cloud.password === undefined) {
-      fixedCloud = await this.getLoginData(errorMessage)
-    } else {
-      fixedCloud = cloud
+    if (credentials === undefined) {
+      credentials = await this.getCredentials(errorMessage)
     }
 
-    await this.client.login(fixedCloud.username, fixedCloud.password)
+    await this.client.login(credentials.username, credentials.password)
+    await storeManager.storeCloudCredentials(credentials)
     shm.update(mem => ({
       ...mem,
       cloudVaultData: {
         state: 'connected'
-      },
-      settings: {
-        ...mem.settings,
-        cloud: fixedCloud
       }
     }))
   }
@@ -404,16 +427,16 @@ export class CloudVaultManager {
       getContext: (v) => v.context
     })
 
-    let cloud: CloudVaultPrivateSettings
+    let credentials: Credentials
     switch (loginOrRegister?.id) {
       case login.id:
-        cloud = await this.getLoginData(errorMessage)
-        await this.loginTask(task, cloud)
+        credentials = await this.getCredentials(errorMessage)
+        await this.loginTask(task, credentials)
         break
 
       case register.id:
-        cloud = await this.getLoginData(errorMessage)
-        await this.registerTask(task, cloud)
+        credentials = await this.getCredentials(errorMessage)
+        await this.registerTask(task, credentials)
         break
     }
   }
@@ -451,6 +474,13 @@ export class CloudVaultManager {
   }
 
   async logout (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    shm.update(mem => ({
+      ...mem,
+      cloudVaultData: {
+        state: 'disconnected'
+      }
+    }))
     this.client.logout()
     await this.locals.storeManager.onStopCloudService()
   }

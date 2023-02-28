@@ -12,7 +12,7 @@ export function SettingsInput (props: Props): JSX.Element {
 
   const dispatch = useAction()
   const [sharedMemory, setSharedMemory] = useSharedMemory()
-  const value = _.get(sharedMemory.settings, metadata.key)
+  const value = _.get(sharedMemory.settings, metadata.key) ?? ''
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (ev) => {
     const newValue = ev.target.value
