@@ -6,13 +6,13 @@ import { ActionDispatcher } from '@wallet/renderer/communication'
 
 import { ArraySettingsMetadata, ObjectSettingsMetadata, MetadataRecord } from '../settings-metadata'
 
-const defaultProvider = { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' }
+const defaultProvider = { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://localhost:8545' }
 
 const validProvider = (provider: Provider, oldProvider: Provider, settings: SharedMemory['settings'], oldSettings: SharedMemory['settings'], dispatch: ActionDispatcher): boolean => {
   // If there are multiple providers with the same provider you can delete one of them
 
   const providersWithSameProvider = oldSettings.providers
-    .reduce((count, p) => p.provider === oldProvider.provider ? count + 1 : count, 0)
+    .reduce((count, p) => p.network === oldProvider.network ? count + 1 : count, 0)
 
   if (providersWithSameProvider <= 1) {
     // You cannot delete providers that are already used in the wallet
@@ -24,7 +24,7 @@ const validProvider = (provider: Provider, oldProvider: Provider, settings: Shar
         return dict
       }, {})
 
-    if (Object.keys(requiredProviders).includes(oldProvider.provider)) {
+    if (Object.keys(requiredProviders).includes(oldProvider.network)) {
       dispatch(showToastAction.create({
         message: 'Cannot modify provider',
         details: `Provider ${provider.name} cannot be modified because it will lead to orphan wallets.`,
@@ -51,7 +51,7 @@ const validProvider = (provider: Provider, oldProvider: Provider, settings: Shar
 }
 
 const providersMetadata: ArraySettingsMetadata<Provider> = {
-  label: 'Providers',
+  label: 'Networks',
   type: 'array',
   key: 'providers',
   canDelete: (i, provider, sharedMemory, dispatch) => {
@@ -63,7 +63,7 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
   }),
   innerType: (i, parent) => {
     const providerMetadata: ObjectSettingsMetadata<Provider> = {
-      label: `Provider ${i + 1}`,
+      label: (key, provider) => provider.name,
       type: 'object',
       key: `${parent.key}.${i}`,
       canUpdate: (key, value, metadata, sharedMemory, dispatch) => {
@@ -84,18 +84,19 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
         },
         rpcUrl: {
           label: 'RPC URL',
-          type: 'input',
+          type: 'array',
+          innerType: (i, parent) => ({
+            label: 'RPC URL',
+            type: 'input',
+            key: `${parent.key}.${i}`
+          }),
+          defaults: () => 'http://localhost:8545',
           key: `${parent.key}.${i}.rpcUrl`
         },
         network: {
           label: 'Network',
           type: 'input',
           key: `${parent.key}.${i}.network`
-        },
-        provider: {
-          label: 'Provider',
-          type: 'input',
-          key: `${parent.key}.${i}.provider`
         }
       }
     }

@@ -1,3 +1,6 @@
+
+import * as React from 'react'
+
 import { CloudVault, CurrentWallet, Pairing, TaskManager } from './items'
 
 import './status-bar.scss'

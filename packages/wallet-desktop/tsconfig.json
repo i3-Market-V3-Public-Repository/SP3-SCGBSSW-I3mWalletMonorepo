@@ -26,6 +26,5 @@
         "paths": {
             "@wallet/*": [ "./src/*" ],
         }
-    },
-    "exclude": ["node_modules"]
+    }
 }

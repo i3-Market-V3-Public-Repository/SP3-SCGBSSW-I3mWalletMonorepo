@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { createWalletAction } from '@wallet/lib'

@@ -12,8 +12,10 @@ export interface InfoMetadata extends BaseMetadata<never> {
   type: 'info'
 }
 
+export type SettingsValueOrFunction<V, T> = V | ((key: string, value: T, metadata: SettingsMetadata, sharedMemory: SharedMemory) => V)
+
 interface BaseSettingsMetadata<T = any> extends BaseMetadata<T> {
-  label: string
+  label: SettingsValueOrFunction<string, T>
   key: string
   canUpdate?: (key: string, value: any, metadata: SettingsMetadata, sharedMemory: SharedMemory, dispatch: ActionDispatcher) => boolean
 }

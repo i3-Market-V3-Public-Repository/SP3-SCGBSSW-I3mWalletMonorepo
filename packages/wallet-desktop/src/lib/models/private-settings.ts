@@ -20,7 +20,6 @@ export interface WalletSettings {
 
 export interface Provider extends ProviderData {
   name: string
-  provider: string
 }
 
 export interface DeveloperSettings {

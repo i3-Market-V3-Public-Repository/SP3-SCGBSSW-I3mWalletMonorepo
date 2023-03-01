@@ -14,58 +14,68 @@
     .settings-items {
       padding: 5px 20px;
 
-      .settings-item {
-        display: flex;
-        flex-direction: column;
-        padding: 5px 5px;
-        width: 100%;
+      .settings-checkbox, .settings-number, .settings-input {
+        align-items: center;
 
-        .settings-checkbox {
-          label {
-            cursor: pointer;
-          }
+        .form-switch {
+          margin-top: -4px;
         }
 
-        .settings-number, .settings-input {
-          display: flex;
-          align-items: center;
-
-          > label {
-            margin-right: 10px;
-          }
-          > input {
-            flex: 1;
-            font-size: 16px;
-          }
+        label, input[type='checkbox'] {
+          cursor: pointer;
         }
       }
 
+      .settings-item {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        margin-bottom: 5px;
+      }
+
       .settings-array {
-        > :not(:first-child) {
-          margin-left: 10px;
-        }
 
-        > label {
-          font-weight: bold;
-          font-size: 18px;
-          margin-bottom: 15px;
-        }
-
-        .settings-array-button {
-          height: 20px;
-          width: 20px;
+        > .settings-array-header {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
           padding: 5px;
-          border-radius: 10px;
-          background-color: #00000034;
-          cursor: pointer;
 
-          &:hover {
-            background-color: #00000017;
+          > label {
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 5px;
+          }
+
+          > .settings-array-name {
+            cursor: pointer;
+            flex: 1;
           }
         }
 
         .settings-array-item {
           display: flex;
+          align-items: center;
+        }
+
+        .settings-array-button {
+          &.add-button {
+            height: 30px;
+            width: 30px;
+            padding: 5px;
+            border-radius: 10px;
+            color: #000;
+            opacity: 0.5;
+            cursor: pointer;
+
+            &:hover {
+              opacity: 0.75;
+            }
+          }
+          
+          &.delete-button {
+            margin: 0 5px;
+          }
         }
       }
 
@@ -77,10 +87,6 @@
 
       .settings-description {
         margin: 10px 0;
-        padding: 5px;
-        border: 1px solid black;
-        border-radius: 5px;
-        background: #FFFFFFAA;
       }
     }
   }

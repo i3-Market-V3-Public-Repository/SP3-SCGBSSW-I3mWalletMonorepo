@@ -1,3 +1,7 @@
+
+import * as ReactDOM from 'react-dom'
+import * as React from 'react'
+
 import { config } from '@fortawesome/fontawesome-svg-core'
 import { WindowArgs } from '@wallet/lib'
 import Windows from './windows'

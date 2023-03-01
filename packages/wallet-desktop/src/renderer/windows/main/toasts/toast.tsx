@@ -1,3 +1,6 @@
+
+import * as React from 'react'
+
 import { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import { faTimes, faInfo, faCheck, faExclamation } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

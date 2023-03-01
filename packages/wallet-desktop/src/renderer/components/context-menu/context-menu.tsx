@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { ContextMenuUI, ContextMenuData } from './context-menu-ui'
 import { ContextMenuContext, OpenContextMenu } from './context-menu-context'
 

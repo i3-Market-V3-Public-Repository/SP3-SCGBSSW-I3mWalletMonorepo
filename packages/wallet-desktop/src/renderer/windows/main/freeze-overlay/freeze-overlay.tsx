@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import Loader from 'react-spinners/ClipLoader'
 
 import { WalletTask } from '@wallet/lib'

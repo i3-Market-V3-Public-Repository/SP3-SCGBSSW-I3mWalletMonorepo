@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { faCheck, faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Loader from 'react-spinners/PuffLoader'

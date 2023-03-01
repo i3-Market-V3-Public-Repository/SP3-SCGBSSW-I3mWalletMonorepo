@@ -99,7 +99,7 @@ export class WalletFactory {
     const providers = await privateSettings.get('providers')
     const providersData = providers.reduce<Record<string, ProviderData>>(
       (prev, curr) => {
-        prev[curr.provider] = curr
+        prev[curr.network] = curr
         return prev
       }, DEFAULT_PROVIDERS_DATA)
 

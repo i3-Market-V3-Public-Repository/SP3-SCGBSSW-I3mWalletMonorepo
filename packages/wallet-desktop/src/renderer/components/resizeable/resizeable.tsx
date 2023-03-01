@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { joinClassNames } from '@wallet/renderer/util'
 import { usePresistentState } from '@wallet/renderer/hooks'
 
@@ -62,8 +64,6 @@ export function Resizeable (props: Props): JSX.Element {
             height: mouseMoveEvent.pageY,
             width: mouseMoveEvent.pageX
           }
-
-          console.log(start, end)
 
           setSize((state) => {
             return Object.assign({}, state, handler(start, end))

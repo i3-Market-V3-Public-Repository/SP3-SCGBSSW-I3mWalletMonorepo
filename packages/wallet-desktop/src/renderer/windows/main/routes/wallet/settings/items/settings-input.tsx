@@ -1,7 +1,11 @@
+import * as React from 'react'
+
 import _ from 'lodash'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 
 import { InputSettingsMetadata } from '../settings-metadata'
+import { Col, Form, Row } from 'react-bootstrap'
+import { executeFunctionOrValue } from '../execute-function-or-value'
 
 interface Props {
   metadata: InputSettingsMetadata
@@ -13,6 +17,8 @@ export function SettingsInput (props: Props): JSX.Element {
   const dispatch = useAction()
   const [sharedMemory, setSharedMemory] = useSharedMemory()
   const value = _.get(sharedMemory.settings, metadata.key) ?? ''
+  const label = executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)
+  const id = `settings-${label}`
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (ev) => {
     const newValue = ev.target.value
@@ -28,9 +34,11 @@ export function SettingsInput (props: Props): JSX.Element {
   }
 
   return (
-    <div className='settings-input'>
-      <label>{metadata.label}</label>
-      <input type='text' placeholder={metadata.placeholder} onChange={onChange} value={value} />
-    </div>
+    <Form.Group as={Row} className='settings-input' controlId={id}>
+      <Form.Label column sm='2'>{label}</Form.Label>
+      <Col sm='10'>
+        <Form.Control type='text' size='sm' placeholder={metadata.placeholder} onChange={onChange} value={value} />
+      </Col>
+    </Form.Group>
   )
 }

@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { Identity, ContractResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 

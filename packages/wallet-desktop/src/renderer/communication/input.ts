@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { MainInput, withType, WithType } from '@wallet/lib'
 
 import { Observable, Subject } from 'rxjs'

@@ -1,4 +1,24 @@
 
+
+.bootstrap {
+  /* make the customizations */
+  $theme-colors: (
+    'primary': tomato,
+    'secondary': tomato,
+    'success': tomato,
+    'danger': tomato,
+    'warning': tomato,
+    'info': tomato,
+    'light': white,
+    'dark': tomato
+    // "info": tomato,
+    // "danger": teal
+  );
+
+  @import "../../node_modules/bootstrap/scss/bootstrap";
+}
+
+
 $primary: #A6AFC4;
 $secondary: #6DC169;
 $dark-secondary: #3BBD59;

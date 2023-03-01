@@ -1,9 +1,12 @@
-import { Extendible, HorizontalAccordion, ListSelector, Resizeable, Section } from '@wallet/renderer/components'
+import * as React from 'react'
+
+import { Bootstrap, Extendible, HorizontalAccordion, ListSelector, Resizeable, Section } from '@wallet/renderer/components'
 import { cloudVaultMetadata, developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
 import { SettingsItem } from './settings-item'
 import { MetadataRecord } from './settings-metadata'
 
 import './settings.scss'
+import { Form } from 'react-bootstrap'
 
 export function Settings (): JSX.Element {
   const settingsMetadatas: MetadataRecord = {
@@ -25,15 +28,19 @@ export function Settings (): JSX.Element {
         </Section>
       </Resizeable>
       <Extendible className='settings-group'>
-        {settingsGroup !== undefined ? (
-          <Section title={settingsGroup}>
-            <div className='settings-items'>
-              {settingsMetadatas[settingsGroup].map((metadata, i) => (
-                <SettingsItem key={i} metadata={metadata} />
-              ))}
-            </div>
-          </Section>
-        ) : null}
+        <Bootstrap>
+          {settingsGroup !== undefined ? (
+            <Section title={settingsGroup}>
+              <Form>
+                <div className='settings-items'>
+                  {settingsMetadatas[settingsGroup].map((metadata, i) => (
+                    <SettingsItem key={i} metadata={metadata} />
+                  ))}
+                </div>
+              </Form>
+            </Section>
+          ) : null}
+        </Bootstrap>
       </Extendible>
     </HorizontalAccordion>
   )

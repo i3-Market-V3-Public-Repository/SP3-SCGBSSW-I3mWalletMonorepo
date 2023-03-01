@@ -2,15 +2,11 @@ import { v4 as uuid } from 'uuid'
 import { WalletMetadata } from '@i3m/base-wallet'
 import {
   createWalletAction,
+  Provider,
   WalletInfo
 } from '@wallet/lib'
 import { ActionError } from '../action-error'
 import { ActionHandlerBuilder } from '../action-handler'
-
-interface Provider {
-  name: string
-  provider: string
-}
 
 interface WalletCreationForm {
   name: string
@@ -66,7 +62,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
         package: walletCreationForm.walletMetadata[0],
         store: uuid(),
         args: {
-          provider: walletCreationForm.provider.provider
+          provider: `did:ethr:${walletCreationForm.provider.network}`
         }
       }
 

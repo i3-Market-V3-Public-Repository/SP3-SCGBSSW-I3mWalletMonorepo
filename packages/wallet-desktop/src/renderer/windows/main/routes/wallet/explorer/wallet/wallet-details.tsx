@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { WalletFunctionMetadata } from '@i3m/base-wallet'
 import { WalletInfo, callWalletFunctionAction } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
@@ -13,7 +15,7 @@ export function WalletDetails (props: Props): JSX.Element {
   const dispatch = useAction()
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
 
-  const provider = sharedMemory.settings.providers.find((provider) => provider.provider === wallet.args.provider)
+  const provider = sharedMemory.settings.providers.find((provider) => `did:ethr:${provider.network}` === wallet.args.provider)
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
   const enabled = wallet.name === sharedMemory.settings.wallet.current

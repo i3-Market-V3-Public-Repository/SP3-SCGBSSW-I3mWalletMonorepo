@@ -1,3 +1,6 @@
+import * as ReactRouterDOM from 'react-router-dom'
+import * as React from 'react'
+
 import { pluck } from 'rxjs/operators'
 
 import { MainArgs, withType } from '@wallet/lib'

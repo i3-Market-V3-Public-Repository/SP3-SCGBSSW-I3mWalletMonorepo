@@ -1,4 +1,7 @@
 
+import * as ReactRouterDOM from 'react-router-dom'
+import * as React from 'react'
+
 import { IconDefinition, faWallet, faCog, faLink, faCloud } from '@fortawesome/free-solid-svg-icons'
 import { Nav, NavIcon, Content } from '@wallet/renderer/components'
 

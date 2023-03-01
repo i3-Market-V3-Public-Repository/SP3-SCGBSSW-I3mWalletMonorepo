@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import _ from 'lodash'
 
 import { SharedMemory, createDefaultSharedMemory } from '@wallet/lib'

@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { joinClassNames } from '@wallet/renderer/util'
 
 export interface ContextMenuButton {

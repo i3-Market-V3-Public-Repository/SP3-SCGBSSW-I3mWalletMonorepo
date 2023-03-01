@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { Identity, Resource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Extendible, Section } from '@wallet/renderer/components'

@@ -1,3 +1,7 @@
+
+import * as ReactRouterDOM from 'react-router-dom'
+import * as React from 'react'
+
 import { useOutput, useSharedMemory } from '@wallet/renderer/communication'
 
 import './password.scss'

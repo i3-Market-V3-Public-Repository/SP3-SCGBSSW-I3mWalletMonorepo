@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { v4 as uuid } from 'uuid'
 
 import { WalletInfo } from '@wallet/lib'

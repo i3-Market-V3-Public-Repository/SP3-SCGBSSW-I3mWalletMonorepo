@@ -1,3 +1,7 @@
+
+import * as ReactRouterDOM from 'react-router-dom'
+import * as React from 'react'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
 

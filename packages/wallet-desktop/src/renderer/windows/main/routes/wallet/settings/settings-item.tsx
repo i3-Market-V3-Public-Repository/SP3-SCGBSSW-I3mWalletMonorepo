@@ -1,12 +1,16 @@
-import _ from 'lodash'
+import * as React from 'react'
+
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
+import _ from 'lodash'
 
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 
-import { ArraySettingsMetadata, ItemMetadata, ObjectSettingsMetadata, SettingsMetadata } from './settings-metadata'
+import { Accordion, CloseButton } from 'react-bootstrap'
+import { executeFunctionOrValue } from './execute-function-or-value'
 import { SettingsCheckbox, SettingsInput, SettingsNumber } from './items'
 import { SettingsDescription } from './settings-description'
+import { ArraySettingsMetadata, ItemMetadata, ObjectSettingsMetadata, SettingsMetadata } from './settings-metadata'
 
 interface Props {
   metadata: ItemMetadata
@@ -20,18 +24,31 @@ interface ObjectProps {
   metadata: ObjectSettingsMetadata
 }
 
+// function SettingsArrayHeader (props: React.PropsWithChildren<{ eventKey: string, onDelete: () => void }>): JSX.Element {
+//   const decoratedOnClick = useAccordionButton(props.eventKey)
+
+//   return (
+//     <div className='settings-array-header'>
+//       <span className='settings-array-name' onClick={decoratedOnClick}>{props.children}</span>
+//       <CloseButton onClick={props.onDelete} />
+//     </div>
+//   )
+// }
+
 function ArraySettingsItem (props: ArrayProps): JSX.Element {
   const { metadata } = props
 
   const [sharedMemory, setSharedMemory] = useSharedMemory()
   const dispatch = useAction()
-  const value = _.get(sharedMemory.settings, metadata.key) as any[]
+  const _values = _.get(sharedMemory.settings, metadata.key) ?? [] as any[]
+  const values = _values instanceof Array ? _values : [_values]
+  const label = executeFunctionOrValue(metadata.label, metadata, values, sharedMemory)
 
   const onAddClick: React.MouseEventHandler = (ev) => {
     const newSettings: any = {}
     _.set(newSettings, metadata.key, [
-      ...value,
-      metadata.defaults(metadata, value)
+      ...values,
+      metadata.defaults(metadata, values)
     ])
 
     setSharedMemory({
@@ -39,15 +56,15 @@ function ArraySettingsItem (props: ArrayProps): JSX.Element {
     })
   }
 
-  const onDeleteClick = (i: number): React.MouseEventHandler => (ev) => {
-    if (metadata.canDelete !== undefined && !metadata.canDelete(i, value[i], sharedMemory, dispatch)) {
+  const onDeleteClick = (i: number) => (): void => {
+    if (metadata.canDelete !== undefined && !metadata.canDelete(i, values[i], sharedMemory, dispatch)) {
       // Errors should be shown using dispatch inside canDelete method!
       return
     }
 
     const newSettings: any = {}
-    value.splice(i, 1)
-    _.set(newSettings, metadata.key, [...value])
+    values.splice(i, 1)
+    _.set(newSettings, metadata.key, [...values])
     setSharedMemory({
       settings: newSettings
     })
@@ -76,17 +93,41 @@ function ArraySettingsItem (props: ArrayProps): JSX.Element {
   }
 
   return (
-    <div className='settings-item settings-array'>
-      <label>{metadata.label}</label>
-      {value.map((item, i) => (
-        <div className='settings-array-item' key={i}>
-          <FontAwesomeIcon className='settings-array-button' icon={faTrash} onClick={onDeleteClick(i)} />
-          <SettingsItem metadata={buildChildMetadata(i)} />
-        </div>
-      ))}
-      <FontAwesomeIcon className='settings-array-button' icon={faPlus} onClick={onAddClick} />
+    <div className='settings-array'>
+      <div className='settings-array-header'>
+        <label>{label}</label>
+        <FontAwesomeIcon className='settings-array-button add-button' icon={faPlus} onClick={onAddClick} />
+      </div>
+      <Accordion flush alwaysOpen>
+        {values.map((item, i) => (
+          <div className='settings-array-item' key={i}>
+            <CloseButton className='settings-array-button delete-button' onClick={onDeleteClick(i)} />
+            <SettingsItem metadata={buildChildMetadata(i)} />
+          </div>
+        ))}
+      </Accordion>
     </div>
   )
+
+  // return (
+  //   <Accordion className='settings-item settings-array' flush alwaysOpen>
+  //     <label>{executeFunctionOrValue(metadata.label, metadata, values, sharedMemory)}</label>
+  //     {values.map((value, i) => ({
+  //       value,
+  //       metadata: buildChildMetadata(i)
+  //     })).map(({ value, metadata }, i) => (
+  //       <Accordion.Item className='settings-array-item' key={i} eventKey={i.toString()}>
+  //         <SettingsArrayHeader eventKey={i.toString()} onDelete={onDeleteClick(i)}>
+  //           {executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)}
+  //         </SettingsArrayHeader>
+  //         <Accordion.Body>
+  //           <SettingsItem metadata={metadata} />
+  //         </Accordion.Body>
+  //       </Accordion.Item>
+  //     ))}
+  //     <FontAwesomeIcon className='settings-array-button' icon={faPlus} onClick={onAddClick} />
+  //   </Accordion>
+  // )
 }
 
 function ObjectSettingsItem (props: ObjectProps): JSX.Element {
@@ -95,6 +136,11 @@ function ObjectSettingsItem (props: ObjectProps): JSX.Element {
   const properties = Object
     .keys(metadata.innerType)
     .sort((a, b) => a > b ? 1 : b > a ? -1 : 0)
+
+  const [sharedMemory] = useSharedMemory()
+  const key = metadata.key
+  const value = _.get(sharedMemory.settings, metadata.key) ?? {} as any
+  const label = executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)
 
   const buildPropMetadata = (propKey: string): SettingsMetadata => {
     const propMetadata = metadata.innerType[propKey]
@@ -122,14 +168,18 @@ function ObjectSettingsItem (props: ObjectProps): JSX.Element {
   }
 
   return (
-    <div className='settings-item settings-object'>
-      <label>{metadata.label}</label>
-      {properties.map((propKey, i) => (
-        <div key={i} className='settings-object-properties'>
-          <SettingsItem metadata={buildPropMetadata(propKey)} />
-        </div>
-      ))}
-    </div>
+    <Accordion.Item className='settings-object' eventKey={key}>
+      <Accordion.Header>
+        {label}
+      </Accordion.Header>
+      <Accordion.Body>
+        {properties.map((propKey, i) => (
+          <div key={i} className='settings-object-properties'>
+            <SettingsItem metadata={buildPropMetadata(propKey)} />
+          </div>
+        ))}
+      </Accordion.Body>
+    </Accordion.Item>
   )
 }
 

@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { faChevronLeft, faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { joinClassNames } from '@wallet/renderer/util'

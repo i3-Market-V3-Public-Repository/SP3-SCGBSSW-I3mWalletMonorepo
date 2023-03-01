@@ -1,5 +1,8 @@
+
+import * as React from 'react'
+
 import { useSharedMemory } from '@wallet/renderer/communication'
-import { HorizontalAccordion } from '@wallet/renderer/components'
+import { Bootstrap, HorizontalAccordion } from '@wallet/renderer/components'
 import { Authenticate } from './authenticate'
 import { Authenticated } from './authenticated'
 
@@ -11,9 +14,11 @@ export function CloudVault (): JSX.Element {
 
   return (
     <HorizontalAccordion className='cloud-vault'>
-      <div className='center-vertically'>
-        {state === 'disconnected' ? <Authenticate /> : <Authenticated />}
-      </div>
+      <Bootstrap>
+        <div className='center-vertically'>
+          {state === 'disconnected' ? <Authenticate /> : <Authenticated />}
+        </div>
+      </Bootstrap>
     </HorizontalAccordion>
   )
 }

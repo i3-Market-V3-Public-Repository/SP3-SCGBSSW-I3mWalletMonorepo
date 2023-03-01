@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Extendible, InterfaceObject } from '@wallet/renderer/components'
 

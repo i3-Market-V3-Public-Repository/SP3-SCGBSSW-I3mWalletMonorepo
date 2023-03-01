@@ -1,6 +1,10 @@
 import _ from 'lodash'
+import * as React from 'react'
+import { Col, Form, Row } from 'react-bootstrap'
+
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { CheckboxSettingsMetadata } from '../settings-metadata'
+import { executeFunctionOrValue } from '../execute-function-or-value'
 
 interface Props {
   metadata: CheckboxSettingsMetadata
@@ -11,10 +15,13 @@ export function SettingsCheckbox (props: Props): JSX.Element {
 
   const dispatch = useAction()
   const [sharedMemory, setSharedMemory] = useSharedMemory()
-  const value = _.get(sharedMemory.settings, metadata.key)
+  const value: boolean = _.get(sharedMemory.settings, metadata.key) ?? false
+  const label = executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)
+  const id = `settings-${label}`
 
-  const onChange: React.ChangeEventHandler<HTMLInputElement> = (ev) => {
-    const newValue = ev.target.checked
+  const onChange = (): void => {
+    const newValue = !value
+    console.log('change', newValue)
     if (metadata.canUpdate !== undefined && !metadata.canUpdate(metadata.key, newValue, metadata, sharedMemory, dispatch)) {
       return
     }
@@ -27,11 +34,11 @@ export function SettingsCheckbox (props: Props): JSX.Element {
   }
 
   return (
-    <div className='settings-checkbox'>
-      <label>
-        {metadata.label}
-        <input type='checkbox' onChange={onChange} checked={value} />
-      </label>
-    </div>
+    <Form.Group as={Row} className='settings-checkbox' controlId={id}>
+      <Form.Label column sm='2'>{label}</Form.Label>
+      <Col sm='10'>
+        <Form.Switch onChange={onChange} checked={value} />
+      </Col>
+    </Form.Group>
   )
 }

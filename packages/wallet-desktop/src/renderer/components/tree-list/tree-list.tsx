@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition, faChevronRight, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 

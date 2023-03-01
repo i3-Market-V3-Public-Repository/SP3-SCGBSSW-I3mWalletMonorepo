@@ -1,3 +1,4 @@
+import * as React from 'react'
 
 type FocusFunction = () => void
 type FocusHook<T> = [React.RefObject<T>, FocusFunction]

@@ -1,3 +1,5 @@
+import * as React from 'react'
+
 import { ContractResource, NonRepudiationProofResource, ObjectResource, Resource, VerifiableCredentialResource } from '@i3m/base-wallet'
 import { Extendible, Section } from '@wallet/renderer/components'
 import { ObjectDetails } from './object-details'
