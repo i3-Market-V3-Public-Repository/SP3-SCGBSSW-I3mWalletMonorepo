@@ -226,6 +226,13 @@ export class StoreManager extends StoreBag {
     return storesBundle
   }
 
+  private getVersionDate (timestamp?: number): string | 'never' {
+    if (timestamp === undefined) {
+      return 'never'
+    }
+    return new Date(timestamp).toString()
+  }
+
   public async storeCloudCredentials (credentials: Credentials): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const silentPrivateSettings = this.silentBag.getStore('private-settings')
@@ -251,6 +258,9 @@ export class StoreManager extends StoreBag {
     const publicSettings = this.getStore('public-settings')
     const cloud = await publicSettings.get('cloud')
 
+    const versionDate = this.getVersionDate(cloud?.timestamp)
+    logger.debug(`Upload from cloud vault version: ${versionDate}`)
+
     const bundle = await this.bundleStores()
     const bundleJSON = JSON.stringify(bundle)
     const storage = Buffer.from(bundleJSON)
@@ -267,13 +277,14 @@ export class StoreManager extends StoreBag {
   }
 
   public async restoreStoreBundle (vault: VaultStorage): Promise<void> {
-    logger.debug('restore from cloud vault')
+    const versionDate = this.getVersionDate(vault.timestamp)
+    logger.debug(`Restoring from cloud vault version: ${versionDate}`)
     const { to } = this.ctx.storeMigrationProxy
     const { storage } = vault
     const bundleJSON = storage.toString()
     const bundle = JSON.parse(bundleJSON) as StoresBundle
 
-    const { versionManager, sharedMemoryManager: shm, keysManager, cloudVaultManager: cvm } = this.locals
+    const { versionManager, sharedMemoryManager: shm, keysManager, cloudVaultManager: cvm, walletFactory } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
       return await cvm.conflict({})
     }
@@ -299,12 +310,16 @@ export class StoreManager extends StoreBag {
       await store.set(storeBundle.data)
     }
 
+    // Refresh settings without notify store update
     const settingsId = StoreBag.getStoreId('private-settings')
     const settingsBundle = bundle.stores[settingsId] as StoreBundleData<'private-settings'>
     shm.update(mem => ({
       ...mem,
       settings: settingsBundle.data
     }), { modifiers: { 'no-settings-update': true } })
+
+    // Refresh wallet data
+    await walletFactory.refreshWalletData()
 
     const publicSettings = this.getStore('public-settings')
     await publicSettings.set('cloud', {

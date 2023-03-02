@@ -1,0 +1,10 @@
+
+@import './reset';
+@import './scroll';
+@import './spinner';
+
+@mixin styles {
+  @include reset;
+  @include scroll;
+  @include spinner;
+}

@@ -5,6 +5,28 @@
   100% { transform: scale(1.5, 1.5); }
 }
 
+$radar-size: 200px;
+$circle-width: 4px;
+$button-size: 50px;
+$button-margin: 10px;
+$radar-circle-count: 3;
+
+$gradient: math.div(
+  math.div($radar-size - ($button-size + $button-margin + $radar-circle-count * $circle-width), 2),
+  $radar-circle-count - 2
+);
+
+@mixin radar-circle($index) {
+  $radius: $radar-size - ($gradient * $index);
+  $offset: math.div($gradient, 2) * $index;
+
+  height: $radius;
+  width: $radius;
+  top: $offset;
+  left: $offset;
+  opacity: 10% + ($index * 10);
+}
+
 .connect {
   display: flex;
   justify-content: center;
@@ -36,8 +58,8 @@
       }
 
       > .pin {
-        height: 62px;
-        margin-top: 6%;
+        height: 90px;
+        margin-top: 10px;
         font-weight: bold;
         font-size: 62px;
         font-family: monospace;
@@ -56,19 +78,19 @@
     }
 
     .sync {
-      margin-top: 6%;
+      margin-top: 5px;
       display: flex;
       justify-content: center;
       position: relative;
       width: 100%;
-      height: 126px;
+      height: math.div($radar-size, 2);
 
       .radar {
         position: absolute;
-        width: 208px;
-        height: 108px;
-        border-top-left-radius: 100px;
-        border-top-right-radius: 100px;
+        width: $radar-size;
+        height: math.div($radar-size, 2);
+        border-top-left-radius: $radar-size;
+        border-top-right-radius: $radar-size;
         overflow: hidden;
 
         > * {
@@ -78,38 +100,28 @@
         > .wave {
           left: 0;
           position: absolute;
-          width: 208px;
-          height: 208px;
+          width: $radar-size;
+          height: $radar-size;
 
-          border-radius: 100px;
+          border-radius: $radar-size;
           transform: scale(0, 0);
           background-image: radial-gradient(circle, #D2D6E100 50%, #D2D6E1);
         }
 
         > .circle {
-          border: 4px solid #D2D6E1;
-          border-radius: 100px;
+          border: $circle-width solid #D2D6E1;
+          border-radius: $radar-size;
 
           &.one {
-            width: 200px;
-            height: 200px;
-            opacity: 5%;
+            @include radar-circle(0);
           }
   
           &.two {
-            width: 135px;
-            height: 135px;
-            top: 33px;
-            left: 33px;
-            opacity: 10%;
+            @include radar-circle(1);
           }
   
           &.three {
-            width: 70px;
-            height: 70px;
-            top: 65px;
-            left: 65px;
-            opacity: 20%;
+            @include radar-circle(2);
           }
         }
       }
@@ -120,15 +132,15 @@
         padding: 10px;
         color: #202531;
         background-color: #D2D6E1;
-        border-radius: 50px;
-        width: 50px;
-        height: 50px;
+        border-radius: $button-size;
+        width: $button-size;
+        height: $button-size;
         position: absolute;
-        top: 78px;
+        top: math.div($radar-size - $button-size, 2);
         cursor: pointer;
 
         > svg {
-          width: 32px;
+          width: 30px;
         }
       }
     }

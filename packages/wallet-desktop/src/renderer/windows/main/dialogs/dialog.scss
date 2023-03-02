@@ -108,7 +108,22 @@
       flex-direction: row;
 
       input {
+        padding: 5px;
+        background-color: #A7AEBB;
+        color: i3m.$dark;
+        border: 2px solid transparent;
+        outline: none;
+        font-family: sans-serif;
+        font-size: 14px;
+        height: 34px;
+
         flex: 1;
+        &::placeholder {
+          color: transparentize(i3m.$dark, 0.5);
+        }
+        &:focus {
+          border-color: #3BBD59;
+        }
       }
 
       .button {

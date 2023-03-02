@@ -7,7 +7,7 @@ import { MainArgs, withType } from '@wallet/lib'
 import { useFilterInput, useSharedMemory } from '@wallet/renderer/communication'
 import { ContextMenu } from '@wallet/renderer/components'
 
-import { Password, Wallet } from './routes'
+import { Wallet } from './routes'
 import { Dialog, DialogProps } from './dialogs'
 import { Toasts } from './toasts'
 import { FreezeOverlay } from './freeze-overlay'
@@ -37,9 +37,6 @@ function App (props: MainArgs): JSX.Element {
   return (
     <div className='window'>
       <ContextMenu>
-        <Route path='/password'>
-          <Password />
-        </Route>
         <Route path='/wallet'>
           <Wallet />
         </Route>

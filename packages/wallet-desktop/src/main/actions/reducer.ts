@@ -44,8 +44,8 @@ export class ActionReducer {
     ]
   }
 
-  addModule (epic: Module): void {
-    epic.bindReducer(this.action$, this.handlers, this.locals)
+  addModule (module: Module): void {
+    module.bindReducer(this.action$, this.handlers, this.locals)
   }
 
   async fromApi<B extends Action>(

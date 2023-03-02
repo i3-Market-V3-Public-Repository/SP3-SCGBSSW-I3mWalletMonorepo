@@ -166,7 +166,7 @@ export class BaseWallet<
   async queryBalance (): Promise<void> {
     const providerData = this.veramo.providersData[this.provider]
     if (providerData?.rpcUrl === undefined) {
-      throw new WalletError('This provider has incomplete information, cannot execute transaction')
+      throw new WalletError(`The provider '${this.provider}' has incomplete information: cannot execute transaction`)
     }
 
     const identities = await this.veramo.agent.didManagerFind()

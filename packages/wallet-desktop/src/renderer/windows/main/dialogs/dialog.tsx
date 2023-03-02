@@ -307,7 +307,6 @@ export function Dialog (props: DialogProps): JSX.Element {
               </span>
             ) : null}
             <input
-              className='modern'
               ref={inputRef}
               type={hiddenText ? 'password' : 'text'}
               placeholder='Write here to search an option...' value={text}

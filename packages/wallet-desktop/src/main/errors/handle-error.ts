@@ -48,6 +48,13 @@ export async function handleError (locals: Locals, err: unknown): Promise<void> 
     await handleVaultErrors(locals, err)
   } else if (err instanceof WalletDesktopError) {
     await handleWalletDesktopErrors(locals, err)
+  } else {
+    const anyError = err as any
+    locals.toast.show({
+      type: 'error',
+      message: 'Something went wrong...',
+      details: anyError?.message ?? 'And the cause is unknown'
+    })
   }
 }
 

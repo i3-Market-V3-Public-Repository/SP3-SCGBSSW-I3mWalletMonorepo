@@ -99,7 +99,7 @@ export class WalletFactory {
     const providers = await privateSettings.get('providers')
     const providersData = providers.reduce<Record<string, ProviderData>>(
       (prev, curr) => {
-        prev[curr.network] = curr
+        prev[`did:ethr:${curr.network}`] = curr
         return prev
       }, DEFAULT_PROVIDERS_DATA)
 
@@ -201,7 +201,7 @@ export class WalletFactory {
     }
 
     logger.info(`Change wallet to ${walletName}`)
-    const { sharedMemoryManager, apiManager } = this.locals
+    const { apiManager } = this.locals
 
     // Stop API
     await apiManager.close()
@@ -238,15 +238,21 @@ export class WalletFactory {
       details: `Using wallet '${walletName}'`
     })
 
-    // Setup the resource list inside shared memory
-    const identities = await this.wallet.getIdentities()
-    const resources = await this.wallet.getResources()
-    sharedMemoryManager.update((mem) => ({
-      ...mem, identities, resources
-    }))
+    await this.refreshWalletData()
 
     // Start API
     await apiManager.listen()
+  }
+
+  async refreshWalletData (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+
+    // Setup the resource list inside shared memory
+    const identities = await this.wallet.getIdentities()
+    const resources = await this.wallet.getResources()
+    shm.update((mem) => ({
+      ...mem, identities, resources
+    }))
   }
 
   getWalletFeatures <T>(walletPackage: string): Array<Feature<T>> {

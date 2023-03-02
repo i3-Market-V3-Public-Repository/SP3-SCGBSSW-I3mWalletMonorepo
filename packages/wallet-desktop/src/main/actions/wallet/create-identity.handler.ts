@@ -10,7 +10,7 @@ export const createIdentity: ActionHandlerBuilder<typeof createIdentityAction> =
   return {
     type: createIdentityAction.type,
     async handle (action) {
-      const { sharedMemoryManager, dialog, walletFactory } = locals
+      const { dialog, walletFactory } = locals
       let alias: string | undefined = action.payload.alias
 
       if (alias === undefined) {
@@ -35,8 +35,7 @@ export const createIdentity: ActionHandlerBuilder<typeof createIdentityAction> =
       const response = await walletFactory.wallet.identityCreate({ alias })
 
       // Update state
-      const identities = await walletFactory.wallet.getIdentities()
-      sharedMemoryManager.update((mem) => ({ ...mem, identities }))
+      await walletFactory.refreshWalletData()
 
       return { response, status: 201 }
     }

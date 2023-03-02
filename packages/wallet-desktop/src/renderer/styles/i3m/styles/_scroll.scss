@@ -1,0 +1,41 @@
+
+@mixin scroll {
+
+  .scroll {
+    overflow: auto;
+    height: 100%;
+    display: flex;
+  }
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 13px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: $scroll-track-bg;
+    border: 2px solid $scroll-track-border-color;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: $scroll-thumb-bg;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: $scroll-thumb-hover-bg;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: $scroll-thumb-active-bg;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: $scroll-corner-bg;
+    border: 1px solid $scroll-corner-border-color;
+  }
+
+}

@@ -9,15 +9,13 @@ export const callWalletFunction: ActionHandlerBuilder<typeof callWalletFunctionA
   return {
     type: callWalletFunctionAction.type,
     async handle (action) {
-      const { sharedMemoryManager, walletFactory } = locals
+      const { walletFactory } = locals
 
       // Call the internal function
       await walletFactory.wallet.call(action.payload)
 
       // Refresh all sharedMemory
-      const identities = await walletFactory.wallet.getIdentities()
-      const resources = await walletFactory.wallet.getResources()
-      sharedMemoryManager.update((mem) => ({ ...mem, identities, resources }))
+      await walletFactory.refreshWalletData()
 
       return { response: undefined, status: 200 }
     }

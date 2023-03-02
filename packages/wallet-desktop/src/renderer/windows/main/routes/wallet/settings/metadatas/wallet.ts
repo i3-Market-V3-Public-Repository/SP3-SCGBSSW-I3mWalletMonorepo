@@ -6,7 +6,7 @@ import { ActionDispatcher } from '@wallet/renderer/communication'
 
 import { ArraySettingsMetadata, ObjectSettingsMetadata, MetadataRecord } from '../settings-metadata'
 
-const defaultProvider = { name: 'i3Market', provider: 'did:ethr:i3m', network: 'i3m', rpcUrl: 'http://localhost:8545' }
+const defaultProvider = { name: 'Ganache', network: 'ganache', rpcUrl: ['http://localhost:8545'] }
 
 const validProvider = (provider: Provider, oldProvider: Provider, settings: SharedMemory['settings'], oldSettings: SharedMemory['settings'], dispatch: ActionDispatcher): boolean => {
   // If there are multiple providers with the same provider you can delete one of them

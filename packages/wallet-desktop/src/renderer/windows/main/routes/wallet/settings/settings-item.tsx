@@ -24,24 +24,12 @@ interface ObjectProps {
   metadata: ObjectSettingsMetadata
 }
 
-// function SettingsArrayHeader (props: React.PropsWithChildren<{ eventKey: string, onDelete: () => void }>): JSX.Element {
-//   const decoratedOnClick = useAccordionButton(props.eventKey)
-
-//   return (
-//     <div className='settings-array-header'>
-//       <span className='settings-array-name' onClick={decoratedOnClick}>{props.children}</span>
-//       <CloseButton onClick={props.onDelete} />
-//     </div>
-//   )
-// }
-
 function ArraySettingsItem (props: ArrayProps): JSX.Element {
   const { metadata } = props
 
   const [sharedMemory, setSharedMemory] = useSharedMemory()
   const dispatch = useAction()
-  const _values = _.get(sharedMemory.settings, metadata.key) ?? [] as any[]
-  const values = _values instanceof Array ? _values : [_values]
+  const values: any[] = _.get(sharedMemory.settings, metadata.key) ?? []
   const label = executeFunctionOrValue(metadata.label, metadata, values, sharedMemory)
 
   const onAddClick: React.MouseEventHandler = (ev) => {
@@ -101,33 +89,13 @@ function ArraySettingsItem (props: ArrayProps): JSX.Element {
       <Accordion flush alwaysOpen>
         {values.map((item, i) => (
           <div className='settings-array-item' key={i}>
-            <CloseButton className='settings-array-button delete-button' onClick={onDeleteClick(i)} />
             <SettingsItem metadata={buildChildMetadata(i)} />
+            <CloseButton className='settings-array-button delete-button' onClick={onDeleteClick(i)} />
           </div>
         ))}
       </Accordion>
     </div>
   )
-
-  // return (
-  //   <Accordion className='settings-item settings-array' flush alwaysOpen>
-  //     <label>{executeFunctionOrValue(metadata.label, metadata, values, sharedMemory)}</label>
-  //     {values.map((value, i) => ({
-  //       value,
-  //       metadata: buildChildMetadata(i)
-  //     })).map(({ value, metadata }, i) => (
-  //       <Accordion.Item className='settings-array-item' key={i} eventKey={i.toString()}>
-  //         <SettingsArrayHeader eventKey={i.toString()} onDelete={onDeleteClick(i)}>
-  //           {executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)}
-  //         </SettingsArrayHeader>
-  //         <Accordion.Body>
-  //           <SettingsItem metadata={metadata} />
-  //         </Accordion.Body>
-  //       </Accordion.Item>
-  //     ))}
-  //     <FontAwesomeIcon className='settings-array-button' icon={faPlus} onClick={onAddClick} />
-  //   </Accordion>
-  // )
 }
 
 function ObjectSettingsItem (props: ObjectProps): JSX.Element {
@@ -169,7 +137,7 @@ function ObjectSettingsItem (props: ObjectProps): JSX.Element {
 
   return (
     <Accordion.Item className='settings-object' eventKey={key}>
-      <Accordion.Header>
+      <Accordion.Header className='settings-object-header'>
         {label}
       </Accordion.Header>
       <Accordion.Body>

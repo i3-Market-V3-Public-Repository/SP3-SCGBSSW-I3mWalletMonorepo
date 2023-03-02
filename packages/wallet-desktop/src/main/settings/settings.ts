@@ -35,7 +35,7 @@ function validProviders (providers: Provider[]): boolean {
   const filledArguments = providers.reduce((prev, curr) => ({
     name: prev.name || curr.name === undefined,
     network: prev.network || curr.network === undefined,
-    rpcUrl: prev.rpcUrl || curr.rpcUrl === undefined
+    rpcUrl: prev.rpcUrl || !(curr.rpcUrl instanceof Array) || curr.rpcUrl === undefined
   }), { name: false, network: false, rpcUrl: false })
 
   return Object.values(filledArguments).reduce((prev, curr) => prev && !curr, true)
@@ -51,8 +51,7 @@ export const fixPrivateSettings = async (locals: Locals): Promise<void> => {
   // Setup default providers
   if (!validProviders(providers)) {
     await settings.set('providers', [
-      { name: 'i3Market', network: 'i3m', rpcUrl: 'http://95.211.3.250:8545' },
-      { name: 'Rinkeby', network: 'rinkeby', rpcUrl: 'https://rpc.ankr.com/eth_rinkeby' }
+      { name: 'Rinkeby', network: 'rinkeby', rpcUrl: ['https://rpc.ankr.com/eth_rinkeby'] }
     ])
   }
 

@@ -4,6 +4,7 @@ import { WalletFunctionMetadata } from '@i3m/base-wallet'
 import { WalletInfo, callWalletFunctionAction } from '@wallet/lib'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
 import { Extendible, Section } from '@wallet/renderer/components'
+import { getProvider } from '@wallet/renderer/util'
 
 interface Props {
   wallet: WalletInfo
@@ -15,7 +16,7 @@ export function WalletDetails (props: Props): JSX.Element {
   const dispatch = useAction()
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
 
-  const provider = sharedMemory.settings.providers.find((provider) => `did:ethr:${provider.network}` === wallet.args.provider)
+  const provider = getProvider(props.wallet.args.provider as string, sharedMemory)
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
   const enabled = wallet.name === sharedMemory.settings.wallet.current

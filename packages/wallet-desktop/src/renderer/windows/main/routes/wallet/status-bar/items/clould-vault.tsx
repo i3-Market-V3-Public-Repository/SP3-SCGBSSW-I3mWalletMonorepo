@@ -18,7 +18,7 @@ export function CloudVault (): JSX.Element | null {
   if (state === 'connected') {
     icon = <FontAwesomeIcon icon={faCheck} className='icon' />
   } else if (state === 'sync') {
-    icon = <Loader size='8px' className='loader' color='white' />
+    icon = <Loader size='20px' className='loader' color='white' />
   } else {
     icon = <FontAwesomeIcon icon={faXmark} className='icon' />
   }

@@ -4,7 +4,6 @@ import { Alert } from 'react-bootstrap'
 
 import { DEFAULT_CLOUD_URL, showToastAction } from '@wallet/lib'
 import { MetadataRecord } from '../settings-metadata'
-import { Bootstrap } from '@wallet/renderer/components'
 
 export const cloudVaultMetadata: MetadataRecord = {
   'Cloud Vault': [
@@ -12,11 +11,9 @@ export const cloudVaultMetadata: MetadataRecord = {
       type: 'info',
       description: {
         message: (
-          <Bootstrap>
-            <Alert variant='light'>
-              Here I can put a message descriving what the cloud vault is and more bla bla things.
-            </Alert>
-          </Bootstrap>
+          <Alert variant='light'>
+            Here I can put a message descriving what the cloud vault is and more bla bla things.
+          </Alert>
         )
       }
     },
