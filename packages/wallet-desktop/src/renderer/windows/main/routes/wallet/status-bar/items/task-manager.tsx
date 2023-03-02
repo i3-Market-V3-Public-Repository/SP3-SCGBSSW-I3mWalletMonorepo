@@ -24,7 +24,7 @@ export function TaskManager (): JSX.Element | null {
   }
 
   if (tasks.length > 0) {
-    icon = <Loader className='loader' color='white' />
+    icon = <Loader size='20px' className='loader' color='white' />
   } else {
     icon = <FontAwesomeIcon icon={faBarsProgress} className='icon' />
   }
