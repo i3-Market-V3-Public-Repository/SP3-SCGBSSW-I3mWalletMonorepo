@@ -31,11 +31,12 @@ export class VaultClient extends EventEmitter {
 
   private es?: EventSource
 
-  constructor (serverUrl: string, name?: string) {
+  constructor (serverUrl: string, timestamp?: number, name?: string) {
     super({ captureRejections: true })
 
     this.name = name ?? randomBytes(16).toString('hex')
     this.serverUrl = serverUrl
+    this.timestamp = timestamp
 
     this._state = VAULT_STATE.NOT_INITIALIZED
 
@@ -111,7 +112,10 @@ export class VaultClient extends EventEmitter {
 
     this.es.addEventListener('connected', (e) => {
       const msg = JSON.parse(e.data) as ConnectedEvent['data']
-      this.timestamp = msg.timestamp
+      if (msg.timestamp !== undefined && msg.timestamp !== this.timestamp) {
+        this.timestamp = msg.timestamp
+        this.emit('storage-updated', this.timestamp)
+      }
       this.state = VAULT_STATE.CONNECTED
     })
 

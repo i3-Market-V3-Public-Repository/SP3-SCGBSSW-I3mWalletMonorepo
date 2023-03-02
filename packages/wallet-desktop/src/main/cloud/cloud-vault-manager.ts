@@ -498,6 +498,7 @@ export class CloudVaultManager {
       return await this.client.updateStorage(vault, force)
     } catch (err: unknown) {
       if (err instanceof VaultError) {
+        console.trace(err)
         if (checkErrorType(err, 'conflict')) {
           await this.conflict({
             remoteTimestamp: this.client.timestamp
