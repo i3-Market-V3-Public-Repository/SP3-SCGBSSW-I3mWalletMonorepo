@@ -52,6 +52,8 @@ interface Props<T> {
   listRef?: React.RefObject<HTMLDivElement>
   cursorRef?: React.RefObject<HTMLDivElement>
 
+  paddingBottom?: number
+
   tab?: number
 }
 
@@ -64,7 +66,7 @@ function itemAggregator (prev: TreeListItem[], curr: TreeListItem): TreeListItem
 }
 
 export function TreeList<T = string> (props: Props<T>): JSX.Element {
-  const { className, items, selectedState, cursorState, collapsedState } = props
+  const { className, items, selectedState, cursorState, collapsedState, paddingBottom } = props
   const [selected, setSelected] = selectedState
   const [cursor, setCursor] = cursorState
   const [collapsed, setCollapsed] = collapsedState
@@ -94,7 +96,7 @@ export function TreeList<T = string> (props: Props<T>): JSX.Element {
       if (normalizedCursorTop < 0) {
         list.scrollTop = cursor.offsetTop - list.offsetTop
       } else if (normalizedCursorTop + cursor.offsetHeight > list.clientHeight) {
-        list.scrollTop = cursor.offsetTop - list.offsetTop + cursor.offsetHeight - list.clientHeight
+        list.scrollTop = cursor.offsetTop - list.offsetTop + cursor.offsetHeight - list.clientHeight + (paddingBottom ?? 0)
       }
     }
 

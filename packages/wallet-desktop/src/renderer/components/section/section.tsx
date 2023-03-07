@@ -12,19 +12,25 @@ export interface DividerOperation {
   onClick: () => void
 }
 
+type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 type Props = React.PropsWithChildren<{
   title: string
+  light?: boolean
+  scroll?: boolean
+  scrollRef?: React.LegacyRef<HTMLDivElement>
   operations?: DividerOperation[]
-}>
+} & DivProps>
 
 export function Section (props: Props): JSX.Element {
   const operations = props.operations ?? []
-  const { title, children } = props
+  const { className, title, children, light, scroll, scrollRef, ...divProps } = props
+  const scrollClass = scroll === true ? 'scroll' : undefined
+  const lightClass = light === true ? 'light' : undefined
 
   return (
-    <div className={joinClassNames('section')}>
+    <div className={joinClassNames('section', className, lightClass)} {...divProps}>
       <div className='header'>
-        <span className='label'>{title}</span>
+        <span className='label' title={title}>{title}</span>
         {operations.map(({ icon, onClick }, i) => (
           <FontAwesomeIcon
             key={i} className='operation-icon'
@@ -32,7 +38,9 @@ export function Section (props: Props): JSX.Element {
           />
         ))}
       </div>
-      {children}
+      <div className={joinClassNames('body', scrollClass)} ref={scrollRef}>
+        {children}
+      </div>
     </div>
   )
 }

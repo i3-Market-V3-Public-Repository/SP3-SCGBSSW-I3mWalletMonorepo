@@ -1,12 +1,12 @@
 import * as React from 'react'
 
-import { Extendible, HorizontalAccordion, ListSelector, Resizeable, Section } from '@wallet/renderer/components'
+import { ListSelector, Resizeable, Section } from '@wallet/renderer/components'
 import { cloudVaultMetadata, developerMetadata, walletMetadata, walletProtocolMetadata } from './metadatas'
 import { SettingsItem } from './settings-item'
 import { MetadataRecord } from './settings-metadata'
 
-import './settings.scss'
 import { Form } from 'react-bootstrap'
+import './settings.scss'
 
 export function Settings (): JSX.Element {
   const settingsMetadatas: MetadataRecord = {
@@ -19,18 +19,21 @@ export function Settings (): JSX.Element {
     // Sort setting groups alphabetically
     .sort((a, b) => a > b ? 1 : a < b ? -1 : 0)
   const [settingsGroup, setSettingsGroup] = React.useState<string>(groups[0])
+  const onSubmit: React.FormEventHandler<HTMLFormElement> = (ev) => {
+    ev.preventDefault()
+  }
 
   return (
-    <HorizontalAccordion className='settings'>
-      <Resizeable className='settings-list' stateId='wallet.settings.tree-list' resizeWidth>
-        <Section title='Settings'>
+    <Resizeable className='settings'>
+      <Resizeable.Dynamic className='settings-list' stateId='wallet.settings.tree-list' resizeWidth>
+        <Section title='Settings' scroll>
           <ListSelector selected={settingsGroup} items={groups} onSelect={setSettingsGroup} />
         </Section>
-      </Resizeable>
-      <Extendible className='settings-group'>
+      </Resizeable.Dynamic>
+      <Resizeable.Fixed className='settings-editor'>
         {settingsGroup !== undefined ? (
-          <Section title={settingsGroup}>
-            <Form>
+          <Section title={settingsGroup} scroll light>
+            <Form className='settings-form' onSubmit={onSubmit}>
               <div className='settings-items'>
                 {settingsMetadatas[settingsGroup].map((metadata, i) => (
                   <SettingsItem key={i} metadata={metadata} />
@@ -39,7 +42,7 @@ export function Settings (): JSX.Element {
             </Form>
           </Section>
         ) : null}
-      </Extendible>
-    </HorizontalAccordion>
+      </Resizeable.Fixed>
+    </Resizeable>
   )
 }

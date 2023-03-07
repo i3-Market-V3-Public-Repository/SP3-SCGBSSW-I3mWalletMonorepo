@@ -1,0 +1,28 @@
+
+$accordion-bg: bootstrapUtils.tint-color(i3m.$primary, 90%);
+$accordion-border-color: bootstrapUtils.shade-color(i3m.$primary, 10%);
+
+.json-ui {
+  border: 2px solid $accordion-border-color;
+  margin-bottom: 10px;
+
+  .accordion-button {
+    box-shadow: none;
+  }
+
+  .form-label { 
+    text-overflow: ellipsis;
+    // white-space: nowrap;
+    overflow: hidden;  
+  }
+
+  .json-ui-object, .json-ui-array {
+    background-color: $accordion-bg;
+  }
+
+  .json-ui-text, .json-ui-boolean {
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+  }
+}

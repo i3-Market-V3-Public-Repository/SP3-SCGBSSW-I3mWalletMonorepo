@@ -1,14 +1,28 @@
 .section {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  height: 100%;
+  width: 100%;
+
+  background-image: i3m.$dark-background;
+
+  &.light {
+    background-image: i3m.$light-background;
+
+    > .body {
+      > * {
+        color: i3m.$dark-foreground;
+      }
+    }
+  }
 
   > .header {
     padding-left: 10px;
     background-color: #30384977;
-    border: 2px solid #1A1E27;
+    border: 1px solid #1A1E27;
     font-size: 18px;
     font-weight: bold;
+    height: 40px;
 
     display: flex;
     align-items: center;
@@ -17,6 +31,9 @@
       margin: 5px 0;
       margin-right: 10px;
       flex: 1 1 auto;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .operation-icon {
@@ -35,6 +52,15 @@
         opacity: 1;
         color: #6dc169cc;
       }
+    }
+  }
+
+  > .body {
+    display: grid;
+    flex: 1;
+
+    > * {
+      color: i3m.$light-foreground;
     }
   }
 }

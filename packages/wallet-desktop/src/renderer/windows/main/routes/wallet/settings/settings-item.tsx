@@ -140,11 +140,9 @@ function ObjectSettingsItem (props: ObjectProps): JSX.Element {
       <Accordion.Header className='settings-object-header'>
         {label}
       </Accordion.Header>
-      <Accordion.Body>
+      <Accordion.Body className='settings-items'>
         {properties.map((propKey, i) => (
-          <div key={i} className='settings-object-properties'>
-            <SettingsItem metadata={buildPropMetadata(propKey)} />
-          </div>
+          <SettingsItem key={i} metadata={buildPropMetadata(propKey)} />
         ))}
       </Accordion.Body>
     </Accordion.Item>
@@ -181,9 +179,9 @@ export function SettingsItem (props: Props): JSX.Element | null {
   }
 
   return (
-    <div className='settings-item'>
+    <>
       {item}
       <SettingsDescription metadata={metadata} />
-    </div>
+    </>
   )
 }

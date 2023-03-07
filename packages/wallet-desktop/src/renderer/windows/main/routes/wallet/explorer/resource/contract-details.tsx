@@ -1,7 +1,9 @@
 import * as React from 'react'
 
-import { Identity, ContractResource } from '@i3m/base-wallet'
+import { ContractResource, Identity } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
+import { Details, JsonUi } from '@wallet/renderer/components'
+import { getResourceName } from '@wallet/renderer/util'
 
 interface Props {
   resource: ContractResource
@@ -9,42 +11,33 @@ interface Props {
 
 export function ContractDetails (props: Props): JSX.Element {
   const { resource } = props
-
   const [sharedMemory] = useSharedMemory()
+  const name = getResourceName(props.resource)
 
   let identity: Identity | undefined
   if (resource.identity !== undefined) {
     identity = sharedMemory.identities[resource.identity]
   }
+  const identityAlias = identity?.alias
 
   return (
-    <div className='details-body'>
-      {resource.name !== undefined
-        ? (
-          <div className='details-param inline'>
-            <span>Name:</span>
-            <input type='text' disabled value={resource.name} />
-          </div>
-        ) : null}
-      <div className='details-param inline'>
-        <span>Id:</span>
-        <input type='text' disabled value={resource.id} />
-      </div>
-      <div className='details-param inline'>
-        <span>Type:</span>
-        <input type='text' disabled value='Contract' />
-      </div>
-      {identity !== undefined
-        ? (
-          <div className='details-param inline'>
-            <span>From identity:</span>
-            <input type='text' disabled value={identity.alias} />
-          </div>
-        ) : null}
-      <div className='details-param expand'>
-        <span>Data:</span>
-        <textarea disabled value={JSON.stringify(resource.resource, null, 2)} />
-      </div>
-    </div>
+    <>
+      <Details.Body>
+        <Details.Title>Summary</Details.Title>
+        <Details.Grid>
+          <Details.Input label='Id' value={resource.id} />
+          <Details.Input label='Name' value={name} />
+          <Details.Input label='Type' value={resource.type} />
+          {identityAlias !== undefined
+            ? (
+              <Details.Input label='From identity' value={identityAlias} />
+            ) : null}
+        </Details.Grid>
+      </Details.Body>
+      <Details.Body>
+        <Details.Title>Content</Details.Title>
+        <JsonUi prop='Data' value={resource.resource} />
+      </Details.Body>
+    </>
   )
 }

@@ -1,7 +1,11 @@
-$info-color: #388EE8;
-$success-color: #4DD470;
-$warning-color: #F6C133;
-$error-color: #F5426B;
+@mixin colorize-toast($class, $color) {
+  &.#{$class} {
+    border-color: $color;
+    .type {
+      background-color: $color;
+    }
+  }
+}
 
 
 .toasts {
@@ -15,6 +19,7 @@ $error-color: #F5426B;
 
   .toast {
     display: flex;
+    align-items: center;
     padding: 10px;
     margin: 10px;
     user-select: none;
@@ -24,6 +29,7 @@ $error-color: #F5426B;
     border-left-width: 10px;
     border-left-style: solid;
     max-width: 360px;
+    overflow: hidden;
 
     &.toast-transition-enter-active {
       animation: fadein 0.5s;
@@ -47,56 +53,21 @@ $error-color: #F5426B;
       opacity: 1;
     }
 
-    > .toast-content {
+    > .toast-text {
       display: flex;
-      flex-direction: row;
-      align-items: center;
-      margin-right: 10px;
+      flex-direction: column;
       flex: 1;
+      margin: 0px 10px;
+      white-space: pre-line;
+      word-break: break-word;
 
-      > * {
-        margin-right: 10px;
-      }  
+      > .toast-message {
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
 
-      .toast-text {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        white-space: pre-line;
-        word-break: break-word;
-  
-        > .message {
-          font-weight: bold;
-          margin-bottom: 3px;
-        }
-        > .details {
-          font-size: 14px;
-        }
-      }
-    }
-
-    &.info {
-      border-color: $info-color;
-      .type {
-        background-color: $info-color;
-      }
-    }
-    &.success {
-      border-color: $success-color;
-      .type {
-        background-color: $success-color;
-      }
-    }
-    &.warning {
-      border-color: $warning-color;
-      .type {
-        background-color: $warning-color;
-      }
-    }
-    &.error {
-      border-color: $error-color;
-      .type {
-        background-color: $error-color;
+      > .toast-details {
+        font-size: 14px;
       }
     }
 
@@ -119,6 +90,12 @@ $error-color: #F5426B;
         }
       }
     }
+
+    // Colors
+    @include colorize-toast('info', i3m.$info);
+    @include colorize-toast('success', i3m.$success);
+    @include colorize-toast('warning', i3m.$warning);
+    @include colorize-toast('error', i3m.$danger);
   }
 }
 

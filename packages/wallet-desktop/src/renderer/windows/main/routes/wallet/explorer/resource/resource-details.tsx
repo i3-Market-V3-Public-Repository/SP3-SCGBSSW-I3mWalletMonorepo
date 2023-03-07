@@ -1,40 +1,45 @@
 import * as React from 'react'
 
 import { ContractResource, NonRepudiationProofResource, ObjectResource, Resource, VerifiableCredentialResource } from '@i3m/base-wallet'
-import { Extendible, Section } from '@wallet/renderer/components'
-import { ObjectDetails } from './object-details'
 import { ContractDetails } from './contract-details'
-import { VerifiableCredentialDetails } from './verifiable-credential-details'
+import { ObjectDetails } from './object-details'
 import { ProofDetails } from './proof-details'
+import { VerifiableCredentialDetails } from './verifiable-credential-details'
+import { getResourceName } from '@wallet/renderer/util'
+import { Details, Section } from '@wallet/renderer/components'
 
 interface Props {
   resource: Resource
 }
 
-function ResourceSelector (props: Props): JSX.Element | null {
+export function ResourceDetails (props: Props): JSX.Element {
   const { resource } = props
+  const name = getResourceName(props.resource)
 
+  let child: JSX.Element
   switch (props.resource.type) {
     case 'VerifiableCredential':
-      return <VerifiableCredentialDetails vc={resource as VerifiableCredentialResource} />
+      child = <VerifiableCredentialDetails vc={resource as VerifiableCredentialResource} />
+      break
 
     case 'Contract':
-      return <ContractDetails resource={resource as ContractResource} />
+      child = <ContractDetails resource={resource as ContractResource} />
+      break
 
     case 'NonRepudiationProof':
-      return <ProofDetails resource={resource as NonRepudiationProofResource} />
+      child = <ProofDetails resource={resource as NonRepudiationProofResource} />
+      break
 
     default:
-      return <ObjectDetails resource={resource as ObjectResource} />
+      child = <ObjectDetails resource={resource as ObjectResource} />
+      break
   }
-}
 
-export function ResourceDetails (props: Props): JSX.Element {
   return (
-    <Extendible className='details'>
-      <Section title='Details'>
-        <ResourceSelector {...props} />
-      </Section>
-    </Extendible>
+    <Section title={name} scroll light>
+      <Details>
+        {child}
+      </Details>
+    </Section>
   )
 }

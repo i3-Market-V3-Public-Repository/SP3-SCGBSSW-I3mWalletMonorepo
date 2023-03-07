@@ -2,40 +2,61 @@
 @mixin scroll {
 
   .scroll {
-    overflow: auto;
+    overflow: overlay;
     height: 100%;
-    display: flex;
+    width: 100%;
+    padding: 0 15px 15px 0;
+    color: rgba(0,0,0,0);
+    transition: color 0.4s;
+
+    &:hover {
+      color: $scroll-thumb-bg;
+    }
+
+    &.vertical {
+      flex-direction: column;
+    }
   }
 
   /* width */
   ::-webkit-scrollbar {
-    width: 13px;
+    width: 15px;
+    height: 15px;
   }
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: $scroll-track-bg;
-    border: 2px solid $scroll-track-border-color;
+    background-color: $scroll-track-bg;
+    border-radius: 2px;
+    border: 1px solid $scroll-track-border-color;
+
+    &:horizontal {
+      border-bottom: none;
+    }
+
+    &:vertical {
+      border-right: none;
+    }
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: $scroll-thumb-bg;
+    border-radius: 2px;
+    box-shadow: inset 0 0 0 15px;
+    // background-color: inherit; /* Inherits from outer container */
   }
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: $scroll-thumb-hover-bg;
-    border-radius: 2px;
+    background-color: $scroll-thumb-hover-bg;
   }
 
   ::-webkit-scrollbar-thumb:active {
-    background: $scroll-thumb-active-bg;
+    background-color: $scroll-thumb-active-bg;
   }
 
   ::-webkit-scrollbar-corner {
-    background: $scroll-corner-bg;
-    border: 1px solid $scroll-corner-border-color;
+    background-color: $scroll-corner-bg;
+    // border: 1px solid $scroll-corner-border-color;
   }
-
 }

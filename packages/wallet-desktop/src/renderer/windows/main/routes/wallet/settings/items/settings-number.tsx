@@ -1,10 +1,10 @@
 import * as React from 'react'
 
-import _ from 'lodash'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
-import { NumberSettingsMetadata } from '../settings-metadata'
-import { Col, Form, Row } from 'react-bootstrap'
+import _ from 'lodash'
+import { Form } from 'react-bootstrap'
 import { executeFunctionOrValue } from '../execute-function-or-value'
+import { NumberSettingsMetadata } from '../settings-metadata'
 
 interface Props {
   metadata: NumberSettingsMetadata
@@ -33,11 +33,9 @@ export function SettingsNumber (props: Props): JSX.Element {
   }
 
   return (
-    <Form.Group as={Row} className='settings-number' controlId={id}>
-      <Form.Label column sm='2'>{label}</Form.Label>
-      <Col sm='10'>
-        <Form.Control type='number' size='sm' onChange={onChange} value={value} />
-      </Col>
-    </Form.Group>
+    <>
+      <label htmlFor={id} title={label}>{label}</label>
+      <Form.Control id={id} type='number' size='sm' onChange={onChange} value={value} />
+    </>
   )
 }

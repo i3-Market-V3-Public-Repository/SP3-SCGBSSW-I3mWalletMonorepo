@@ -1,47 +1,66 @@
+
 .resizeable {
-  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
 
-  &.horizontal {
-    padding-right: 4px;
-
-    .draghandle.vertical {
-      width: calc(100% - 4px);
-    }
-  }
-
-  &.vertical {
-    padding-bottom: 4px;
-
-    .draghandle.horizontal {
-      height: calc(100% - 4px);
-    }
-  }
-
-  .draghandle {
-    position: absolute;
-    min-width: 4px;
-    min-height: 4px;
-    background-color: #ffffff36;
-    right: 0;
-    bottom: 0;
-    cursor: nwse-resize;
-
-    &:hover {
-      background-color: #ffffff80;
-    }
+  .resizeable-dynamic {
+    position: relative;
+    min-width: 200px;
 
     &.horizontal {
-      top: 0;
-      right: 0;
-      height: 100%;
-      cursor: ew-resize;
+      padding-right: 4px;
+
+      .draghandle.vertical {
+        width: calc(100% - 4px);
+      }
     }
 
     &.vertical {
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      cursor: ns-resize;
+      padding-bottom: 4px;
+
+      .draghandle.horizontal {
+        height: calc(100% - 4px);
+      }
     }
+
+    &.active {
+      > .draghandle {
+        background-color: i3m.$primary !important;
+      }
+    }
+
+    > .draghandle {
+      position: absolute;
+      min-width: 4px;
+      min-height: 4px;
+      background-color: i3m.$scroll-bg;
+      right: 0;
+      bottom: 0;
+      cursor: nwse-resize;
+
+      &:hover {
+        background-color: i3m.$scroll-thumb-hover-bg;
+      }
+
+      &.horizontal {
+        top: 0;
+        right: 0;
+        height: 100%;
+        cursor: ew-resize;
+      }
+
+      &.vertical {
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        cursor: ns-resize;
+      }
+    }
+  }
+
+  .resizeable-fixed {
+    flex: 1;
+    min-width: 200px;
   }
 }

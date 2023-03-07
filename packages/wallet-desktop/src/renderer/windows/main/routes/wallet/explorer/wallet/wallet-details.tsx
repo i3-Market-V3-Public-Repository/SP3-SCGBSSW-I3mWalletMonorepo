@@ -1,9 +1,10 @@
-import * as React from 'react'
-
 import { WalletFunctionMetadata } from '@i3m/base-wallet'
-import { WalletInfo, callWalletFunctionAction } from '@wallet/lib'
-import { useSharedMemory, useAction } from '@wallet/renderer/communication'
-import { Extendible, Section } from '@wallet/renderer/components'
+import * as React from 'react'
+import { Alert, Button } from 'react-bootstrap'
+
+import { callWalletFunctionAction, WalletInfo } from '@wallet/lib'
+import { useAction, useSharedMemory } from '@wallet/renderer/communication'
+import { Details, Section } from '@wallet/renderer/components'
 import { getProvider } from '@wallet/renderer/util'
 
 interface Props {
@@ -17,6 +18,7 @@ export function WalletDetails (props: Props): JSX.Element {
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
 
   const provider = getProvider(props.wallet.args.provider as string, sharedMemory)
+  const providerName = provider?.name ?? 'Unknown'
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
   const enabled = wallet.name === sharedMemory.settings.wallet.current
@@ -27,50 +29,42 @@ export function WalletDetails (props: Props): JSX.Element {
   }
 
   return (
-    <Extendible className='details'>
-      <Section title='Details'>
-        <div className='details-body'>
-          <div className='details-param inline'>
-            <span>Name:</span>
-            <input type='text' disabled value={wallet.name} />
-          </div>
-          <div className='details-param'>
-            <span>Type:</span>
-            <input type='text' disabled value={walletMetadata.name} />
-          </div>
-          <div className='details-param'>
-            <span>Provider:</span>
-            <input type='text' disabled value={provider?.name ?? 'Unknown'} />
-          </div>
-          <div className='details-param'>
-            <span className='details-title'>Wallet Functions</span>
-            <div className='details-buttons'>
+    <Section title={wallet.name} scroll light>
+      <Details>
+        <Details.Body>
+          <Details.Title>Summary</Details.Title>
+          <Details.Grid>
+            <Details.Input label='Name' value={wallet.name} />
+            <Details.Input label='Type' value={walletMetadata.name} />
+            <Details.Input label='Network' value={providerName} />
+          </Details.Grid>
+        </Details.Body>
+        <Details.Separator />
+        <Details.Body>
+          <Details.Grid>
+            {!enabled ? <Alert variant='info'>To enable the <b>wallet functions</b> for this wallet you must select it fist</Alert> : null}
+            <Details.Buttons title='Wallet Functions'>
               {walletFunctions.map((walletFunction, i) => (
-                <button
+                <Button
                   disabled={!enabled}
                   onClick={() => executeWalletFunction(walletFunction)} key={i}
                 >{walletFunction.name}
-                </button>
+                </Button>
               ))}
-            </div>
-          </div>
-          {sharedMemory.settings.developer.enableDeveloperFunctions ? (
-            <div className='details-param'>
-              <span className='details-title'>Developer Functions</span>
-              <div className='details-buttons'>
-                {developerFunctions.map((walletFunction, i) => (
-                  <button
-                    disabled={!enabled}
-                    onClick={() => executeWalletFunction(walletFunction)} key={i}
-                  >{walletFunction.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
-          {!enabled ? <span>*To enable wallet functions, you must select this wallet fist</span> : null}
-        </div>
-      </Section>
-    </Extendible>
+            </Details.Buttons>
+            {!enabled ? <Alert variant='info'>To enable the <b>developer functions</b> for this wallet you must select it fist</Alert> : null}
+            <Details.Buttons title='Developer Functions'>
+              {developerFunctions.map((walletFunction, i) => (
+                <Button
+                  disabled={!enabled}
+                  onClick={() => executeWalletFunction(walletFunction)} key={i}
+                >{walletFunction.name}
+                </Button>
+              ))}
+            </Details.Buttons>
+          </Details.Grid>
+        </Details.Body>
+      </Details>
+    </Section>
   )
 }

@@ -485,11 +485,11 @@ export class CloudVaultManager {
     await this.locals.storeManager.onStopCloudService()
   }
 
-  async login (): Promise<void> {
+  async login (credentials?: Credentials): Promise<void> {
     const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.loginTask(task)
+      return await this.loginTask(task, credentials)
     })
   }
 

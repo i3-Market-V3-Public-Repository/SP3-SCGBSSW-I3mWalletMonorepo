@@ -4,6 +4,7 @@ import { stopCloudSync } from './stop-cloud-sync.handler'
 import { registerCloud } from './register-cloud.handler'
 import { logoutCloud } from './logout-cloud.handler'
 import { loginCloud } from './login-cloud.handler'
+import { reloginCloud } from './relogin-cloud.handler'
 
 export const cloudModule = new Module({
   handlersBuilders: [
@@ -11,6 +12,7 @@ export const cloudModule = new Module({
     stopCloudSync,
     registerCloud,
     logoutCloud,
-    loginCloud
+    loginCloud,
+    reloginCloud
   ]
 })

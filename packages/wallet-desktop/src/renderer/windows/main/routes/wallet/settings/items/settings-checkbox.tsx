@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import * as React from 'react'
-import { Col, Form, Row } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
-import { CheckboxSettingsMetadata } from '../settings-metadata'
 import { executeFunctionOrValue } from '../execute-function-or-value'
+import { CheckboxSettingsMetadata } from '../settings-metadata'
 
 interface Props {
   metadata: CheckboxSettingsMetadata
@@ -34,11 +34,9 @@ export function SettingsCheckbox (props: Props): JSX.Element {
   }
 
   return (
-    <Form.Group as={Row} className='settings-checkbox' controlId={id}>
-      <Form.Label column sm='2'>{label}</Form.Label>
-      <Col sm='10'>
-        <Form.Switch onChange={onChange} checked={value} />
-      </Col>
-    </Form.Group>
+    <>
+      <label htmlFor={id}>{label}</label>
+      <Form.Switch id={id} onChange={onChange} checked={value} />
+    </>
   )
 }

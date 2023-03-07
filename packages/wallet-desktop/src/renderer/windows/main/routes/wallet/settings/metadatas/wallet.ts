@@ -4,9 +4,12 @@ import { v4 as uuid } from 'uuid'
 import { Provider, SharedMemory, showToastAction } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 
-import { ArraySettingsMetadata, ObjectSettingsMetadata, MetadataRecord } from '../settings-metadata'
+import { ArraySettingsMetadata, MetadataRecord, ObjectSettingsMetadata } from '../settings-metadata'
 
-const defaultProvider = { name: 'Ganache', network: 'ganache', rpcUrl: ['http://localhost:8545'] }
+const defaultProvider = (): Provider => {
+  const id = uuid()
+  return { name: id, network: id, rpcUrl: ['http://localhost:8545'] }
+}
 
 const validProvider = (provider: Provider, oldProvider: Provider, settings: SharedMemory['settings'], oldSettings: SharedMemory['settings'], dispatch: ActionDispatcher): boolean => {
   // If there are multiple providers with the same provider you can delete one of them
@@ -57,10 +60,7 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
   canDelete: (i, provider, sharedMemory, dispatch) => {
     return validProvider(provider, provider, sharedMemory.settings, sharedMemory.settings, dispatch)
   },
-  defaults: (parent, value) => ({
-    ...defaultProvider,
-    name: uuid()
-  }),
+  defaults: (parent, value) => defaultProvider(),
   innerType: (i, parent) => {
     const providerMetadata: ObjectSettingsMetadata<Provider> = {
       label: (key, provider) => provider.name,

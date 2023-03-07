@@ -33,17 +33,19 @@ export function Toast (props: ToastProps): JSX.Element {
 
   return (
     <div className={joinClassNames('toast', toastType)}>
-      <div className='toast-content'>
-        <FontAwesomeIcon className='icon type' icon={toastIcon} />
-        <div className='toast-text'>
-          <span className='message'>{toast.message}</span>
-          <span className='details'>{toast.details}</span>
-        </div>
+      {/* <div className='toast-content'>
+      </div> */}
+      <FontAwesomeIcon className='icon type' icon={toastIcon} />
+      <div className='toast-text'>
+        <span className='toast-message'>{toast.message}</span>
+        <span className='toast-details'>{toast.details}</span>
       </div>
-      <FontAwesomeIcon
-        className='icon close' icon={faTimes}
-        onClick={closeToast}
-      />
+      <div className='toast-close'>
+        <FontAwesomeIcon
+          className='icon close' icon={faTimes}
+          onClick={closeToast}
+        />
+      </div>
     </div>
   )
 }

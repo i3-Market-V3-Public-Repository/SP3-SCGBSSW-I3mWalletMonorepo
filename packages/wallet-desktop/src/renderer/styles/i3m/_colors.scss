@@ -294,15 +294,28 @@ $cyans: (
   "cyan-900": $cyan-900
 ) !default;
 
+$dark-background: linear-gradient(to bottom, #202531, #3D465C 100%);
+$light-background: linear-gradient(to bottom left, white, #D2D6E1);
 
-$i3m-green: #4CAF50;
+$dark-foreground: #202531;
+$light-foreground: #D2D6E1;
+
+// $i3m-green: #4CAF50;
+// $i3m-green: #119540;
+$i3m-green: #199545;
+
+$i3m-red: #e85c41;
+$i3m-success: #4DD470;
+$i3m-info: #388EE8;
+$i3m-warning: #F6C133;
+$i3m-danger: #F5426B;
 
 $primary:       $i3m-green !default;
 $secondary:     $gray-600 !default;
-$success:       $green !default;
-$info:          $cyan !default;
-$warning:       $yellow !default;
-$danger:        $red !default;
+$success:       $i3m-success !default;
+$info:          $i3m-info !default;
+$warning:       $i3m-warning !default;
+$danger:        $i3m-danger !default;
 $light:         $gray-100 !default;
 $dark:          $gray-900 !default;
 
@@ -317,59 +330,16 @@ $dark:          $gray-900 !default;
 
 
 // Scroll
-$scroll-bg: transparentize($secondary, $amount: 0.2);
+$scroll-opacity: 0.5;
+$scroll-hover-opacity: 0.7;
+$scroll-bg: transparentize(bootstrapUtils.tint-color($dark, 40%), 1 - $scroll-opacity);
 
-$scroll-track-bg: transparentize($light, $amount: 0.9);
-$scroll-track-border-color: transparentize($dark, $amount: 0.8);
+$scroll-track-bg: transparentize(bootstrapUtils.tint-color($dark, 25%), 1);
+$scroll-track-border-color: rgba(0, 0, 0, 0);
 
-$scroll-thumb-bg: $scroll-bg;
-$scroll-thumb-hover-bg: transparentize(bootstrapUtils.shade-color($primary, 10%), $amount: 0.2);
-$scroll-thumb-active-bg: transparentize(bootstrapUtils.shade-color($primary, 20%), $amount: 0.2);
+$scroll-thumb-bg: transparentize(bootstrapUtils.tint-color($dark, 50%), 1 - $scroll-opacity);
+$scroll-thumb-hover-bg: transparentize(bootstrapUtils.tint-color($dark, 50%), 1 - $scroll-hover-opacity);
+$scroll-thumb-active-bg: transparentize($primary, 1 - $scroll-hover-opacity);
 
-$scroll-corner-bg: $scroll-bg;
-$scroll-corner-border-color: $scroll-bg;
-
-
-
-// @mixin scroll {
-
-//   .scroll {
-//     overflow: auto;
-//     height: 100%;
-//     display: flex;
-//   }
-  
-//   /* width */
-//   ::-webkit-scrollbar {
-//     width: 13px;
-//   }
-  
-//   /* Track */
-//   ::-webkit-scrollbar-track {
-//     background: transparentize($light, $amount: 0.9);
-//     border: 2px solid transparentize($dark, $amount: 0.8);
-//   }
-  
-//   /* Handle */
-//   ::-webkit-scrollbar-thumb {
-//     background: transparentize($dark-gray, $amount: 0.6);
-//   }
-  
-//   /* Handle on hover */
-//   ::-webkit-scrollbar-thumb:hover {
-//     background: transparentize($dark-gray, $amount: 0.2);
-  
-//     border-radius: 2px;
-//   }
-  
-//   ::-webkit-scrollbar-thumb:active {
-//     background: transparentize($secondary, $amount: 0.2);
-//   }
-  
-//   ::-webkit-scrollbar-corner {
-//     background: transparentize($dark-gray, $amount: 0.8);
-//     border: 1px solid transparentize($dark-gray, $amount: 0.7);
-//   }
-  
-//   }
-  
+$scroll-corner-bg: $scroll-track-bg;
+$scroll-corner-border-color: $scroll-track-border-color;

@@ -5,7 +5,7 @@ import { logoutCloudAction, stopCloudSyncAction } from '@wallet/lib'
 import { useAction } from '@wallet/renderer/communication'
 import { Button, ButtonGroup, Card } from 'react-bootstrap'
 
-export function Authenticated (): JSX.Element {
+export function Connected (): JSX.Element {
   const dispatch = useAction()
 
   const onLogout = (): void => {

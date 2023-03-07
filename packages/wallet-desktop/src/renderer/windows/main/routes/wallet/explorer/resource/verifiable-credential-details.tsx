@@ -2,6 +2,8 @@ import * as React from 'react'
 
 import { Identity, VerifiableCredentialResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
+import { Details, JsonUi } from '@wallet/renderer/components'
+import { getClaims } from '@wallet/renderer/util'
 
 interface Props {
   vc: VerifiableCredentialResource
@@ -9,49 +11,39 @@ interface Props {
 
 export function VerifiableCredentialDetails (props: Props): JSX.Element {
   const { vc } = props
-
   const [sharedMemory] = useSharedMemory()
 
   let identity: Identity | undefined
   if (vc.identity !== undefined) {
     identity = sharedMemory.identities[vc.identity]
   }
+  const alias = identity?.alias
 
   return (
-    <div className='details-body'>
-      <div className='details-param inline'>
-        <span>Id:</span>
-        <input type='text' disabled value={vc.id} />
-      </div>
-      <div className='details-param inline'>
-        <span>Type:</span>
-        <input type='text' disabled value='Verifiable Credential' />
-      </div>
-      {identity !== undefined
-        ? (
-          <div className='details-param inline'>
-            <span>From identity:</span>
-            <input type='text' disabled value={identity.alias} />
-          </div>
-        ) : null}
-      <div className='details-param'>
-        <span>Issuer:</span>
-        <input type='text' disabled value={vc.resource.issuer.id} />
-      </div>
-      <div className='details-param'>
-        <span>Issuance date:</span>
-        <input type='text' disabled value={vc.resource.issuanceDate.toString()} />
-      </div>
-      {Object.keys(vc.resource.credentialSubject)
-        .filter((claimType) => claimType !== 'id')
-        .map((claimType, i) => {
-          return (
-            <div key={i} className='details-param inline'>
-              <span>Claim "{claimType}":</span>
-              <input type='text' disabled value={vc.resource.credentialSubject[claimType]} />
-            </div>
-          )
-        })}
-    </div>
+    <>
+      <Details.Body>
+        <Details.Title>Summary</Details.Title>
+        <Details.Grid>
+          <Details.Input label='ID' value={vc.id} />
+          <Details.Input label='Type' value='Verifiable Credential' />
+          {alias !== undefined
+            ? (
+              <Details.Input label='From identity' value={alias} />
+            ) : null}
+          <Details.Input label='Issuance date' value={vc.resource.issuanceDate.toString()} />
+        </Details.Grid>
+      </Details.Body>
+      <Details.Body>
+        <Details.Title>Content</Details.Title>
+        <JsonUi
+          prop='Claims'
+          value={getClaims(vc.resource)}
+        />
+        <JsonUi
+          prop='Data'
+          value={vc.resource}
+        />
+      </Details.Body>
+    </>
   )
 }

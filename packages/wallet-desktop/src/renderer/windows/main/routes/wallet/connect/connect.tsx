@@ -4,7 +4,7 @@ import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
 import { walletProtocolPairingAction } from '@wallet/lib'
-import { HorizontalAccordion } from '@wallet/renderer/components'
+import { HorizontalAccordion, Section } from '@wallet/renderer/components'
 import { useSharedMemory, useAction } from '@wallet/renderer/communication'
 import { joinClassNames } from '@wallet/renderer/util'
 
@@ -30,29 +30,31 @@ export function Connect (): JSX.Element {
 
   return (
     <HorizontalAccordion className='connect'>
-      <div className='center-vertically'>
-        <div className={joinClassNames(
-          'wallet-protocol',
-          'connect-box',
-          pairing ? 'pairing' : undefined
-        )}
-        >
-          <span className='title'>You can connect applications using the wallet protocol</span>
-          <span className='message'>{message}</span>
-          <span className='pin'>{pin}</span>
-          <div className='sync'>
-            <div className='radar'>
-              <Wave />
-              <div className='circle one' />
-              <div className='circle two' />
-              <div className='circle three' />
-            </div>
-            <div className='sync-button' onClick={startPairing}>
-              <FontAwesomeIcon icon={faLink} />
+      <Section title='Connect'>
+        <div className='center-vertically'>
+          <div className={joinClassNames(
+            'wallet-protocol',
+            'connect-box',
+            pairing ? 'pairing' : undefined
+          )}
+          >
+            <span className='title'>You can connect applications using the wallet protocol</span>
+            <span className='message'>{message}</span>
+            <span className='pin'>{pin}</span>
+            <div className='sync'>
+              <div className='radar'>
+                <Wave />
+                <div className='circle one' />
+                <div className='circle two' />
+                <div className='circle three' />
+              </div>
+              <div className='sync-button' onClick={startPairing}>
+                <FontAwesomeIcon icon={faLink} />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Section>
     </HorizontalAccordion>
   )
 }

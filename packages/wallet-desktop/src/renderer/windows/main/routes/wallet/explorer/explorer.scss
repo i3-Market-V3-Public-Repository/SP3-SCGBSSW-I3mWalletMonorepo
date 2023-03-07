@@ -1,119 +1,14 @@
 
 
 .explorer {
-  display: flex;
-  flex-direction: row;
-  height: 100%;
-  color: #D2D6E1;
-  background-color: #404A61;
 
   .explorer-content {
     display: flex;
     flex-direction: column;
-    min-width: 200px;
-    max-width: 500px;
   }
 
-  .details {
-    display: flex;
-    flex-direction: column;
-    flex: 3;
-
-    .details-body {
-      padding: 10px;
-      flex: 1;
-      font-size: 16px;
-      display: flex;
-      flex-direction: column;
-      overflow: auto;
-
-      .details-title {
-        font-size: 20px;
-        padding: 10px 0px;
-      }
-
-      .details-buttons {
-        padding: 0 10px;
-      }
-
-      .details-param {
-        display: flex;
-        flex-direction: column;
-  
-        &.inline {
-          flex-direction: row;
-          align-items: center;
-
-          input:disabled {
-            margin-left: 5px;          
-          }
-        }
-
-        &.expand {
-          flex: 1;
-
-          textarea {
-            padding: 10px;
-            height: 100%;
-            resize: none;
-          }
-        }
-  
-        > * {
-          margin-bottom: 10px;
-        }
-  
-        input:disabled {
-          font-size: 16px;
-          padding: 5px;
-          cursor: pointer;
-        }
-  
-        .resources {
-          width: 100%;
-
-          .resource::before {
-            content: "•";
-            margin-right: 10px;
-            margin-left: 20px;
-          }
-  
-          .resource {
-            display: flex;
-            flex-direction: row;
-            margin-bottom: 20px;
-          }
-        }
-      }
-    }
-
-    .identity-buttons {
-      display: flex;
-      flex-direction: row-reverse;
-    }
-
-    button {
-      font-size: 16px;
-
-      background-color: #4CAF50; /* Green */
-      border: none;
-      color: white;
-      padding: 10px 14px;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      border-radius: 2px;
-      font-size: 16px;
-      margin-bottom: 5px;
-      margin-right: 5px;
-
-      cursor: pointer;
-
-      &:disabled {
-        background-color: #4caf4f69; /* Green */
-        cursor: not-allowed;
-      }
-    }
+  .explorer-details {
+    min-width: 200px;
   }
 
   .wallet-form {

@@ -3,10 +3,10 @@ import * as React from 'react'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { createWalletAction } from '@wallet/lib'
-import { useSharedMemory, useAction } from '@wallet/renderer/communication'
-import { Section, HorizontalAccordion, Resizeable, DividerOperation, TreeList, InterfaceObject } from '@wallet/renderer/components'
+import { useAction, useSharedMemory } from '@wallet/renderer/communication'
+import { DividerOperation, InterfaceObject, Resizeable, Section, TreeList } from '@wallet/renderer/components'
 import { usePresistentState } from '@wallet/renderer/hooks'
-import { Details } from './details'
+import { DetailsSwitch } from './details-switch'
 
 import './explorer.scss'
 import { buildWalletTreeList } from './wallet-tree-list'
@@ -50,20 +50,21 @@ export function Explorer (): JSX.Element {
   })
 
   return (
-    <HorizontalAccordion className='explorer'>
-      <Resizeable className='explorer-content' stateId='wallet.explorer.tree-list' resizeWidth>
-        <Section title='Wallets' operations={walletOperations}>
-          <div className='scroll' ref={listRef}>
-            <TreeList
-              listRef={listRef} items={items}
-              selectedState={selectedState}
-              cursorState={cursorState}
-              collapsedState={treeViewState}
-            />
-          </div>
+    <Resizeable className='explorer'>
+      <Resizeable.Dynamic className='explorer-content' stateId='wallet.explorer.tree-list' resizeWidth>
+        <Section title='Explorer' operations={walletOperations} scrollRef={listRef} scroll>
+          <TreeList
+            listRef={listRef} items={items}
+            selectedState={selectedState}
+            cursorState={cursorState}
+            collapsedState={treeViewState}
+            paddingBottom={15}
+          />
         </Section>
-      </Resizeable>
-      <Details item={selected} />
-    </HorizontalAccordion>
+      </Resizeable.Dynamic>
+      <Resizeable.Fixed>
+        <DetailsSwitch item={selected} />
+      </Resizeable.Fixed>
+    </Resizeable>
   )
 }

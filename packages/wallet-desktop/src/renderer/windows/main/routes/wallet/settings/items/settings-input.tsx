@@ -1,11 +1,11 @@
 import * as React from 'react'
 
-import _ from 'lodash'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
+import _ from 'lodash'
 
-import { InputSettingsMetadata } from '../settings-metadata'
-import { Col, Form, Row } from 'react-bootstrap'
+import { Form } from 'react-bootstrap'
 import { executeFunctionOrValue } from '../execute-function-or-value'
+import { InputSettingsMetadata } from '../settings-metadata'
 
 interface Props {
   metadata: InputSettingsMetadata
@@ -34,11 +34,9 @@ export function SettingsInput (props: Props): JSX.Element {
   }
 
   return (
-    <Form.Group as={Row} className='settings-input' controlId={id}>
-      <Form.Label column sm='2'>{label}</Form.Label>
-      <Col sm='10'>
-        <Form.Control type='text' size='sm' placeholder={metadata.placeholder} onChange={onChange} value={value} />
-      </Col>
-    </Form.Group>
+    <>
+      <label htmlFor={id}>{label}</label>
+      <Form.Control id={id} type='text' size='sm' placeholder={metadata.placeholder} onChange={onChange} value={value} />
+    </>
   )
 }

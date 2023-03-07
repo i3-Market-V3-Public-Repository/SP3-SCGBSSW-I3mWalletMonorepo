@@ -1,0 +1,23 @@
+
+
+.box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-width: 1000px;
+
+  > .header {
+    padding-left: 10px;
+    background-color: #30384977;
+    border: 2px solid #1A1E27;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  > .body {
+    flex: 1;
+    color: #202531;
+    background-image: linear-gradient(to bottom left, white, #D2D6E1);
+  }
+}

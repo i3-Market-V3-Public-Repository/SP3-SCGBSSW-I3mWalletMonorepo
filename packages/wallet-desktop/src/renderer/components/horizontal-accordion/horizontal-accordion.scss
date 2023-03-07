@@ -3,20 +3,14 @@
   flex-direction: row;
   height: 100%;
   width: 100%;
-  background-image: linear-gradient(to bottom, #202531, #3D465C 100%);
-  color: #D2D6E1;
-
-  > * {
-    overflow: auto;
-  }
 
   >.accordion-fixed {
-    color: #D2D6E1;
+    color: i3m.$light-foreground;
   }
 
   >.accordion-extendible {
     flex: 1;
-    color: #202531;
-    background-image: linear-gradient(to bottom left, white, #D2D6E1);
+    color: i3m.$dark-foreground;
+    background-image: i3m.$light-background;
   }
 }

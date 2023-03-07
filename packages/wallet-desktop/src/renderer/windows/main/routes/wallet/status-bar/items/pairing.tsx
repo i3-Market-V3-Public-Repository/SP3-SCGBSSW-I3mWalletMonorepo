@@ -7,11 +7,19 @@ import Loader from 'react-spinners/PuffLoader'
 import { walletProtocolPairingAction } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { StatusBarItem } from './status-bar-item'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { OverlayInjectedProps } from 'react-bootstrap/esm/Overlay'
 
 export function Pairing (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
   const walletProtocol = sharedMemory.connectData.walletProtocol
+
+  const renderTooltip = (props: OverlayInjectedProps): JSX.Element => (
+    <Tooltip id='button-tooltip' {...props}>
+      Start pairing protocol
+    </Tooltip>
+  )
 
   const textStyle: React.HTMLAttributes<any>['style'] = {}
   let title: string
@@ -22,7 +30,7 @@ export function Pairing (): JSX.Element | null {
   }
 
   if (walletProtocol.connectString === undefined) {
-    title = 'Start Pairing'
+    title = 'Connect'
     icon = <FontAwesomeIcon icon={faLink} className='icon' />
   } else {
     icon = <Loader size='20px' className='loader' color='white' />
@@ -31,9 +39,15 @@ export function Pairing (): JSX.Element | null {
   }
 
   return (
-    <StatusBarItem onClick={onClick}>
-      {icon}
-      <span style={textStyle}>{title}</span>
-    </StatusBarItem>
+    <OverlayTrigger
+      placement='top'
+      delay={{ show: 250, hide: 400 }}
+      overlay={renderTooltip}
+    >
+      <StatusBarItem onClick={onClick}>
+        {icon}
+        <span style={textStyle}>{title}</span>
+      </StatusBarItem>
+    </OverlayTrigger>
   )
 }

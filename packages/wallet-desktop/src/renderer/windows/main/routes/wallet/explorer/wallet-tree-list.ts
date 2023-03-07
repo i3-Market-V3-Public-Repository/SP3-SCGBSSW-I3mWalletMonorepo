@@ -5,6 +5,7 @@ import { createIdentityAction, deleteIdentityAction, deleteResourceAction, delet
 import { ActionDispatcher } from '@wallet/renderer/communication'
 import { InterfaceObject, Menu, TreeListItem } from '@wallet/renderer/components'
 import { ContextMenuItem } from '@wallet/renderer/components/context-menu/context-menu-item'
+import { getResourceName } from '@wallet/renderer/util'
 
 type ItemEventHandler = (item: InterfaceObject) => void
 type DeleteEventHandler = () => void
@@ -27,7 +28,7 @@ function buildResourceTreeListItem (props: TreeListProps, parent: TreeListItem<a
     item: resource,
     id: resourceId,
     type: 'resource',
-    text: `[${resource.type}] ${resource.name ?? resource.id}`,
+    text: getResourceName(resource),
     icon: faQuestionCircle,
     parent,
     children: resourceChildren,

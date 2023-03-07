@@ -1,7 +1,10 @@
 import * as React from 'react'
 
-import { NonRepudiationProofResource } from '@i3m/base-wallet'
+import { Identity, NonRepudiationProofResource } from '@i3m/base-wallet'
 import { NrProofPayload } from '@i3m/non-repudiation-library/types'
+import { useSharedMemory } from '@wallet/renderer/communication'
+import { Details, JsonUi } from '@wallet/renderer/components'
+import { getResourceName } from '@wallet/renderer/util'
 import { decodeJwt } from 'jose'
 
 interface Props {
@@ -10,29 +13,49 @@ interface Props {
 
 export function ProofDetails (props: Props): JSX.Element {
   const { resource } = props
-  const proofPayload = decodeJwt(resource.resource) as unknown as NrProofPayload
+  const name = getResourceName(props.resource)
+  const [sharedMemory] = useSharedMemory()
+  // const dispatch = useAction()
+
+  let proofPayload: NrProofPayload | undefined
+  try {
+    proofPayload = decodeJwt(resource.resource) as unknown as NrProofPayload
+  } catch {
+    // TODO: Cannot use dispach action because it refereshes this component and creates an infinite loop
+    // dispatch(showToastAction.create({
+    //   message: 'Invalid resource',
+    //   details: `Cannot verify the resource ${name}`,
+    //   type: 'error'
+    // }))
+  }
+  const proofType = proofPayload?.proofType ?? 'Unknown'
+
+  let identity: Identity | undefined
+  if (resource.identity !== undefined) {
+    identity = sharedMemory.identities[resource.identity]
+  }
+  const identityAlias = identity?.alias
 
   return (
-    <div className='details-body'>
-      {resource.name !== undefined
-        ? (
-          <div className='details-param inline'>
-            <span>Name:</span>
-            <input type='text' disabled value={resource.name} />
-          </div>
-        ) : null}
-      <div className='details-param inline'>
-        <span>Id:</span>
-        <input type='text' disabled value={resource.id} />
-      </div>
-      <div className='details-param inline'>
-        <span>Type:</span>
-        <input type='text' disabled value={'Proof: ' + proofPayload.proofType} />
-      </div>
-      <div className='details-param expand'>
-        <span>Data:</span>
-        <textarea disabled value={JSON.stringify({ claims: proofPayload, jws: resource.resource }, undefined, 2)} />
-      </div>
-    </div>
+    <>
+      <Details.Body>
+        <Details.Title>Summary</Details.Title>
+        <Details.Grid>
+          <Details.Input label='Id' value={resource.id} />
+          <Details.Input label='Name' value={name} />
+          <Details.Input label='Resource type' value={resource.type} />
+          <Details.Input label='Proof type' value={proofType} />
+          {identityAlias !== undefined
+            ? (
+              <Details.Input label='From identity' value={identityAlias} />
+            ) : null}
+        </Details.Grid>
+      </Details.Body>
+      <Details.Body>
+        <Details.Title>Content</Details.Title>
+        <JsonUi prop='Claims' value={{ claims: proofPayload }} />
+        <JsonUi prop='Data' value={{ claims: resource.resource }} />
+      </Details.Body>
+    </>
   )
 }

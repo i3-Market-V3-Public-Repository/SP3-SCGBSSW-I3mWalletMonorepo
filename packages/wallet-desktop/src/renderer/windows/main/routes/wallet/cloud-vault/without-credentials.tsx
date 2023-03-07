@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap'
 import { loginCloudAction, registerCloudAction } from '@wallet/lib'
 import { useAction } from '@wallet/renderer/communication'
 
-export function Authenticate (): JSX.Element {
+export function WithoutCredentials (): JSX.Element {
   const dispatch = useAction()
 
   const onLogin = (): void => {

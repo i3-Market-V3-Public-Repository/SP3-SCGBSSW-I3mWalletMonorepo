@@ -19,7 +19,7 @@ export const developerMetadata: MetadataRecord = {
       description: {
         visible: (metadata, value) => value,
         message: (
-          <Alert variant='light'>
+          <Alert>
             <ul>
               <li>OpenAPI Specification: <ExternalLink href='http://localhost:29170' /></li>
               <li>Pairing tests: <ExternalLink href='http://localhost:29170/pairing' /></li>

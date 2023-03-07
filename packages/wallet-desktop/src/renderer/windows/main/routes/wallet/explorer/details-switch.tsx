@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { useSharedMemory } from '@wallet/renderer/communication'
-import { Extendible, InterfaceObject } from '@wallet/renderer/components'
+import { InterfaceObject, Section } from '@wallet/renderer/components'
 
 import { IdentityDetails } from './identity'
 import { ResourceDetails } from './resource'
@@ -11,26 +11,30 @@ export interface Props {
   item?: InterfaceObject
 }
 
-export function Details (props: Props): JSX.Element | null {
+export function DetailsSwitch (props: Props): JSX.Element | null {
   const { item } = props
-  if (item === undefined) {
-    return <Extendible className='details' />
-  }
-
   const [sharedMemory] = useSharedMemory()
-  switch (item.type) {
+
+  let children: JSX.Element
+
+  switch (item?.type) {
     case 'wallet': {
       const wallet = sharedMemory.settings.wallet
       const walletInfo = wallet.wallets[item.item]
-      return <WalletDetails wallet={walletInfo} />
+      children = <WalletDetails wallet={walletInfo} />
+      break
     }
     case 'identity': {
-      return <IdentityDetails identity={item.item} />
+      children = <IdentityDetails identity={item.item} />
+      break
     }
     case 'resource': {
-      return <ResourceDetails resource={item.item} />
+      children = <ResourceDetails resource={item.item} />
+      break
     }
     default:
-      return null
+      return <Section title='' light />
   }
+
+  return children
 }

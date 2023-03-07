@@ -1,5 +1,14 @@
 
 .content {
-    flex: 1;
-    font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  flex: 1;
+  font-size: 16px;
+
+  overflow: hidden;
+
+  background-image: i3m.$dark-background;
+  color: i3m.$light-foreground;
 }
