@@ -1,11 +1,11 @@
 
 import * as React from 'react'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLink } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { walletProtocolPairingAction } from '@wallet/lib'
-import { HorizontalAccordion, Section } from '@wallet/renderer/components'
-import { useSharedMemory, useAction } from '@wallet/renderer/communication'
+import { useAction, useSharedMemory } from '@wallet/renderer/communication'
+import { Section } from '@wallet/renderer/components'
 import { joinClassNames } from '@wallet/renderer/util'
 
 import './connect.scss'
@@ -29,32 +29,30 @@ export function Connect (): JSX.Element {
   }
 
   return (
-    <HorizontalAccordion className='connect'>
-      <Section title='Connect'>
-        <div className='center-vertically'>
-          <div className={joinClassNames(
-            'wallet-protocol',
-            'connect-box',
-            pairing ? 'pairing' : undefined
-          )}
-          >
-            <span className='title'>You can connect applications using the wallet protocol</span>
-            <span className='message'>{message}</span>
-            <span className='pin'>{pin}</span>
-            <div className='sync'>
-              <div className='radar'>
-                <Wave />
-                <div className='circle one' />
-                <div className='circle two' />
-                <div className='circle three' />
-              </div>
-              <div className='sync-button' onClick={startPairing}>
-                <FontAwesomeIcon icon={faLink} />
-              </div>
+    <Section title='Connect' className='connect'>
+      <div className='center-vertically'>
+        <div className={joinClassNames(
+          'wallet-protocol',
+          'connect-box',
+          pairing ? 'pairing' : undefined
+        )}
+        >
+          <span className='title'>You can connect applications using the wallet protocol</span>
+          <span className='message'>{message}</span>
+          <span className='pin'>{pin}</span>
+          <div className='sync'>
+            <div className='radar'>
+              <Wave />
+              <div className='circle one' />
+              <div className='circle two' />
+              <div className='circle three' />
+            </div>
+            <div className='sync-button' onClick={startPairing}>
+              <FontAwesomeIcon icon={faLink} />
             </div>
           </div>
         </div>
-      </Section>
-    </HorizontalAccordion>
+      </div>
+    </Section>
   )
 }

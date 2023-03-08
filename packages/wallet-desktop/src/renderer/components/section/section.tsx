@@ -13,19 +13,21 @@ export interface DividerOperation {
 }
 
 type DivProps = React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
-type Props = React.PropsWithChildren<{
+export type SectionProps = React.PropsWithChildren<{
   title: string
   light?: boolean
   scroll?: boolean
+  center?: boolean
   scrollRef?: React.LegacyRef<HTMLDivElement>
   operations?: DividerOperation[]
 } & DivProps>
 
-export function Section (props: Props): JSX.Element {
+export function Section (props: SectionProps): JSX.Element {
   const operations = props.operations ?? []
-  const { className, title, children, light, scroll, scrollRef, ...divProps } = props
+  const { className, title, children, light, scroll, center, scrollRef, ...divProps } = props
   const scrollClass = scroll === true ? 'scroll' : undefined
   const lightClass = light === true ? 'light' : undefined
+  const centerClass = center === true ? 'center' : undefined
 
   return (
     <div className={joinClassNames('section', className, lightClass)} {...divProps}>
@@ -38,7 +40,7 @@ export function Section (props: Props): JSX.Element {
           />
         ))}
       </div>
-      <div className={joinClassNames('body', scrollClass)} ref={scrollRef}>
+      <div className={joinClassNames('body', scrollClass, centerClass)} ref={scrollRef}>
         {children}
       </div>
     </div>

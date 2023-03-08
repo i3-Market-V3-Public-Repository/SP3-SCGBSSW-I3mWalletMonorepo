@@ -64,16 +64,16 @@ export class CloudVaultManager {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
         if (cloud?.credentials !== undefined) {
-          const asyncLogin = this.loginTask(task, cloud.credentials)
+          const asyncLogin = this.loginTask(task, cloud)
           handlePromise(this.locals, asyncLogin)
         }
       }
     })
   }
 
-  protected resetClient (): void {
+  protected resetClient (cloud?: CloudVaultPrivateSettings): void {
     const { sharedMemoryManager: shm } = this.locals
-    const newUrl = CloudVaultManager.buildCloudUrl(shm.memory.settings.cloud)
+    const newUrl = CloudVaultManager.buildCloudUrl(cloud ?? shm.memory.settings.cloud)
     if (this.url !== newUrl) {
       if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
       this.client = new VaultClient(this.url)
@@ -200,7 +200,7 @@ export class CloudVaultManager {
 
           if (loginBackBuilder.compare(relogin, option)) {
             try {
-              await this.loginTask(task, credentials)
+              await this.loginTask(task, { credentials })
               sync = true
             } catch (err: unknown) {
               await handleError(this.locals, err)
@@ -252,7 +252,7 @@ export class CloudVaultManager {
     }
 
     if (syncCtx.direction === undefined) {
-      const fixedRemoteTimestamp = syncCtx.remoteTimestamp ?? 0
+      const fixedRemoteTimestamp = syncCtx.remoteTimestamp ?? this.client.timestamp ?? 0
       const fixedLocalTimestamp = syncCtx.publicCloud?.timestamp ?? 0
       const unsyncedChanges = syncCtx.publicCloud?.unsyncedChanges ?? false
 
@@ -361,12 +361,13 @@ export class CloudVaultManager {
     return vc
   }
 
-  async registerTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<Credentials> {
+  async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<Credentials> {
     const errorMessage = 'Vault user registration error'
 
-    this.resetClient()
+    this.resetClient(cloud)
     await this.client.initialized
 
+    let credentials = cloud?.credentials
     if (credentials === undefined) {
       credentials = await this.getCredentials(errorMessage)
     }
@@ -389,13 +390,14 @@ export class CloudVaultManager {
     return credentials
   }
 
-  async loginTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<void> {
+  async loginTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
-    this.resetClient()
+    this.resetClient(cloud)
     await this.client.initialized
 
+    let credentials = cloud?.credentials
     if (credentials === undefined) {
       credentials = await this.getCredentials(errorMessage)
     }
@@ -411,6 +413,7 @@ export class CloudVaultManager {
   }
 
   async startVaultSyncTask (task: LabeledTaskHandler): Promise<void> {
+    // TODO: Deprecated
     const { dialog } = this.locals
     const errorMessage = 'Vault synchronization error'
 
@@ -431,12 +434,12 @@ export class CloudVaultManager {
     switch (loginOrRegister?.id) {
       case login.id:
         credentials = await this.getCredentials(errorMessage)
-        await this.loginTask(task, credentials)
+        await this.loginTask(task, { credentials })
         break
 
       case register.id:
         credentials = await this.getCredentials(errorMessage)
-        await this.registerTask(task, credentials)
+        await this.registerTask(task, { credentials })
         break
     }
   }
@@ -486,15 +489,20 @@ export class CloudVaultManager {
   }
 
   async login (credentials?: Credentials): Promise<void> {
-    const { taskManager } = this.locals
+    const { taskManager, sharedMemoryManager: shm } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.loginTask(task, credentials)
+      const cloud = {
+        ...shm.memory.settings.cloud,
+        credentials
+      }
+      return await this.loginTask(task, cloud)
     })
   }
 
   async updateStorage (vault: VaultStorage, force?: boolean): Promise<number> {
     try {
+      logger.debug(`Uploading to ${this.client.serverUrl}`)
       return await this.client.updateStorage(vault, force)
     } catch (err: unknown) {
       if (err instanceof VaultError) {

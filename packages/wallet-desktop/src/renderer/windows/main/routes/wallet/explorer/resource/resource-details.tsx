@@ -6,18 +6,18 @@ import { ObjectDetails } from './object-details'
 import { ProofDetails } from './proof-details'
 import { VerifiableCredentialDetails } from './verifiable-credential-details'
 import { getResourceName } from '@wallet/renderer/util'
-import { Details, Section } from '@wallet/renderer/components'
+import { Details, Section, SectionProps } from '@wallet/renderer/components'
 
-interface Props {
-  resource: Resource
+interface Props extends SectionProps {
+  item: Resource
 }
 
 export function ResourceDetails (props: Props): JSX.Element {
-  const { resource } = props
-  const name = getResourceName(props.resource)
+  const { item: resource, title, ...sectionProps } = props
+  const name = getResourceName(props.item)
 
   let child: JSX.Element
-  switch (props.resource.type) {
+  switch (props.item.type) {
     case 'VerifiableCredential':
       child = <VerifiableCredentialDetails vc={resource as VerifiableCredentialResource} />
       break
@@ -36,7 +36,7 @@ export function ResourceDetails (props: Props): JSX.Element {
   }
 
   return (
-    <Section title={name} scroll light>
+    <Section title={name} {...sectionProps}>
       <Details>
         {child}
       </Details>

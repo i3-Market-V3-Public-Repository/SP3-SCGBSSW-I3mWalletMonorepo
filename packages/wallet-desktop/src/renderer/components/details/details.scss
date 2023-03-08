@@ -6,6 +6,7 @@ $details-separator-color: transparentize(bootstrapUtils.tint-color(i3m.$dark, 10
   flex-direction: column;
   height: 100%;
   width: 100%;
+  max-width: 1000px;
   min-width: 350px;
 
   .copy-button {

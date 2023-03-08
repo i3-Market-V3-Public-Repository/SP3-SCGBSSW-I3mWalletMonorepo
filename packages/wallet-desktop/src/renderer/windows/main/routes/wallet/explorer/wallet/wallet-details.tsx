@@ -4,15 +4,15 @@ import { Alert, Button } from 'react-bootstrap'
 
 import { callWalletFunctionAction, WalletInfo } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
-import { Details, Section } from '@wallet/renderer/components'
+import { Details, Section, SectionProps } from '@wallet/renderer/components'
 import { getProvider } from '@wallet/renderer/util'
 
-interface Props {
+interface Props extends SectionProps {
   wallet: WalletInfo
 }
 
 export function WalletDetails (props: Props): JSX.Element {
-  const { wallet } = props
+  const { wallet, title, ...sectionProps } = props
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
@@ -29,7 +29,7 @@ export function WalletDetails (props: Props): JSX.Element {
   }
 
   return (
-    <Section title={wallet.name} scroll light>
+    <Section title={wallet.name} {...sectionProps}>
       <Details>
         <Details.Body>
           <Details.Title>Summary</Details.Title>

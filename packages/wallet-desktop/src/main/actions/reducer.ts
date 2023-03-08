@@ -3,14 +3,16 @@ import { Request, Response } from 'express'
 import Debug from 'debug'
 import { Action, ActionBuilder, GetAction, GetResponse } from '@wallet/lib'
 
-import { Locals, logger, MainContext } from '@wallet/main/internal'
+import { handleErrorCatch, Locals, logger, MainContext } from '@wallet/main/internal'
 import { Module } from './module'
 import { ActionHandler } from './action-handler'
 import { walletModule } from './wallet'
 import { connectModule } from './connect'
 import { systemModule } from './system'
 import { cloudModule } from './cloud'
+import { sharedMemoryModule } from './shared-memory'
 import { ActionResult } from './action-result'
+import { NextAction } from './epic'
 
 const debug = Debug('wallet-desktop:ActionReducer')
 
@@ -40,12 +42,17 @@ export class ActionReducer {
       walletModule,
       connectModule,
       systemModule,
-      cloudModule
+      cloudModule,
+      sharedMemoryModule
     ]
   }
 
   addModule (module: Module): void {
-    module.bindReducer(this.action$, this.handlers, this.locals)
+    const next: NextAction = (action) => {
+      this.reduce(action).catch(...handleErrorCatch(this.locals))
+    }
+
+    module.bind(this.action$, this.handlers, this.locals, next)
   }
 
   async fromApi<B extends Action>(

@@ -1,18 +1,18 @@
 import * as React from 'react'
 
 import { useSharedMemory } from '@wallet/renderer/communication'
-import { InterfaceObject, Section } from '@wallet/renderer/components'
+import { InterfaceObject, Section, SectionProps } from '@wallet/renderer/components'
 
 import { IdentityDetails } from './identity'
 import { ResourceDetails } from './resource'
 import { WalletDetails } from './wallet'
 
-export interface Props {
+export interface Props extends SectionProps {
   item?: InterfaceObject
 }
 
 export function DetailsSwitch (props: Props): JSX.Element | null {
-  const { item } = props
+  const { item, ...sectionProps } = props
   const [sharedMemory] = useSharedMemory()
 
   let children: JSX.Element
@@ -21,19 +21,19 @@ export function DetailsSwitch (props: Props): JSX.Element | null {
     case 'wallet': {
       const wallet = sharedMemory.settings.wallet
       const walletInfo = wallet.wallets[item.item]
-      children = <WalletDetails wallet={walletInfo} />
+      children = <WalletDetails wallet={walletInfo} {...sectionProps} />
       break
     }
     case 'identity': {
-      children = <IdentityDetails identity={item.item} />
+      children = <IdentityDetails identity={item.item} {...sectionProps} />
       break
     }
     case 'resource': {
-      children = <ResourceDetails resource={item.item} />
+      children = <ResourceDetails item={item.item} {...sectionProps} />
       break
     }
     default:
-      return <Section title='' light />
+      return <Section {...sectionProps} />
   }
 
   return children

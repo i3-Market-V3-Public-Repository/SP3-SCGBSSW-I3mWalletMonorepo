@@ -20,12 +20,6 @@ async function executeRuntime (
   setLocals: LocalsSetter
 ): Promise<void> {
   const runtimeManager = new RuntimeManager(ctx, locals, setLocals)
-  runtimeManager.on('ui', async () => {
-    locals.toast.show({
-      message: 'Test',
-      timeout: 0
-    })
-  })
   await setLocals('runtimeManager', runtimeManager)
   await runtimeManager.run()
 }

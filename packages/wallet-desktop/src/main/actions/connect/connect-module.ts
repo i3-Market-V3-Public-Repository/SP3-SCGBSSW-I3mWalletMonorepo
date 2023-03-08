@@ -1,5 +1,5 @@
 import { Module } from '../module'
-import { walletProtocolPairing } from './wallet-protocol-pairing.handler'
+import { walletProtocolPairing } from './handlers'
 
 export const connectModule = new Module({
   handlersBuilders: [

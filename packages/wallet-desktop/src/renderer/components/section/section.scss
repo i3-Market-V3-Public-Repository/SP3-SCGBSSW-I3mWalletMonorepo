@@ -59,6 +59,10 @@
     display: grid;
     flex: 1;
 
+    &.center {
+      justify-items: center;
+    }
+
     > * {
       color: i3m.$light-foreground;
     }

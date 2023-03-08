@@ -2,11 +2,11 @@ import * as React from 'react'
 
 import { Identity, Resource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
-import { Details, JsonUi, Section } from '@wallet/renderer/components'
+import { Details, JsonUi, Section, SectionProps } from '@wallet/renderer/components'
 
 import { getClaims, getResourceName } from '@wallet/renderer/util'
 
-interface Props {
+interface Props extends SectionProps {
   identity: Identity
 }
 
@@ -26,7 +26,7 @@ function resourceSummary (prev: any, resource: Resource): any {
 }
 
 export function IdentityDetails (props: Props): JSX.Element {
-  const { identity } = props
+  const { identity, title, ...sectionProps } = props
   const [sharedMemory] = useSharedMemory()
   const resources = Object.keys(sharedMemory.resources)
     .map(id => sharedMemory.resources[id] as Resource)
@@ -38,7 +38,7 @@ export function IdentityDetails (props: Props): JSX.Element {
   const alias = identity.alias ?? identity.did
 
   return (
-    <Section title={alias} scroll light>
+    <Section title={alias} {...sectionProps}>
       <Details>
         <Details.Body>
           <Details.Title>Summary</Details.Title>

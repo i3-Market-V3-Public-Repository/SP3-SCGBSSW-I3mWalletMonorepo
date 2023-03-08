@@ -2,7 +2,7 @@ import { Observable, Subscription } from 'rxjs'
 import { Action } from '@wallet/lib'
 import { Locals } from '../internal'
 import { ActionHandlerBuilder, ActionHandler } from './action-handler'
-import { Epic } from './epic'
+import { Epic, NextAction } from './epic'
 
 export class Module {
   protected readonly handlerBuilders: ActionHandlerBuilder[]
@@ -15,20 +15,33 @@ export class Module {
     this.subscriptions = []
   }
 
-  bindReducer (
-    reducer$: Observable<Action>,
+  bind (
+    action$: Observable<Action>,
     handlers: Map<string, ActionHandler>,
-    locals: Locals
+    locals: Locals,
+    next: NextAction
   ): void {
     // Bind handlers
     for (const hBuilder of this.handlerBuilders) {
       const handler = hBuilder(locals)
       handlers.set(handler.type, handler)
     }
+
+    for (const eBuilder of this.epics) {
+      this.subscriptions.push(eBuilder(action$, locals, next))
+    }
   }
 
-  // TODO: We might need to implement this??
-  unbindReducer (): void {
+  unbind (handlers: Map<string, ActionHandler>, locals: Locals): void {
+    // TODO: Could be more eficient but I think this will never be used...
+    for (const hBuilder of this.handlerBuilders) {
+      const handler = hBuilder(locals)
+      handlers.delete(handler.type)
+    }
+
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe()
+    }
     throw new Error('Not implemented yet')
   }
 }

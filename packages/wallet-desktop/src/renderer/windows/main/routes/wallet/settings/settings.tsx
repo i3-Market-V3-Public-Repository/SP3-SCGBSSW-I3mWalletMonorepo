@@ -32,7 +32,7 @@ export function Settings (): JSX.Element {
       </Resizeable.Dynamic>
       <Resizeable.Fixed className='settings-editor'>
         {settingsGroup !== undefined ? (
-          <Section title={settingsGroup} scroll light>
+          <Section title={settingsGroup} scroll light center>
             <Form className='settings-form' onSubmit={onSubmit}>
               <div className='settings-items'>
                 {settingsMetadatas[settingsGroup].map((metadata, i) => (

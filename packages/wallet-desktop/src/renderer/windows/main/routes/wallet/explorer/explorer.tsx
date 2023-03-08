@@ -63,7 +63,7 @@ export function Explorer (): JSX.Element {
         </Section>
       </Resizeable.Dynamic>
       <Resizeable.Fixed>
-        <DetailsSwitch item={selected} />
+        <DetailsSwitch title='' light scroll center item={selected} />
       </Resizeable.Fixed>
     </Resizeable>
   )

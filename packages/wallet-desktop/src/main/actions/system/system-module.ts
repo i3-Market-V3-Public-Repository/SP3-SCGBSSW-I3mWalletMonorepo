@@ -1,7 +1,5 @@
 import { Module } from '../module'
-import { reset } from './reset.handler'
-import { closeToast } from './close-toast.handler'
-import { showToast } from './show-toast.handler'
+import { closeToast, reset, showToast } from './handlers'
 
 export const systemModule = new Module({
   handlersBuilders: [
