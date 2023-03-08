@@ -16,9 +16,10 @@ export declare class VaultClient extends EventEmitter {
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
     private _state;
     private _initialized;
+    private _uploading;
     private keyManager?;
     private es?;
-    constructor(serverUrl: string, name?: string);
+    constructor(serverUrl: string, timestamp?: number, name?: string);
     get initialized(): Promise<void>;
     get state(): typeof this._state;
     set state(newState: typeof this._state);
@@ -32,6 +33,7 @@ export declare class VaultClient extends EventEmitter {
     login(username: string, password: string): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
+    private _updateStorage;
     updateStorage(storage: VaultStorage, force?: boolean): Promise<number>;
     deleteStorage(): Promise<void>;
     getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey>;

@@ -111,8 +111,8 @@ describe('Wallet Cloud-Vault', function () {
       }
     }
 
-    client1 = new VaultClient(serverUrl, '1')
-    client2 = new VaultClient(serverUrl, '2')
+    client1 = new VaultClient(serverUrl, undefined, '1')
+    client2 = new VaultClient(serverUrl, undefined, '2')
 
     function getTime (timestamp: number): string {
       const date = new Date(timestamp)

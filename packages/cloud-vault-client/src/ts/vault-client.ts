@@ -27,6 +27,7 @@ export class VaultClient extends EventEmitter {
   private _state: VaultState
 
   private _initialized: Promise<void>
+  private _uploading: Promise<void>
   private keyManager?: KeyManager
 
   private es?: EventSource
@@ -41,6 +42,9 @@ export class VaultClient extends EventEmitter {
     this._state = VAULT_STATE.NOT_INITIALIZED
 
     this._initialized = this.init()
+    this._uploading = new Promise((resolve, reject) => {
+      resolve()
+    })
   }
 
   get initialized (): Promise<void> {
@@ -120,17 +124,21 @@ export class VaultClient extends EventEmitter {
     })
 
     this.es.addEventListener('storage-updated', (e) => {
-      const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
-      if (msg.timestamp !== this.timestamp) {
-        this.timestamp = msg.timestamp
-        this.emit('storage-updated', this.timestamp)
-      }
+      this._uploading.then(() => {
+        const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
+        if (msg.timestamp !== this.timestamp) {
+          this.timestamp = msg.timestamp
+          this.emit('storage-updated', this.timestamp)
+        }
+      }).catch(reason => {})
     })
 
     this.es.addEventListener('storage-deleted', (e) => {
-      delete this.timestamp
-      this.logout()
-      this.emit('storage-deleted')
+      this._uploading.finally(() => {
+        delete this.timestamp
+        this.logout()
+        this.emit('storage-deleted')
+      }).catch(reason => {})
     })
 
     this.es.onerror = (e) => {
@@ -183,6 +191,7 @@ export class VaultClient extends EventEmitter {
     if (this.state < VAULT_STATE.LOGGED_IN) {
       throw new VaultError('unauthorized', undefined)
     }
+    await this._uploading
 
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
@@ -210,6 +219,7 @@ export class VaultClient extends EventEmitter {
     if (this.state < VAULT_STATE.LOGGED_IN) {
       throw new VaultError('unauthorized', undefined)
     }
+    await this._uploading
 
     const startTs = Date.now()
     this.emit('sync-start', startTs)
@@ -246,7 +256,7 @@ export class VaultClient extends EventEmitter {
     }
   }
 
-  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<number> {
+  private async _updateStorage (storage: VaultStorage, force: boolean = false): Promise<number> {
     if (this.state < VAULT_STATE.LOGGED_IN) {
       throw new VaultError('unauthorized', undefined)
     }
@@ -295,10 +305,26 @@ export class VaultClient extends EventEmitter {
     }
   }
 
+  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<number> {
+    await this._uploading
+    let timestamp: number = 0
+    this._uploading = new Promise((resolve, reject) => {
+      this._updateStorage(storage, force).then((remoteTimestamp) => {
+        timestamp = remoteTimestamp
+        resolve()
+      }).catch((reason) => {
+        reject(reason)
+      })
+    })
+    await this._uploading
+    return timestamp
+  }
+
   async deleteStorage (): Promise<void> {
     if (this.state < VAULT_STATE.LOGGED_IN) {
       throw new VaultError('unauthorized', undefined)
     }
+    await this._uploading
 
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
     try {
