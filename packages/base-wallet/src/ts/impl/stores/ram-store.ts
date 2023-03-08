@@ -40,11 +40,11 @@ export class RamStore<T extends Record<string, any> = Record<string, unknown>> e
     this.emit('changed', Date.now())
   }
 
-  has<Key extends 'accounts'>(key: Key): CanBePromise<boolean> {
+  has (key: string): CanBePromise<boolean> {
     return _.has(this.model, key)
   }
 
-  delete <Key extends 'accounts'>(key: Key): CanBePromise<void> {
+  delete (key: string): CanBePromise<void> {
     this.model = _.omit(this.model, key) as any
     this.emit('changed', Date.now())
   }

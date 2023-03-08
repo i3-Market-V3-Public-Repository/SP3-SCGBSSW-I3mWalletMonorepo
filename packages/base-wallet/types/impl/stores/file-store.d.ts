@@ -46,8 +46,8 @@ export declare class FileStore<T extends Record<string, any> = Record<string, un
     private decryptModel;
     get(key: any, defaultValue?: any): Promise<any>;
     set(keyOrStore: any, value?: any): Promise<void>;
-    has<Key extends 'accounts'>(key: Key): Promise<boolean>;
-    delete<Key extends 'accounts'>(key: Key): Promise<void>;
+    has(key: any): Promise<boolean>;
+    delete(key: any): Promise<void>;
     clear(): Promise<void>;
     getStore(): Promise<T>;
     getPath(): string;

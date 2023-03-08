@@ -17,8 +17,8 @@ export declare class RamStore<T extends Record<string, any> = Record<string, unk
     emit(eventName: string | symbol, ...args: any[]): boolean;
     get(key: any, defaultValue?: any): any;
     set(keyOrStore?: any, value?: any): CanBePromise<void>;
-    has<Key extends 'accounts'>(key: Key): CanBePromise<boolean>;
-    delete<Key extends 'accounts'>(key: Key): CanBePromise<void>;
+    has(key: string): CanBePromise<boolean>;
+    delete(key: string): CanBePromise<void>;
     clear(): CanBePromise<void>;
     getStore(): CanBePromise<T>;
     getPath(): string;

@@ -192,14 +192,14 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
     this.emit('changed', Date.now())
   }
 
-  async has<Key extends 'accounts'>(key: Key): Promise<boolean> {
+  async has (key: any): Promise<boolean> {
     await this.initialized
 
     const model = await this.getModel()
     return _.has(model, key)
   }
 
-  async delete<Key extends 'accounts'>(key: Key): Promise<void> {
+  async delete (key: any): Promise<void> {
     await this.initialized
 
     let model = await this.getModel()
