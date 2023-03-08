@@ -761,7 +761,7 @@ export class BaseWallet<
       rejectMsg: 'Cancel'
     })
     if (confirmation === true) {
-      await this.store.delete(`identities.${did}`)
+      await this.veramo.agent.didManagerDelete({ did })
       const resourcesMap = await this.getResources()
       const resources = Object
         .keys(resourcesMap)

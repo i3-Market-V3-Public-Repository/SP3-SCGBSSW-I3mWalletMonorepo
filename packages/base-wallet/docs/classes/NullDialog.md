@@ -41,7 +41,7 @@
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L33)
+[src/ts/impl/dialogs/null-dialog.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L33)
 
 ## Methods
 
@@ -59,7 +59,7 @@ Dialog.authenticate
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L60)
+[src/ts/impl/dialogs/null-dialog.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L60)
 
 ___
 
@@ -83,7 +83,7 @@ Dialog.confirmation
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L49)
+[src/ts/impl/dialogs/null-dialog.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L49)
 
 ___
 
@@ -113,7 +113,7 @@ Dialog.form
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L64)
+[src/ts/impl/dialogs/null-dialog.ts:64](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L64)
 
 ___
 
@@ -143,7 +143,7 @@ Dialog.select
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L54)
+[src/ts/impl/dialogs/null-dialog.ts:54](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L54)
 
 ___
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L37)
+[src/ts/impl/dialogs/null-dialog.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L37)
 
 ___
 
@@ -188,4 +188,4 @@ Dialog.text
 
 #### Defined in
 
-[src/ts/impl/dialogs/null-dialog.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/37673c9/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L44)
+[src/ts/impl/dialogs/null-dialog.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/dialogs/null-dialog.ts#L44)
