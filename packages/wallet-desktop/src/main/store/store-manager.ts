@@ -169,15 +169,16 @@ export class StoreManager extends StoreBag {
     const afterChange = async (): Promise<void> => {
       await this.onAfterChange(type, store)
     }
-    const afterDelete = async (): Promise<void> => {
-      storeProxy.off('before-set', beforeChange)
-      storeProxy.off('after-set', afterChange)
-      storeProxy.off('after-delete', afterDelete)
-    }
+    // TODO: Unbind events on delete store, for instance, when syncing a different store set
+    // const afterDelete = async (): Promise<void> => {
+    //   storeProxy.off('before-set', beforeChange)
+    //   storeProxy.off('after-set', afterChange)
+    //   storeProxy.off('after-delete', afterChange)
+    // }
 
     storeProxy.on('before-set', beforeChange)
     storeProxy.on('after-set', afterChange)
-    storeProxy.on('after-delete', afterDelete)
+    storeProxy.on('after-delete', afterChange)
 
     const id = StoreBag.getStoreId(type, ...args)
     this.setStoreById(storeProxy.proxy, metadata, id)
