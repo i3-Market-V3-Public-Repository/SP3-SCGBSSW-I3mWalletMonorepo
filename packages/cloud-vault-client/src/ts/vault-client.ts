@@ -32,12 +32,11 @@ export class VaultClient extends EventEmitter {
 
   private es?: EventSource
 
-  constructor (serverUrl: string, timestamp?: number, name?: string) {
+  constructor (serverUrl: string, name?: string) {
     super({ captureRejections: true })
 
     this.name = name ?? randomBytes(16).toString('hex')
     this.serverUrl = serverUrl
-    this.timestamp = timestamp
 
     this._state = VAULT_STATE.NOT_INITIALIZED
 
@@ -159,13 +158,14 @@ export class VaultClient extends EventEmitter {
 
   logout (): void {
     this.es?.close()
+    this.timestamp = undefined
     this.state = VAULT_STATE.LOGGED_IN
 
     this.token = undefined
     this.state = VAULT_STATE.INITIALIZED
   }
 
-  async login (username: string, password: string): Promise<void> {
+  async login (username: string, password: string, timestamp?: number): Promise<void> {
     if (this.state === VAULT_STATE.INITIALIZED) {
       await this.initialized
     }
@@ -184,6 +184,8 @@ export class VaultClient extends EventEmitter {
     this.token = data.token
 
     this.state = VAULT_STATE.LOGGED_IN
+
+    this.timestamp = timestamp
     await this.initEventSourceClient()
   }
 

@@ -19,7 +19,7 @@ export declare class VaultClient extends EventEmitter {
     private _uploading;
     private keyManager?;
     private es?;
-    constructor(serverUrl: string, timestamp?: number, name?: string);
+    constructor(serverUrl: string, name?: string);
     get initialized(): Promise<void>;
     get state(): typeof this._state;
     set state(newState: typeof this._state);
@@ -30,7 +30,7 @@ export declare class VaultClient extends EventEmitter {
     private initEventSourceClient;
     private initKeyManager;
     logout(): void;
-    login(username: string, password: string): Promise<void>;
+    login(username: string, password: string, timestamp?: number): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
     private _updateStorage;
