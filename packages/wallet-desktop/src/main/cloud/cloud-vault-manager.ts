@@ -4,7 +4,8 @@ import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
 import { CloudVaultPrivateSettings, CloudVaultPublicSettings, TaskDescription, DEFAULT_CLOUD_URL, Credentials } from '@wallet/lib'
-import { filledString, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
+import { filledString, getVersionDate, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
+import { StoresBundle } from '../store/store-bundle'
 
 interface DialogOption {
   id: number
@@ -64,7 +65,7 @@ export class CloudVaultManager {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
         if (cloud?.credentials !== undefined) {
-          const asyncLogin = this.loginTask(task, cloud)
+          const asyncLogin = this.login(cloud)
           handlePromise(this.locals, asyncLogin)
         }
       }
@@ -96,6 +97,7 @@ export class CloudVaultManager {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
+            ...mem.cloudVaultData,
             state: 'connected'
           }
         }))
@@ -111,6 +113,7 @@ export class CloudVaultManager {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
+            ...mem.cloudVaultData,
             state: 'disconnected'
           }
         }))
@@ -128,6 +131,7 @@ export class CloudVaultManager {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
+            ...mem.cloudVaultData,
             state: 'sync'
           }
         }))
@@ -143,6 +147,7 @@ export class CloudVaultManager {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
+            ...mem.cloudVaultData,
             state: 'connected'
           }
         }))
@@ -219,73 +224,6 @@ export class CloudVaultManager {
         direction: 'pull',
         force: true
       })
-    }
-  }
-
-  async conflict (syncCtx: SynchronizeContext): Promise<void> {
-    const { dialog } = this.locals
-
-    const optionBuilder = dialog.useOptionsBuilder()
-    const remote = optionBuilder.add('Remote version')
-    const local = optionBuilder.add('Local version')
-    optionBuilder.add('Cancel', 'danger')
-
-    const response = await dialog.select({
-      title: 'Cloud Vault',
-      message: '',
-      allowCancel: true,
-      ...optionBuilder
-    })
-
-    if (optionBuilder.compare(remote, response)) {
-      await this.synchronize({ ...syncCtx, direction: 'pull', force: true })
-    } else if (optionBuilder.compare(local, response)) {
-      await this.synchronize({ ...syncCtx, direction: 'push', force: true })
-    }
-  }
-
-  async synchronize (syncCtx: SynchronizeContext): Promise<void> {
-    const { storeManager } = this.locals
-    if (syncCtx.publicCloud === undefined) {
-      const publicSettings = storeManager.getStore('public-settings')
-      syncCtx.publicCloud = await publicSettings.get('cloud')
-    }
-
-    if (syncCtx.direction === undefined) {
-      const fixedRemoteTimestamp = syncCtx.remoteTimestamp ?? this.client.timestamp ?? 0
-      const fixedLocalTimestamp = syncCtx.publicCloud?.timestamp ?? 0
-      const unsyncedChanges = syncCtx.publicCloud?.unsyncedChanges ?? false
-
-      if (fixedRemoteTimestamp > fixedLocalTimestamp) {
-        if (unsyncedChanges && syncCtx.force !== true) {
-          syncCtx.direction = 'conflict'
-        } else {
-          syncCtx.direction = 'pull'
-        }
-      } else if (unsyncedChanges) {
-        syncCtx.direction = 'push'
-      } else {
-        syncCtx.direction = 'none'
-      }
-    }
-
-    switch (syncCtx.direction) {
-      case 'pull': {
-        const vault = await this.client.getStorage()
-        await storeManager.restoreStoreBundle(vault)
-        break
-      }
-
-      case 'push':
-        await storeManager.uploadStores(syncCtx.force)
-        break
-
-      case 'conflict':
-        await this.conflict(syncCtx)
-        break
-
-      default:
-        logger.info('Already synchronized')
     }
   }
 
@@ -394,6 +332,14 @@ export class CloudVaultManager {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
+    shm.update(mem => ({
+      ...mem,
+      cloudVaultData: {
+        ...mem.cloudVaultData,
+        loggingIn: true
+      }
+    }))
+
     this.resetClient(cloud)
     await this.client.initialized
 
@@ -401,19 +347,26 @@ export class CloudVaultManager {
     if (credentials === undefined) {
       credentials = await this.getCredentials(errorMessage)
     }
+    const publicSettings = storeManager.getStore('public-settings')
+    const publicCloudSettings = await publicSettings.get('cloud')
 
-    await this.client.login(credentials.username, credentials.password)
-    await storeManager.storeCloudCredentials(credentials)
+    await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
+    await storeManager.onCloudLogin(credentials)
     shm.update(mem => ({
       ...mem,
       cloudVaultData: {
-        state: 'connected'
+        ...mem.cloudVaultData,
+        unsyncedChanges: publicCloudSettings?.unsyncedChanges ?? false,
+        loggingIn: false
       }
     }))
   }
 
+  /**
+   * This method is deprecated
+   * @deprecated
+   */
   async startVaultSyncTask (task: LabeledTaskHandler): Promise<void> {
-    // TODO: Deprecated
     const { dialog } = this.locals
     const errorMessage = 'Vault synchronization error'
 
@@ -477,10 +430,12 @@ export class CloudVaultManager {
   }
 
   async logout (): Promise<void> {
+    // We modify the state before the logout to remove the disconnected toast!
     const { sharedMemoryManager: shm } = this.locals
     shm.update(mem => ({
       ...mem,
       cloudVaultData: {
+        ...mem.cloudVaultData,
         state: 'disconnected'
       }
     }))
@@ -488,14 +443,10 @@ export class CloudVaultManager {
     await this.locals.storeManager.onStopCloudService()
   }
 
-  async login (credentials?: Credentials): Promise<void> {
-    const { taskManager, sharedMemoryManager: shm } = this.locals
+  async login (cloud?: CloudVaultPrivateSettings): Promise<void> {
+    const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      const cloud = {
-        ...shm.memory.settings.cloud,
-        credentials
-      }
       return await this.loginTask(task, cloud)
     })
   }
@@ -514,6 +465,121 @@ export class CloudVaultManager {
         }
       }
       throw err
+    }
+  }
+
+  // Syncronization methods
+  async uploadVault (force = false): Promise<void> {
+    if (this.isDisconnected) {
+      return
+    }
+
+    const { sharedMemoryManager: sh, storeManager } = this.locals
+    if (sh.memory.settings.cloud === undefined) {
+      return
+    }
+
+    const publicSettings = storeManager.getStore('public-settings')
+    const cloud = await publicSettings.get('cloud')
+
+    const versionDate = getVersionDate(cloud?.timestamp)
+    logger.debug(`Upload from cloud vault version: ${versionDate}`)
+
+    const bundle = await storeManager.bundleStores()
+    const bundleJSON = JSON.stringify(bundle)
+    const storage = Buffer.from(bundleJSON)
+
+    const newTimestamp = await this.updateStorage({
+      storage, timestamp: cloud?.timestamp
+    }, force)
+
+    storeManager.onCloudSynced(newTimestamp)
+  }
+
+  async restoreVault (vault?: VaultStorage): Promise<void> {
+    const { storeManager } = this.locals
+    if (vault === undefined) {
+      vault = await this.client.getStorage()
+    }
+    if (vault.timestamp === undefined) {
+      throw new WalletDesktopError('Invalid vault timestamp!')
+    }
+
+    const versionDate = getVersionDate(vault.timestamp)
+    logger.debug(`Restoring from cloud vault version: ${versionDate}`)
+
+    // Parse bundle
+    const { storage } = vault
+    const bundleJSON = storage.toString()
+    const bundle = JSON.parse(bundleJSON) as StoresBundle
+
+    await storeManager.restoreStores(bundle)
+    await storeManager.onCloudSynced(vault.timestamp)
+  }
+
+  async conflict (syncCtx: SynchronizeContext): Promise<void> {
+    const { dialog } = this.locals
+
+    const optionBuilder = dialog.useOptionsBuilder()
+    const remote = optionBuilder.add('Remote version')
+    const local = optionBuilder.add('Local version')
+    optionBuilder.add('Cancel', 'danger')
+
+    const response = await dialog.select({
+      title: 'Cloud Vault',
+      message: '',
+      allowCancel: true,
+      ...optionBuilder
+    })
+
+    if (optionBuilder.compare(remote, response)) {
+      await this.synchronize({ ...syncCtx, direction: 'pull', force: true })
+    } else if (optionBuilder.compare(local, response)) {
+      await this.synchronize({ ...syncCtx, direction: 'push', force: true })
+    }
+  }
+
+  async synchronize (syncCtx: SynchronizeContext): Promise<void> {
+    const { storeManager } = this.locals
+    if (syncCtx.publicCloud === undefined) {
+      const publicSettings = storeManager.getStore('public-settings')
+      syncCtx.publicCloud = await publicSettings.get('cloud')
+    }
+
+    if (syncCtx.direction === undefined) {
+      const fixedRemoteTimestamp = syncCtx.remoteTimestamp ?? this.client.timestamp ?? 0
+      const fixedLocalTimestamp = syncCtx.publicCloud?.timestamp ?? 0
+      const unsyncedChanges = syncCtx.publicCloud?.unsyncedChanges ?? false
+
+      if (fixedRemoteTimestamp > fixedLocalTimestamp) {
+        if (unsyncedChanges && syncCtx.force !== true) {
+          syncCtx.direction = 'conflict'
+        } else {
+          syncCtx.direction = 'pull'
+        }
+      } else if (unsyncedChanges) {
+        syncCtx.direction = 'push'
+      } else {
+        syncCtx.direction = 'none'
+      }
+    }
+
+    switch (syncCtx.direction) {
+      case 'pull': {
+        await this.restoreVault()
+        break
+      }
+
+      case 'push':
+        await this.uploadVault(syncCtx.force)
+        break
+
+      case 'conflict':
+        await this.conflict(syncCtx)
+        break
+
+      default:
+        logger.info('Already synchronized')
     }
   }
 }

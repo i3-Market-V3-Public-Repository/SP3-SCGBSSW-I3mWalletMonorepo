@@ -1,29 +1,26 @@
 import { Store } from '@i3m/base-wallet'
-import { VaultStorage } from '@i3m/cloud-vault-client'
 import { KeyObject } from 'crypto'
 
 import {
-  createDefaultPrivateSettings, Credentials, StoreSettings
+  createDefaultPrivateSettings,
+  Credentials, storeChangedAction, StoreClass,
+  StoreClasses, StoreModel, StoreModels, StoreSettings
 } from '@wallet/lib'
 import {
   fixPrivateSettings,
-  fixPublicSettings,
-  handleErrorSync,
-  Locals,
-  logger,
-  MainContext,
+  fixPublicSettings, handleErrorCatch, isEncryptedStore,
+  Locals, MainContext,
   PublicSettingsOptions,
   softwareVersion,
   StoreFeatureOptions,
-  StoreModel,
   WalletDesktopError
 } from '@wallet/main/internal'
+
 import { currentStoreType, StoreOptions } from './builders'
 import { StoreOptionsBuilder } from './migration'
 import { StoreBag } from './store-bag'
 import { StoreBuilder } from './store-builder'
 import { StoreBundleData, StoreMetadata, StoresBundle } from './store-bundle'
-import { StoreClass, StoreClasses, StoreModels } from './store-class'
 import { StoreProxy } from './store-proxy'
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = { type: 'electron-store' }
@@ -68,7 +65,7 @@ export class StoreManager extends StoreBag {
     })
   }
 
-  // Class utils
+  // Loaders
   public async loadPublicSettings (): Promise<void> {
     const options: PublicSettingsOptions = {
       defaults: { version: softwareVersion(this.locals) }
@@ -137,6 +134,7 @@ export class StoreManager extends StoreBag {
     }
   }
 
+  // Store Bag methods
   public async buildWalletStore (walletName: string): Promise<void> {
     const { walletFactory } = this.locals
     const privateSettings = this.getStore('private-settings')
@@ -153,13 +151,13 @@ export class StoreManager extends StoreBag {
     await this.executeOptionsBuilders(builder, 'wallet', walletName)
   }
 
-  //
   protected sendStoreToBag <T extends StoreClass> (
     store: Store<StoreModels[T]>,
     options: StoreOptions<StoreModels[T]>,
     type: T,
     ...args: StoreClasses[T]
   ): void {
+    const { actionReducer } = this.locals
     const metadata: StoreMetadata<T> = { type, args, options }
 
     const storeProxy = new StoreProxy(store)
@@ -167,7 +165,9 @@ export class StoreManager extends StoreBag {
       await this.onBeforeChange(type, store)
     }
     const afterChange = async (): Promise<void> => {
-      await this.onAfterChange(type, store)
+      actionReducer
+        .reduce(storeChangedAction.create([type, store]))
+        .catch(...handleErrorCatch(this.locals))
     }
     // TODO: Unbind events on delete store, for instance, when syncing a different store set
     // const afterDelete = async (): Promise<void> => {
@@ -204,7 +204,27 @@ export class StoreManager extends StoreBag {
   }
 
   // Cloud Sync
-  protected async bundleStores (): Promise<StoresBundle> {
+  public async updateUnsyncedChanges (
+    unsyncedChanges: boolean,
+    timestamp?: number
+  ): Promise<void> {
+    this.locals.sharedMemoryManager.update(mem => ({
+      ...mem,
+      cloudVaultData: {
+        ...mem.cloudVaultData,
+        unsyncedChanges
+      }
+    }))
+
+    const publicSettings = this.getStore('public-settings')
+    if (timestamp !== undefined) {
+      await publicSettings.set('cloud', { timestamp, unsyncedChanges })
+    } else {
+      await publicSettings.set('cloud.unsyncedChanges', unsyncedChanges)
+    }
+  }
+
+  public async bundleStores (): Promise<StoresBundle> {
     const { versionManager } = this.locals
     const storesBundle: StoresBundle = {
       version: versionManager.softwareVersion,
@@ -227,66 +247,12 @@ export class StoreManager extends StoreBag {
     return storesBundle
   }
 
-  private getVersionDate (timestamp?: number): string | 'never' {
-    if (timestamp === undefined) {
-      return 'never'
-    }
-    return new Date(timestamp).toString()
-  }
-
-  public async storeCloudCredentials (credentials: Credentials): Promise<void> {
-    const { sharedMemoryManager: shm } = this.locals
-    const silentPrivateSettings = this.silentBag.getStore('private-settings')
-    await silentPrivateSettings.set('cloud.credentials', credentials)
-    shm.update(mem => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        cloud: {
-          ...mem.settings.cloud,
-          credentials
-        }
-      }
-    }), { modifiers: { 'no-settings-update': true } })
-  }
-
-  public async uploadStores (force = false): Promise<void> {
-    const { sharedMemoryManager: sh, cloudVaultManager } = this.locals
-    if (sh.memory.settings.cloud === undefined) {
-      return
-    }
-
-    const publicSettings = this.getStore('public-settings')
-    const cloud = await publicSettings.get('cloud')
-
-    const versionDate = this.getVersionDate(cloud?.timestamp)
-    logger.debug(`Upload from cloud vault version: ${versionDate}`)
-
-    const bundle = await this.bundleStores()
-    const bundleJSON = JSON.stringify(bundle)
-    const storage = Buffer.from(bundleJSON)
-
-    const newTimestamp = await cloudVaultManager.updateStorage({
-      storage, timestamp: cloud?.timestamp
-    }, force)
-
-    // Update timestamp
-    await publicSettings.set('cloud', {
-      timestamp: newTimestamp,
-      unsyncedChanges: false
-    })
-  }
-
-  public async restoreStoreBundle (vault: VaultStorage): Promise<void> {
-    const versionDate = this.getVersionDate(vault.timestamp)
-    logger.debug(`Restoring from cloud vault version: ${versionDate}`)
+  public async restoreStores (bundle: StoresBundle): Promise<void> {
     const { to } = this.ctx.storeMigrationProxy
-    const { storage } = vault
-    const bundleJSON = storage.toString()
-    const bundle = JSON.parse(bundleJSON) as StoresBundle
 
     const { versionManager, sharedMemoryManager: shm, keysManager, cloudVaultManager: cvm, walletFactory } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
+      // TODO: Maybe raise exception
       return await cvm.conflict({})
     }
 
@@ -321,15 +287,25 @@ export class StoreManager extends StoreBag {
 
     // Refresh wallet data
     await walletFactory.refreshWalletData()
-
-    const publicSettings = this.getStore('public-settings')
-    await publicSettings.set('cloud', {
-      timestamp: vault.timestamp,
-      unsyncedChanges: false
-    })
   }
 
-  // Events
+  // Event handlers
+  public async onCloudLogin (credentials: Credentials): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    const silentPrivateSettings = this.silentBag.getStore('private-settings')
+    await silentPrivateSettings.set('cloud.credentials', credentials)
+    shm.update(mem => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        cloud: {
+          ...mem.settings.cloud,
+          credentials
+        }
+      }
+    }), { modifiers: { 'no-settings-update': true } })
+  }
+
   public async onStopCloudService (): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
 
@@ -341,34 +317,16 @@ export class StoreManager extends StoreBag {
       }
     }))
     const publicSettings = this.getStore('public-settings')
-    await publicSettings.delete('cloud')
+    await publicSettings.delete('cloud.credentials')
   }
 
-  protected async onBeforeChange (type: StoreClass, store: Store<any>): Promise<void> {
+  public async onCloudSynced (timestamp: number): Promise<void> {
+    await this.updateUnsyncedChanges(false, timestamp)
+  }
+
+  protected async onBeforeChange <T extends StoreClass>(type: T, store: Store<StoreModels[T]>): Promise<void> {
     if (isEncryptedStore(type)) {
-      const publicSettings = this.getStore('public-settings')
-      await publicSettings.set('cloud.unsyncedChanges', true)
+      this.updateUnsyncedChanges(true)
     }
   }
-
-  protected async onAfterChange (type: StoreClass, store: Store<any>): Promise<void> {
-    logger.debug(`The store has been changed ${store.getPath()}`)
-    const { cloudVaultManager: cvm } = this.locals
-    if (isEncryptedStore(type) && !cvm.isDisconnected) {
-      await this.uploadStores().catch((err: Error) => {
-        const fixedError = new WalletDesktopError('Could not upload stores', {
-          severity: 'error',
-          message: 'Upload store error',
-          details: `Could not upload store due to '${err.message}'`
-        })
-        console.trace(err)
-        handleErrorSync(this.locals, fixedError)
-      })
-    }
-  }
-}
-
-type EncryptedStoreClass = 'wallet' | 'private-settings'
-function isEncryptedStore (type: StoreClass): type is EncryptedStoreClass {
-  return type !== 'public-settings'
 }

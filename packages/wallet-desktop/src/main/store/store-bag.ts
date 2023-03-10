@@ -1,8 +1,9 @@
 import { Store } from '@i3m/base-wallet'
 import { existsSync, rmSync } from 'fs'
 
+import { StoreClass, StoreClasses, StoreModels } from '@wallet/lib'
+
 import { WalletDesktopError } from '@wallet/main/internal'
-import { StoreClass, StoreClasses, StoreModels } from './store-class'
 import { StoreMetadata } from './store-bundle'
 
 export class StoreBag {

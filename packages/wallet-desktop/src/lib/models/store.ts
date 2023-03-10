@@ -1,5 +1,12 @@
-import { PrivateSettings, PublicSettings } from '@wallet/lib'
-import { StoreModel } from '@wallet/main/internal'
+import { BaseWalletModel } from '@i3m/base-wallet'
+
+import { PrivateSettings } from './private-settings'
+import { PublicSettings } from './public-settings'
+
+
+export interface StoreModel extends BaseWalletModel {
+  start: Date
+}
 
 export interface StoreClasses {
   wallet: [

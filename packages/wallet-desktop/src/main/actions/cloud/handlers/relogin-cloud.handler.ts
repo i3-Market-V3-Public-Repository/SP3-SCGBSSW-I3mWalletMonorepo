@@ -12,8 +12,8 @@ export const reloginCloud: ActionHandlerBuilder<typeof actionBuilder> = (
       const { cloudVaultManager, sharedMemoryManager: shm } = locals
 
       // Call the internal function
-      const credentials = shm.memory.settings.cloud?.credentials
-      await cloudVaultManager.login(credentials)
+      const cloud = shm.memory.settings.cloud
+      await cloudVaultManager.login(cloud)
 
       return { response: undefined, status: 200 }
     }

@@ -5,7 +5,7 @@ import { DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloud
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { Details, Section } from '@wallet/renderer/components'
 
-import { Button, ButtonProps } from 'react-bootstrap'
+import { Alert, Button, ButtonProps } from 'react-bootstrap'
 import './cloud-vault.scss'
 
 type Operation = (() => void) | undefined
@@ -37,6 +37,7 @@ export function CloudVault (): JSX.Element {
   const status = publicCloudData.state
   const username = privateCloudData?.credentials?.username
   const url = privateCloudData?.url ?? DEFAULT_CLOUD_URL
+  const unsynced = publicCloudData.unsyncedChanges
   const operations: CloudVaultOperations = {}
 
   const onLogin = (): void => {
@@ -59,22 +60,25 @@ export function CloudVault (): JSX.Element {
     dispatch(syncCloudAction.create())
   }
 
-  if (publicCloudData.state !== 'disconnected') {
-    operations.logout = onLogout
-    operations.sync = onSync
-    operations.delete = onDelete
-  } else if (privateCloudData?.credentials !== undefined) {
-    operations.login = onLogin
-    operations.logout = onLogout
-  } else {
-    operations.login = onLogin
-    operations.register = onRegister
+  if (publicCloudData.loggingIn === false) {
+    if (publicCloudData.state !== 'disconnected') {
+      operations.logout = onLogout
+      operations.sync = onSync
+      operations.delete = onDelete
+    } else if (privateCloudData?.credentials !== undefined) {
+      operations.login = onLogin
+      operations.logout = onLogout
+    } else {
+      operations.login = onLogin
+      operations.register = onRegister
+    }  
   }
 
   return (
     <Section className='cloud-vault' title='Cloud Vault' scroll light center>
       <Details>
         <Details.Body>
+          {unsynced ? <Alert variant='warning'>Your wallet is currently <b>unsynced</b>!</Alert> : null}
           <Details.Title>Summary</Details.Title>
           <Details.Grid>
             <Details.Input label='Status' value={status} />

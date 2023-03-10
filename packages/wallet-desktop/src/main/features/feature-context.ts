@@ -1,4 +1,5 @@
-import { StoreModel, StoreOptions } from '@wallet/main/internal'
+import { StoreModel } from '@wallet/lib'
+import { StoreOptions } from '@wallet/main/internal'
 import { Store } from '@i3m/base-wallet'
 
 export type WalletStore = Store<StoreModel>

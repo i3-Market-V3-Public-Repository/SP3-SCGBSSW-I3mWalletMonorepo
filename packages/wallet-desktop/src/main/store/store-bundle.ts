@@ -1,9 +1,8 @@
 
-// type WalletStoreMetadata = [type: 'wallet', walletName: string]
-// type PrivateSettingsStoreMetadata = [type: 'private-settings']
+import { StoreClass, StoreClasses, StoreModels } from '@wallet/lib'
 
 import { StoreOptions } from './builders'
-import { StoreClass, StoreClasses, StoreModels } from './store-class'
+
 
 // export type StoreIdMetadata<T extends StoreClass> =
 

@@ -11,7 +11,7 @@ export const cloudVaultMetadata: MetadataRecord = {
       type: 'info',
       description: {
         message: (
-          <Alert>
+          <Alert variant='info'>
             Here I can put a message descriving what the cloud vault is and more bla bla things.
           </Alert>
         )
