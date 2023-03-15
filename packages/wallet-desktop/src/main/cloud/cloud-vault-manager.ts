@@ -48,7 +48,13 @@ export class CloudVaultManager {
 
   constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
     this.url = CloudVaultManager.buildCloudUrl(params.cloud)
-    this.client = new VaultClient(this.url)
+    this.client = new VaultClient(this.url, {
+      // TO-DO: add retry options to params
+      defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours
+        retries: 24 * 3600 / 5,
+        retryDelay: 5000
+      }
+    })
     this.failed = false
     this.pendingSyncs = []
     this.bindClientEvents()
@@ -493,7 +499,7 @@ export class CloudVaultManager {
       storage, timestamp: cloud?.timestamp
     }, force)
 
-    storeManager.onCloudSynced(newTimestamp)
+    storeManager.onCloudSynced(newTimestamp).catch((err) => { throw err })
   }
 
   async restoreVault (vault?: VaultStorage): Promise<void> {

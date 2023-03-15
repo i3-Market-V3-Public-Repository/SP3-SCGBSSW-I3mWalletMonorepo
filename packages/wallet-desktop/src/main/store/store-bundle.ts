@@ -3,7 +3,6 @@ import { StoreClass, StoreClasses, StoreModels } from '@wallet/lib'
 
 import { StoreOptions } from './builders'
 
-
 // export type StoreIdMetadata<T extends StoreClass> =
 
 export interface StoreMetadata<T extends StoreClass = StoreClass> {

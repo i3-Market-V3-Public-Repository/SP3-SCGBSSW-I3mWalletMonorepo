@@ -326,7 +326,7 @@ export class StoreManager extends StoreBag {
 
   protected async onBeforeChange <T extends StoreClass>(type: T, store: Store<StoreModels[T]>): Promise<void> {
     if (isEncryptedStore(type)) {
-      this.updateUnsyncedChanges(true)
+      this.updateUnsyncedChanges(true).catch((err) => { throw err })
     }
   }
 }

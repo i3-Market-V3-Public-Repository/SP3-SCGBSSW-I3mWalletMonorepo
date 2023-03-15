@@ -6,14 +6,14 @@ export const uploadStoresEpic: Epic = (action$, locals, next) =>
   action$
     .pipe(
       filterAction(storeChangedAction),
-      debounceTime(2000),
-    ).subscribe(async (action) => {
+      debounceTime(2000)
+    ).subscribe((action) => {
       const [type, store] = action.payload
       const { cloudVaultManager: cvm } = locals
 
       logger.debug(`The store has been changed ${store.getPath()}`)
       if (isEncryptedStore(type)) {
-        await cvm.uploadVault().catch((err: Error) => {
+        cvm.uploadVault().catch((err: Error) => {
           const fixedError = new WalletDesktopError('Could not upload stores', {
             severity: 'error',
             message: 'Upload store error',

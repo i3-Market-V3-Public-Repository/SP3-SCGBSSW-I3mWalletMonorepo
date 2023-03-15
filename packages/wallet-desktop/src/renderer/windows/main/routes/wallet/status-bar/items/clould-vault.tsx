@@ -25,7 +25,7 @@ export function CloudVault (): JSX.Element | null {
   } else if (state === 'sync') {
     icon = <Loader size='20px' className='loader' color='white' />
     tooltip = 'Syncing'
-  } else if (unsyncedChanges === true) {
+  } else if (unsyncedChanges) {
     icon = <FontAwesomeIcon icon={faExclamationTriangle} className='icon' />
     tooltip = 'Not synced'
   } else if (state === 'connected') {

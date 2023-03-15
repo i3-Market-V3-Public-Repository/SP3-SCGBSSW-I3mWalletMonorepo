@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { VaultClient, VaultError } from '#pkg'
+import { Request, VaultClient, VaultError } from '#pkg'
 import { setTimeout as timersSetTimeout } from 'timers'
 import { promisify } from 'util'
 import { Server } from '@i3m/cloud-vault-server'
@@ -7,7 +7,6 @@ import { spawn } from 'child_process'
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
 import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { config as loadEnvFile } from 'dotenv'
-import axios, { AxiosError } from 'axios'
 import { randomBytes } from 'crypto'
 import { expect } from 'chai'
 import { join as pathJoin } from 'path'
@@ -37,6 +36,8 @@ const user = {
   username,
   password
 }
+
+const request = new Request()
 
 const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
@@ -91,7 +92,7 @@ async function stopLocalDb (): Promise<void> {
 }
 
 describe('Wallet Cloud-Vault', function () {
-  this.timeout(30000) // ms
+  this.timeout(60000) // ms
   let client1: VaultClient
   let client2: VaultClient
   let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
@@ -111,8 +112,20 @@ describe('Wallet Cloud-Vault', function () {
       }
     }
 
-    client1 = new VaultClient(serverUrl, undefined, '1')
-    client2 = new VaultClient(serverUrl, undefined, '2')
+    client1 = new VaultClient(serverUrl, {
+      name: '1',
+      defaultRetryOptions: { // retry every 5 seconds for 24 hours
+        retries: 24 * 720,
+        retryDelay: 5000
+      }
+    })
+    client2 = new VaultClient(serverUrl, {
+      name: '2',
+      defaultRetryOptions: { // retry every 5 seconds for 24 hours
+        retries: 24 * 720,
+        retryDelay: 5000
+      }
+    })
 
     function getTime (timestamp: number): string {
       const date = new Date(timestamp)
@@ -150,8 +163,8 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   after('Close clients', function (done) {
-    client1.logout()
-    client2.logout()
+    client1.close()
+    client2.close()
 
     if (localTesting) {
       const server: Server | undefined = this.server
@@ -185,16 +198,12 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      const res = await axios.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
         serverUrl + `/api/${apiVersion}/registration/register/` + data
       )
-      chai.expect(res.status).to.equal(201)
+      chai.expect(res.status).to.equal('created')
     } catch (error) {
-      if (error instanceof AxiosError) {
-        console.log('error', error.response?.data)
-      } else {
-        console.log('error', error)
-      }
+      console.log('error', error)
       chai.expect(false).to.be.true
     }
   })
@@ -211,13 +220,12 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      await axios.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
+      await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
         serverUrl + `/api/${apiVersion}/registration/register/` + data
       )
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const response = error.response
-        chai.expect(response?.status).to.equal(400)
+      if (error instanceof VaultError) {
+        chai.expect(error.data.response.data.name).to.equal('already-registered')
       } else {
         console.log('error', error)
         chai.expect(false).to.be.true
@@ -230,7 +238,9 @@ describe('Wallet Cloud-Vault', function () {
     try {
       await client1.login(user.username, 'badpassword')
       clientConnected = true
-    } catch (error) {}
+    } catch (error) {
+      chai.expect((error as VaultError).name === 'invalid-credentials')
+    }
     chai.expect(clientConnected).to.be.false
   })
 
@@ -250,10 +260,13 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   it('should fail getting storage if not previously uploaded', async function () {
-    const storage = await client1.getStorage().catch((err) => {
+    let storage
+    try {
+      storage = await client1.getStorage()
+    } catch (err) {
       expect(err).to.be.an.instanceOf(VaultError)
       expect((err as VaultError).message).to.equal('no-uploaded-storage')
-    })
+    }
     expect(storage).to.be.undefined
   })
 
@@ -264,6 +277,7 @@ describe('Wallet Cloud-Vault', function () {
       randomBytes(5242880) // 5 Mbytes
     ]
     const msgLimit = storages.length
+    let client1AlsoReceivesStorageUpdatedEvent = false
 
     const client2promise = new Promise<void>((resolve, reject) => {
       let receivedEvents = 0
@@ -281,6 +295,11 @@ describe('Wallet Cloud-Vault', function () {
           }
         }).catch(error => reject(error))
       })
+    })
+
+    client1.on('storage-updated', (timestamp: number) => {
+      console.log(`ERROR: Client ${client1.name} received storage-updated event when deleting it!!!`)
+      client1AlsoReceivesStorageUpdatedEvent = true
     })
 
     for (let i = 0; i < msgLimit; i++) {
@@ -303,7 +322,7 @@ describe('Wallet Cloud-Vault', function () {
       console.log(reason)
       expect(false).to.be.true
     })
-    expect(true).to.be.true
+    expect(client1AlsoReceivesStorageUpdatedEvent).to.be.false
   })
   it('should delete all data from user if requested', async function () {
     let deleted = true

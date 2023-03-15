@@ -1,4 +1,4 @@
-import { StoreClass } from "@wallet/lib"
+import { StoreClass } from '@wallet/lib'
 
 type EncryptedStoreClass = 'wallet' | 'private-settings'
 export function isEncryptedStore (type: StoreClass): type is EncryptedStoreClass {

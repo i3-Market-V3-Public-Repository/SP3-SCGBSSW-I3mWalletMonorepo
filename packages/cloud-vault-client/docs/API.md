@@ -7,6 +7,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 ### Classes
 
 - [KeyManager](classes/KeyManager.md)
+- [Request](classes/Request.md)
 - [SecretKey](classes/SecretKey.md)
 - [VaultClient](classes/VaultClient.md)
 - [VaultError](classes/VaultError.md)
@@ -14,7 +15,9 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 ### Interfaces
 
 - [KeyDerivationOptions](interfaces/KeyDerivationOptions.md)
+- [RetryOptions](interfaces/RetryOptions.md)
 - [ScryptOptions](interfaces/ScryptOptions.md)
+- [VaultClientOpts](interfaces/VaultClientOpts.md)
 - [VaultStorage](interfaces/VaultStorage.md)
 
 ### Type Aliases
@@ -62,7 +65,7 @@ A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vaul
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/vault-client.ts#L14)
+[cloud-vault-client/src/ts/vault-client.ts:14](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/vault-client.ts#L14)
 
 ___
 
@@ -78,7 +81,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/error.ts#L37)
+[cloud-vault-client/src/ts/error.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L45)
 
 ___
 
@@ -104,6 +107,12 @@ ___
 | `http-connection-error.response.data?` | `any` |
 | `http-connection-error.response.headers?` | { `[header: string]`: `string`;  } |
 | `http-connection-error.response.status?` | `number` |
+| `http-request-canceled` | { `request`: { `data?`: `any` ; `headers?`: { `[header: string]`: `string`;  } ; `method?`: `string` ; `url?`: `string`  }  } |
+| `http-request-canceled.request` | { `data?`: `any` ; `headers?`: { `[header: string]`: `string`;  } ; `method?`: `string` ; `url?`: `string`  } |
+| `http-request-canceled.request.data?` | `any` |
+| `http-request-canceled.request.headers?` | { `[header: string]`: `string`;  } |
+| `http-request-canceled.request.method?` | `string` |
+| `http-request-canceled.request.url?` | `string` |
 | `invalid-credentials` | `any` |
 | `no-uploaded-storage` | `any` |
 | `not-initialized` | `any` |
@@ -117,7 +126,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/error.ts#L5)
+[cloud-vault-client/src/ts/error.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L5)
 
 ___
 
@@ -127,7 +136,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/error.ts#L36)
+[cloud-vault-client/src/ts/error.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L44)
 
 ___
 
@@ -137,7 +146,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-state.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/vault-state.ts#L10)
+[cloud-vault-client/src/ts/vault-state.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/vault-state.ts#L10)
 
 ## Variables
 
@@ -156,7 +165,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-state.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/vault-state.ts#L3)
+[cloud-vault-client/src/ts/vault-state.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/vault-state.ts#L3)
 
 ## Functions
 
@@ -183,7 +192,7 @@ err is VaultError<T\>
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:95](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/error.ts#L95)
+[cloud-vault-client/src/ts/error.ts:103](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L103)
 
 ___
 
@@ -204,7 +213,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/key-manager.ts#L77)
+[cloud-vault-client/src/ts/key-manager.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/key-manager.ts#L77)
 
 ▸ **deriveKey**(`key`, `opts`): `Promise`<`KeyObject`\>
 
@@ -221,4 +230,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e2ecdc1/packages/cloud-vault-client/src/ts/key-manager.ts#L78)
+[cloud-vault-client/src/ts/key-manager.ts:78](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/key-manager.ts#L78)

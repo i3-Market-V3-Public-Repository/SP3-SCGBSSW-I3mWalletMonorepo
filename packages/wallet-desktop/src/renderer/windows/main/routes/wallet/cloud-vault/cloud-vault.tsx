@@ -60,7 +60,7 @@ export function CloudVault (): JSX.Element {
     dispatch(syncCloudAction.create())
   }
 
-  if (publicCloudData.loggingIn === false) {
+  if (!publicCloudData.loggingIn) {
     if (publicCloudData.state !== 'disconnected') {
       operations.logout = onLogout
       operations.sync = onSync
@@ -71,7 +71,7 @@ export function CloudVault (): JSX.Element {
     } else {
       operations.login = onLogin
       operations.register = onRegister
-    }  
+    }
   }
 
   return (

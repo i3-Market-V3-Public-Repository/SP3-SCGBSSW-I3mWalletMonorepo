@@ -17,6 +17,16 @@ export type VaultErrorData = {
             data?: any;
         };
     };
+    'http-request-canceled': {
+        request: {
+            method?: string;
+            url?: string;
+            headers?: {
+                [header: string]: string;
+            };
+            data?: any;
+        };
+    };
     'no-uploaded-storage': any;
     'sse-connection-error': any;
     'quota-exceeded': string;
