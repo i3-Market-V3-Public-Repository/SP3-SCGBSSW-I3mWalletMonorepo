@@ -28,7 +28,6 @@ export class CloudVaultManager {
   protected client: VaultClient
   protected failed: boolean
   protected pendingSyncs: number[]
-  protected url: string
   protected unbindClientEvents: (() => void) | undefined
 
   // Static initialization
@@ -47,8 +46,8 @@ export class CloudVaultManager {
   }
 
   constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
-    this.url = CloudVaultManager.buildCloudUrl(params.cloud)
-    this.client = new VaultClient(this.url, {
+    const url = CloudVaultManager.buildCloudUrl(params.cloud)
+    this.client = new VaultClient(url, {
       // TO-DO: add retry options to params
       defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours
         retries: 24 * 3600 / 5,
@@ -81,11 +80,10 @@ export class CloudVaultManager {
   protected resetClient (cloud?: CloudVaultPrivateSettings): void {
     const { sharedMemoryManager: shm } = this.locals
     const newUrl = CloudVaultManager.buildCloudUrl(cloud ?? shm.memory.settings.cloud)
-    if (this.url !== newUrl) {
+    if (this.client.serverUrl !== newUrl) {
       if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
-      this.client = new VaultClient(this.url)
+      this.client = new VaultClient(newUrl)
       this.bindClientEvents()
-      this.url = newUrl
     }
   }
 
