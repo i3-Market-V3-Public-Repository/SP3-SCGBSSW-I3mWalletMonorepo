@@ -356,16 +356,17 @@ export class CloudVaultManager {
     const publicSettings = storeManager.getStore('public-settings')
     const publicCloudSettings = await publicSettings.get('cloud')
 
-    await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
+    await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp).finally(() => {
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          unsyncedChanges: publicCloudSettings?.unsyncedChanges ?? false,
+          loggingIn: false
+        }
+      }))
+    })
     await storeManager.onCloudLogin(credentials)
-    shm.update(mem => ({
-      ...mem,
-      cloudVaultData: {
-        ...mem.cloudVaultData,
-        unsyncedChanges: publicCloudSettings?.unsyncedChanges ?? false,
-        loggingIn: false
-      }
-    }))
   }
 
   /**
