@@ -26,16 +26,16 @@ interface ConfirmationFormDescriptor extends ConfirmationOptions {
 interface SelectFormDescriptor<T> extends SelectOptions<T> {
     type: 'select';
 }
-export declare type DialogOptionContext = 'success' | 'danger';
-export declare type Descriptors<T = any> = TextFormDescriptor | ConfirmationFormDescriptor | SelectFormDescriptor<T>;
-export declare type DescriptorsMap<T = any> = {
+export type DialogOptionContext = 'success' | 'danger';
+export type Descriptors<T = any> = TextFormDescriptor | ConfirmationFormDescriptor | SelectFormDescriptor<T>;
+export type DescriptorsMap<T = any> = {
     [K in keyof Partial<T>]: Descriptors<T[K]>;
 };
 export interface FormOptions<T> extends BaseDialogOptions {
     descriptors: DescriptorsMap<T>;
     order: Array<keyof T>;
 }
-export declare type DialogResponse<T> = Promise<T | undefined>;
+export type DialogResponse<T> = Promise<T | undefined>;
 export interface Dialog {
     text: (options: TextOptions) => DialogResponse<string>;
     confirmation: (options: ConfirmationOptions) => DialogResponse<boolean>;

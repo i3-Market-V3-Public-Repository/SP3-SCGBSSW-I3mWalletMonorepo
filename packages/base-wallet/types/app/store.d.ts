@@ -1,34 +1,34 @@
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
 import { IIdentifier } from '@veramo/core';
 import { CanBePromise } from '../utils';
-export declare type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & {
+export type Resource = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & {
     identity?: WalletComponents.Schemas.ObjectResource['identity'];
 } & {
     parentResource?: WalletComponents.Schemas.ObjectResource['parentResource'];
 };
-export declare type VerifiableCredentialResource = Resource & {
+export type VerifiableCredentialResource = Resource & {
     type: 'VerifiableCredential';
 };
-export declare type ObjectResource = Resource & {
+export type ObjectResource = Resource & {
     type: 'Object';
 };
-export declare type KeyPairResource = Resource & {
+export type KeyPairResource = Resource & {
     type: 'KeyPair';
 };
-export declare type ContractResource = Resource & {
+export type ContractResource = Resource & {
     type: 'Contract';
 };
-export declare type NonRepudiationProofResource = Resource & {
+export type NonRepudiationProofResource = Resource & {
     type: 'NonRepudiationProof';
 };
-export declare type DataExchangeResource = Resource & {
+export type DataExchangeResource = Resource & {
     type: 'DataExchange';
 };
-export declare type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource'];
-export declare type KeyPair = WalletComponents.Schemas.KeyPair['resource'];
-export declare type Contract = WalletComponents.Schemas.Contract['resource'];
-export declare type Object = WalletComponents.Schemas.ObjectResource['resource'];
-export declare type Identity = IIdentifier;
+export type VerifiableCredential = WalletComponents.Schemas.VerifiableCredential['resource'];
+export type KeyPair = WalletComponents.Schemas.KeyPair['resource'];
+export type Contract = WalletComponents.Schemas.Contract['resource'];
+export type Object = WalletComponents.Schemas.ObjectResource['resource'];
+export type Identity = IIdentifier;
 export interface BaseWalletModel {
     resources: {
         [id: string]: Resource;

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
-import axiosRetry from 'axios-retry'
+import axiosRetry, { isNetworkOrIdempotentRequestError } from 'axios-retry'
 import { VaultError } from './error'
 
 export interface RetryOptions {
@@ -43,8 +43,8 @@ export class Request {
         retryDelay: () => {
           return retryOptions.retryDelay
         },
-        retryCondition: () => {
-          return this._stop
+        retryCondition: (err) => {
+          return !this._stop && isNetworkOrIdempotentRequestError(err)
         }
       })
     }

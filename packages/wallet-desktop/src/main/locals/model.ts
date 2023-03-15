@@ -20,13 +20,15 @@ import {
   AuthManager,
   WalletDesktopError,
   MainContext,
-  RuntimeManager
+  RuntimeManager,
+  Args
 } from '@wallet/main/internal'
 
 export interface Locals {
   readonly packageJson: typeof packageJson
 
   // Application
+  readonly arguments: Args
   readonly runtimeManager: RuntimeManager
   readonly sharedMemoryManager: SharedMemoryManager
   readonly versionManager: VersionManager

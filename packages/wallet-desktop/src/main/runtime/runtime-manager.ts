@@ -12,6 +12,7 @@ import {
   LocalsSetter,
   logger,
   MainContext,
+  parseArguments,
   PropInitializer,
   SharedMemoryManager,
   StoreManager, StoreMigration, TaskManager,
@@ -89,7 +90,8 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
       ['taskManager', TaskManager.initialize],
       ['sharedMemoryManager', SharedMemoryManager.initialize],
       ['storeManager', StoreManager.initialize],
-      ['actionReducer', ActionReducer.initialize]
+      ['actionReducer', ActionReducer.initialize],
+      ['arguments', parseArguments()]
     ])
 
     this.addLocalsModule('before-start', [

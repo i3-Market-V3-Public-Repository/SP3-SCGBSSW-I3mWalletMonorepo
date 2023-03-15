@@ -9,7 +9,14 @@ export interface MultipleExecutionsOptions {
   timeout?: number // maximum elapsed time in milliseconds between values acquired from the executors. Defaults to 10000.
 }
 
-export async function multipleExecutions<T extends any> (options: MultipleExecutionsOptions, executors: any[], fnName: string, ...args: any[]): Promise<T[]> {
+type FunctionMap<K extends string> = {
+  [P in K]: (...args: any) => any
+}
+
+type ValueOrResolvedValue<T> = T extends Promise<infer R> ? R : T
+export type MultipleExecutionsReturn<K extends string, T extends FunctionMap<K>> = ValueOrResolvedValue<ReturnType<T[K]>>
+
+export async function multipleExecutions<K extends string, T extends FunctionMap<K>> (options: MultipleExecutionsOptions, executors: T[], fnName: K, ...args: any[]): Promise<Array<MultipleExecutionsReturn<K, T>>> {
   if (executors.length < 1 || executors[0][fnName] === undefined) {
     throw new Error('invalid executors')
   }
@@ -23,27 +30,32 @@ export async function multipleExecutions<T extends any> (options: MultipleExecut
 
   const _timeout = options.timeout ?? 10000
 
-  const observable = new Observable<T>((subscriber) => {
+  const observable = new Observable<ValueOrResolvedValue<ReturnType<T[K]>>>((subscriber) => {
     let subscriberSFinished: number = 0
     executors.forEach(executor => {
-      if (isAsync(executor[fnName])) {
-        executor[fnName](...args).then((result: T) => {
-          subscriber.next(result)
-        }).catch((err: unknown) => {
-          debug(err)
-        }).finally(() => {
-          subscriberSFinished++
-          if (subscriberSFinished === executors.length) {
-            subscriber.complete()
-          }
-        })
-      } else {
-        try {
-          const result: T = executor[fnName](...args)
-          subscriber.next(result)
-        } catch (err: unknown) {
-          debug(err)
-        } finally {
+      const fn = executor[fnName]
+      let returnPromise = false
+      try {
+        const resultOrPromise = fn.call(executor, ...args)
+        if (isPromise<ReturnType<T[K]>>(resultOrPromise)) {
+          returnPromise = true
+          resultOrPromise.then((result) => {
+            subscriber.next(result)
+          }).catch((err: unknown) => {
+            debug(err)
+          }).finally(() => {
+            subscriberSFinished++
+            if (subscriberSFinished === executors.length) {
+              subscriber.complete()
+            }
+          })
+        } else {
+          subscriber.next(resultOrPromise)
+        }
+      } catch (err: unknown) {
+        debug(err)
+      } finally {
+        if (!returnPromise) {
           subscriberSFinished++
           if (subscriberSFinished === executors.length) {
             subscriber.complete()
@@ -56,20 +68,17 @@ export async function multipleExecutions<T extends any> (options: MultipleExecut
     timeout(_timeout)
   )
 
-  const results = await new Promise<T[]>((resolve, reject) => {
+  const results = await new Promise<Array<ValueOrResolvedValue<ReturnType<T[K]>>>>((resolve, reject) => {
     const subscription = observable.subscribe({
       next: v => {
         resolve(v)
-      },
-      error: (e) => {
-        debug(e)
-        reject(e)
       }
     })
     setTimeout(() => {
       subscription.unsubscribe()
+      reject(new Error('Timeout waiting for results reached'))
     }, _timeout)
-  })
+  }).catch()
 
   if (results.length < minResults) {
     throw new Error(`less successful executions (${results.length}) than min requested (${minResults})`)
@@ -78,11 +87,6 @@ export async function multipleExecutions<T extends any> (options: MultipleExecut
   return results
 }
 
-function isAsync (fn: any): boolean {
-  if (fn.constructor.name === 'AsyncFunction') {
-    return true
-  } else if (fn.constructor.name === 'Function') {
-    return false
-  }
-  throw new Error('not a function')
+function isPromise<T> (promise: any): promise is Promise<T> {
+  return promise !== undefined && typeof promise.then === 'function'
 }

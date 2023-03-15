@@ -4,9 +4,9 @@ interface Validation {
     validated: boolean;
     errors: Error[];
 }
-export declare type ResourceType = WalletComponents.Schemas.ResourceType;
-export declare type Resource = WalletComponents.Schemas.Resource;
-export declare type Validator<T extends Resource> = (resource: T, veramo: Veramo) => Promise<Error[]>;
+export type ResourceType = WalletComponents.Schemas.ResourceType;
+export type Resource = WalletComponents.Schemas.Resource;
+export type Validator<T extends Resource> = (resource: T, veramo: Veramo) => Promise<Error[]>;
 export declare class ResourceValidator {
     protected validators: {
         [key: string]: Validator<any> | undefined;

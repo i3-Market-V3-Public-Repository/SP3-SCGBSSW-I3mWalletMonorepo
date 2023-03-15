@@ -4,7 +4,7 @@ import { BaseWalletModel, Store } from '../app';
 import { ISelectiveDisclosure } from '@veramo/selective-disclosure';
 import { ICredentialIssuer } from '@veramo/credential-w3c';
 import { KeyWallet } from '../keywallet';
-declare type PluginMap = IDIDManager & IKeyManager & IResolver & IMessageHandler & ISelectiveDisclosure & ICredentialIssuer;
+type PluginMap = IDIDManager & IKeyManager & IResolver & IMessageHandler & ISelectiveDisclosure & ICredentialIssuer;
 export interface ProviderData {
     network: string;
     rpcUrl?: string | string[];

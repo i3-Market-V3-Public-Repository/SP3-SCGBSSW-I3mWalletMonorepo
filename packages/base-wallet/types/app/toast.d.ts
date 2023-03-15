@@ -1,4 +1,4 @@
-export declare type ToastType = 'info' | 'success' | 'warning' | 'error';
+export type ToastType = 'info' | 'success' | 'warning' | 'error';
 export interface ToastOptions {
     message: string;
     type?: ToastType;

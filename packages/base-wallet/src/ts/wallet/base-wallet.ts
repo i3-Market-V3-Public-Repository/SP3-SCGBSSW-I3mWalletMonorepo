@@ -183,10 +183,12 @@ export class BaseWallet<
 
     // Let us shuffle the array of rpcUrls
     const rpcUrls: string[] = shuffleArray((providerData.rpcUrl instanceof Array) ? providerData.rpcUrl : [providerData.rpcUrl])
-    const providers = rpcUrls.map(rpcUrl => new ethers.providers.JsonRpcProvider(rpcUrl))
+    const providers = rpcUrls.map(rpcUrl => new ethers.providers.StaticJsonRpcProvider(rpcUrl))
 
     const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
-    const balances = await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getBalance', address)
+    const balance = await providers[0].getBalance(address)
+    console.log(balance)
+    const balances = await multipleExecutions({ successRate: 0 }, providers, 'getBalance', address)
     const ether = ethers.utils.formatEther(balances[0])
 
     this.toast.show({
@@ -229,8 +231,8 @@ export class BaseWallet<
     const providers = rpcUrls.map(rpcUrl => new ethers.providers.JsonRpcProvider(rpcUrl))
 
     const from = ethers.utils.computeAddress(`0x${transactionData.from.keys[0].publicKeyHex}`)
-    const nonce = (await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getTransactionCount', from, 'latest'))[0]
-    const gasPrice = (await multipleExecutions<ethers.BigNumberish>({ successRate: 0 }, providers, 'getGasPrice'))[0]
+    const nonce = (await multipleExecutions({ successRate: 0 }, providers, 'getTransactionCount', from, 'latest'))[0]
+    const gasPrice = (await multipleExecutions({ successRate: 0 }, providers, 'getGasPrice'))[0]
 
     const tx = {
       to: transactionData.to,

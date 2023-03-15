@@ -14,7 +14,7 @@ interface TransactionOptions {
     transaction?: string;
     notifyUser?: boolean;
 }
-declare type ResourceMap = BaseWalletModel['resources'];
+type ResourceMap = BaseWalletModel['resources'];
 export declare class BaseWallet<Options extends WalletOptions<Model>, Model extends BaseWalletModel = BaseWalletModel> implements Wallet {
     dialog: Dialog;
     store: Store<Model>;

@@ -11,5 +11,5 @@ export interface WalletOptionsSettings<T extends BaseWalletModel> {
     provider?: string;
     providersData?: Record<string, ProviderData>;
 }
-export declare type WalletOptions<T extends BaseWalletModel> = WalletOptionsSettings<T> & WalletOptionsCryptoWallet;
+export type WalletOptions<T extends BaseWalletModel> = WalletOptionsSettings<T> & WalletOptionsCryptoWallet;
 //# sourceMappingURL=wallet-options.d.ts.map

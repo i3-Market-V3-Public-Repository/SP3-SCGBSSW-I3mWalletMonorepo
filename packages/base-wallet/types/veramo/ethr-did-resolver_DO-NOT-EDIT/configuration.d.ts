@@ -26,8 +26,8 @@ export interface MultiProviderConfiguration extends ProviderConfiguration {
 export interface InfuraConfiguration {
     infuraProjectId: string;
 }
-export declare type ConfigurationOptions = MultiProviderConfiguration | InfuraConfiguration;
-export declare type ConfiguredNetworks = Record<string, Contract>;
+export type ConfigurationOptions = MultiProviderConfiguration | InfuraConfiguration;
+export type ConfiguredNetworks = Record<string, Contract>;
 export declare function getContractForNetwork(conf: ProviderConfiguration): Contract;
 /**
  * Generates a configuration that maps ethereum network names and chainIDs to the respective ERC1056 contracts deployed on them.

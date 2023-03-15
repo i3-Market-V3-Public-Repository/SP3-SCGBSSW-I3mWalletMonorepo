@@ -4,10 +4,10 @@ export declare const identifierMatcher: RegExp;
 export declare const nullAddress = "0x0000000000000000000000000000000000000000";
 export declare const DEFAULT_REGISTRY_ADDRESS = "0xdca7ef03e98e0dc2b855be647c39abe984fcf21b";
 export declare const DEFAULT_JSON_RPC = "http://127.0.0.1:8545/";
-export declare type address = string;
-export declare type uint256 = BigNumber;
-export declare type bytes32 = string;
-export declare type bytes = string;
+export type address = string;
+export type uint256 = BigNumber;
+export type bytes32 = string;
+export type bytes = string;
 export interface ERC1056Event {
     identity: address;
     previousChange: uint256;

@@ -1,7 +1,7 @@
 import type { BlockTag } from '@ethersproject/abstract-provider'
 import type { DIDDocument, DIDResolutionOptions, DIDResolutionResult, DIDResolver, ParsedDID, Resolvable } from 'did-resolver'
 import type { BigNumber } from 'ethers'
-import { multipleExecutions, MultipleExecutionsOptions } from '../utils'
+import { multipleExecutions, MultipleExecutionsOptions, MultipleExecutionsReturn } from '../utils'
 import { allEqual } from '../utils/all-equal'
 import type { ProviderConfiguration } from './ethr-did-resolver_DO-NOT-EDIT/configuration'
 import type { ERC1056Event } from './ethr-did-resolver_DO-NOT-EDIT/helpers'
@@ -85,8 +85,8 @@ export class EthrDidMultipleRpcResolver implements Omit<EthrDidResolver, 'contra
     return { ethr: this.resolve.bind(this) }
   }
 
-  private async multiproviderFnExec<T> (fnName: string, ...args: any[]): Promise<T> {
-    const results = await multipleExecutions<T>(this.multiRpcOptions, this.resolvers, fnName, ...args)
+  private async multiproviderFnExec<K extends keyof EthrDidResolver> (fnName: K, ...args: any[]): Promise<MultipleExecutionsReturn<K, EthrDidResolver>> {
+    const results = await multipleExecutions(this.multiRpcOptions, this.resolvers, fnName, ...args)
     if (allEqual(results)) return results[0]
     throw new Error('not all responses are equal, please consider removing the missbehaving/malicious RPC endpoint.')
   }

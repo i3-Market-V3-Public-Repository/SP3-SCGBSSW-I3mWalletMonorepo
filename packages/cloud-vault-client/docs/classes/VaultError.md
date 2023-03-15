@@ -59,7 +59,7 @@ Error.constructor
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L51)
+[cloud-vault-client/src/ts/error.ts:51](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/cloud-vault-client/src/ts/error.ts#L51)
 
 ## Properties
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:48](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L48)
+[cloud-vault-client/src/ts/error.ts:48](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/cloud-vault-client/src/ts/error.ts#L48)
 
 ___
 
@@ -97,7 +97,7 @@ Error.message
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L49)
+[cloud-vault-client/src/ts/error.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/cloud-vault-client/src/ts/error.ts#L49)
 
 ___
 
@@ -221,4 +221,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/error.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/d8bd171/packages/cloud-vault-client/src/ts/error.ts#L59)
+[cloud-vault-client/src/ts/error.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/cloud-vault-client/src/ts/error.ts#L59)

@@ -95,7 +95,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L31)
+[src/ts/impl/stores/file-store.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L31)
 
 • **new FileStore**<`T`\>(`filepath`, `password?`, `defaultModel?`)
 
@@ -123,7 +123,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L39)
+[src/ts/impl/stores/file-store.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L39)
 
 ## Properties
 
@@ -133,7 +133,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L24)
+[src/ts/impl/stores/file-store.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L24)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L19)
+[src/ts/impl/stores/file-store.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L19)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L23)
+[src/ts/impl/stores/file-store.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L23)
 
 ___
 
@@ -167,7 +167,7 @@ EventEmitter.captureRejectionSymbol
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:328
+node_modules/@types/node/events.d.ts:328
 
 ___
 
@@ -183,7 +183,7 @@ EventEmitter.captureRejections
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:333
+node_modules/@types/node/events.d.ts:333
 
 ___
 
@@ -197,7 +197,7 @@ EventEmitter.defaultMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:334
+node_modules/@types/node/events.d.ts:334
 
 ___
 
@@ -219,7 +219,7 @@ EventEmitter.errorMonitor
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:327
+node_modules/@types/node/events.d.ts:327
 
 ## Methods
 
@@ -250,7 +250,7 @@ EventEmitter.addListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:354
+node_modules/@types/node/events.d.ts:354
 
 ___
 
@@ -270,7 +270,7 @@ Store.clear
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:211](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L211)
+[src/ts/impl/stores/file-store.ts:211](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L211)
 
 ___
 
@@ -296,7 +296,7 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:202](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L202)
+[src/ts/impl/stores/file-store.ts:202](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L202)
 
 ___
 
@@ -317,7 +317,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:82](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L82)
+[src/ts/impl/stores/file-store.ts:82](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L82)
 
 ___
 
@@ -351,7 +351,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L65)
+[src/ts/impl/stores/file-store.ts:65](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L65)
 
 ▸ **emit**(`eventName`, `changedAt`): `boolean`
 
@@ -381,9 +381,9 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L66)
+[src/ts/impl/stores/file-store.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L66)
 
-▸ **emit**(`eventName`, ...`args`): `boolean`
+▸ **emit**(`eventName`, `...args`): `boolean`
 
 Synchronously calls each of the listeners registered for the event named`eventName`, in the order they were registered, passing the supplied arguments
 to each.
@@ -443,7 +443,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L67)
+[src/ts/impl/stores/file-store.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L67)
 
 ___
 
@@ -481,7 +481,7 @@ EventEmitter.eventNames
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:669
+node_modules/@types/node/events.d.ts:669
 
 ___
 
@@ -508,7 +508,7 @@ Get an item.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:174](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L174)
+[src/ts/impl/stores/file-store.ts:174](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L174)
 
 ___
 
@@ -533,7 +533,7 @@ EventEmitter.getMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:526
+node_modules/@types/node/events.d.ts:526
 
 ___
 
@@ -555,7 +555,7 @@ Store.getPath
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:224](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L224)
+[src/ts/impl/stores/file-store.ts:224](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L224)
 
 ___
 
@@ -577,7 +577,7 @@ Store.getStore
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:218](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L218)
+[src/ts/impl/stores/file-store.ts:218](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L218)
 
 ___
 
@@ -603,7 +603,7 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:195](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L195)
+[src/ts/impl/stores/file-store.ts:195](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L195)
 
 ___
 
@@ -633,7 +633,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:616
+node_modules/@types/node/events.d.ts:616
 
 ___
 
@@ -671,7 +671,7 @@ EventEmitter.listeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:539
+node_modules/@types/node/events.d.ts:539
 
 ___
 
@@ -702,7 +702,7 @@ EventEmitter.off
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:499
+node_modules/@types/node/events.d.ts:499
 
 ___
 
@@ -739,7 +739,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L58)
+[src/ts/impl/stores/file-store.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L58)
 
 ▸ **on**(`eventName`, `listener`): [`FileStore`](FileStore.md)<`T`\>
 
@@ -772,7 +772,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L59)
+[src/ts/impl/stores/file-store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L59)
 
 ▸ **on**(`eventName`, `listener`): [`FileStore`](FileStore.md)<`T`\>
 
@@ -825,7 +825,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L60)
+[src/ts/impl/stores/file-store.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L60)
 
 ___
 
@@ -878,7 +878,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:414
+node_modules/@types/node/events.d.ts:414
 
 ___
 
@@ -920,7 +920,7 @@ EventEmitter.prependListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:634
+node_modules/@types/node/events.d.ts:634
 
 ___
 
@@ -960,7 +960,7 @@ EventEmitter.prependOnceListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:650
+node_modules/@types/node/events.d.ts:650
 
 ___
 
@@ -1015,7 +1015,7 @@ EventEmitter.rawListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:569
+node_modules/@types/node/events.d.ts:569
 
 ___
 
@@ -1051,7 +1051,7 @@ EventEmitter.removeAllListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:510
+node_modules/@types/node/events.d.ts:510
 
 ___
 
@@ -1157,7 +1157,7 @@ EventEmitter.removeListener
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:494
+node_modules/@types/node/events.d.ts:494
 
 ___
 
@@ -1184,7 +1184,7 @@ Set multiple keys at once.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:181](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a5dc72d/packages/base-wallet/src/ts/impl/stores/file-store.ts#L181)
+[src/ts/impl/stores/file-store.ts:181](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/impl/stores/file-store.ts#L181)
 
 ___
 
@@ -1219,7 +1219,7 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:520
+node_modules/@types/node/events.d.ts:520
 
 ___
 
@@ -1273,7 +1273,7 @@ EventEmitter.getEventListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:299
+node_modules/@types/node/events.d.ts:299
 
 ___
 
@@ -1317,7 +1317,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:271
+node_modules/@types/node/events.d.ts:271
 
 ___
 
@@ -1403,7 +1403,7 @@ EventEmitter.on
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:254
+node_modules/@types/node/events.d.ts:254
 
 ___
 
@@ -1513,7 +1513,7 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:194
+node_modules/@types/node/events.d.ts:194
 
 ▸ `Static` **once**(`emitter`, `eventName`, `options?`): `Promise`<`any`[]\>
 
@@ -1535,13 +1535,13 @@ EventEmitter.once
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:195
+node_modules/@types/node/events.d.ts:195
 
 ___
 
 ### setMaxListeners
 
-▸ `Static` **setMaxListeners**(`n?`, ...`eventTargets`): `void`
+▸ `Static` **setMaxListeners**(`n?`, `...eventTargets`): `void`
 
 ```js
 const {
@@ -1576,4 +1576,4 @@ EventEmitter.setMaxListeners
 
 #### Defined in
 
-node_modules/@types/node/ts4.8/events.d.ts:317
+node_modules/@types/node/events.d.ts:317
