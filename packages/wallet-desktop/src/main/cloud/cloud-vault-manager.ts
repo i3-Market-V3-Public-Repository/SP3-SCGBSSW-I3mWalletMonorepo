@@ -338,6 +338,8 @@ export class CloudVaultManager {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
+    const publicSettings = storeManager.getStore('public-settings')
+    const publicCloudSettings = await publicSettings.get('cloud')
     shm.update(mem => ({
       ...mem,
       cloudVaultData: {
@@ -346,17 +348,19 @@ export class CloudVaultManager {
       }
     }))
 
-    this.resetClient(cloud)
-    await this.client.initialized
+    try {
+      this.resetClient(cloud)
+      await this.client.initialized
 
-    let credentials = cloud?.credentials
-    if (credentials === undefined) {
-      credentials = await this.getCredentials(errorMessage)
+      let credentials = cloud?.credentials
+      if (credentials === undefined) {
+        credentials = await this.getCredentials(errorMessage)
+      }
+
+      await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
+      await storeManager.onCloudLogin(credentials)
     }
-    const publicSettings = storeManager.getStore('public-settings')
-    const publicCloudSettings = await publicSettings.get('cloud')
-
-    await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp).finally(() => {
+    finally {
       shm.update(mem => ({
         ...mem,
         cloudVaultData: {
@@ -365,8 +369,7 @@ export class CloudVaultManager {
           loggingIn: false
         }
       }))
-    })
-    await storeManager.onCloudLogin(credentials)
+    }
   }
 
   /**
