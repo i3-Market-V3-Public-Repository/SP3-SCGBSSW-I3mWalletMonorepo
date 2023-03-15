@@ -19,7 +19,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
   return {
     type: createWalletAction.type,
     async handle (action) {
-      const { sharedMemoryManager, dialog } = locals
+      const { sharedMemoryManager, dialog, walletFactory } = locals
       const mem = sharedMemoryManager.memory
       const walletPackages = mem.walletsMetadata
 
@@ -35,14 +35,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
               return walletMetadata.name
             }
           },
-          provider: {
-            type: 'select',
-            message: 'Select a network',
-            values: mem.settings.providers,
-            getText (provider) {
-              return provider.name
-            }
-          }
+          provider: walletFactory.providerSelect(mem.settings.providers)
         },
         order: ['name', 'walletMetadata', 'provider']
       })

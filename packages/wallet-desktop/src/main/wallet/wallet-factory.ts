@@ -1,5 +1,5 @@
-import { ProviderData, Wallet, WalletBuilder, WalletMetadata, DEFAULT_PROVIDERS_DATA } from '@i3m/base-wallet'
-import { TaskDescription, WalletMetadataMap } from '@wallet/lib'
+import { ProviderData, Wallet, WalletBuilder, WalletMetadata, DEFAULT_PROVIDERS_DATA, Descriptors } from '@i3m/base-wallet'
+import { Provider, TaskDescription, WalletMetadataMap } from '@wallet/lib'
 import {
   logger,
   Locals,
@@ -101,7 +101,7 @@ export class WalletFactory {
       (prev, curr) => {
         prev[`did:ethr:${curr.network}`] = curr
         return prev
-      }, DEFAULT_PROVIDERS_DATA)
+      }, { ...DEFAULT_PROVIDERS_DATA })
 
     const walletInfo = wallets[walletName]
     if (walletInfo === undefined) {
@@ -144,6 +144,24 @@ export class WalletFactory {
       }
 
       throw new InvalidWalletError(`Cannot load the wallet '${walletName}'`)
+    }
+  }
+
+  providerSelect (providers: Provider[]): Descriptors<Provider> {
+    const completeProviderList: Provider[] = [
+      ...Object.values(DEFAULT_PROVIDERS_DATA).map((provider) => ({
+        ...provider,
+        name: provider.network
+      })),
+      ...providers
+    ]
+    return {
+      type: 'select',
+      message: 'Select a network',
+      values: completeProviderList,
+      getText (provider) {
+        return provider.name
+      }
     }
   }
 
