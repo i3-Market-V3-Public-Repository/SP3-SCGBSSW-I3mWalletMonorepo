@@ -1,5 +1,6 @@
 import { Resource, Identity, WalletMetadata, ToastOptions } from '@i3m/base-wallet'
-import { PrivateSettings, createDefaultPrivateSettings, DialogData, ConnectData, CloudVaultData } from '../internal'
+
+import { PrivateSettings, createDefaultPrivateSettings, DialogData, ConnectData, CloudVaultData, toVaultState } from '../internal'
 import { WalletTask } from './tasks'
 
 export interface WalletMetadataMap {
@@ -51,7 +52,8 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
     toasts: [],
     tasks: [],
     cloudVaultData: {
-      state: 'disconnected',
+      state: toVaultState('not-initialized'),
+      syncing: false,
       loggingIn: false,
       unsyncedChanges: false
     },

@@ -7,10 +7,11 @@ export interface RetryOptions {
   retryDelay: number // milliseconds
 }
 
-interface CallOptions {
+interface CallOptions<T = unknown> {
   bearerToken?: string
   responseStatus?: number
   sequentialPost?: boolean // post/put to the same url will be handled sequentially
+  beforeUploadFinish?: (data: T) => Promise<void>
 }
 
 export class Request {
@@ -74,9 +75,9 @@ export class Request {
     this._stop = false
   }
 
-  async get<T> (url: string, options?: CallOptions): Promise<T>
-  async get<T> (options?: CallOptions): Promise<T>
-  async get<T> (urlOrOptions?: string | CallOptions, opts?: CallOptions): Promise<T> {
+  async get<T> (url: string, options?: CallOptions<T>): Promise<T>
+  async get<T> (options?: CallOptions<T>): Promise<T>
+  async get<T> (urlOrOptions?: string | CallOptions<T>, opts?: CallOptions<T>): Promise<T> {
     const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
@@ -115,9 +116,9 @@ export class Request {
     return res.data
   }
 
-  async delete<T> (url: string, options?: CallOptions): Promise<T>
-  async delete<T> (options?: CallOptions): Promise<T>
-  async delete<T> (urlOrOptions?: string | CallOptions, opts?: CallOptions): Promise<T> {
+  async delete<T> (url: string, options?: CallOptions<T>): Promise<T>
+  async delete<T> (options?: CallOptions<T>): Promise<T>
+  async delete<T> (urlOrOptions?: string | CallOptions, opts?: CallOptions<T>): Promise<T> {
     const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
@@ -152,7 +153,7 @@ export class Request {
     return res.data
   }
 
-  private async upload<T> (method: 'post' | 'put', url: string, requestBody: any, options?: CallOptions): Promise<T> {
+  private async upload<T> (method: 'post' | 'put', url: string, requestBody: any, options?: CallOptions<T>): Promise<T> {
     const headers: AxiosRequestConfig['headers'] = {
       'Content-Type': 'application/json'
     }
@@ -188,6 +189,11 @@ export class Request {
       throw VaultError.from(err)
     })
 
+    const beforeUploadFinish = options?.beforeUploadFinish
+    if (beforeUploadFinish !== undefined) {
+      await beforeUploadFinish(res.data)
+    }
+
     if (index === this.uploading[url].length - 1) {
       this.uploading[url].pop() // eslint-disable-line @typescript-eslint/no-floating-promises
     } else {
@@ -209,9 +215,9 @@ export class Request {
     return res.data
   }
 
-  async post<T> (url: string, requestBody: any, options?: CallOptions): Promise<T>
-  async post<T> (requestBody: any, options?: CallOptions): Promise<T>
-  async post<T> (urlOrRequestBody: string | any, requestBodyOrOptions: any | CallOptions, opts?: CallOptions): Promise<T> {
+  async post<T> (url: string, requestBody: any, options?: CallOptions<T>): Promise<T>
+  async post<T> (requestBody: any, options?: CallOptions<T>): Promise<T>
+  async post<T> (urlOrRequestBody: string | any, requestBodyOrOptions: any | CallOptions<T>, opts?: CallOptions): Promise<T> {
     let url, requestBody, options
     if (typeof urlOrRequestBody === 'string') {
       url = urlOrRequestBody
@@ -228,9 +234,9 @@ export class Request {
     return await this.upload('post', url, requestBody, options)
   }
 
-  async put<T> (url: string, requestBody: any, options?: CallOptions): Promise<T>
-  async put<T> (requestBody: any, options?: CallOptions): Promise<T>
-  async put<T> (urlOrRequestBody: string | any, requestBodyOrOptions: any | CallOptions, opts?: CallOptions): Promise<T> {
+  async put<T> (url: string, requestBody: any, options?: CallOptions<T>): Promise<T>
+  async put<T> (requestBody: any, options?: CallOptions<T>): Promise<T>
+  async put<T> (urlOrRequestBody: string | any, requestBodyOrOptions: any | CallOptions<T>, opts?: CallOptions): Promise<T> {
     let url, requestBody, options
     if (typeof urlOrRequestBody === 'string') {
       url = urlOrRequestBody

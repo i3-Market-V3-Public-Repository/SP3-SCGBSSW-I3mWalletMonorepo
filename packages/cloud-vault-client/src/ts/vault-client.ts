@@ -97,10 +97,7 @@ export class VaultClient extends EventEmitter {
           delete this.vaultRequest
           delete this.token
           delete this.timestamp
-        }
-        break
-      case VAULT_STATE.LOGGED_IN:
-        if (this._state === VAULT_STATE.CONNECTED) {
+
           this.es?.close()
           delete this.es
         }
@@ -344,13 +341,15 @@ export class VaultClient extends EventEmitter {
       const vaultRequest = this.vaultRequest as Request
       const data = await vaultRequest.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(requestBody, {
         bearerToken: this.token,
-        responseStatus: 201
+        responseStatus: 201,
+        beforeUploadFinish: async (data) => {
+          this.timestamp = data.timestamp
+        }
       })
-      this.timestamp = data.timestamp
 
       this.emit('sync-stop', startTs, Date.now())
 
-      return this.timestamp
+      return data.timestamp
     } catch (error) {
       this.emit('sync-stop', startTs, Date.now())
       this.state = stateFromError(this.state, error)

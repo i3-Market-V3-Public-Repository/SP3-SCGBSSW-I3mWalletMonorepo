@@ -1,8 +1,8 @@
-
-export type CloudVaultState = 'connected' | 'disconnected' | 'sync'
+import { VaultState } from "@i3m/cloud-vault-client"
 
 export interface CloudVaultData {
-  state: CloudVaultState
+  state: VaultState
+  syncing: boolean
   loggingIn: boolean
   unsyncedChanges: boolean
 }

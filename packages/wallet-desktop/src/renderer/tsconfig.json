@@ -13,5 +13,5 @@
     ],
     "include": [
         "**/*"
-    ]
+, "../lib/util/vault-state.ts"    ]
 }

@@ -11,7 +11,8 @@ import {
   logger,
   MainContext,
   RuntimeManager,
-  createStoreMigrationProxy
+  createStoreMigrationProxy,
+  parseArguments
 } from './internal'
 
 async function executeRuntime (
@@ -39,8 +40,8 @@ export default async (argv: string[]): Promise<void> => {
 
     // Initialize context
     const ctx = initContext<MainContext>({
+      args: parseArguments(),
       appPath: path.resolve(__dirname, '../../'),
-      settingsPath: app.getPath('userData'),
       storeMigrationProxy: createStoreMigrationProxy()
     })
 

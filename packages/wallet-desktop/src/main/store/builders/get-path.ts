@@ -3,7 +3,7 @@ import { StoreOptions } from './store-builder'
 
 export const getPath = (ctx: MainContext, locals: Locals, options?: Partial<StoreOptions<any>>): string => {
   const fixedOptions = Object.assign({}, {
-    cwd: ctx.settingsPath,
+    cwd: ctx.args.config,
     fileExtension: 'json',
     name: 'config'
   }, options)

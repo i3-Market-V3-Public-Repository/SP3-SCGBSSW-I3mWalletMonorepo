@@ -17,6 +17,7 @@ export type SettingsValueOrFunction<V, T> = V | ((key: string, value: T, metadat
 interface BaseSettingsMetadata<T = any> extends BaseMetadata<T> {
   label: SettingsValueOrFunction<string, T>
   key: string
+  default?: T
   canUpdate?: (key: string, value: any, metadata: SettingsMetadata, sharedMemory: SharedMemory, dispatch: ActionDispatcher) => boolean
 }
 

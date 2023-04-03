@@ -3,10 +3,11 @@ export interface RetryOptions {
     retries: number;
     retryDelay: number;
 }
-interface CallOptions {
+interface CallOptions<T = unknown> {
     bearerToken?: string;
     responseStatus?: number;
     sequentialPost?: boolean;
+    beforeUploadFinish?: (data: T) => Promise<void>;
 }
 export declare class Request {
     axios: AxiosInstance;
@@ -24,15 +25,15 @@ export declare class Request {
     private getAxiosInstance;
     waitForUploadsToFinsh(url?: string): Promise<void>;
     stop(): Promise<void>;
-    get<T>(url: string, options?: CallOptions): Promise<T>;
-    get<T>(options?: CallOptions): Promise<T>;
-    delete<T>(url: string, options?: CallOptions): Promise<T>;
-    delete<T>(options?: CallOptions): Promise<T>;
+    get<T>(url: string, options?: CallOptions<T>): Promise<T>;
+    get<T>(options?: CallOptions<T>): Promise<T>;
+    delete<T>(url: string, options?: CallOptions<T>): Promise<T>;
+    delete<T>(options?: CallOptions<T>): Promise<T>;
     private upload;
-    post<T>(url: string, requestBody: any, options?: CallOptions): Promise<T>;
-    post<T>(requestBody: any, options?: CallOptions): Promise<T>;
-    put<T>(url: string, requestBody: any, options?: CallOptions): Promise<T>;
-    put<T>(requestBody: any, options?: CallOptions): Promise<T>;
+    post<T>(url: string, requestBody: any, options?: CallOptions<T>): Promise<T>;
+    post<T>(requestBody: any, options?: CallOptions<T>): Promise<T>;
+    put<T>(url: string, requestBody: any, options?: CallOptions<T>): Promise<T>;
+    put<T>(requestBody: any, options?: CallOptions<T>): Promise<T>;
 }
 export {};
 //# sourceMappingURL=request.d.ts.map

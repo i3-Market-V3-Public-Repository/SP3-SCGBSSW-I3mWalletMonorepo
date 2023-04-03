@@ -1,11 +1,12 @@
 
 import * as React from 'react'
+import { VaultState } from '@i3m/cloud-vault-client'
+import { Alert, Button, ButtonProps } from 'react-bootstrap'
 
-import { DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudSyncAction, syncCloudAction } from '@wallet/lib'
+import { DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudSyncAction, syncCloudAction, toVaultState } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { Details, Section } from '@wallet/renderer/components'
 
-import { Alert, Button, ButtonProps } from 'react-bootstrap'
 import './cloud-vault.scss'
 
 type Operation = (() => void) | undefined
@@ -28,13 +29,23 @@ const bindOperation = (operation: keyof CloudVaultOperations, operations: CloudV
   return props
 }
 
+const getStateText = (state: VaultState): string => {
+  switch (state) {
+    case toVaultState('connected'):
+      return 'Connected'
+
+    default:
+      return 'Disconnected'
+  }
+}
+
 export function CloudVault (): JSX.Element {
   const [mem] = useSharedMemory()
   const dispatch = useAction()
   const { cloudVaultData: publicCloudData } = mem
   const { cloud: privateCloudData } = mem.settings
 
-  const status = publicCloudData.state
+  const state = publicCloudData.state
   const username = privateCloudData?.credentials?.username
   const url = privateCloudData?.url ?? DEFAULT_CLOUD_URL
   const unsynced = publicCloudData.unsyncedChanges
@@ -61,7 +72,7 @@ export function CloudVault (): JSX.Element {
   }
 
   if (!publicCloudData.loggingIn) {
-    if (publicCloudData.state !== 'disconnected') {
+    if (state === toVaultState('connected')) {
       operations.logout = onLogout
       operations.sync = onSync
       operations.delete = onDelete
@@ -81,7 +92,7 @@ export function CloudVault (): JSX.Element {
           {unsynced ? <Alert variant='warning'>Your wallet is currently <b>unsynced</b>!</Alert> : null}
           <Details.Title>Summary</Details.Title>
           <Details.Grid>
-            <Details.Input label='Status' value={status} />
+            <Details.Input label='Status' value={getStateText(state)} />
             {username !== undefined ? <Details.Input label='Username' value={username} /> : null}
             <Details.Input label='URL' value={url} />
           </Details.Grid>

@@ -47,17 +47,11 @@ export class CloudVaultManager {
 
   constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
     const url = CloudVaultManager.buildCloudUrl(params.cloud)
-    this.client = new VaultClient(url, {
-      // TO-DO: add retry options to params
-      defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours
-        retries: 24 * 3600 / 5,
-        retryDelay: 5000
-      }
-    })
+    this.client = this.buildClient(url)
     this.failed = false
     this.pendingSyncs = []
-    this.bindClientEvents()
     this.bindRuntimeEvents()
+    this.bindClientEvents()
   }
 
   protected bindRuntimeEvents (): void {
@@ -81,10 +75,22 @@ export class CloudVaultManager {
     const { sharedMemoryManager: shm } = this.locals
     const newUrl = CloudVaultManager.buildCloudUrl(cloud ?? shm.memory.settings.cloud)
     if (this.client.serverUrl !== newUrl) {
-      if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
-      this.client = new VaultClient(newUrl)
+      this.client = this.buildClient(newUrl)
       this.bindClientEvents()
     }
+  }
+
+  protected buildClient (url: string): VaultClient {
+    if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
+    const client = new VaultClient(url, {
+      // TO-DO: add retry options to params
+      defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours
+        retries: 24 * 3600 / 5,
+        retryDelay: 5000
+      }
+    })
+
+    return client
   }
 
   protected bindClientEvents (): void {
@@ -92,51 +98,43 @@ export class CloudVaultManager {
     const onStateChange: ClientCallback<'state-changed'> = (state) => {
       const prevState = shm.memory.cloudVaultData.state
 
-      if (prevState !== 'connected' && state === VAULT_STATE.CONNECTED) {
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          state
+        }
+      }))
+
+      if (prevState < VAULT_STATE.CONNECTED && state === VAULT_STATE.CONNECTED) {
         this.locals.toast.show({
           message: 'Cloud Vault connected',
           type: 'success'
         })
-
-        shm.update(mem => ({
-          ...mem,
-          cloudVaultData: {
-            ...mem.cloudVaultData,
-            state: 'connected'
-          }
-        }))
-      }
-
-      if (prevState !== 'disconnected' && state === VAULT_STATE.LOGGED_IN) {
+      } else if (prevState === VAULT_STATE.CONNECTED && state < VAULT_STATE.CONNECTED) {
         this.locals.toast.show({
           message: 'Cloud Vault disconnected',
           details: 'Check your internet connection please',
           type: 'error'
         })
-
-        shm.update(mem => ({
-          ...mem,
-          cloudVaultData: {
-            ...mem.cloudVaultData,
-            state: 'disconnected'
-          }
-        }))
       }
     }
 
     const onStorageUpdated: ClientCallback<'storage-updated'> = (remoteTimestamp) => {
+      const versionDate = getVersionDate(remoteTimestamp)
+      logger.debug(`Getting a new cloud vault version (${versionDate})`)
       const promise = this.synchronize({ remoteTimestamp })
       handlePromise(this.locals, promise)
     }
 
     const onSyncStart: ClientCallback<'sync-start'> = (startTs) => {
-      const prevState = shm.memory.cloudVaultData.state
-      if (prevState !== 'sync') {
+      const pairing = shm.memory.cloudVaultData.syncing
+      if (!pairing) {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
             ...mem.cloudVaultData,
-            state: 'sync'
+            syncing: true
           }
         }))
       }
@@ -147,12 +145,13 @@ export class CloudVaultManager {
       this.pendingSyncs = this
         .pendingSyncs
         .filter((thisStartTs) => thisStartTs !== startTs)
+
       if (this.pendingSyncs.length === 0) {
         shm.update(mem => ({
           ...mem,
           cloudVaultData: {
             ...mem.cloudVaultData,
-            state: 'connected'
+            syncing: false
           }
         }))
       }
@@ -232,11 +231,11 @@ export class CloudVaultManager {
   }
 
   get isConnected (): boolean {
-    return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'connected'
+    return this.locals.sharedMemoryManager.memory.cloudVaultData.state === VAULT_STATE.CONNECTED
   }
 
   get isDisconnected (): boolean {
-    return this.locals.sharedMemoryManager.memory.cloudVaultData.state === 'disconnected'
+    return this.locals.sharedMemoryManager.memory.cloudVaultData.state < VAULT_STATE.CONNECTED
   }
 
   async getCredentials (errorMessage: string): Promise<Credentials> {
@@ -444,7 +443,7 @@ export class CloudVaultManager {
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        state: 'disconnected'
+        state: VAULT_STATE.INITIALIZED
       }
     }))
     this.client.logout()
@@ -461,7 +460,8 @@ export class CloudVaultManager {
 
   async updateStorage (vault: VaultStorage, force?: boolean): Promise<number> {
     try {
-      logger.debug(`Uploading to ${this.client.serverUrl}`)
+      const versionDate = getVersionDate(vault.timestamp)
+      logger.debug(`Uploading to cloud vault (${this.client.serverUrl}) the version (${versionDate})`)
       return await this.client.updateStorage(vault, force)
     } catch (err: unknown) {
       if (err instanceof VaultError) {
@@ -489,9 +489,6 @@ export class CloudVaultManager {
 
     const publicSettings = storeManager.getStore('public-settings')
     const cloud = await publicSettings.get('cloud')
-
-    const versionDate = getVersionDate(cloud?.timestamp)
-    logger.debug(`Upload from cloud vault version: ${versionDate}`)
 
     const bundle = await storeManager.bundleStores()
     const bundleJSON = JSON.stringify(bundle)
@@ -533,9 +530,12 @@ export class CloudVaultManager {
     const local = optionBuilder.add('Local version')
     optionBuilder.add('Cancel', 'danger')
 
+    const localVersion = getVersionDate(syncCtx.publicCloud?.timestamp)
+    const remoteVersion = getVersionDate(syncCtx.remoteTimestamp)
+
     const response = await dialog.select({
       title: 'Cloud Vault',
-      message: '',
+      message: `There has been a conflict between the local version from ${localVersion} and the remote version from ${remoteVersion}.\n\n Which version would you want to use?`,
       allowCancel: true,
       ...optionBuilder
     })

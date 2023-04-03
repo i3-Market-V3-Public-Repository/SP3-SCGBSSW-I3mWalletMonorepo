@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { Alert } from 'react-bootstrap'
 
-import { DEFAULT_CLOUD_URL, showToastAction } from '@wallet/lib'
+import { DEFAULT_CLOUD_URL, DEFAULT_UPLOAD_DEBOUNCE_TIME, showToastAction } from '@wallet/lib'
 import { MetadataRecord } from '../settings-metadata'
 
 export const cloudVaultMetadata: MetadataRecord = {
@@ -35,6 +35,12 @@ export const cloudVaultMetadata: MetadataRecord = {
 
         return true
       }
+    },
+    {
+      type: 'input',
+      label: 'Waiting time after ',
+      key: 'cloud.uploadDebounceTime',
+      placeholder: DEFAULT_UPLOAD_DEBOUNCE_TIME.toString(),
     }
   ]
 }

@@ -6,5 +6,5 @@ interface Paths {
 }
 
 export const paths = (ctx: MainContext): Paths => ({
-  publicConfig: path.join(ctx.settingsPath, 'config.json')
+  publicConfig: path.join(ctx.args.config, 'config.json')
 })

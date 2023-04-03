@@ -1,7 +1,7 @@
 import { BaseContext } from '@wallet/lib'
-import { StoreMigrationProxy } from '@wallet/main/internal'
+import { Args, StoreMigrationProxy } from '@wallet/main/internal'
 
 export interface MainContext extends BaseContext {
-  settingsPath: string
+  args: Args
   storeMigrationProxy: StoreMigrationProxy
 }

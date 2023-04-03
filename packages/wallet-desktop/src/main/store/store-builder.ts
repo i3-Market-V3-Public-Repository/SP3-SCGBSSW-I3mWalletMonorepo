@@ -1,7 +1,5 @@
-import { app } from 'electron'
 import { promises as fs } from 'fs'
 import _ from 'lodash'
-import path from 'path'
 
 import { StoreSettings, WalletInfo } from '@wallet/lib'
 import { EncryptionKeys, Locals, logger, MainContext, StoreFeatureOptions, WalletStoreOptions } from '@wallet/main/internal'
@@ -20,7 +18,7 @@ export class StoreBuilder {
   public async buildWalletStoreOptions (wallet: WalletInfo, opts: StoreFeatureOptions | undefined, encKeys?: EncryptionKeys): Promise<WalletStoreOptions> {
     const { keysManager } = this.locals
     const name = _.get(opts, 'name', 'wallet')
-    const storePath = _.get(opts, 'storePath', path.resolve(app.getPath('userData')))
+    const storePath = _.get(opts, 'storePath', this.ctx.args.config)
     const encryptionEnabled: boolean = _.get(opts, 'encryption.enabled', false)
     const storeId = wallet.store
 
@@ -56,7 +54,7 @@ export class StoreBuilder {
       }
     } else {
       const options = await optionsBuilder({
-        cwd: this.ctx.settingsPath,
+        cwd: this.ctx.args.config,
         encKeys: this.locals.keysManager.encKeys
       })
       return await this.buildStore<T>({ ...options, storeType: to.storeType })
@@ -65,7 +63,7 @@ export class StoreBuilder {
 
   public async buildStore <T extends Record<string, any> = Record<string, unknown>>(options?: Partial<StoreOptions<T>>): Promise<[store: Store<T>, options: StoreOptions<T>]> {
     const fixedOptions = Object.assign({}, {
-      cwd: this.ctx.settingsPath,
+      cwd: this.ctx.args.config,
       fileExtension: 'json',
       name: 'config',
       storeType: this.storeInfo.type

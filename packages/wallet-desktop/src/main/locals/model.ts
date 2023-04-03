@@ -1,34 +1,15 @@
 
 import { Toast } from '@i3m/base-wallet'
-import packageJson from '../../../package.json'
 import {
-  Tray,
-  WalletFactory,
-  FeatureContext,
-  SharedMemoryManager,
-  WindowManager,
-  ApiManager,
-  FeatureManager,
-  ActionReducer,
-  ConnectManager,
-  KeysManager,
-  VersionManager,
-  StoreManager,
-  CloudVaultManager,
-  TaskManager,
-  ElectronDialog,
-  AuthManager,
-  WalletDesktopError,
-  MainContext,
-  RuntimeManager,
-  Args
+  ActionReducer, ApiManager, AuthManager, CloudVaultManager, ConnectManager, ElectronDialog, FeatureContext, FeatureManager, KeysManager, MainContext,
+  RuntimeManager, SharedMemoryManager, StoreManager, TaskManager, Tray, VersionManager, WalletDesktopError, WalletFactory, WindowManager
 } from '@wallet/main/internal'
+import packageJson from '../../../package.json'
 
 export interface Locals {
   readonly packageJson: typeof packageJson
 
   // Application
-  readonly arguments: Args
   readonly runtimeManager: RuntimeManager
   readonly sharedMemoryManager: SharedMemoryManager
   readonly versionManager: VersionManager

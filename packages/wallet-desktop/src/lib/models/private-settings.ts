@@ -40,9 +40,11 @@ export interface Credentials {
 export interface CloudVaultPrivateSettings {
   credentials?: Credentials
   url?: string
+  uploadDebounceTime?: number
 }
 
 export const DEFAULT_CLOUD_URL = 'http://localhost:3000'
+export const DEFAULT_UPLOAD_DEBOUNCE_TIME = 2000
 
 export const DEFAULT_WALLET_PACKAGES = [
   '@i3m/sw-wallet',
