@@ -36,6 +36,7 @@ export type VaultErrorData = {
     };
     unauthorized: any;
     'invalid-credentials': any;
+    'invalid-timestamp': any;
     error: Error;
     unknown: any;
     validation: {

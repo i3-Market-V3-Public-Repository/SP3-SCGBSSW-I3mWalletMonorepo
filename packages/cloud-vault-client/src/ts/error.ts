@@ -34,6 +34,7 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
   }
   unauthorized: any
   'invalid-credentials': any
+  'invalid-timestamp': any
   error: Error // unknown error generated as an instance of Error
   unknown: any // unknown error not as an instance of Error
   validation: {
@@ -57,7 +58,7 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
   }
 
   static from (error: unknown): VaultError {
-    if (error instanceof VaultError) return error
+    if (error instanceof VaultError) { return error }
     if (error instanceof Object && error.constructor.name === 'Event') { // SSE problem
       return new VaultError('sse-connection-error', error, { cause: 'Likely issues connecting to the events endpoint of the cloud vault server' })
     }
@@ -68,6 +69,8 @@ export class VaultError<T extends VaultErrorName = VaultErrorName> extends Error
           return new VaultError('no-uploaded-storage', undefined)
         case 'invalid-credentials':
           return new VaultError('invalid-credentials', undefined)
+        case 'invalid-timestamp':
+          return new VaultError('invalid-timestamp', undefined)
         case 'quota-exceeded':
           return new VaultError('quota-exceeded', err.description)
         case 'unauthorized':

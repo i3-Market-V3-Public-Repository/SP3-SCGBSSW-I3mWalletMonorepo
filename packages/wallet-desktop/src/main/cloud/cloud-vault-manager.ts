@@ -1,9 +1,9 @@
 import { DialogOptionContext, VerifiableCredentialResource } from '@i3m/base-wallet'
-import { checkErrorType, VaultClient, VaultError, VaultStorage, VAULT_STATE, CbOnEventFn as ClientCallback } from '@i3m/cloud-vault-client'
+import { CbOnEventFn as ClientCallback, checkErrorType, VaultClient, VaultError, VaultStorage, VAULT_STATE } from '@i3m/cloud-vault-client'
 import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { shell } from 'electron'
 
-import { CloudVaultPrivateSettings, CloudVaultPublicSettings, TaskDescription, DEFAULT_CLOUD_URL, Credentials } from '@wallet/lib'
+import { CloudVaultPrivateSettings, CloudVaultPublicSettings, Credentials, DEFAULT_CLOUD_URL, TaskDescription } from '@wallet/lib'
 import { filledString, getVersionDate, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 import { StoresBundle } from '../store/store-bundle'
 
@@ -21,7 +21,8 @@ interface SynchronizeContext {
 }
 
 interface Params {
-  cloud?: CloudVaultPrivateSettings
+  privateCloud?: CloudVaultPrivateSettings
+  publicCloud?: CloudVaultPublicSettings
 }
 
 export class CloudVaultManager {
@@ -34,19 +35,23 @@ export class CloudVaultManager {
   static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
     const { storeManager } = locals
     const privSettings = storeManager.getStore('private-settings')
-    const cloud = await privSettings.get('cloud')
+    const privateCloud = await privSettings.get('cloud')
+
+    const pubSettings = storeManager.getStore('public-settings')
+    const publicCloud = await pubSettings.get('cloud')
 
     return new CloudVaultManager(ctx, locals, {
-      cloud
+      privateCloud,
+      publicCloud
     })
   }
 
-  static buildCloudUrl (cloud?: CloudVaultPrivateSettings): string {
-    return filledString(cloud?.url, DEFAULT_CLOUD_URL)
+  static buildCloudUrl (url?: string): string {
+    return filledString(url, DEFAULT_CLOUD_URL)
   }
 
   constructor (protected ctx: MainContext, protected locals: Locals, params: Params) {
-    const url = CloudVaultManager.buildCloudUrl(params.cloud)
+    const url = CloudVaultManager.buildCloudUrl(params.publicCloud?.url)
     this.client = this.buildClient(url)
     this.failed = false
     this.pendingSyncs = []
@@ -57,6 +62,7 @@ export class CloudVaultManager {
   protected bindRuntimeEvents (): void {
     const { authManager, runtimeManager, storeManager } = this.locals
 
+    // Cloud vault workflow
     runtimeManager.on('cloud-auth', async (task) => {
       if (authManager.justRegistered) {
         await this.firstTimeSync(task)
@@ -71,9 +77,8 @@ export class CloudVaultManager {
     })
   }
 
-  protected resetClient (cloud?: CloudVaultPrivateSettings): void {
-    const { sharedMemoryManager: shm } = this.locals
-    const newUrl = CloudVaultManager.buildCloudUrl(cloud ?? shm.memory.settings.cloud)
+  protected resetClient (url: string): void {
+    const newUrl = CloudVaultManager.buildCloudUrl(url)
     if (this.client.serverUrl !== newUrl) {
       this.client = this.buildClient(newUrl)
       this.bindClientEvents()
@@ -127,6 +132,11 @@ export class CloudVaultManager {
       handlePromise(this.locals, promise)
     }
 
+    const onEmptyStorage: ClientCallback<'empty-storage'> = () => {
+      const promise = this.synchronize({ direction: 'push' })
+      handlePromise(this.locals, promise)
+    }
+
     const onSyncStart: ClientCallback<'sync-start'> = (startTs) => {
       const pairing = shm.memory.cloudVaultData.syncing
       if (!pairing) {
@@ -159,6 +169,7 @@ export class CloudVaultManager {
 
     this.client.on('state-changed', onStateChange)
     this.client.on('storage-updated', onStorageUpdated)
+    this.client.on('empty-storage', onEmptyStorage)
     this.client.on('sync-start', onSyncStart)
     this.client.on('sync-stop', onSyncStop)
 
@@ -173,20 +184,19 @@ export class CloudVaultManager {
   async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
     const { dialog } = this.locals
 
-    const loginRegisterBuilder = dialog.useOptionsBuilder()
-    const login = loginRegisterBuilder.add('Login')
-    const register = loginRegisterBuilder.add('Register')
-    loginRegisterBuilder.add('Omit', 'danger')
+    const loginBuilder = dialog.useOptionsBuilder()
+    loginBuilder.add('No', 'danger')
+    const login = loginBuilder.add('Yes')
 
     let sync = false
     while (!sync) {
       const option = await dialog.select({
         title: 'Secure Cloud Vault',
-        message: 'Do you want to connect to your secure cloud vault? \nYour cloud vault storage will be restored in this wallet.',
-        ...loginRegisterBuilder
+        message: 'If you already have a backup in a cloud vault server, do you want to load it?',
+        ...loginBuilder
       })
 
-      if (loginRegisterBuilder.compare(option, login)) {
+      if (loginBuilder.compare(option, login)) {
         try {
           await this.loginTask(task)
           sync = true
@@ -194,32 +204,35 @@ export class CloudVaultManager {
         } catch (err: unknown) {
           await handleError(this.locals, err)
         }
-      } else if (loginRegisterBuilder.compare(option, register)) {
-        while (true) {
-          const credentials = await this.registerTask(task)
-          const loginBackBuilder = dialog.useOptionsBuilder()
-          const relogin = loginRegisterBuilder.add('Login with same credentials')
-          loginRegisterBuilder.add('Go back')
-          const option = await dialog.select({
-            title: 'Cloud Vault Registration',
-            message: 'Bla bla',
-            ...loginRegisterBuilder
-          })
-
-          if (loginBackBuilder.compare(relogin, option)) {
-            try {
-              await this.loginTask(task, { credentials })
-              sync = true
-            } catch (err: unknown) {
-              await handleError(this.locals, err)
-            }
-          } else {
-            break
-          }
-        }
       } else {
         break
       }
+      // else if (loginBuilder.compare(option, register)) {
+      //   while (true) {
+      //     const credentials = await this.registerTask(task)
+      //     const loginBackBuilder = dialog.useOptionsBuilder()
+      //     const relogin = loginBuilder.add('Login with same credentials')
+      //     loginBuilder.add('Go back')
+      //     const option = await dialog.select({
+      //       title: 'Cloud Vault Registration',
+      //       message: 'Bla bla',
+      //       ...loginBuilder
+      //     })
+
+      //     if (loginBackBuilder.compare(relogin, option)) {
+      //       try {
+      //         await this.loginTask(task, { credentials })
+      //         sync = true
+      //       } catch (err: unknown) {
+      //         await handleError(this.locals, err)
+      //       }
+      //     } else {
+      //       break
+      //     }
+      //   }
+      // } else {
+      //   break
+      // }
     }
 
     if (sync) {
@@ -236,6 +249,38 @@ export class CloudVaultManager {
 
   get isDisconnected (): boolean {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state < VAULT_STATE.CONNECTED
+  }
+
+  async getCloudVaultUrl (): Promise<string> {
+    const { storeManager, dialog } = this.locals
+    const publicSettings = storeManager.getStore('public-settings')
+    let cloud = await publicSettings.get('cloud')
+
+    if (cloud?.url === undefined) {
+      const vaultUrl = await dialog.text({
+        title: 'Cloud Vault',
+        message: 'You must provide the URL of your Cloud Vault server (i.e. https://my-vault-server.com:8000)',
+        allowCancel: true
+      })
+      if (vaultUrl !== undefined) {
+        cloud = {
+          unsyncedChanges: false,
+          ...cloud,
+          url: vaultUrl
+        }
+        await publicSettings.set('cloud', cloud)
+      }
+    }
+
+    const url = cloud?.url
+    if (url === undefined) {
+      throw new WalletDesktopError('Invalid URL for the Cloud Vault server', {
+        message: 'Cloud Vault',
+        details: 'Invalid URL for the Cloud Vault server'
+      })
+    }
+
+    return url
   }
 
   async getCredentials (errorMessage: string): Promise<Credentials> {
@@ -305,7 +350,8 @@ export class CloudVaultManager {
   async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<Credentials> {
     const errorMessage = 'Vault user registration error'
 
-    this.resetClient(cloud)
+    const url = await this.getCloudVaultUrl()
+    this.resetClient(url)
     await this.client.initialized
 
     let credentials = cloud?.credentials
@@ -346,7 +392,8 @@ export class CloudVaultManager {
     }))
 
     try {
-      this.resetClient(cloud)
+      const url = await this.getCloudVaultUrl()
+      this.resetClient(url)
       await this.client.initialized
 
       let credentials = cloud?.credentials
@@ -356,8 +403,7 @@ export class CloudVaultManager {
 
       await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
       await storeManager.onCloudLogin(credentials)
-    }
-    finally {
+    } finally {
       shm.update(mem => ({
         ...mem,
         cloudVaultData: {
@@ -483,7 +529,7 @@ export class CloudVaultManager {
     }
 
     const { sharedMemoryManager: sh, storeManager } = this.locals
-    if (sh.memory.settings.cloud === undefined) {
+    if (sh.memory.settings.private.cloud === undefined) {
       return
     }
 

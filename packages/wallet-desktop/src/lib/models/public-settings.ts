@@ -8,8 +8,9 @@ export interface StoreSettings {
 }
 
 export interface CloudVaultPublicSettings {
-  timestamp: number // timestamp (milliseconds elapsed since EPOCH) when the storage was registered in the vault cloud.
+  timestamp?: number // timestamp (milliseconds elapsed since EPOCH) when the storage was registered in the vault cloud.
   unsyncedChanges: boolean
+  url?: string
 }
 
 export interface PublicSettings {

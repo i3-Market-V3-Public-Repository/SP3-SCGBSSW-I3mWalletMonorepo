@@ -1,4 +1,4 @@
-import { VaultState } from "@i3m/cloud-vault-client"
+import { VaultState } from '@i3m/cloud-vault-client'
 
 export interface CloudVaultData {
   state: VaultState

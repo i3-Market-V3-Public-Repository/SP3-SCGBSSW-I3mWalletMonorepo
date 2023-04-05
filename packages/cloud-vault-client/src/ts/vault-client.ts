@@ -152,7 +152,9 @@ export class VaultClient extends EventEmitter {
 
     this.es.addEventListener('connected', (e) => {
       const msg = JSON.parse(e.data) as ConnectedEvent['data']
-      if (msg.timestamp !== undefined && msg.timestamp !== this.timestamp) {
+      if (msg.timestamp === undefined) {
+        this.emit('empty-storage')
+      } else if (msg.timestamp !== this.timestamp) {
         this.timestamp = msg.timestamp
         this.emit('storage-updated', this.timestamp)
       }

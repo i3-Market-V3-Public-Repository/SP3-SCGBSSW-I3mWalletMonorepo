@@ -81,6 +81,10 @@ export class KeysManager {
     }
   }
 
+  isCurrentEncKey (encKeys = this.encKeys): boolean {
+    return encKeys === this.encKeys
+  }
+
   async computeWalletKey (walletUuid: string, encKeys = this.encKeys): Promise<KeyObject> {
     return await encKeys.generateWalletKey(walletUuid)
   }

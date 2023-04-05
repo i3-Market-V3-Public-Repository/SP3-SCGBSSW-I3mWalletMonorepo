@@ -26,7 +26,7 @@ export class Tray {
 
   updateContextMenu (wallets: WalletItem[]): void {
     const { windowManager, sharedMemoryManager, actionReducer } = this.locals
-    const currentWallet = sharedMemoryManager.memory.settings.wallet.current
+    const currentWallet = sharedMemoryManager.memory.settings.private.wallet.current
 
     const contextMenu = Menu.buildFromTemplate([
       { label: 'Open', type: 'normal', click: () => windowManager.openMainWindow() },

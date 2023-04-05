@@ -5,6 +5,7 @@ export interface StoreMigration {
   cwd?: string
   encKeys?: EncryptionKeys
   storeType?: StoreType
+  readonly direction: 'from' | 'to'
 }
 
 export interface StoreMigrationProxy {
@@ -33,8 +34,8 @@ export const createStoreMigrationProxy = (): StoreMigrationProxy => {
   }
   const baseProxy: StoreMigrationProxy = {
     needed: false,
-    from: new Proxy({}, changeNeededProxyHandler),
-    to: new Proxy({}, changeNeededProxyHandler)
+    from: new Proxy<StoreMigration>({ direction: 'from' }, changeNeededProxyHandler),
+    to: new Proxy<StoreMigration>({ direction: 'to' }, changeNeededProxyHandler)
   }
   return new Proxy<StoreMigrationProxy>(baseProxy, changeNeededProxyHandler)
 }

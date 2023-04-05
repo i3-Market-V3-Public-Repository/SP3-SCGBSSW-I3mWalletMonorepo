@@ -15,7 +15,7 @@ export const selectWallet: ActionHandlerBuilder<typeof selectWalletAction> = (
         wallet = await dialog.select({ values: walletFactory.walletNames })
       }
 
-      if (wallet === sharedMemoryManager.memory.settings.wallet.current) {
+      if (wallet === sharedMemoryManager.memory.settings.private.wallet.current) {
         return { response: wallet }
       }
 
@@ -27,9 +27,12 @@ export const selectWallet: ActionHandlerBuilder<typeof selectWalletAction> = (
         ...mem,
         settings: {
           ...mem.settings,
-          wallet: {
-            ...mem.settings.wallet,
-            current: wallet
+          private: {
+            ...mem.settings.private,
+            wallet: {
+              ...mem.settings.private.wallet,
+              current: wallet
+            }
           }
         },
         identities: {},

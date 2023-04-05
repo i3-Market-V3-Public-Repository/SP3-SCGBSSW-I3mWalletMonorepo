@@ -3,6 +3,7 @@ export type VaultEvent = {
     'state-changed': [
         state: VaultState
     ];
+    'empty-storage': never;
     'storage-updated': [
         timestamp: number
     ];

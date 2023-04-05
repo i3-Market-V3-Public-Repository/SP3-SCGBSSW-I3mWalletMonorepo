@@ -21,7 +21,8 @@ export function WalletDetails (props: Props): JSX.Element {
   const providerName = provider?.name ?? 'Unknown'
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
-  const enabled = wallet.name === sharedMemory.settings.wallet.current
+  const enabled = wallet.name === sharedMemory.settings.private.wallet.current
+  const developerEnabled = sharedMemory.settings.private.developer.enableDeveloperFunctions
 
   const executeWalletFunction = (walletFunction: WalletFunctionMetadata): void => {
     const action = callWalletFunctionAction.create(walletFunction)
@@ -52,16 +53,18 @@ export function WalletDetails (props: Props): JSX.Element {
                 </Button>
               ))}
             </Details.Buttons>
-            {!enabled ? <Alert variant='info'>To enable the <b>developer functions</b> for this wallet you must select it fist</Alert> : null}
-            <Details.Buttons title='Developer Functions'>
-              {developerFunctions.map((walletFunction, i) => (
-                <Button
-                  disabled={!enabled}
-                  onClick={() => executeWalletFunction(walletFunction)} key={i}
-                >{walletFunction.name}
-                </Button>
-              ))}
-            </Details.Buttons>
+            {!enabled && developerEnabled ? <Alert variant='info'>To enable the <b>developer functions</b> for this wallet you must select it fist</Alert> : null}
+            {developerEnabled ? (
+              <Details.Buttons title='Developer Functions'>
+                {developerFunctions.map((walletFunction, i) => (
+                  <Button
+                    disabled={!enabled}
+                    onClick={() => executeWalletFunction(walletFunction)} key={i}
+                  >{walletFunction.name}
+                  </Button>
+                ))}
+              </Details.Buttons>
+            ) : undefined}
           </Details.Grid>
         </Details.Body>
       </Details>

@@ -43,7 +43,7 @@ export function Explorer (): JSX.Element {
     setCursor(undefined)
   }
 
-  const wallet = sharedMemory.settings.wallet
+  const wallet = sharedMemory.settings.private.wallet
   const wallets = Object.keys(wallet.wallets)
   const items = buildWalletTreeList({
     wallets, sharedMemory, onSelect, onDelete, dispatch

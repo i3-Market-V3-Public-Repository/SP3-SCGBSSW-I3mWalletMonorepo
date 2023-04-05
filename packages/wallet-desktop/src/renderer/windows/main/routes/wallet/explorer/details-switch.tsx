@@ -19,7 +19,7 @@ export function DetailsSwitch (props: Props): JSX.Element | null {
 
   switch (item?.type) {
     case 'wallet': {
-      const wallet = sharedMemory.settings.wallet
+      const wallet = sharedMemory.settings.private.wallet
       const walletInfo = wallet.wallets[item.item]
       children = <WalletDetails wallet={walletInfo} {...sectionProps} />
       break

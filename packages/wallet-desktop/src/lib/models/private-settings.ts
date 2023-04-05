@@ -39,7 +39,6 @@ export interface Credentials {
 
 export interface CloudVaultPrivateSettings {
   credentials?: Credentials
-  url?: string
   uploadDebounceTime?: number
 }
 

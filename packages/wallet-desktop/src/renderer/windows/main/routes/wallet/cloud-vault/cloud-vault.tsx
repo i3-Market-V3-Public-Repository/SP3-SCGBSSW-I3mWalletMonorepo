@@ -43,11 +43,12 @@ export function CloudVault (): JSX.Element {
   const [mem] = useSharedMemory()
   const dispatch = useAction()
   const { cloudVaultData: publicCloudData } = mem
-  const { cloud: privateCloudData } = mem.settings
+  const { cloud: privateCloudSettings } = mem.settings.private
+  const { cloud: publicCloudSettings } = mem.settings.public
 
   const state = publicCloudData.state
-  const username = privateCloudData?.credentials?.username
-  const url = privateCloudData?.url ?? DEFAULT_CLOUD_URL
+  const username = privateCloudSettings?.credentials?.username
+  const url = publicCloudSettings?.url ?? DEFAULT_CLOUD_URL
   const unsynced = publicCloudData.unsyncedChanges
   const operations: CloudVaultOperations = {}
 
@@ -76,7 +77,7 @@ export function CloudVault (): JSX.Element {
       operations.logout = onLogout
       operations.sync = onSync
       operations.delete = onDelete
-    } else if (privateCloudData?.credentials !== undefined) {
+    } else if (privateCloudSettings?.credentials !== undefined) {
       operations.login = onLogin
       operations.logout = onLogout
     } else {

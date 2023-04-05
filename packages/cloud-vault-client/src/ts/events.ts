@@ -4,6 +4,7 @@ export type VaultEvent = { // eslint-disable-line @typescript-eslint/consistent-
   'state-changed': [
     state: VaultState
   ]
+  'empty-storage': never
   'storage-updated': [
     timestamp: number // timestamp in milliseconds elapsed from EPOCH when the latest storage has been updated to the cloud.
   ]

@@ -100,7 +100,7 @@ export class GenericPbkdfEncKeys implements EncryptionKeys {
   }
 
   async migrationNeeded (): Promise<boolean> {
-    return _.isEqual(DEFAULT_KD, this.kd)
+    return !_.isEqual(DEFAULT_KD, this.kd)
   }
 
   static initialize (): GenericPbkdfEncKeys {

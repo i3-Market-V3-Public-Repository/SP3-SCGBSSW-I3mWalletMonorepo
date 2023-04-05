@@ -177,7 +177,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
       icon: faWallet,
       children: [],
       showCollapseIcon: true,
-      forcedCollapse: wallet === sharedMemory.settings.wallet.current ? undefined : true,
+      forcedCollapse: wallet === sharedMemory.settings.private.wallet.current ? undefined : true,
       menu: {
         items: [{
           text: 'Select wallet',
@@ -219,7 +219,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
         dispatch(selectWalletAction.create({ wallet: walletItem.item }))
       },
       onToogleCollapse (walletItem, collapsed: boolean) {
-        if (wallet !== sharedMemory.settings.wallet.current) {
+        if (wallet !== sharedMemory.settings.private.wallet.current) {
           dispatch(selectWalletAction.create({ wallet: walletItem.item }))
           return false
         }
@@ -228,7 +228,7 @@ export function buildWalletTreeList (props: TreeListProps): WalletTreeItem[] {
     }
 
     const walletChildren: Array<TreeListItem<any>> = []
-    if (wallet === sharedMemory.settings.wallet.current) {
+    if (wallet === sharedMemory.settings.private.wallet.current) {
       dids.forEach((did) => {
         const identity = sharedMemory.identities[did] as Identity
         const text = identity?.alias as string

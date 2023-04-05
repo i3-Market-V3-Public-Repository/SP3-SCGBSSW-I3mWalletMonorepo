@@ -20,10 +20,10 @@ export const cloudVaultMetadata: MetadataRecord = {
     {
       type: 'input',
       label: 'Cloud URL',
-      key: 'cloud.url',
+      key: 'public.cloud.url',
       placeholder: DEFAULT_CLOUD_URL,
       canUpdate (key, value, metadata, shm, dispatch) {
-        const hasCredentials = shm.settings.cloud?.credentials !== undefined
+        const hasCredentials = shm.settings.private.cloud?.credentials !== undefined
         if (hasCredentials) {
           dispatch(showToastAction.create({
             message: 'Cannot update cloud URL',
@@ -35,12 +35,15 @@ export const cloudVaultMetadata: MetadataRecord = {
 
         return true
       }
-    },
-    {
-      type: 'input',
-      label: 'Waiting time after ',
-      key: 'cloud.uploadDebounceTime',
-      placeholder: DEFAULT_UPLOAD_DEBOUNCE_TIME.toString(),
     }
   ]
+}
+
+if (process.env.NODE_ENV === 'development') {
+  cloudVaultMetadata['Cloud Vault'].push({
+    type: 'input',
+    label: 'Upload debounce time',
+    key: 'private.cloud.uploadDebounceTime',
+    placeholder: DEFAULT_UPLOAD_DEBOUNCE_TIME.toString()
+  })
 }

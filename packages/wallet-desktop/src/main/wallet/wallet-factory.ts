@@ -204,10 +204,13 @@ export class WalletFactory {
       ...mem,
       settings: {
         ...mem.settings,
-        wallet: {
-          ...mem.settings.wallet,
-          wallets: newWallets,
-          current: currentWallet
+        private: {
+          ...mem.settings.private,
+          wallet: {
+            ...mem.settings.private.wallet,
+            wallets: newWallets,
+            current: currentWallet
+          }
         }
       }
     }))
@@ -241,9 +244,12 @@ export class WalletFactory {
         ...mem,
         settings: {
           ...mem.settings,
-          wallet: {
-            ...mem.settings.wallet,
-            current: undefined
+          private: {
+            ...mem.settings.private,
+            wallet: {
+              ...mem.settings.private.wallet,
+              current: undefined
+            }
           }
         }
       }))
@@ -293,11 +299,11 @@ export class WalletFactory {
   }
 
   get walletNames (): string[] {
-    return Object.keys(this.locals.sharedMemoryManager.memory.settings.wallet.wallets)
+    return Object.keys(this.locals.sharedMemoryManager.memory.settings.private.wallet.wallets)
   }
 
   get walletPackages (): string[] {
-    return this.locals.sharedMemoryManager.memory.settings.wallet.packages
+    return this.locals.sharedMemoryManager.memory.settings.private.wallet.packages
   }
 
   get walletName (): string | undefined {

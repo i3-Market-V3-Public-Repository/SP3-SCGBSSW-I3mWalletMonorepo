@@ -13,6 +13,7 @@ export interface StoreOptions<T> {
   //
   encryptionKey?: KeyObject
   storeType?: StoreType
+  onBeforeBuild?: (storePath: string, opts: this) => Promise<void>
 }
 
 export interface StoreBuilder<T extends Record<string, any> = Record<string, unknown>> {

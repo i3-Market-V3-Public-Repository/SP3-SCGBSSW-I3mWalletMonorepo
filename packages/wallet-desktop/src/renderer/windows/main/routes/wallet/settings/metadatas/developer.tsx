@@ -10,12 +10,12 @@ export const developerMetadata: MetadataRecord = {
     {
       label: 'Developer Functions',
       type: 'checkbox',
-      key: 'developer.enableDeveloperFunctions'
+      key: 'private.developer.enableDeveloperFunctions'
     },
     {
       label: 'Developer API',
       type: 'checkbox',
-      key: 'developer.enableDeveloperApi',
+      key: 'private.developer.enableDeveloperApi',
       description: {
         visible: (metadata, value) => value,
         message: (

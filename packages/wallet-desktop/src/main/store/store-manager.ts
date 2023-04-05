@@ -1,5 +1,7 @@
 import { Store } from '@i3m/base-wallet'
 import { KeyObject } from 'crypto'
+import { existsSync } from 'fs'
+import fs from 'fs/promises'
 
 import {
   createDefaultPrivateSettings,
@@ -9,7 +11,7 @@ import {
 import {
   fixPrivateSettings,
   fixPublicSettings, handleErrorCatch, isEncryptedStore,
-  Locals, MainContext,
+  Locals, logger, MainContext,
   PublicSettingsOptions,
   softwareVersion,
   StoreFeatureOptions,
@@ -46,9 +48,9 @@ export class StoreManager extends StoreBag {
       await this.loadPublicSettings()
     })
 
-    runtimeManager.on('private-settings', async () => {
+    runtimeManager.on('private-settings', async (task) => {
       // Load encrypted settings
-      // task.setDetails('Migrating and loading encrypted stores')
+      task.setDetails('Migrating and loading encrypted stores')
       await this.loadPrivateSettings()
     })
 
@@ -58,28 +60,65 @@ export class StoreManager extends StoreBag {
       await fixPrivateSettings(this.locals)
     })
 
-    runtimeManager.on('wallet-stores', async () => {
+    runtimeManager.on('wallet-stores', async (task) => {
       // Load encrypted settings
-      // task.setDetails('Migrating and loading encrypted stores')
+      task.setDetails('Migrating and loading encrypted stores')
       await this.loadWalletStores()
+    })
+  }
+
+  protected async handleStoreBackup<T> (storePath: string, options: StoreOptions<T>): Promise<void> {
+    const { runtimeManager } = this.locals
+    const storeBakPath = `${storePath}.bak`
+
+    if (existsSync(storeBakPath)) {
+      // Restore backup if present
+      logger.debug(`Restore backup for store: ${storePath}`)
+      const storeBakData = await fs.readFile(storeBakPath)
+      if (storeBakData.length === 0) {
+        if (existsSync(storePath)) {
+          await fs.rm(storePath)
+        }
+      } else {
+        await fs.copyFile(storeBakPath, storePath)
+      }
+    } else if (existsSync(storePath)) {
+      // Backup if previous settings
+      logger.debug(`Create backup for store: ${storePath}`)
+      await fs.copyFile(storePath, storeBakPath)
+    } else {
+      // Backup if previous settings
+      logger.debug(`Create empty backup for store: ${storePath}`)
+      await fs.writeFile(storeBakPath, '')
+    }
+
+    // Remove backup after migration
+    runtimeManager.on('after-migration', async () => {
+      logger.debug(`Remove backup for store: ${storePath}`)
+      await fs.rm(storeBakPath)
     })
   }
 
   // Loaders
   public async loadPublicSettings (): Promise<void> {
     const options: PublicSettingsOptions = {
-      defaults: { version: softwareVersion(this.locals) }
+      defaults: {
+        version: softwareVersion(this.locals)
+      },
+      onBeforeBuild: async (storePath, opts) => {
+        await this.handleStoreBackup(storePath, opts)
+      }
     }
 
-    // NOTE: Public settings must always be not encrypted and using the electorn store.
-    // This guarantees compatibilities with future versions!
     const [publicSettings, fixedOptions] = await this.builder.buildStore({ ...options, storeType: 'electron-store' })
     const publicMetadata: StoreMetadata<'public-settings'> = {
       type: 'public-settings',
       args: [],
       options: fixedOptions
     }
-    // const f: StoreIdMetadata<'public-settings'> = ['public-settings']
+
+    // NOTE: Public settings must always be not encrypted and using the electorn store.
+    // This guarantees compatibilities with future versions!
     this.setStore(publicSettings, publicMetadata, 'public-settings')
 
     // Migrate to last store type
@@ -101,11 +140,19 @@ export class StoreManager extends StoreBag {
     const { keysManager } = this.locals
     const publicSettings = this.getStore('public-settings')
     const { version, auth, cloud, store, enc, ...rest } = await publicSettings.getStore()
+    const options: Partial<StoreOptions<any>> = {
+      fileExtension: 'enc.json'
+    }
 
     await this.executeOptionsBuilders(async (migration) => ({
       defaults: Object.assign({}, createDefaultPrivateSettings(), rest),
       encryptionKey: await keysManager.computeSettingsKey(migration.encKeys),
-      fileExtension: 'enc.json'
+      onBeforeBuild: async (storePath, opts) => {
+        if (migration.direction === 'from') {
+          await this.handleStoreBackup(storePath, opts)
+        }
+      },
+      ...options
     }), 'private-settings')
   }
 
@@ -282,11 +329,16 @@ export class StoreManager extends StoreBag {
     const settingsBundle = bundle.stores[settingsId] as StoreBundleData<'private-settings'>
     shm.update(mem => ({
       ...mem,
-      settings: settingsBundle.data
+      settings: {
+        ...mem.settings,
+        private: settingsBundle.data
+      }
     }), { modifiers: { 'no-settings-update': true } })
 
     // Refresh wallet data
-    await walletFactory.refreshWalletData()
+    if (walletFactory.hasWalletSelected) {
+      await walletFactory.refreshWalletData()
+    }
   }
 
   // Event handlers
@@ -298,9 +350,12 @@ export class StoreManager extends StoreBag {
       ...mem,
       settings: {
         ...mem.settings,
-        cloud: {
-          ...mem.settings.cloud,
-          credentials
+        private: {
+          ...mem.settings.private,
+          cloud: {
+            ...mem.settings.private.cloud,
+            credentials
+          }
         }
       }
     }), { modifiers: { 'no-settings-update': true } })

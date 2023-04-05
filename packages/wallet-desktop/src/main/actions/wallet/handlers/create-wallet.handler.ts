@@ -35,7 +35,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
               return walletMetadata.name
             }
           },
-          provider: walletFactory.providerSelect(mem.settings.providers)
+          provider: walletFactory.providerSelect(mem.settings.private.providers)
         },
         order: ['name', 'walletMetadata', 'provider']
       })
@@ -45,7 +45,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
       }
 
       // Wallet already exists
-      if (walletCreationForm.name in mem.settings.wallet.wallets) {
+      if (walletCreationForm.name in mem.settings.private.wallet.wallets) {
         throw new ActionError(`Wallet ${walletCreationForm.name} already exists`, action)
       }
 
@@ -63,19 +63,22 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
         ...mem,
         settings: {
           ...mem.settings,
-          wallet: {
-            ...mem.settings.wallet,
-
-            // If there is no wallet selected, select this wallet
-            current: mem.settings.wallet.current ?? name,
-
-            // Add the wallet to the wallet map
-            wallets: {
-              ...mem.settings.wallet.wallets,
-              [name]: wallet
+          private: {
+            ...mem.settings.private,
+            wallet: {
+              ...mem.settings.private.wallet,
+  
+              // If there is no wallet selected, select this wallet
+              current: mem.settings.private.wallet.current ?? name,
+  
+              // Add the wallet to the wallet map
+              wallets: {
+                ...mem.settings.private.wallet.wallets,
+                [name]: wallet
+              }
             }
           }
-        }
+          }
       }))
 
       return { response: wallet, status: 201 }

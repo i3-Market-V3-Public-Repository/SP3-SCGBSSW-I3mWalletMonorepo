@@ -11,7 +11,7 @@ export function CurrentWallet (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
 
-  const wallet = sharedMemory.settings.wallet
+  const wallet = sharedMemory.settings.private.wallet
 
   const onClick = (): void => {
     dispatch(selectWalletAction.create())

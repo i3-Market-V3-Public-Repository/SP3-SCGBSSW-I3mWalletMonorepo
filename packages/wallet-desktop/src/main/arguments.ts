@@ -15,12 +15,12 @@ export function parseArguments (): Args {
   })
 
   const DEFAULT_ARGS: Args = {
-    config: app.getPath('userData'),
+    config: app.getPath('userData')
   }
 
   const args = process.argv.slice(1, -1)
-  logger.info(`List of arguments: '${process.argv}'`)
-  logger.info(`List of arguments: '${args}'`)
+  logger.info(`List of arguments: '${process.argv.join(', ')}'`)
+  logger.info(`List of arguments: '${args.join(', ')}'`)
   parser.add_argument('-c', '--config', {
     help: 'Select a custom config folder.',
     required: false
@@ -40,7 +40,7 @@ export function parseArguments (): Args {
     {},
     {
       ...parsedArgs,
-      config: parsedArgs.config ? path.resolve(parsedArgs.config) : undefined
+      config: parsedArgs.config !== undefined ? path.resolve(parsedArgs.config) : undefined
     },
     DEFAULT_ARGS
   )

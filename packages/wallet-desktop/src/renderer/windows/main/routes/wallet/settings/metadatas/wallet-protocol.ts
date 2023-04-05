@@ -5,12 +5,12 @@ export const walletProtocolMetadata: MetadataRecord = {
     {
       label: 'Enable Token expiration',
       type: 'checkbox',
-      key: 'connect.enableTokenExpiration'
+      key: 'private.connect.enableTokenExpiration'
     },
     {
       label: 'Wallet protocol session TTL',
       type: 'number',
-      key: 'connect.tokenTTL'
+      key: 'private.connect.tokenTTL'
     }
   ]
 }

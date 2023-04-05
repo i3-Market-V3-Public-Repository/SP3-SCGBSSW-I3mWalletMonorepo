@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import fs from 'fs/promises'
 import _ from 'lodash'
 
 import { StoreSettings, WalletInfo } from '@wallet/lib'
@@ -48,14 +48,16 @@ export class StoreBuilder {
       } else {
         const options = await optionsBuilder({
           cwd: to.cwd,
-          encKeys: to.encKeys
+          encKeys: to.encKeys,
+          direction: 'from'
         })
         return await this.buildStore<T>({ ...options, storeType: to.storeType })
       }
     } else {
       const options = await optionsBuilder({
         cwd: this.ctx.args.config,
-        encKeys: this.locals.keysManager.encKeys
+        encKeys: this.locals.keysManager.encKeys,
+        direction: 'from'
       })
       return await this.buildStore<T>({ ...options, storeType: to.storeType })
     }
@@ -69,10 +71,14 @@ export class StoreBuilder {
       storeType: this.storeInfo.type
     }, options)
     const builder = loadStoreBuilder<T>(fixedOptions.storeType)
-    const path = getPath(this.ctx, this.locals, options)
-    logger.debug(`Loading store on '${path}'`)
+    const storePath = getPath(this.ctx, this.locals, options)
+
+    if (fixedOptions.onBeforeBuild !== undefined) {
+      await fixedOptions.onBeforeBuild(storePath, fixedOptions)
+    }
 
     // TODO: Check if the format is corret. If not fix corrupted data
+    logger.debug(`Loading store on '${storePath}'`)
     return [await builder.build(this.ctx, this.locals, fixedOptions), fixedOptions]
   }
 

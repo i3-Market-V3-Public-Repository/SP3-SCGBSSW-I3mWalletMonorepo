@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 
-import { Provider, SharedMemory, showToastAction } from '@wallet/lib'
+import { PrivateSettings, Provider, showToastAction } from '@wallet/lib'
 import { ActionDispatcher } from '@wallet/renderer/communication'
 
 import { ArraySettingsMetadata, MetadataRecord, ObjectSettingsMetadata } from '../settings-metadata'
@@ -11,7 +11,7 @@ const defaultProvider = (): Provider => {
   return { name: id, network: id, rpcUrl: ['http://localhost:8545'] }
 }
 
-const validProvider = (provider: Provider, oldProvider: Provider, settings: SharedMemory['settings'], oldSettings: SharedMemory['settings'], dispatch: ActionDispatcher): boolean => {
+const validProvider = (provider: Provider, oldProvider: Provider, settings: PrivateSettings, oldSettings: PrivateSettings, dispatch: ActionDispatcher): boolean => {
   // If there are multiple providers with the same provider you can delete one of them
 
   const providersWithSameProvider = oldSettings.providers
@@ -56,9 +56,9 @@ const validProvider = (provider: Provider, oldProvider: Provider, settings: Shar
 const providersMetadata: ArraySettingsMetadata<Provider> = {
   label: 'Networks',
   type: 'array',
-  key: 'providers',
+  key: 'private.providers',
   canDelete: (i, provider, sharedMemory, dispatch) => {
-    return validProvider(provider, provider, sharedMemory.settings, sharedMemory.settings, dispatch)
+    return validProvider(provider, provider, sharedMemory.settings.private, sharedMemory.settings.private, dispatch)
   },
   defaults: (parent, value) => defaultProvider(),
   innerType: (i, parent) => {
@@ -74,7 +74,7 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
 
         console.log(value, key)
         console.log(newProvider, oldProvider)
-        return validProvider(newProvider, oldProvider, settings, sharedMemory.settings, dispatch)
+        return validProvider(newProvider, oldProvider, settings.private, sharedMemory.settings.private, dispatch)
       },
       innerType: {
         name: {

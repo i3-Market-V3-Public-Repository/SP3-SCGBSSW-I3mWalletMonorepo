@@ -9,7 +9,7 @@ export const uploadStoresEpic: Epic = (action$, locals, next) =>
       filterAction(storeChangedAction),
       debounce(() => {
         const mem = locals.sharedMemoryManager.memory
-        const $debounce = interval(mem.settings.cloud?.uploadDebounceTime ?? DEFAULT_UPLOAD_DEBOUNCE_TIME)
+        const $debounce = interval(mem.settings.private.cloud?.uploadDebounceTime ?? DEFAULT_UPLOAD_DEBOUNCE_TIME)
         return $debounce
       })
     ).subscribe((action) => {
