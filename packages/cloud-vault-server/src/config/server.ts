@@ -1,9 +1,11 @@
-import { parseProccessEnvVar } from './parseProcessEnvVar'
+import { parseProccessEnvVar } from './parseProcessEnvVar.js'
 
 export interface ServerConfig {
+  id: string
   addr: string
   port: number
-  url: string
+  localUrl: string
+  publicUrl: string
 }
 
 export function checkIfIPv6 (str: string): boolean {
@@ -12,14 +14,22 @@ export function checkIfIPv6 (str: string): boolean {
   return regexExp.test(str)
 }
 
-const addr = parseProccessEnvVar('SERVER_ADDRESS', 'string', { defaultValue: '::' })
+const id = parseProccessEnvVar('SERVER_ID', 'string')
+
+const addr = parseProccessEnvVar('SERVER_ADDRESS', 'string', { defaultValue: parseProccessEnvVar('HOSTNAME', 'string', { defaultValue: '::' }) })
 
 const port = Number(parseProccessEnvVar('SERVER_PORT', 'string', { defaultValue: '3000' }))
 
-const url = `http://${checkIfIPv6(addr) ? '[' + addr + ']' : addr}:${port}`
+const localUrl = `http://${checkIfIPv6(addr) ? '[' + addr + ']' : addr}:${port}`
 
-export const server: ServerConfig = {
+const publicUrl = parseProccessEnvVar('SERVER_PUBLIC_URL', 'string', { defaultValue: localUrl })
+
+// console.log(addr, port, url)
+
+export const serverConfig: ServerConfig = {
+  id,
   addr,
   port,
-  url
+  localUrl,
+  publicUrl
 }

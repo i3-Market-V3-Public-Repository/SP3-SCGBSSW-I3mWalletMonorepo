@@ -1,5 +1,5 @@
 import * as OpenApiValidator from 'express-openapi-validator'
-import { openApi } from '../config'
+import { openApi } from '../config/index.js'
 
 export const openApiValidatorMiddleware = OpenApiValidator.middleware({
   ...openApi

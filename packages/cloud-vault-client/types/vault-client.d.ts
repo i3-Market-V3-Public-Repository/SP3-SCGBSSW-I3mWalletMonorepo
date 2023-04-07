@@ -18,7 +18,8 @@ export declare class VaultClient extends EventEmitter {
     token?: string;
     name: string;
     opts?: VaultClientOpts;
-    serverUrl: string;
+    serverRootUrl: string;
+    serverPrefix: string;
     private wellKnownCvsConfigurationPromise?;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
     private _state;

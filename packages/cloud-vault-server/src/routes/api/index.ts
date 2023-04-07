@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import registration from './registration'
-import vault from './vault'
+import registration from './registration.js'
+import vault from './vault.js'
 
 const router = Router()
 const registrationRouter = Router({ mergeParams: true })

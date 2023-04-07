@@ -1,4 +1,4 @@
-import { parseProccessEnvVar } from './parseProcessEnvVar'
+import { parseProccessEnvVar } from './parseProcessEnvVar.js'
 import { randomBytes } from 'node:crypto'
 
 const secret = parseProccessEnvVar('JWT_SECRET', 'string', { defaultValue: randomBytes(32).toString('hex') })

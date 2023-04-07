@@ -1,2 +1,2 @@
-export * as dbFunctions from './dbFunctions'
-export { db } from './Db'
+export * as dbFunctions from './dbFunctions.js'
+export { db } from './Db.js'

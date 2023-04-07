@@ -1,4 +1,4 @@
-import { parseProccessEnvVar } from './parseProcessEnvVar'
+import { parseProccessEnvVar } from './parseProcessEnvVar.js'
 
 interface CorsConfig {
   allowedOrigin: string

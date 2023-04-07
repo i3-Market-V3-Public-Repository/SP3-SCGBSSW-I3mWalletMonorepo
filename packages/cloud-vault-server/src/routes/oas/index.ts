@@ -4,7 +4,7 @@ import { join as pathJoin } from 'path'
 import * as swaggerUi from 'swagger-ui-express'
 
 function openApiSpecRoute (router: Router): void {
-  const oas = JSON.parse(readFileSync(pathJoin(__dirname, '..', '..', 'spec', 'openapi.json'), 'utf8'))
+  const oas = JSON.parse(readFileSync(pathJoin(__dirname, '..', '..', 'spec', 'cvs.json'), 'utf8'))
   router.get('/spec',
     (req: Request, res: Response) => {
       res.json(oas)

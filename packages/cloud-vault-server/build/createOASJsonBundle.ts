@@ -7,15 +7,12 @@ import _ from 'lodash'
 import type { OpenAPIV3 } from 'openapi-types'
 
 import pkgJson from '../package.json'
-import { general } from '../src/config/general'
 import { server } from '../src/config/server'
 import { apiVersion } from '../src/config/openApi'
 
 const rootDir = path.join(__dirname, '..')
 
-function addLocalhostServerIfInDevelopment (spec: OpenAPIV3.Document): void {
-  if (general.nodeEnv !== 'development') return
-
+function addServers (spec: OpenAPIV3.Document): void {
   const localhostServer: OpenAPIV3.ServerObject = {
     url: server.url
   }
@@ -114,7 +111,7 @@ const bundleSpec = async function (): Promise<SpecBundles> {
   removeIgnoredPaths(bundledSpec)
   fixRefs(bundledSpec)
   fillWithPkgJsonData(bundledSpec)
-  addLocalhostServerIfInDevelopment(bundledSpec)
+  addServers(bundledSpec)
 
   const dereferencedBundledSpec = await parser.dereference(_.cloneDeep(bundledSpec)) as OpenAPIV3.Document
 
@@ -128,29 +125,29 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 
 const bundle = async (): Promise<void> => {
   const jsonBundlePath = path.join(rootDir, pkgJson.exports['./openapi.json'])
-  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
+  // const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
   const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
-  const jsonBundleSrcPath = path.join(rootDir, 'src', 'spec', 'openapi.json')
-  const yamlBundleSrcPath = path.join(rootDir, 'src', 'spec', 'openapi.yaml')
+  const jsonBundleSrcPath = path.join(rootDir, 'src', 'spec', path.basename(jsonBundlePath))
+  const yamlBundleSrcPath = path.join(rootDir, 'src', 'spec', path.basename(yamlBundlePath))
 
   fs.rmSync(jsonBundlePath, { force: true })
   fs.mkdirSync(path.dirname(jsonBundlePath), { recursive: true })
-  fs.rmSync(jsonDereferencedBundlePath, { force: true })
-  fs.mkdirSync(path.dirname(jsonDereferencedBundlePath), { recursive: true })
+  // fs.rmSync(jsonDereferencedBundlePath, { force: true })
+  // fs.mkdirSync(path.dirname(jsonDereferencedBundlePath), { recursive: true })
   fs.rmSync(yamlBundlePath, { force: true })
   fs.mkdirSync(path.dirname(yamlBundlePath), { recursive: true })
   fs.rmSync(jsonBundleSrcPath, { force: true })
   fs.rmSync(yamlBundleSrcPath, { force: true })
   fs.mkdirSync(path.dirname(yamlBundleSrcPath), { recursive: true })
 
-  const { api, dereferencedApi } = await bundleSpec()
+  const { api } = await bundleSpec()
 
   fs.writeFileSync(jsonBundlePath, JSON.stringify(api, null, 2))
   fs.writeFileSync(jsonBundleSrcPath, JSON.stringify(api, null, 2)) // generate it to the source (so that typescript sees it)
   console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec JSON bundle written to -> ${jsonBundlePath}`)
 
-  fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(dereferencedApi, null, 2))
-  console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
+  // fs.writeFileSync(jsonDereferencedBundlePath, JSON.stringify(dereferencedApi, null, 2))
+  // console.log('\x1b[32m%s\x1b[0m', `OpenAPI Spec dereferenced JSON bundle written to -> ${jsonDereferencedBundlePath}`)
 
   fs.writeFileSync(yamlBundlePath, jsYaml.dump(api))
   fs.writeFileSync(yamlBundleSrcPath, jsYaml.dump(api)) // generate it to the source (so that typescript sees it)

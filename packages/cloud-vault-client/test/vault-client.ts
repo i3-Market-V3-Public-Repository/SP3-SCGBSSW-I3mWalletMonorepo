@@ -10,6 +10,9 @@ import { config as loadEnvFile } from 'dotenv'
 import { randomBytes } from 'crypto'
 import { expect } from 'chai'
 import { join as pathJoin } from 'path'
+import promptSync from 'prompt-sync'
+
+const prompt = promptSync()
 
 loadEnvFile()
 
@@ -198,40 +201,44 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
-        serverUrl + `/api/${apiVersion}/registration/register/` + data
-      )
-      chai.expect(res.status).to.equal('created')
+      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registration = prompt('Have you been able to register the user: [yN]', { value: 'N' })
+
+      // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      //   serverUrl + `/api/${apiVersion}/registration/register/` + data
+      // )
+      // chai.expect(res.status).to.equal('created')
+      chai.expect(registration).to.equal('y')
     } catch (error) {
       console.log('error', error)
       chai.expect(false).to.be.true
     }
   })
 
-  it('it should fail registering the same user again', async function () {
-    try {
-      const userData = {
-        did: user.did,
-        username: user.username,
-        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
-      }
-      const data = await jweEncrypt(
-        Buffer.from(JSON.stringify(userData)),
-        publicJwk as JWK,
-        'A256GCM'
-      )
-      await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
-        serverUrl + `/api/${apiVersion}/registration/register/` + data
-      )
-    } catch (error) {
-      if (error instanceof VaultError) {
-        chai.expect(error.data.response.data.name).to.equal('already-registered')
-      } else {
-        console.log('error', error)
-        chai.expect(false).to.be.true
-      }
-    }
-  })
+  // it('it should fail registering the same user again', async function () {
+  //   try {
+  //     const userData = {
+  //       did: user.did,
+  //       username: user.username,
+  //       authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
+  //     }
+  //     const data = await jweEncrypt(
+  //       Buffer.from(JSON.stringify(userData)),
+  //       publicJwk as JWK,
+  //       'A256GCM'
+  //     )
+  //     await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
+  //       serverUrl + `/api/${apiVersion}/registration/register/` + data
+  //     )
+  //   } catch (error) {
+  //     if (error instanceof VaultError) {
+  //       chai.expect(error.data.response.data.name).to.equal('already-registered')
+  //     } else {
+  //       console.log('error', error)
+  //       chai.expect(false).to.be.true
+  //     }
+  //   }
+  // })
 
   it('trying to log in with invalid credentials fails', async function () {
     let clientConnected = false

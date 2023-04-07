@@ -43,3 +43,4 @@ yarn.lock
 
 # generated JWKs
 .keys
+**/*/i3m_cred*

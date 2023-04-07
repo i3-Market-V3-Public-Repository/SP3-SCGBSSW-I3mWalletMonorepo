@@ -51,6 +51,8 @@ paths:
       summary: Endpoint where any non-previously registered user can register to enable the cloud vault for the i3M-Wallet.
       tags:
         - "Registration"
+      security:
+        - jwt: []
       parameters:
         - name: data
           in: path
@@ -82,6 +84,8 @@ paths:
       summary: Endpoint where users logged in with valid credentials can deregister their registered username and associated storage. The cloud vault for that identity (DID) will be cleared, and new registration would be needed to use it again
       tags:
         - "Registration"
+      security:
+        - jwt: []
       responses:
         '204':
           description: Vault for logged in identity has been cleared

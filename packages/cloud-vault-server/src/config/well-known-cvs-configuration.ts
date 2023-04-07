@@ -1,26 +1,24 @@
-import { OpenApiComponents } from '../../types/openapi'
-import { dbConfig } from './db'
-import { apiVersion } from './openApi'
-import { parseProccessEnvVar } from './parseProcessEnvVar'
-
-const id = parseProccessEnvVar('SERVER_ID', 'string')
+import type { OpenApiComponents } from '../../types/openapi.js'
+import { dbConfig } from './db.js'
+import { apiVersion } from './openApi.js'
+import { serverConfig } from './server.js'
 
 export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfiguration = {
-  name: id,
+  name: serverConfig.id,
   registration_configuration: {
-    public_jwk_endpoint: `/api/${apiVersion}/registration/public-jwk`,
-    registration_endpoint: `/api/${apiVersion}/registration/register/{data}`,
-    deregistration_endpoint: `/api/${apiVersion}/registration/deregister`
+    public_jwk_endpoint: `${serverConfig.publicUrl}/api/${apiVersion}/registration/public-jwk`,
+    registration_endpoint: `${serverConfig.publicUrl}/api/${apiVersion}/registration/register/{data}`,
+    deregistration_endpoint: `${serverConfig.publicUrl}/api/${apiVersion}/registration/deregister`
   },
   vault_configuration: {
     v2: {
-      id,
+      id: serverConfig.id,
       version: 'v2',
       vault_size: dbConfig.storageByteLength,
-      vault_endpoint: '/api/v2/vault',
-      events_endpoint: '/api/v2/vault/events',
-      timestamp_endpoint: '/api/v2/vault/timestamp',
-      token_endpoint: '/api/v2/vault/token',
+      vault_endpoint: `${serverConfig.publicUrl}/api/v2/vault`,
+      events_endpoint: `${serverConfig.publicUrl}/api/v2/vault/events`,
+      timestamp_endpoint: `${serverConfig.publicUrl}/api/v2/vault/timestamp`,
+      token_endpoint: `${serverConfig.publicUrl}/api/v2/vault/token`,
       token_endpoint_auth_methods_supported: [
         'client_secret_post'
       ],
@@ -29,7 +27,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           alg: 'scrypt',
           derived_key_length: 32,
           input: 'password',
-          salt_pattern: 'master' + id + '{username}',
+          salt_pattern: 'master' + serverConfig.id + '{username}',
           salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 19,
@@ -41,7 +39,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           alg: 'scrypt',
           derived_key_length: 32,
           input: 'master-key',
-          salt_pattern: 'auth' + id + '{username}',
+          salt_pattern: 'auth' + serverConfig.id + '{username}',
           salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 16,
@@ -53,7 +51,7 @@ export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfigurati
           alg: 'scrypt',
           derived_key_length: 32,
           input: 'master-key',
-          salt_pattern: 'enc' + id + '{username}',
+          salt_pattern: 'enc' + serverConfig.id + '{username}',
           salt_hashing_algorithm: 'sha512',
           alg_options: {
             N: 2 ** 16,

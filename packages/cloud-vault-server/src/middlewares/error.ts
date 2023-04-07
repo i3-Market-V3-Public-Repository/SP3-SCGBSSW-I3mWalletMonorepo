@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { HttpError } from 'express-openapi-validator/dist/framework/types'
-import { OpenApiComponents } from '../../types/openapi'
-import { general } from '../config'
+import type { OpenApiComponents } from '../../types/openapi.js'
+import { general } from '../config/index.js'
 
 export function errorMiddleware (err: unknown, req: Request, res: Response, next: NextFunction): void {
   if (general.nodeEnv === 'development') {

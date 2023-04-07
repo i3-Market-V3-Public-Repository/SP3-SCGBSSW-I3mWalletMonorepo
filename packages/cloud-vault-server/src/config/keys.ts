@@ -1,5 +1,5 @@
 import { generateKeys } from '@i3m/non-repudiation-library'
-import { OpenApiComponents } from '../../types/openapi'
+import { OpenApiComponents } from '../../types/openapi.js'
 
 export interface JwkPair {
   publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey

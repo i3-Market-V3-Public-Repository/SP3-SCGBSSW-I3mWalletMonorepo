@@ -2,7 +2,7 @@
 import express, { Express } from 'express'
 import http from 'http'
 import morgan from 'morgan'
-import { general, server as serverConfig, dbConfig } from './config'
+import { general, serverConfig, dbConfig } from './config'
 import apiRoutesPromise from './routes/api'
 import oasRoutesPromise from './routes/oas'
 import wellKnownCvsConfigurationRoutePromise from './routes/well-known-cvs-configuration'
@@ -58,16 +58,16 @@ export const serverPromise = new Promise<Server>((resolve, reject) => {
      * Listen on .env SERVER_PORT or 3000/tcp, on all network interfaces.
      */
     const server = http.createServer(app)
-    const { port, addr, url } = serverConfig
+    const { port, addr, publicUrl } = serverConfig
     server.listen(port, addr)
 
     /**
       * Event listener for HTTP server "listening" event.
       */
     server.on('listening', function (): void {
-      console.log(`⚡️[server]: Server is running at ${url}`)
-      console.log(`⚡️[server]: OpenAPI JSON spec at ${url}/spec`)
-      console.log(`⚡️[server]: OpenAPI browsable spec at ${url}/spec-ui`)
+      console.log(`⚡️[server]: Server is running at ${publicUrl}`)
+      console.log(`⚡️[server]: OpenAPI JSON spec at ${publicUrl}/spec`)
+      console.log(`⚡️[server]: OpenAPI browsable spec at ${publicUrl}/spec-ui`)
       resolve({ server, dbConnection })
     })
 

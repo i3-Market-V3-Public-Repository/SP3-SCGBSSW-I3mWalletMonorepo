@@ -1,6 +1,6 @@
 import { hash, verify } from 'scrypt-mcf'
-import { OpenApiComponents } from '../../types/openapi'
-import { db } from './Db'
+import { OpenApiComponents } from '../../types/openapi.js'
+import { db } from './Db.js'
 
 /**
  * Registers a user in the database
