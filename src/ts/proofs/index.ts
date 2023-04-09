@@ -1,2 +1,2 @@
-export * from './createProof'
-export * from './verifyProof'
+export * from './createProof.js'
+export * from './verifyProof.js'

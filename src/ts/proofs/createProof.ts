@@ -1,7 +1,6 @@
 import { SignJWT } from 'jose'
-import { JWK, NrProofPayload, StoredProof, DataExchange, Dict } from '../types'
-import { verifyKeyPair } from '../crypto/verifyKeyPair'
-import { importJwk } from '../crypto'
+import { JWK, NrProofPayload, StoredProof, DataExchange, Dict } from '../types.js'
+import { importJwk, verifyKeyPair } from '../crypto/index.js'
 
 /**
  * Creates a non-repudiable proof for a given data exchange

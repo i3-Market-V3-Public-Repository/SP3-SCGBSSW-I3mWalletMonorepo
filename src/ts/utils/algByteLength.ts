@@ -1,6 +1,6 @@
-import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { EncryptionAlg, HashAlg, SigningAlg } from '../types'
+import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { EncryptionAlg, HashAlg, SigningAlg } from '../types.js'
 
 export function algByteLength (alg: EncryptionAlg | HashAlg | SigningAlg): number {
   const algs: string[] = (ENC_ALGS as unknown as string[]).concat(HASH_ALGS as unknown as string[]).concat(SIGNING_ALGS as unknown as string[])

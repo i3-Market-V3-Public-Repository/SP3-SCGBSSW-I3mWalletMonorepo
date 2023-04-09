@@ -1,7 +1,7 @@
 import { hashable } from 'object-sha'
-import { jwsDecode } from '../crypto/'
-import { DataExchange, DecodedProof, Dict, NrProofPayload, TimestampVerifyOptions } from '../types'
-import { checkTimestamp } from '../utils/timestamps'
+import { jwsDecode } from '../crypto/index.js'
+import { DataExchange, DecodedProof, Dict, NrProofPayload, TimestampVerifyOptions } from '../types.js'
+import { checkTimestamp } from '../utils/timestamps.js'
 
 /**
  * Verify a proof

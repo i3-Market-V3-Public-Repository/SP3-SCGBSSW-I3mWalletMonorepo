@@ -1,4 +1,4 @@
-import { NrpDltAgent } from '../NrpDltAgent'
+import { NrpDltAgent } from '../NrpDltAgent.js'
 
 export interface NrpDltAgentOrig extends NrpDltAgent {
   /**

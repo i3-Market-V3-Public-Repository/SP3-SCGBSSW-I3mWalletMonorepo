@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
-import { NrError } from '../errors'
-import { parseHex } from './parseHex'
+import { NrError } from '../errors/index.js'
+import { parseHex } from './parseHex.js'
 /**
  * Verifies and returns the ethereum address in EIP-55 format
  * @param a

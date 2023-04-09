@@ -1,8 +1,8 @@
 import { compactDecrypt, CompactDecryptResult, CompactEncrypt, decodeProtectedHeader } from 'jose'
-import { ENC_ALGS, KEY_AGREEMENT_ALGS, SIGNING_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { EncryptionAlg, JWK } from '../types'
-import { importJwk } from './importJwk'
+import { ENC_ALGS, KEY_AGREEMENT_ALGS, SIGNING_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { EncryptionAlg, JWK } from '../types.js'
+import { importJwk } from './importJwk.js'
 
 /**
  * Encrypts a block of data to JWE

@@ -1,11 +1,11 @@
 import { importJWK, JWTPayload, SignJWT } from 'jose'
-import { jwsDecode, verifyKeyPair } from '../crypto'
-import { NrpDltAgentDest } from '../dlt/agents'
-import { NrError } from '../errors'
-import { DisputeRequestPayload, DisputeResolutionPayload, JwkPair, PoRPayload, ResolutionPayload, VerificationRequestPayload, VerificationResolutionPayload } from '../types'
-import { parseJwk } from '../utils'
-import { checkCompleteness } from './checkCompleteness'
-import { checkDecryption } from './checkDecryption'
+import { jwsDecode, verifyKeyPair } from '../crypto/index.js'
+import { NrpDltAgentDest } from '../dlt/agents/index.js'
+import { NrError } from '../errors/index.js'
+import { DisputeRequestPayload, DisputeResolutionPayload, JwkPair, PoRPayload, ResolutionPayload, VerificationRequestPayload, VerificationResolutionPayload } from '../types.js'
+import { parseJwk } from '../utils/index.js'
+import { checkCompleteness } from './checkCompleteness.js'
+import { checkDecryption } from './checkDecryption.js'
 
 /**
  * The base class that should be instantiated in order to create a Conflict Resolver instance.

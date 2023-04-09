@@ -1,7 +1,7 @@
-import { NrError } from '../../../errors'
-import { secretUnisgnedTransaction } from '../secret'
-import { I3mServerWalletAgent } from '../I3mServerWalletAgent'
-import { NrpDltAgentOrig } from './NrpDltAgentOrig'
+import { NrError } from '../../../errors/index.js'
+import { secretUnisgnedTransaction } from '../secret.js'
+import { I3mServerWalletAgent } from '../I3mServerWalletAgent.js'
+import { NrpDltAgentOrig } from './NrpDltAgentOrig.js'
 
 export class I3mServerWalletAgentOrig extends I3mServerWalletAgent implements NrpDltAgentOrig {
   /**

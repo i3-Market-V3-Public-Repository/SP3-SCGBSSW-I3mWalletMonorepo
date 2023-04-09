@@ -1,8 +1,8 @@
-import { HASH_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { HashAlg } from '../types'
+import { HASH_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { HashAlg } from '../types.js'
 
-export async function sha (input: string|Uint8Array, algorithm: HashAlg): Promise<Uint8Array> {
+export async function sha (input: string | Uint8Array, algorithm: HashAlg): Promise<Uint8Array> {
   const algorithms = HASH_ALGS
   if (!algorithms.includes(algorithm)) {
     throw new NrError(new RangeError(`Valid hash algorith values are any of ${JSON.stringify(algorithms)}`), ['invalid algorithm'])

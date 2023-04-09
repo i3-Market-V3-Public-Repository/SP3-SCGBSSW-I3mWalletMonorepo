@@ -1,10 +1,10 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { ethers } from 'ethers'
-import { NrpDltAgentOrig } from '.'
-import { NrError } from '../../errors'
-import { parseHex } from '../../utils'
-import { EthersIoAgent } from './EthersIoAgent'
+import { NrpDltAgentOrig } from './orig/index.js'
+import { NrError } from '../../errors/index.js'
+import { parseHex } from '../../utils/index.js'
+import { EthersIoAgent } from './EthersIoAgent.js'
 
 export async function getSecretFromLedger (contract: ethers.Contract, signerAddress: string, exchangeId: string, timeout: number, secretLength: number): Promise<{ hex: string, iat: number }> {
   let secretBn = ethers.BigNumber.from(0)

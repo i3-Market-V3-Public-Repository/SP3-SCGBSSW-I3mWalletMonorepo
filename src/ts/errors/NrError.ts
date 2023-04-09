@@ -1,4 +1,4 @@
-import { NrErrorName } from '../types'
+import { NrErrorName } from '../types.js'
 
 export class NrError extends Error {
   nrErrors: NrErrorName[]

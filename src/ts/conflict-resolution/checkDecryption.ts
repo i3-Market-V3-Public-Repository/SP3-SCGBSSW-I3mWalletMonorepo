@@ -1,10 +1,10 @@
-import { jweDecrypt, jwsDecode, oneTimeSecret } from '../crypto'
-import { NrError } from '../errors'
-import { DisputeRequestPayload, JWK, PoOPayload, PoRPayload } from '../types'
-import { sha } from '../utils'
-import { verifyPor } from './verifyPor'
 import * as b64 from '@juanelas/base64'
-import { NrpDltAgentDest } from '../dlt'
+import { jweDecrypt, jwsDecode, oneTimeSecret } from '../crypto/index.js'
+import { NrpDltAgentDest } from '../dlt/index.js'
+import { NrError } from '../errors/index.js'
+import { DisputeRequestPayload, JWK, PoOPayload, PoRPayload } from '../types.js'
+import { sha } from '../utils/index.js'
+import { verifyPor } from './verifyPor.js'
 
 /**
  * Check if the cipherblock in the disputeRequest is the one agreed for the dataExchange, and if it could be decrypted with the secret published on the ledger for that dataExchange.

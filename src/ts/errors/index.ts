@@ -1,1 +1,1 @@
-export * from './NrError'
+export * from './NrError.js'

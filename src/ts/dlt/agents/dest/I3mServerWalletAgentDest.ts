@@ -1,6 +1,6 @@
-import { getSecretFromLedger as getSecret } from '../secret'
-import { I3mServerWalletAgent } from '../I3mServerWalletAgent'
-import { NrpDltAgentDest } from './NrpDltAgentDest'
+import { getSecretFromLedger as getSecret } from '../secret.js'
+import { I3mServerWalletAgent } from '../I3mServerWalletAgent.js'
+import { NrpDltAgentDest } from './NrpDltAgentDest.js'
 
 /**
  * A DLT agent for the NRP dest using the i3-MARKET server Wallet.

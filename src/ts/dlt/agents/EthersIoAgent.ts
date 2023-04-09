@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
-import { defaultDltConfig } from '..'
-import { DltConfig } from '../../types'
-import { NrpDltAgent } from './NrpDltAgent'
+import { DltConfig } from '../../types.js'
+import { defaultDltConfig } from '../defaultDltConfig.js'
+import { NrpDltAgent } from './NrpDltAgent.js'
 
 /**
  * A NRP DLT agent using the well known ethers.io library and, if required, wallet (for publishing secrets)

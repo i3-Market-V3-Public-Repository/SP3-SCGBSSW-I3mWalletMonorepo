@@ -1,6 +1,6 @@
-import { getSecretFromLedger as getSecret } from '../secret'
-import { EthersIoAgent } from '../EthersIoAgent'
-import { NrpDltAgentDest } from './NrpDltAgentDest'
+import { getSecretFromLedger as getSecret } from '../secret.js'
+import { EthersIoAgent } from '../EthersIoAgent.js'
+import { NrpDltAgentDest } from './NrpDltAgentDest.js'
 
 /**
  * A DLT agent for the NRP dest using ethers.io.

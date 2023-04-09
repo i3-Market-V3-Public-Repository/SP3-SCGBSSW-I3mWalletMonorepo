@@ -1,8 +1,8 @@
 import * as b64 from '@juanelas/base64'
 import { JWTHeaderParameters, jwtVerify } from 'jose'
-import { NrError } from '../errors'
-import { ProofPayload, getFromJws, JWK, DecodedProof } from '../types'
-import { importJwk } from './importJwk'
+import { NrError } from '../errors/index.js'
+import { DecodedProof, getFromJws, JWK, ProofPayload } from '../types.js'
+import { importJwk } from './importJwk.js'
 
 /**
  * Decodes and optionally verifies a JWS, and returns the decoded header, payload.

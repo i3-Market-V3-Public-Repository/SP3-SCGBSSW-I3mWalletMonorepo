@@ -1,7 +1,7 @@
 import { importJWK as importJWKjose } from 'jose'
-import { ENC_ALGS, KEY_AGREEMENT_ALGS, SIGNING_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { JWK, KeyLike } from '../types'
+import { ENC_ALGS, KEY_AGREEMENT_ALGS, SIGNING_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { JWK, KeyLike } from '../types.js'
 
 export async function importJwk (jwk: JWK, alg?: string): Promise<KeyLike | Uint8Array> {
   const jwkAlg = alg === undefined ? jwk.alg : alg
@@ -11,6 +11,9 @@ export async function importJwk (jwk: JWK, alg?: string): Promise<KeyLike | Uint
   }
   try {
     const key = await importJWKjose(jwk, alg)
+    if (key === undefined || key === null) {
+      throw new NrError(new Error('failed importing keys'), ['invalid key'])
+    }
     return key
   } catch (error) {
     throw new NrError(error, ['invalid key'])

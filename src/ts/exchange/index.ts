@@ -1,2 +1,2 @@
-export * from './exchangeId'
-export * from './checkAgreement'
+export * from './exchangeId.js'
+export * from './checkAgreement.js'

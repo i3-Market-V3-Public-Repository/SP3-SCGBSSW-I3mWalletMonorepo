@@ -1,7 +1,7 @@
-import { NrError } from '../../../errors'
-import { secretUnisgnedTransaction } from '../secret'
-import { I3mWalletAgent } from '../I3mWalletAgent'
-import { NrpDltAgentOrig } from './NrpDltAgentOrig'
+import { NrError } from '../../../errors/index.js'
+import { secretUnisgnedTransaction } from '../secret.js'
+import { I3mWalletAgent } from '../I3mWalletAgent.js'
+import { NrpDltAgentOrig } from './NrpDltAgentOrig.js'
 
 /**
  * A DLT agent for the NRP orig using ethers.io library and the i3m-wallet for signing transactions to the DLT

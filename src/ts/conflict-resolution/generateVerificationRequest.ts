@@ -1,5 +1,5 @@
 import { importJWK, JWTPayload, SignJWT } from 'jose'
-import { JWK, VerificationRequestPayload } from '../types'
+import { JWK, VerificationRequestPayload } from '../types.js'
 
 export async function generateVerificationRequest (iss: 'orig' | 'dest', dataExchangeId: string, por: string, privateJwk: JWK): Promise<string> {
   const payload: VerificationRequestPayload = {

@@ -1,2 +1,2 @@
-export * from './NonRepudiationDest'
-export * from './NonRepudiationOrig'
+export * from './NonRepudiationDest.js'
+export * from './NonRepudiationOrig.js'

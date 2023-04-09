@@ -1,2 +1,2 @@
-export * from './dest'
-export * from './orig'
+export * from './dest/index.js'
+export * from './orig/index.js'

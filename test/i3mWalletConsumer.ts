@@ -144,7 +144,8 @@ Steps for creating a token:
         providerJwks = await _pkg.generateKeys('ES256')
 
         // Prepare the data sharing agreeement
-        dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
+        const dataSharingAgreementJsonModule = await import('./dataSharingAgreementTemplate.json')
+        dataSharingAgreement = dataSharingAgreementJsonModule.default as WalletComponents.Schemas.DataSharingAgreement
 
         dataExchangeAgreement = {
           ...dataSharingAgreement.dataExchangeAgreement,

@@ -1,13 +1,13 @@
 import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
-import { generateVerificationRequest } from '../conflict-resolution/'
-import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { exchangeId, validateDataExchangeAgreement } from '../exchange'
-import { createProof, verifyProof } from '../proofs/'
-import { DataExchange, DataExchangeAgreement, JWK, JwkPair, NrErrorName, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types'
-import { parseHex, sha } from '../utils'
-import { NrpDltAgentOrig } from '../dlt/agents'
-import { NrError } from '../errors'
+import { generateVerificationRequest } from '../conflict-resolution/index.js'
+import { jweEncrypt, oneTimeSecret, verifyKeyPair } from '../crypto/index.js'
+import { exchangeId, validateDataExchangeAgreement } from '../exchange/index.js'
+import { createProof, verifyProof } from '../proofs/index.js'
+import { DataExchange, DataExchangeAgreement, JWK, JwkPair, NrErrorName, OrigBlock, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from '../types.js'
+import { parseHex, sha } from '../utils/index.js'
+import { NrpDltAgentOrig } from '../dlt/agents/index.js'
+import { NrError } from '../errors/index.js'
 
 /**
  * The base class that should be instantiated by the origin of a data
@@ -31,7 +31,7 @@ export class NonRepudiationOrig {
    */
   constructor (agreement: DataExchangeAgreement, privateJwk: JWK, block: Uint8Array, dltAgent: NrpDltAgentOrig) {
     this.jwkPairOrig = {
-      privateJwk: privateJwk,
+      privateJwk,
       publicJwk: JSON.parse(agreement.orig) as JWK
     }
     this.publicJwkDest = JSON.parse(agreement.dest) as JWK

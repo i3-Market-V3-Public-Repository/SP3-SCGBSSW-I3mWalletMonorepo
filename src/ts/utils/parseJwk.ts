@@ -1,7 +1,7 @@
-import { importJwk } from '../crypto'
-import { NrError } from '../errors'
-import { JWK } from '../types'
-import { jsonSort } from './jsonSort'
+import { importJwk } from '../crypto/index.js'
+import { NrError } from '../errors/index.js'
+import { JWK } from '../types.js'
+import { jsonSort } from './jsonSort.js'
 
 export async function parseJwk (jwk: JWK, stringify: true): Promise<string>
 export async function parseJwk (jwk: JWK, stringify: false): Promise<JWK>

@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e8bd0b6/src/ts/errors/NrError.ts#L6)
+[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/9d36e52/src/ts/errors/NrError.ts#L6)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Error.message
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1054
+node_modules/typescript/lib/lib.es5.d.ts:1055
 
 ___
 
@@ -73,7 +73,7 @@ Error.name
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1053
+node_modules/typescript/lib/lib.es5.d.ts:1054
 
 ___
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e8bd0b6/src/ts/errors/NrError.ts#L4)
+[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/9d36e52/src/ts/errors/NrError.ts#L4)
 
 ___
 
@@ -97,7 +97,7 @@ Error.stack
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1055
+node_modules/typescript/lib/lib.es5.d.ts:1056
 
 ___
 
@@ -166,7 +166,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e8bd0b6/src/ts/errors/NrError.ts#L16)
+[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/9d36e52/src/ts/errors/NrError.ts#L16)
 
 ___
 

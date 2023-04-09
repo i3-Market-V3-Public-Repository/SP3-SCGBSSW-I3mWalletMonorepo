@@ -2,10 +2,10 @@ import * as b64 from '@juanelas/base64'
 import { decode as base64decode } from '@juanelas/base64'
 import { bufToHex, hexToBuf, parseHex } from 'bigint-conversion'
 import { exportJWK, generateSecret, KeyLike } from 'jose'
-import { ENC_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { Block, EncryptionAlg, JWK } from '../types'
-import { algByteLength } from '../utils/algByteLength'
+import { ENC_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { Block, EncryptionAlg, JWK } from '../types.js'
+import { algByteLength } from '../utils/algByteLength.js'
 
 /**
  * Create a JWK random (high entropy) symmetric secret
@@ -16,7 +16,7 @@ import { algByteLength } from '../utils/algByteLength'
  * @returns a promise that resolves to the secret in JWK and raw hex string
  */
 
-export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array|string, base64?: boolean): Promise<Exclude<Block['secret'], undefined>> {
+export async function oneTimeSecret (encAlg: EncryptionAlg, secret?: Uint8Array | string, base64?: boolean): Promise<Exclude<Block['secret'], undefined>> {
   let key: Uint8Array | KeyLike
 
   if (!ENC_ALGS.includes(encAlg)) {

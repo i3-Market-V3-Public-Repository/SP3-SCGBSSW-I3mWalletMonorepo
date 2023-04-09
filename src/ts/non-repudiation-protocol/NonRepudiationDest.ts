@@ -1,15 +1,15 @@
 import * as b64 from '@juanelas/base64'
 import { bufToHex } from 'bigint-conversion'
 import { JWTPayload, SignJWT } from 'jose'
-import { generateVerificationRequest } from '../conflict-resolution/'
-import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/'
-import { NrpDltAgentDest } from '../dlt/'
-import { NrError } from '../errors'
-import { exchangeId, validateDataExchangeAgreement } from '../exchange'
-import { createProof, verifyProof } from '../proofs/'
-import { checkTimestamp, sha } from '../utils/'
-import { algByteLength } from '../utils/algByteLength'
-import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, NrErrorName, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types'
+import { generateVerificationRequest } from '../conflict-resolution/index.js'
+import { importJwk, jweDecrypt, jwsDecode, oneTimeSecret, verifyKeyPair } from '../crypto/index.js'
+import { NrpDltAgentDest } from '../dlt/index.js'
+import { NrError } from '../errors/index.js'
+import { exchangeId, validateDataExchangeAgreement } from '../exchange/index.js'
+import { createProof, verifyProof } from '../proofs/index.js'
+import { checkTimestamp, sha } from '../utils/index.js'
+import { algByteLength } from '../utils/algByteLength.js'
+import { Block, DataExchange, DataExchangeAgreement, DecodedProof, Dict, DisputeRequestPayload, JWK, JwkPair, NrErrorName, PoOPayload, PoPPayload, PoRPayload, StoredProof, TimestampVerifyOptions } from './../types.js'
 
 /**
  * The base class that should be instantiated by the destination of a data
@@ -55,7 +55,7 @@ export class NonRepudiationDest {
     this.agreement = agreement
 
     this.jwkPairDest = {
-      privateJwk: privateJwk,
+      privateJwk,
       publicJwk: JSON.parse(agreement.dest) as JWK
     }
     this.publicJwkOrig = JSON.parse(agreement.orig) as JWK
@@ -205,7 +205,7 @@ export class NonRepudiationDest {
    *
    * @returns the secret
    */
-  async getSecretFromLedger (): Promise<{hex: string, jwk: JWK}> {
+  async getSecretFromLedger (): Promise<{ hex: string, jwk: JWK }> {
     await this.initialized
 
     if (this.exchange === undefined || this.block.poo === undefined || this.block.por === undefined) {

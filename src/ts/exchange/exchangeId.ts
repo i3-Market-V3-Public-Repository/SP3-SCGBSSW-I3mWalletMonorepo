@@ -1,7 +1,7 @@
-import { hashable } from 'object-sha'
-import { sha } from '../utils'
-import { DataExchange } from '../types'
 import * as b64 from '@juanelas/base64'
+import { hashable } from 'object-sha'
+import { DataExchange } from '../types.js'
+import { sha } from '../utils/index.js'
 
 /**
  * Returns the exchangeId of the data exchange. The id is computed hashing an object with

@@ -2,9 +2,9 @@ import * as b64 from '@juanelas/base64'
 import { hexToBuf } from 'bigint-conversion'
 import { randBytes } from 'bigint-crypto-utils'
 import elliptic from 'elliptic'
-import { SIGNING_ALGS } from '../constants'
-import { NrError } from '../errors'
-import { JWK, JwkPair, SigningAlg } from '../types'
+import { SIGNING_ALGS } from '../constants.js'
+import { NrError } from '../errors/index.js'
+import { JWK, JwkPair, SigningAlg } from '../types.js'
 
 const { ec: Ec } = elliptic
 /**

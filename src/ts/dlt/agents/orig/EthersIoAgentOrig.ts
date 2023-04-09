@@ -2,10 +2,10 @@ import { hexToBuf } from 'bigint-conversion'
 import { randBytesSync } from 'bigint-crypto-utils'
 import { ethers, Wallet } from 'ethers'
 import { SigningKey } from 'ethers/lib/utils'
-import { DltConfig } from '../../../types'
-import { secretUnisgnedTransaction } from '../secret'
-import { EthersIoAgent } from '../EthersIoAgent'
-import { NrpDltAgentOrig } from './NrpDltAgentOrig'
+import { DltConfig } from '../../../types.js'
+import { secretUnisgnedTransaction } from '../secret.js'
+import { EthersIoAgent } from '../EthersIoAgent.js'
+import { NrpDltAgentOrig } from './NrpDltAgentOrig.js'
 
 /**
  * A DLT agent for the NRP orig using ethers.io.

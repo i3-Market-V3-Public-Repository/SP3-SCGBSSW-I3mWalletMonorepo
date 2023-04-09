@@ -1,5 +1,5 @@
 import { parseHex as bcParseHex } from 'bigint-conversion'
-import { NrError } from '../errors'
+import { NrError } from '../errors/index.js'
 
 export function parseHex (a: string, prefix0x: boolean = false, byteLength?: number): string {
   try {

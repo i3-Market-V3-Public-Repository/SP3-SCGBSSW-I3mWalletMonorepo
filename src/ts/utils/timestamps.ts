@@ -1,4 +1,4 @@
-import { NrError } from '../errors'
+import { NrError } from '../errors/index.js'
 
 export function checkTimestamp (timestamp: number, notBefore: number, notAfter: number, tolerance: number = 2000): void {
   if (timestamp < notBefore - tolerance) {
