@@ -45,7 +45,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/438f424/src/ts/errors/NrError.ts#L6)
+[src/ts/errors/NrError.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/errors/NrError.ts#L6)
 
 ## Properties
 
@@ -83,7 +83,7 @@ ___
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/438f424/src/ts/errors/NrError.ts#L4)
+[src/ts/errors/NrError.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/errors/NrError.ts#L4)
 
 ___
 
@@ -166,7 +166,7 @@ node_modules/@types/node/globals.d.ts:13
 
 #### Defined in
 
-[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/438f424/src/ts/errors/NrError.ts#L16)
+[src/ts/errors/NrError.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/errors/NrError.ts#L16)
 
 ___
 
