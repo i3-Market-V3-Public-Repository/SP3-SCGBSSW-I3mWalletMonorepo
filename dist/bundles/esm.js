@@ -2,7 +2,6 @@ const base64Encode = (bytes) => {
     const CHUNK_SIZE = 0x8000;
     const arr = [];
     for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
-        // @ts-expect-error
         arr.push(String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK_SIZE)));
     }
     return btoa(arr.join(''));
@@ -13,19 +12,6 @@ const base64Decode = (encoded) => {
         .map((c) => c.charCodeAt(0)));
 };
 
-/**
- * Base64url for both node.js and brwser javascript. It can work with ArrayBuffer|TypedArray|Buffer
- *
- * @remarks Bowser code obtained from https://github.com/panva/jose/blob/main/src/runtime/browser/base64url.ts
- * @packageDocumentation
- */
-/**
- * Base64Url encoding of a buffer input or a string (UTF16 in browsers, UTF8 in node)
- * @param input
- * @param urlsafe - if true Base64 URL encoding is used ('+' and '/' are replaced by '-', '_')
- * @param padding - if false, padding (trailing '=') is removed
- * @returns a string with the base64-encoded representation of the input
- */
 function encode$4(input, urlsafe = false, padding = true) {
     let base64 = '';
     {
@@ -40,12 +26,6 @@ function encode$4(input, urlsafe = false, padding = true) {
         base64 = removeBase64Padding(base64);
     return base64;
 }
-/**
- * Base64url decoding (binary output) of base64url-encoded string
- * @param base64 - a base64 string
- * @param stringOutput - if true a UTF16 (browser) or UTF8 (node) string is returned
- * @returns a buffer or unicode string
- */
 function decode$5(base64, stringOutput = false) {
     {
         let urlsafe = false;
@@ -111,31 +91,12 @@ function hexToBuf(hexStr, returnArrayBuffer = false) {
     }
 }
 
-/**
- * Absolute value. abs(a)==a if a>=0. abs(a)==-a if a<0
- *
- * @param a
- *
- * @returns The absolute value of a
- */
-
-/**
- * Secure random bytes for both node and browsers. Node version uses crypto.randomBytes() and browser one self.crypto.getRandomValues()
- *
- * @param byteLength - The desired number of random bytes
- * @param forceLength - Set to true if you want to force the output to have a bit length of 8*byteLength. It basically forces the msb to be 1
- *
- * @throws {@link RangeError} if byteLength < 1
- *
- * @returns A promise that resolves to a UInt8Array/Buffer (Browser/Node.js) filled with cryptographically secure random bytes
- */
 function randBytes(byteLength, forceLength = false) {
     if (byteLength < 1)
         throw new RangeError('byteLength MUST be > 0');
     return new Promise(function (resolve, reject) {
-        { // browser
+        {
             const buf = new Uint8Array(byteLength);
-            // the maximum number of bytes of entropy available via self.crypto.getRandomValues is 65536
             if (byteLength <= 65536) {
                 self.crypto.getRandomValues(buf);
             }
@@ -146,31 +107,17 @@ function randBytes(byteLength, forceLength = false) {
                     self.crypto.getRandomValues(buf.subarray(begin, end));
                 }
             }
-            // If fixed length is required we put the first bit to 1 -> to get the necessary bitLength
             if (forceLength)
                 buf[0] = buf[0] | 128;
             resolve(buf);
         }
     });
 }
-/**
- * Secure random bytes for both node and browsers. Node version uses crypto.randomFill() and browser one self.crypto.getRandomValues()
- * This is the synchronous version, consider using the asynchronous one for improved efficiency.
- *
- * @param byteLength - The desired number of random bytes
- * @param forceLength - Set to true if you want to force the output to have a bit length of 8*byteLength. It basically forces the msb to be 1
- *
- * @throws {@link RangeError} if byteLength < 1
- *
- * @returns A UInt8Array/Buffer (Browser/Node.js) filled with cryptographically secure random bytes
- */
 function randBytesSync(byteLength, forceLength = false) {
     if (byteLength < 1)
         throw new RangeError('byteLength MUST be > 0');
-    /* eslint-disable no-lone-blocks */
-    { // browser
+    {
         const buf = new Uint8Array(byteLength);
-        // the maximum number of bytes of entropy available via self.crypto.getRandomValues is 65536
         if (byteLength <= 65536) {
             self.crypto.getRandomValues(buf);
         }
@@ -181,12 +128,10 @@ function randBytesSync(byteLength, forceLength = false) {
                 self.crypto.getRandomValues(buf.subarray(begin, end));
             }
         }
-        // If fixed length is required we put the first bit to 1 -> to get the necessary bitLength
         if (forceLength)
             buf[0] = buf[0] | 128;
         return buf;
     }
-    /* eslint-enable no-lone-blocks */
 }
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -11614,20 +11559,12 @@ function objectToArraySortedByKey(obj) {
             return item;
         });
     }
-    // if it is an object convert to array and sort
-    return Object.keys(obj) // eslint-disable-line
+    return Object.keys(obj)
         .sort()
         .map((key) => {
         return [key, objectToArraySortedByKey(obj[key])];
     });
 }
-/**
- * If the input object is not an Array, this function converts the object to an array, all the key-values to 2-arrays [key, value] and then sort the array by the keys. All the process is done recursively so objects inside objects or arrays are also ordered. Once the array is created the method returns the JSON.stringify() of the sorted array.
- *
- * @param obj the object
- *
- * @returns a JSON stringify of the created sorted array
- */
 function hashable (obj) {
     return JSON.stringify(objectToArraySortedByKey(obj));
 }

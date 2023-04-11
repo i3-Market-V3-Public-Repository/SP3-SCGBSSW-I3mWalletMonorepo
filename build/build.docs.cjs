@@ -48,11 +48,13 @@ async function typedoc () {
   const tsConfig = json5.parse(fs.readFileSync(tsConfigPath, 'utf8'))
   tsConfig.include = ['src/ts/**/*', 'build/typings/**/*.d.ts']
   tsConfig.exclude = ['src/**/*.spec.ts']
+  delete tsConfig.compilerOptions.outDir
+  // delete tsConfig.exclude
   fs.writeFileSync(tempTsConfigPath, JSON.stringify(tsConfig, undefined, 2))
 
   // If you want TypeDoc to load tsconfig.json / typedoc.json files
   app.options.addReader(new TypeDoc.TSConfigReader())
-  app.options.addReader(new TypeDoc.TypeDocReader())
+  // app.options.addReader(new TypeDoc.TypeDocReader())
 
   app.bootstrap({
     // typedoc options here
@@ -66,7 +68,10 @@ async function typedoc () {
     excludePrivate: true
   })
 
-  const project = app.convert()
+  // This is the part that seems to skip compile errors
+  // (normally we would call `app.convert()` here)
+  const project = app.converter.convert(app.getEntryPoints() ?? [])
+  // const project = app.convert()
 
   if (project) {
     // Project may not have converted correctly

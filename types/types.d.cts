@@ -1,6 +1,6 @@
 import { ContractInterface } from '@ethersproject/contracts';
 import { JWEHeaderParameters, JWK as JWKjose, JWTHeaderParameters } from 'jose';
-import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants';
+import { ENC_ALGS, HASH_ALGS, SIGNING_ALGS } from './constants.js';
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types';
 export { KeyLike } from 'jose';
 export { ContractInterface };
