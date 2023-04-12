@@ -137,7 +137,7 @@ export function JsonUi (props: Props<any>): JSX.Element | null {
   }
 
   return (
-    <Accordion className='json-ui' flush alwaysOpen defaultActiveKey={props.prop}>
+    <Accordion className='json-ui' flush alwaysOpen defaultActiveKey={[props.prop]}>
       <JsonProxy {...internalProps} />
     </Accordion>
   )
