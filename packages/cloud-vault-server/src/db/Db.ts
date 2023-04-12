@@ -1,5 +1,5 @@
 import { Pool, QueryArrayConfig, QueryArrayResult, QueryConfig, QueryResult, QueryResultRow } from 'pg'
-import { dbConfig, general } from '../config/index.js'
+import { dbConfig, general } from '../config'
 
 const checkDbExistsQuery = 'SELECT version FROM config;'
 

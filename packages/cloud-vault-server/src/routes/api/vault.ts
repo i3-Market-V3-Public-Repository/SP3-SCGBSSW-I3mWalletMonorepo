@@ -5,11 +5,12 @@ import { DatabaseError } from 'pg'
 import { OpenApiPaths } from '../../../types/openapi'
 import { general, jwt, dbConfig } from '../../config'
 import { dbFunctions as db } from '../../db'
-import { passport, User } from '../../middlewares/passport'
-import { vaultEvents } from '../../vault'
+import { passportPromise, User } from '../../middlewares/passport'
+import { vaultEvents } from '../../vault/index'
 
-export default function (router: Router): void {
-  router.use(passport.initialize())
+export default async function (router: Router): Promise<void> {
+  const passport = await passportPromise
+  // router.use(passport.initialize())
   router.post('/token',
     async (req: Request<{}, {}, OpenApiPaths.ApiV2VaultToken.Post.RequestBody, {}>, res: Response<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>, next) => { // eslint-disable-line @typescript-eslint/no-misused-promises
       try {
@@ -20,7 +21,7 @@ export default function (router: Router): void {
           const error = new HttpError({
             name: 'invalid-credentials',
             message: 'invalid username and/or authkey',
-            path: req.path,
+            path: req.baseUrl + req.path,
             status: 404
           })
           throw error
@@ -71,7 +72,7 @@ export default function (router: Router): void {
           const error = new HttpError({
             name: 'no-storage',
             message: "you haven't upload storage yet",
-            path: req.path,
+            path: req.baseUrl + req.path,
             status: 404
           })
           throw error
@@ -94,7 +95,7 @@ export default function (router: Router): void {
           const error = new HttpError({
             name: 'no-storage',
             message: "you haven't upload storage yet",
-            path: req.path,
+            path: req.baseUrl + req.path,
             status: 404
           })
           throw error
@@ -120,7 +121,7 @@ export default function (router: Router): void {
         if (error instanceof Error && error.message === 'not-registered') {
           return next(new HttpError({
             name: 'not-registered',
-            path: req.path,
+            path: req.baseUrl + req.path,
             status: 404
           }))
         }
@@ -159,7 +160,7 @@ export default function (router: Router): void {
             default:
               return next(new HttpError({
                 name: 'error',
-                path: req.path,
+                path: req.baseUrl + req.path,
                 status: 400,
                 message: 'couldn\'t update storage'
               }))
@@ -167,7 +168,7 @@ export default function (router: Router): void {
         } else if (error instanceof Error && (error.message === 'invalid-timestamp' || error.message === 'not-registered')) {
           return next(new HttpError({
             name: error.message,
-            path: req.path,
+            path: req.baseUrl + req.path,
             status: 400
           }))
         }

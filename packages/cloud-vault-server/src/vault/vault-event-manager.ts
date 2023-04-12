@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import _ from 'lodash'
-import { randomUUID } from 'node:crypto'
+import { randomUUID } from 'crypto'
 import { OpenApiComponents } from '../../types/openapi'
 
 interface ConnectionToUsernameMap {

@@ -1,6 +1,11 @@
-/// <reference types="express" />
-/// <reference types="passport" />
+import passport from 'passport';
 export interface User {
     username: string;
 }
-export declare const passport: import("passport").Authenticator<import("express").Handler, any, any, import("passport").AuthenticateOptions>;
+export interface RegistrationUser {
+    idToken: string;
+    claims: string[];
+    did: string;
+    scope: string;
+}
+export declare const passportPromise: Promise<passport.PassportStatic>;

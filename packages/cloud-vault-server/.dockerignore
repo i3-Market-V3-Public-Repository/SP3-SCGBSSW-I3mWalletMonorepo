@@ -1,0 +1,8 @@
+.vscode
+dist
+node_modules
+test
+test-fixtures
+types
+.*
+**/*.md

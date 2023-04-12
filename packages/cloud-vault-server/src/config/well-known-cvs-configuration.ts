@@ -1,7 +1,7 @@
-import type { OpenApiComponents } from '../../types/openapi.js'
-import { dbConfig } from './db.js'
-import { apiVersion } from './openApi.js'
-import { serverConfig } from './server.js'
+import type { OpenApiComponents } from '../../types/openapi'
+import { dbConfig } from './db'
+import { apiVersion } from './openApi'
+import { serverConfig } from './server'
 
 export const wellKnownCvsConfiguration: OpenApiComponents.Schemas.CvsConfiguration = {
   name: serverConfig.id,

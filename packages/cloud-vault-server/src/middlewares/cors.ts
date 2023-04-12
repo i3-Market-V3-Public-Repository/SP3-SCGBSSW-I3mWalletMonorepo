@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express'
-import { cors } from '../config/index.js'
+import { cors } from '../config'
 
 export const corsMiddleware: RequestHandler = (req, res, next) => {
   res.header('Access-Control-Allow-Origin', cors.allowedOrigin)

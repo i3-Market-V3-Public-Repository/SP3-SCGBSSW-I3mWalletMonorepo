@@ -1,0 +1,64 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    restart: always
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 127.0.0.1:25432:5432
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mysuperpassword
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - 127.0.0.1:20080:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@mail.com
+      PGADMIN_DEFAULT_PASSWORD: mysuperpassword
+    depends_on:
+      - db
+
+  cvs:
+    build: 
+      context: ..
+      args: 
+        USER_ID: ${USER_ID-1000}
+        GROUP_ID: ${GROUP_ID-1000}
+      dockerfile: ./docker/Dockerfile.development
+    image: i3m/cvs
+    container_name: cvs
+    env_file:
+      - cvs.env
+    volumes:
+      - spec:/app/dist/spec
+    ports:
+      - 127.0.0.1:23000:3000
+    depends_on:
+      - db
+
+  backplane:
+    image: registry.gitlab.com/i3-market/code/backplane/backplane-api-gateway/backplane:latest-with-integrator
+    restart: always
+    container_name: backplane
+    env_file:
+      - backplane.env
+    ports:
+      - 3000:3000
+    volumes:
+      - spec:/home/node/app/specs:ro
+    depends_on:
+      - cvs
+
+volumes:
+ pgadmin:
+ pgdata:
+ spec:

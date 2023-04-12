@@ -1,0 +1,19 @@
+FROM node:18-alpine
+    WORKDIR /app
+    
+    COPY . ./
+
+    RUN ls -l
+
+    RUN apk update &&\
+        apk upgrade &&\
+        chown -R node.node /app
+
+    USER node
+
+    RUN npm install &&\
+        npm run build
+
+    ENTRYPOINT [ "npx" ]
+
+    CMD [ "cvs" ]

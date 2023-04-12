@@ -1,4 +1,4 @@
-import { parseProccessEnvVar } from './parseProcessEnvVar.js'
+import { parseProccessEnvVar } from './parseProcessEnvVar'
 
 const storageByteLength = Number(parseProccessEnvVar('DB_STORAGE_LIMIT', 'string', { defaultValue: '5242880' }))
 
