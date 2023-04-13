@@ -72,6 +72,7 @@ export const serverPromise = new Promise<Server>((resolve, reject) => {
      */
     const server = http.createServer(app)
     const { port, addr, publicUrl } = serverConfig
+
     server.listen(port, addr)
 
     /**

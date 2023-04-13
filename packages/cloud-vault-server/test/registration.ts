@@ -10,7 +10,7 @@ use(chaiHttp)
 let apiVersion: string
 
 const user = {
-  did: 'did:ethr:i3m:0x0345155444167d42db1db4cd68e079581a6ff085da0db171fb32f6deac4894f688',
+  did: process.env.TEST_DID,
   username: 'testUser',
   authkey: 'uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ'
 }

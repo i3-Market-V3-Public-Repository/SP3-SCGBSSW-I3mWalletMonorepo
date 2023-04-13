@@ -132,6 +132,7 @@ export class VaultClient extends EventEmitter {
       retries: 1200 * 24, // will retry for 24 hours
       retryDelay: 3000
     })
+    // this.wellKnownCvsConfigurationPromise = VaultClient.getWellKnownCvsConfiguration(this.serverRootUrl + this.serverPrefix)
 
     this.wellKnownCvsConfiguration = await this.wellKnownCvsConfigurationPromise.promise.catch(err => {
       throw new VaultError('not-initialized', err)
@@ -146,7 +147,7 @@ export class VaultClient extends EventEmitter {
     }
 
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-    const esUrl = this.serverRootUrl + cvsConf.vault_configuration[apiVersion].events_endpoint
+    const esUrl = cvsConf.vault_configuration[apiVersion].events_endpoint
     this.es = new EventSource(esUrl, {
       headers: {
         Authorization: 'Bearer ' + (this.token as string)
@@ -225,7 +226,7 @@ export class VaultClient extends EventEmitter {
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
     const data = await request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
-      this.serverRootUrl + cvsConf.vault_configuration.v2.token_endpoint,
+      cvsConf.vault_configuration.v2.token_endpoint,
       reqBody,
       { responseStatus: 200 }
     )
@@ -238,7 +239,7 @@ export class VaultClient extends EventEmitter {
         bearerToken: this.token,
         sequentialPost: true
       },
-      defaultUrl: this.serverRootUrl + cvsConf.vault_configuration.v2.vault_endpoint
+      defaultUrl: cvsConf.vault_configuration.v2.vault_endpoint
     })
 
     this.timestamp = timestamp
@@ -257,7 +258,7 @@ export class VaultClient extends EventEmitter {
       await (this.vaultRequest as Request).waitForUploadsToFinsh()
       const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
       const data = await request.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
-        this.serverRootUrl + cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
+        cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
         {
           bearerToken: this.token,
           responseStatus: 200
@@ -390,7 +391,7 @@ export class VaultClient extends EventEmitter {
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
     const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
     const data = await request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
-      this.serverRootUrl + cvsConf.registration_configuration.public_jwk_endpoint,
+      cvsConf.registration_configuration.public_jwk_endpoint,
       { responseStatus: 200 }
     )
     return data.jwk

@@ -5,5 +5,5 @@ export interface ServerConfig {
     localUrl: string;
     publicUrl: string;
 }
-export declare function checkIfIPv6(str: string): boolean;
-export declare const serverConfig: ServerConfig;
+export declare let serverConfig: ServerConfig;
+export declare function updateServerConfig(vars: Partial<ServerConfig>): void;

@@ -38,6 +38,14 @@ services:
     container_name: cvs
     env_file:
       - cvs.env
+    environment:
+      - SERVER_ADDRESS=cvs
+      - SERVER_PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=myuser
+      - DB_USER=myuser
+      - DB_PASSWORD=mysuperpassword
     volumes:
       - spec:/app/dist/spec
     ports:

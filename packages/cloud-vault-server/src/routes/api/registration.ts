@@ -60,6 +60,14 @@ export default async function (router: Router): Promise<void> {
               path: req.baseUrl + req.path
             })
             return next(err)
+          } else if (!regUser.claims.includes('provider') && !regUser.claims.includes('consumer')) {
+            const err = new HttpError({
+              status: 401,
+              name: 'unauthorized',
+              message: 'user has not presented a valid credential for having a cloud vallet account',
+              path: req.baseUrl + req.path
+            })
+            return next(err)
           }
           try {
             await db.registerUser(did, username, authkey)
