@@ -6,9 +6,10 @@
   "exports": {
     ".": "./openapi.json",
     "./types": "./types/index.d.ts",
+    "./types/index.d.ts": "./types/index.d.ts",
     "./openapi.yaml": "./openapi.yaml",
     "./openapi.json": "./openapi.json",
-    "./openapi.dereferenced.json": "./openapi_dereferenced.json"
+    "./openapi_dereferenced.json": "./openapi_dereferenced.json"
   },
   "directories": {
     "types": "./types",

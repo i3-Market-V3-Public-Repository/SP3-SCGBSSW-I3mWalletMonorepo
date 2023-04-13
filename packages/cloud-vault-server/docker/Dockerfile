@@ -1,7 +1,7 @@
 # Instructions:
 # Download this file (you don't need anything else)
 # Build: docker build -t cvs . 
-# Copy template.env to .env and fill all the required env variables.
+# Copy .env.template to .env and fill all the required env variables.
 # Run the Cloud-Vault Server: docker run -it --init -p 127.0.0.1:3000:3000 --env-file .env cvs
 FROM node:18-alpine
 

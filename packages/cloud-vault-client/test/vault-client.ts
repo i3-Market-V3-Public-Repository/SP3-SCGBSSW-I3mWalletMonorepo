@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import { Request, VaultClient, VaultError } from '#pkg'
+import { VaultClient, VaultError } from '#pkg'
+import { Server } from '@i3m/cloud-vault-server'
+import type { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
+import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
+import { expect } from 'chai'
+import { spawn } from 'child_process'
+import { randomBytes } from 'crypto'
+import { config as loadEnvFile } from 'dotenv'
+import { join as pathJoin } from 'path'
+import promptSync from 'prompt-sync'
 import { setTimeout as timersSetTimeout } from 'timers'
 import { promisify } from 'util'
-import { Server } from '@i3m/cloud-vault-server'
-import { spawn } from 'child_process'
-import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
-import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
-import { config as loadEnvFile } from 'dotenv'
-import { randomBytes } from 'crypto'
-import { expect } from 'chai'
-import { join as pathJoin } from 'path'
+
+const prompt = promptSync()
 
 loadEnvFile()
 
@@ -32,13 +35,14 @@ if (process.env.WCV_SERVER_URL === undefined || process.env.WCV_USERNAME === und
 }
 
 const user = {
-  did: 'did:ethr:i3m:0x02c1e51dbe7fa3c3e89df33495f241316d9554b5206fcef16d8108486285e38c27',
+  did: process.env.WCV_DID,
   username,
   password
 }
 
-const request = new Request()
-
+if (user.did === undefined || user.did === '') {
+  throw new Error('WCV_DID must be set in your .env file')
+}
 const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
 async function runCommand (cmd: string, args: string[]): Promise<{ code: number | null, stdout: string, stderr: string }> {
@@ -198,10 +202,14 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
-        serverUrl + `/api/${apiVersion}/registration/register/` + data
-      )
-      chai.expect(res.status).to.equal('created')
+      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registration = prompt('Have you been able to register the user: [Yn]', { value: 'y' })
+
+      // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      //   serverUrl + `/api/${apiVersion}/registration/register/` + data
+      // )
+      // chai.expect(res.status).to.equal('created')
+      chai.expect(registration.toLocaleLowerCase()).to.equal('y')
     } catch (error) {
       console.log('error', error)
       chai.expect(false).to.be.true
@@ -220,16 +228,17 @@ describe('Wallet Cloud-Vault', function () {
         publicJwk as JWK,
         'A256GCM'
       )
-      await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$400>(
-        serverUrl + `/api/${apiVersion}/registration/register/` + data
-      )
+      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registration = prompt('Have you been able to register the user: [yN]', { value: 'N' })
+
+      // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      //   serverUrl + `/api/${apiVersion}/registration/register/` + data
+      // )
+      // chai.expect(res.status).to.equal('created')
+      chai.expect(registration.toLocaleLowerCase()).to.equal('n')
     } catch (error) {
-      if (error instanceof VaultError) {
-        chai.expect(error.data.response.data.name).to.equal('already-registered')
-      } else {
-        console.log('error', error)
-        chai.expect(false).to.be.true
-      }
+      console.log('error', error)
+      chai.expect(false).to.be.true
     }
   })
 

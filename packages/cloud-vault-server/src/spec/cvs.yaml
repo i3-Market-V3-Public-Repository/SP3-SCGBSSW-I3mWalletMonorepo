@@ -16,7 +16,7 @@ paths:
     get:
       summary: the well-known configuration of this Cloud Vault Server (CVS)
       tags:
-        - Cloud-Vault-Server Discovery
+        - 'Cloud-Vault Server: Discovery'
       responses:
         '200':
           description: OK
@@ -34,7 +34,7 @@ paths:
     get:
       summary: Get the current wallet cloud-vault's public key as a JWK
       tags:
-        - Registration
+        - 'Cloud-Vault Server: Registration'
       responses:
         '200':
           description: OK
@@ -59,7 +59,7 @@ paths:
         Endpoint where any non-previously registered user can register to enable
         the cloud vault for the i3M-Wallet.
       tags:
-        - Registration
+        - 'Cloud-Vault Server: Registration'
       parameters:
         - name: data
           in: path
@@ -67,18 +67,14 @@ paths:
           schema:
             $ref: '#/components/schemas/RegistrationData'
       responses:
-        '201':
-          description: OK
-          content:
-            application/json:
+        '302':
+          description: oidc
+          headers:
+            Location:
+              description: redirect to oidc login
               schema:
-                $ref: '#/components/schemas/RegistrationResponse'
-        '400':
-          description: user already registered
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorAlreadyRegistered'
+                type: string
+                format: uri
         default:
           description: unexpected error
           content:
@@ -93,8 +89,59 @@ paths:
         that identity (DID) will be cleared, and new registration would be
         needed to use it again
       tags:
-        - Registration
+        - 'Cloud-Vault Server: Registration'
       responses:
+        '302':
+          description: oidc
+          headers:
+            Location:
+              description: redirect to oidc login
+              schema:
+                type: string
+                format: uri
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/registration/login:
+    get:
+      summary: Endpoint to start login proccess with the oidc server
+      tags:
+        - 'Cloud-Vault Server: Registration'
+      responses:
+        '302':
+          description: oidc
+          headers:
+            Location:
+              description: redirect to oidc login
+              schema:
+                type: string
+                format: uri
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v2/registration/cb:
+    get:
+      summary: Callback Endpoint for OIDC authentication.
+      tags:
+        - 'Cloud-Vault Server: Registration'
+      security:
+        - i3m:
+            - vc
+            - vc:provider
+            - vc:consumer
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegistrationResponse'
         '204':
           description: Vault for logged in identity has been cleared
         '404':
@@ -105,6 +152,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorNotRegistered'
+        '409':
+          description: user already registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorAlreadyRegistered'
         default:
           description: unexpected error
           content:
@@ -117,7 +170,7 @@ paths:
         The endpoint to get a valid bearer token to access the vault. Valid
         credentials (`username`, `authkey`) must be provided.
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       requestBody:
         required: true
         content:
@@ -154,7 +207,7 @@ paths:
         It cannot be tested nor connected with automated tooling since it is NOT
         SUPPORTED in OpenAPI 3.0
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
       responses:
@@ -193,7 +246,7 @@ paths:
       summary: |
         Get the timestamp when latest storage was uploaded to the cloud vault
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
       responses:
@@ -226,7 +279,7 @@ paths:
       summary: |
         Get the latest storage in vault
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
       responses:
@@ -262,7 +315,7 @@ paths:
       summary: |
         Delete all data stored in the cloud vault
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
       responses:
@@ -290,7 +343,7 @@ paths:
       summary: |
         Sets/updates encrypted storage in cloud vault
       tags:
-        - Cloud Vault
+        - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
       requestBody:
@@ -331,10 +384,9 @@ paths:
                 $ref: '#/components/schemas/ApiError'
 components:
   securitySchemes:
-    jwt:
-      type: apiKey
-      in: header
-      name: id_token
+    i3m:
+      type: openIdConnect
+      openIdConnectUrl: https://OIDC_PROVIDER_URI/.well-known/openid-configuration
     bearerAuth:
       type: http
       scheme: bearer
@@ -848,5 +900,3 @@ components:
             timestamp refers to the exact time the latest storage was registered
             in the cloud vault.
           example: 1674060143749
-servers:
-  - url: http://[::]:3000

@@ -19,7 +19,7 @@
       "get": {
         "summary": "the well-known configuration of this Cloud Vault Server (CVS)",
         "tags": [
-          "Cloud-Vault-Server Discovery"
+          "Cloud-Vault Server: Discovery"
         ],
         "responses": {
           "200": {
@@ -49,7 +49,7 @@
       "get": {
         "summary": "Get the current wallet cloud-vault's public key as a JWK",
         "tags": [
-          "Registration"
+          "Cloud-Vault Server: Registration"
         ],
         "responses": {
           "200": {
@@ -87,7 +87,7 @@
       "get": {
         "summary": "Endpoint where any non-previously registered user can register to enable the cloud vault for the i3M-Wallet.",
         "tags": [
-          "Registration"
+          "Cloud-Vault Server: Registration"
         ],
         "parameters": [
           {
@@ -97,6 +97,111 @@
             "schema": {
               "$ref": "#/components/schemas/RegistrationData"
             }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "oidc",
+            "headers": {
+              "Location": {
+                "description": "redirect to oidc login",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/registration/deregister": {
+      "get": {
+        "summary": "Endpoint where users logged in with valid credentials can deregister their registered username and associated storage. The cloud vault for that identity (DID) will be cleared, and new registration would be needed to use it again",
+        "tags": [
+          "Cloud-Vault Server: Registration"
+        ],
+        "responses": {
+          "302": {
+            "description": "oidc",
+            "headers": {
+              "Location": {
+                "description": "redirect to oidc login",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/registration/login": {
+      "get": {
+        "summary": "Endpoint to start login proccess with the oidc server",
+        "tags": [
+          "Cloud-Vault Server: Registration"
+        ],
+        "responses": {
+          "302": {
+            "description": "oidc",
+            "headers": {
+              "Location": {
+                "description": "redirect to oidc login",
+                "schema": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "unexpected error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v2/registration/cb": {
+      "get": {
+        "summary": "Callback Endpoint for OIDC authentication.",
+        "tags": [
+          "Cloud-Vault Server: Registration"
+        ],
+        "security": [
+          {
+            "i3m": [
+              "vc",
+              "vc:provider",
+              "vc:consumer"
+            ]
           }
         ],
         "responses": {
@@ -110,7 +215,20 @@
               }
             }
           },
-          "400": {
+          "204": {
+            "description": "Vault for logged in identity has been cleared"
+          },
+          "404": {
+            "description": "the identity requesting to delete her/his vault has not previously registered to have one",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotRegistered"
+                }
+              }
+            }
+          },
+          "409": {
             "description": "user already registered",
             "content": {
               "application/json": {
@@ -133,44 +251,11 @@
         }
       }
     },
-    "/api/v2/registration/deregister": {
-      "get": {
-        "summary": "Endpoint where users logged in with valid credentials can deregister their registered username and associated storage. The cloud vault for that identity (DID) will be cleared, and new registration would be needed to use it again",
-        "tags": [
-          "Registration"
-        ],
-        "responses": {
-          "204": {
-            "description": "Vault for logged in identity has been cleared"
-          },
-          "404": {
-            "description": "the identity requesting to delete her/his vault has not previously registered to have one",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorNotRegistered"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v2/vault/token": {
       "post": {
         "summary": "The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "requestBody": {
           "required": true,
@@ -220,7 +305,7 @@
       "get": {
         "summary": "A notification channel using Server-Sent Events for vault changes. Everytime there is a change the timestamp of the change is broadcasted to all clients authenticated with the same user that updated it.\nThis is here just for documenting the Server-Sent Events (SSE) endpoint. It cannot be tested nor connected with automated tooling since it is NOT SUPPORTED in OpenAPI 3.0\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "security": [
           {
@@ -271,7 +356,7 @@
       "get": {
         "summary": "Get the timestamp when latest storage was uploaded to the cloud vault\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "security": [
           {
@@ -326,7 +411,7 @@
       "get": {
         "summary": "Get the latest storage in vault\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "security": [
           {
@@ -389,7 +474,7 @@
       "delete": {
         "summary": "Delete all data stored in the cloud vault\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "security": [
           {
@@ -435,7 +520,7 @@
       "post": {
         "summary": "Sets/updates encrypted storage in cloud vault\n",
         "tags": [
-          "Cloud Vault"
+          "Cloud-Vault Server: Vault"
         ],
         "security": [
           {
@@ -509,10 +594,9 @@
   },
   "components": {
     "securitySchemes": {
-      "jwt": {
-        "type": "apiKey",
-        "in": "header",
-        "name": "id_token"
+      "i3m": {
+        "type": "openIdConnect",
+        "openIdConnectUrl": "https://OIDC_PROVIDER_URI/.well-known/openid-configuration"
       },
       "bearerAuth": {
         "type": "http",
@@ -1046,10 +1130,5 @@
         }
       }
     }
-  },
-  "servers": [
-    {
-      "url": "http://[::]:3000"
-    }
-  ]
+  }
 }

@@ -1,5 +1,10 @@
 import type { Server } from '../src'
+import { parseProccessEnvVar } from '../src/config/parseProcessEnvVar'
+
 before(async function () {
+  if (parseProccessEnvVar('SERVER_PUBLIC_URL', 'string', { defaultValue: '' }) !== '') {
+    return
+  }
   try {
     const { serverPromise } = await import('../src')
     const server: Server | undefined = await serverPromise
@@ -12,6 +17,9 @@ before(async function () {
 })
 
 after(function (done) {
+  if (parseProccessEnvVar('SERVER_PUBLIC_URL', 'string', { defaultValue: '' }) !== '') {
+    done()
+  }
   const server: Server | undefined = this.server
   if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
     server.server.closeAllConnections()

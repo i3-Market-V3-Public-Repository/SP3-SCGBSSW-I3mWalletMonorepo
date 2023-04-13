@@ -364,12 +364,37 @@ export namespace OpenApiComponents {
     }
 }
 export namespace OpenApiPaths {
-    export namespace ApiV2RegistrationDeregister {
+    export namespace ApiV2RegistrationCb {
         export namespace Get {
             export namespace Responses {
+                export type $201 = /**
+                 * Registration Response
+                 * The registration response object.
+                 *
+                 */
+                OpenApiComponents.Schemas.RegistrationResponse;
                 export interface $204 {
                 }
                 export type $404 = OpenApiComponents.Schemas.ErrorNotRegistered;
+                export type $409 = OpenApiComponents.Schemas.ErrorAlreadyRegistered;
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2RegistrationDeregister {
+        export namespace Get {
+            export namespace Responses {
+                export interface $302 {
+                }
+                export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
+            }
+        }
+    }
+    export namespace ApiV2RegistrationLogin {
+        export namespace Get {
+            export namespace Responses {
+                export interface $302 {
+                }
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }
@@ -415,13 +440,8 @@ export namespace OpenApiPaths {
                 data: Parameters.Data;
             }
             export namespace Responses {
-                export type $201 = /**
-                 * Registration Response
-                 * The registration response object.
-                 *
-                 */
-                OpenApiComponents.Schemas.RegistrationResponse;
-                export type $400 = OpenApiComponents.Schemas.ErrorAlreadyRegistered;
+                export interface $302 {
+                }
                 export type Default = /* Error */ OpenApiComponents.Schemas.ApiError;
             }
         }

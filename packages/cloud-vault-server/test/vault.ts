@@ -6,7 +6,7 @@ import { randomBytes } from 'crypto'
 import EventSource from 'eventsource'
 import { setTimeout } from 'timers/promises'
 import { apiVersion } from '../src/config/openApi'
-import { server as serverConfig } from '../src/config/server'
+import { serverConfig } from '../src/config/server'
 import { StorageUpdatedEvent } from '../src/vault'
 import type { OpenApiComponents, OpenApiPaths } from '../types/openapi'
 
@@ -97,7 +97,7 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
       username: 'testUser',
       authkey: 'uvATmXpCml3YNqyQ-w3CtJfiCOkHIXo4uUAEj4oshGQ'
     }
-    const res = await request(serverConfig.url)
+    const res = await request(serverConfig.publicUrl)
       .post(`${vaultPath}/token`)
       .set('content-type', 'application/json')
       .send(credentials)
@@ -114,8 +114,8 @@ describe('Wallet Cloud-Vault: Vault Events', function () {
     it('it should send and receive events', async function () {
       const msgLimit = 3
 
-      client1 = new Client(serverConfig.url, token, '1')
-      client2 = new Client(serverConfig.url, token, '2')
+      client1 = new Client(serverConfig.publicUrl, token, '1')
+      client2 = new Client(serverConfig.publicUrl, token, '2')
 
       let updated: boolean = false
       for (let i = 0; i < msgLimit; i++) {
