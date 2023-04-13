@@ -39,11 +39,19 @@
   "exports": {
     ".": {
       "node": {
-        "require": "./dist/cjs/index.node.cjs",
-        "import": "./dist/esm/index.node.js",
-        "module": "./dist/esm/index.node.js"
+        "require": {
+          "default": "./dist/cjs/index.node.cjs",
+          "types": "./types/index.d.ts"
+        },
+        "import": {
+          "default": "./dist/esm/index.node.js",
+          "types": "./types/index.d.ts"
+        }
       },
-      "default": "./dist/esm/index.browser.js"
+      "default": {
+        "default": "./dist/esm/index.node.js",
+        "types": "./types/index.d.ts"
+      }
     },
     "./dist/cjs/index.node": "./dist/cjs/index.node.cjs",
     "./dist/esm/index.node": "./dist/esm/index.node.js",
