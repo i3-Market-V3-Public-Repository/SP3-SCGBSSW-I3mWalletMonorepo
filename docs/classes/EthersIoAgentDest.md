@@ -48,7 +48,7 @@ EthersIoAgent.constructor
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L15)
+[src/ts/dlt/agents/EthersIoAgent.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L15)
 
 ## Properties
 
@@ -62,7 +62,7 @@ EthersIoAgent.contract
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L11)
+[src/ts/dlt/agents/EthersIoAgent.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L11)
 
 ___
 
@@ -76,7 +76,7 @@ EthersIoAgent.dltConfig
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L10)
+[src/ts/dlt/agents/EthersIoAgent.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L10)
 
 ___
 
@@ -90,7 +90,7 @@ EthersIoAgent.initialized
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L13)
+[src/ts/dlt/agents/EthersIoAgent.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L13)
 
 ___
 
@@ -104,7 +104,7 @@ EthersIoAgent.provider
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L12)
+[src/ts/dlt/agents/EthersIoAgent.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L12)
 
 ## Methods
 
@@ -128,7 +128,7 @@ EthersIoAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/EthersIoAgent.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/EthersIoAgent.ts#L43)
+[src/ts/dlt/agents/EthersIoAgent.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/EthersIoAgent.ts#L43)
 
 ___
 
@@ -160,4 +160,4 @@ NrpDltAgentDest.getSecretFromLedger
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/EthersIoAgentDest.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/dest/EthersIoAgentDest.ts#L9)
+[src/ts/dlt/agents/dest/EthersIoAgentDest.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/dest/EthersIoAgentDest.ts#L9)

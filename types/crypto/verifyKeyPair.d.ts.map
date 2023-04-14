@@ -1,1 +1,0 @@
-{"version":3,"file":"verifyKeyPair.d.ts","sourceRoot":"","sources":["../../src/ts/crypto/verifyKeyPair.ts"],"names":[],"mappings":"AAIA,OAAO,EAAE,GAAG,EAAE,MAAM,aAAa,CAAA;AAEjC,wBAAsB,aAAa,CAAE,MAAM,EAAE,GAAG,EAAE,OAAO,EAAE,GAAG,GAAG,OAAO,CAAC,IAAI,CAAC,CAiB7E"}

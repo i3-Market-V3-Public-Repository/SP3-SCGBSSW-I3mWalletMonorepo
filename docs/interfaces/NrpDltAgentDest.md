@@ -46,7 +46,7 @@ the secret in hex and when it was published to the blockchain as a NumericDate
 
 #### Defined in
 
-[src/ts/dlt/agents/dest/NrpDltAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/dest/NrpDltAgentDest.ts#L13)
+[src/ts/dlt/agents/dest/NrpDltAgentDest.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/dest/NrpDltAgentDest.ts#L13)
 
 ## Methods
 
@@ -66,4 +66,4 @@ NrpDltAgent.getContractAddress
 
 #### Defined in
 
-[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/e1c4422/src/ts/dlt/agents/NrpDltAgent.ts#L9)
+[src/ts/dlt/agents/NrpDltAgent.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/7a25b3b/src/ts/dlt/agents/NrpDltAgent.ts#L9)
