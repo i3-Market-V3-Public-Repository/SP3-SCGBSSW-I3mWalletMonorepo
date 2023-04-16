@@ -96,7 +96,6 @@
     "version": "npm run docs && git add -A",
     "test": "echo \"You should run the wallet desktop app in order to perform the tests\"",
     "test:browser": "npm run mocha-ts:browser",
-    "test:browser-headless": "npm run mocha-ts:browser-headless",
     "test:node": "npm run test:node-cjs && npm run test:node-esm",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
