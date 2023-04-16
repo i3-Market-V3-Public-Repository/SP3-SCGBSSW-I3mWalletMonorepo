@@ -1,6 +1,6 @@
 {
   "name": "@i3m/cloud-vault-server",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "private": "true",
   "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
   "keywords": [

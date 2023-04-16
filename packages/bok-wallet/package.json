@@ -1,6 +1,6 @@
 {
   "name": "@i3m/bok-wallet",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "description": "An implementation of the base wallet using a bag of keys (keys are independently created at random).",
   "keywords": [
     "wallet",
