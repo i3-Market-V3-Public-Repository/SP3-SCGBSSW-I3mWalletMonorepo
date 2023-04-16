@@ -2,7 +2,7 @@
 
 import { randBytes } from 'bigint-crypto-utils'
 import { hashable } from 'object-sha'
-import { ServerWallet } from '@i3m/server-wallet/types'
+import type { ServerWallet } from '@i3m/server-wallet'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import * as _pkg from '#pkg'
 

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import * as _pkg from '#pkg'
-import { DataExchangeAgreement, DataSharingAgreement } from '#pkg'
+import type { DataExchangeAgreement, DataSharingAgreement } from '#pkg'
 import { example } from './dataSharingAgreementExample'
 
 describe('checkAgreement', function () {

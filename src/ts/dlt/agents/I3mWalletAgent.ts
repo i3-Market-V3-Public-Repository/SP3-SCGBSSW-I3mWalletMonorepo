@@ -1,4 +1,4 @@
-import { WalletApi } from '@i3m/wallet-protocol-api/types'
+import type { WalletApi } from '@i3m/wallet-protocol-api'
 import { DltConfig } from '../../types.js'
 import { EthersIoAgent } from './EthersIoAgent.js'
 
@@ -18,7 +18,7 @@ export class I3mWalletAgent extends EthersIoAgent {
         } else {
           resolve({
             ...dltConfig,
-            rpcProviderUrl
+            rpcProviderUrl: (typeof rpcProviderUrl === 'string') ? rpcProviderUrl : rpcProviderUrl[0]
           })
         }
       }).catch((reason) => { reject(reason) })

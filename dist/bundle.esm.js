@@ -124,6 +124,8 @@ var _nodeResolve_empty$1 = /*#__PURE__*/Object.freeze({
 
 var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_nodeResolve_empty$1);
 
+bn$1.exports;
+
 (function (module) {
 	(function (module, exports) {
 
@@ -10900,15 +10902,26 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
     if (!isObject$1(payload)) {
         throw new JWTInvalid('JWT Claims Set must be a top-level JSON object');
     }
-    const { issuer } = options;
+    const { requiredClaims = [], issuer, subject, audience, maxTokenAge } = options;
+    if (maxTokenAge !== undefined)
+        requiredClaims.push('iat');
+    if (audience !== undefined)
+        requiredClaims.push('aud');
+    if (subject !== undefined)
+        requiredClaims.push('sub');
+    if (issuer !== undefined)
+        requiredClaims.push('iss');
+    for (const claim of new Set(requiredClaims.reverse())) {
+        if (!(claim in payload)) {
+            throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, claim, 'missing');
+        }
+    }
     if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
         throw new JWTClaimValidationFailed('unexpected "iss" claim value', 'iss', 'check_failed');
     }
-    const { subject } = options;
     if (subject && payload.sub !== subject) {
         throw new JWTClaimValidationFailed('unexpected "sub" claim value', 'sub', 'check_failed');
     }
-    const { audience } = options;
     if (audience &&
         !checkAudiencePresence(payload.aud, typeof audience === 'string' ? [audience] : audience)) {
         throw new JWTClaimValidationFailed('unexpected "aud" claim value', 'aud', 'check_failed');
@@ -10929,7 +10942,7 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
     }
     const { currentDate } = options;
     const now = epoch(currentDate || new Date());
-    if ((payload.iat !== undefined || options.maxTokenAge) && typeof payload.iat !== 'number') {
+    if ((payload.iat !== undefined || maxTokenAge) && typeof payload.iat !== 'number') {
         throw new JWTClaimValidationFailed('"iat" claim must be a number', 'iat', 'invalid');
     }
     if (payload.nbf !== undefined) {
@@ -10948,9 +10961,9 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
             throw new JWTExpired('"exp" claim timestamp check failed', 'exp', 'check_failed');
         }
     }
-    if (options.maxTokenAge) {
+    if (maxTokenAge) {
         const age = now - payload.iat;
-        const max = typeof options.maxTokenAge === 'number' ? options.maxTokenAge : secs(options.maxTokenAge);
+        const max = typeof maxTokenAge === 'number' ? maxTokenAge : secs(maxTokenAge);
         if (age - tolerance > max) {
             throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', 'iat', 'check_failed');
         }
@@ -11551,6 +11564,8 @@ async function sha(input, algorithm) {
 }
 
 var bn = {exports: {}};
+
+bn.exports;
 
 (function (module) {
 	(function (module, exports) {
@@ -32471,7 +32486,7 @@ class I3mWalletAgent extends EthersIoAgent {
                 else {
                     resolve({
                         ...dltConfig,
-                        rpcProviderUrl
+                        rpcProviderUrl: (typeof rpcProviderUrl === 'string') ? rpcProviderUrl : rpcProviderUrl[0]
                     });
                 }
             }).catch((reason) => { reject(reason); });
@@ -32500,7 +32515,7 @@ class I3mServerWalletAgent extends EthersIoAgent {
                 else {
                     resolve({
                         ...dltConfig,
-                        rpcProviderUrl
+                        rpcProviderUrl: (typeof rpcProviderUrl === 'string') ? rpcProviderUrl : rpcProviderUrl[0]
                     });
                 }
             }).catch((reason) => { reject(reason); });
@@ -35333,8 +35348,23 @@ var paths = {
 										example: "i3m"
 									},
 									rpcUrl: {
-										type: "string",
-										example: "http://95.211.3.250:8545"
+										oneOf: [
+											{
+												type: "string",
+												example: "http://95.211.3.250:8545"
+											},
+											{
+												type: "array",
+												items: {
+													type: "string"
+												},
+												uniqueItems: true,
+												example: [
+													"http://95.211.3.249:8545",
+													"http://95.211.3.250:8545"
+												]
+											}
+										]
 									}
 								},
 								additionalProperties: true
@@ -38064,8 +38094,23 @@ var components = {
 					example: "i3m"
 				},
 				rpcUrl: {
-					type: "string",
-					example: "http://95.211.3.250:8545"
+					oneOf: [
+						{
+							type: "string",
+							example: "http://95.211.3.250:8545"
+						},
+						{
+							type: "array",
+							items: {
+								type: "string"
+							},
+							uniqueItems: true,
+							example: [
+								"http://95.211.3.249:8545",
+								"http://95.211.3.250:8545"
+							]
+						}
+					]
 				}
 			},
 			additionalProperties: true

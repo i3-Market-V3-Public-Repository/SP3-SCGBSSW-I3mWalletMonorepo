@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 
 import * as _pkg from '#pkg'
-import { ServerWallet } from '@i3m/server-wallet/types'
+import type { ServerWallet } from '@i3m/server-wallet'
 import { WalletComponents } from '@i3m/wallet-desktop-openapi/types'
 import { HttpInitiatorTransport, Session } from '@i3m/wallet-protocol'
 import { WalletApi } from '@i3m/wallet-protocol-api'

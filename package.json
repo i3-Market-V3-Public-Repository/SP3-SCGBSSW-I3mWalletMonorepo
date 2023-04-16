@@ -59,10 +59,26 @@
       }
     },
     "./esm-browser-bundle": "./dist/bundle.esm.min.js",
+    "./dist/bundle.esm.min.js": "./dist/bundle.esm.min.js",
     "./esm-browser-bundle-nomin": "./dist/bundle.esm.js",
+    "./dist/bundle.esm.js": "./dist/bundle.esm.js",
     "./iife-browser-bundle": "./dist/bundle.iife.js",
+    "./dist/bundle.iife.js": "./dist/bundle.iife.js",
     "./umd-browser-bundle": "./dist/bundle.umd.js",
-    "./types": "./dist/index.d.ts"
+    "./dist/bundle.umd.js": "./dist/bundle.umd.js",
+    "./dist/index.node": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.node.cjs"
+    },
+    "./dist/index.node.esm": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.node.esm.js"
+    },
+    "./dist/index.browser.esm": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.browser.esm.js"
+    },
+    "./package.json": "./package.json"
   },
   "imports": {
     "#pkg": {
@@ -75,7 +91,7 @@
         "default": "./dist/index.node.esm.js"
       },
       "default": {
-        "types": "./dist/esm/index.d.ts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.browser.esm.js"
       }
     }
@@ -136,9 +152,9 @@
   },
   "devDependencies": {
     "@i3m/non-repudiation-protocol-smart-contract": "^1.0.1",
-    "@i3m/server-wallet": "^2.5.6",
-    "@i3m/wallet-desktop-openapi": "^2.5.6",
-    "@i3m/wallet-protocol-api": "^2.5.6",
+    "@i3m/server-wallet": "^2.5.8",
+    "@i3m/wallet-desktop-openapi": "^2.5.8",
+    "@i3m/wallet-protocol-api": "^2.5.8",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-json": "^6.0.0",

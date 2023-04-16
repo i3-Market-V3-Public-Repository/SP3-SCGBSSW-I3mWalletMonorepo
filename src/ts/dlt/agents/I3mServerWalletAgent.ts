@@ -1,4 +1,4 @@
-import { ServerWallet } from '@i3m/server-wallet/types'
+import type { ServerWallet } from '@i3m/server-wallet'
 import { DltConfig } from '../../types.js'
 import { EthersIoAgent } from './EthersIoAgent.js'
 
@@ -10,7 +10,7 @@ export class I3mServerWalletAgent extends EthersIoAgent {
   did: string
 
   constructor (serverWallet: ServerWallet, did: string, dltConfig?: Partial<Omit<DltConfig, 'rpcProviderUrk'>>) {
-    const dltConfigPromise: Promise<Partial<Omit<DltConfig, 'rpcProviderUrk'>> & Pick<DltConfig, 'rpcProviderUrl'>> = new Promise((resolve, reject) => {
+    const dltConfigPromise: Promise<Partial<Omit<DltConfig, 'rpcProviderUrl'>> & Pick<DltConfig, 'rpcProviderUrl'>> = new Promise((resolve, reject) => {
       serverWallet.providerinfoGet().then((providerInfo) => {
         const rpcProviderUrl = providerInfo.rpcUrl
         if (rpcProviderUrl === undefined) {
@@ -18,7 +18,7 @@ export class I3mServerWalletAgent extends EthersIoAgent {
         } else {
           resolve({
             ...dltConfig,
-            rpcProviderUrl
+            rpcProviderUrl: (typeof rpcProviderUrl === 'string') ? rpcProviderUrl : rpcProviderUrl[0]
           })
         }
       }).catch((reason) => { reject(reason) })

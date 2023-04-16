@@ -8,7 +8,7 @@ on:
 
 jobs:
   node:
-    name: build and tests in node.js
+    name: Tests in node.js
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
