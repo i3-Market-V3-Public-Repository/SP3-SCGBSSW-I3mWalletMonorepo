@@ -67,10 +67,10 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
             ...mem.settings.private,
             wallet: {
               ...mem.settings.private.wallet,
-  
+
               // If there is no wallet selected, select this wallet
               current: mem.settings.private.wallet.current ?? name,
-  
+
               // Add the wallet to the wallet map
               wallets: {
                 ...mem.settings.private.wallet.wallets,
@@ -78,7 +78,7 @@ export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
               }
             }
           }
-          }
+        }
       }))
 
       return { response: wallet, status: 201 }

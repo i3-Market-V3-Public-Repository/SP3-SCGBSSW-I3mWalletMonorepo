@@ -92,7 +92,7 @@ const bundleSpec = async function (): Promise<SpecBundles> {
 
 const bundle = async (): Promise<void> => {
   const jsonBundlePath = path.join(rootDir, pkgJson.exports['./openapi.json'])
-  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi.dereferenced.json'])
+  const jsonDereferencedBundlePath = path.join(rootDir, pkgJson.exports['./openapi_dereferenced.json'])
   const yamlBundlePath = path.join(rootDir, pkgJson.exports['./openapi.yaml'])
 
   fs.rmSync(jsonBundlePath, { force: true })

@@ -1,1 +1,0 @@
-{"version":3,"file":"scrypt-thread.d.ts","sourceRoot":"","sources":["../src/ts/scrypt-thread.ts"],"names":[],"mappings":";AACA,OAAO,EAAE,SAAS,EAAU,MAAM,QAAQ,CAAA;AAC1C,OAAO,KAAK,EAAE,oBAAoB,EAAiB,MAAM,eAAe,CAAA;AAExE,MAAM,WAAW,sBAAsB;IACrC,KAAK,EAAE,eAAe,CAAA;IACtB,aAAa,EAAE,MAAM,GAAG,SAAS,CAAA;IACjC,IAAI,EAAE,oBAAoB,CAAA;CAC3B"}
