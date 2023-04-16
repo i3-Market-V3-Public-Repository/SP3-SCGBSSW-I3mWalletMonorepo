@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-api",
-  "version": "2.5.7",
+  "version": "2.5.8",
   "description": "A TypeScript/JavaScript library that can be used to easily connect to an i3m Wallet Desktop App. It wraps all the functionalities provided by the wallet's HTTP API into convenient class methods. It works in Node.js (both ESM and CJS) and browsers.",
   "keywords": [
     "i3-market",
@@ -134,8 +134,8 @@
     ]
   },
   "devDependencies": {
-    "@i3m/base-wallet": "^2.5.7",
-    "@i3m/bok-wallet": "^2.5.7",
+    "@i3m/base-wallet": "^2.5.8",
+    "@i3m/bok-wallet": "^2.5.8",
     "@i3m/non-repudiation-library": "^2.5.0",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-inject": "^5.0.3",
@@ -166,7 +166,7 @@
     "typescript": "^4.9.0"
   },
   "dependencies": {
-    "@i3m/wallet-desktop-openapi": "^2.5.7",
-    "@i3m/wallet-protocol": "^2.5.7"
+    "@i3m/wallet-desktop-openapi": "^2.5.8",
+    "@i3m/wallet-protocol": "^2.5.8"
   }
 }
