@@ -6,9 +6,6 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
-env:
-  USE_HARD_LINKS: false
-
 jobs:
   test:
     runs-on: ${{ matrix.os }}
