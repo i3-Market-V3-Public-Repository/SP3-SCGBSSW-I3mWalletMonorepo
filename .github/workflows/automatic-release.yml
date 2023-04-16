@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -13,7 +14,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: ['16.x', '18.x']
-
+      # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
+      fail-fast: false
+      # The maximum number of jobs that can run simultaneously. Set to 1 if you can't run tests in parallel
+      # max-parallel: 1
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -22,9 +26,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org"
       
       - name: Install root dependecies
-        run: npm ci
+        run: npm i
 
       - name: Lerna bootstrap (install packages dependecies)
         run: npx lerna bootstrap
@@ -69,7 +74,7 @@ jobs:
           node-version: '18.x'
       
       - name: Install root dependencies
-        run: npm ci
+        run: npm i
 
       - name: Install desktop dependencies
         run: npm run install:desktop
