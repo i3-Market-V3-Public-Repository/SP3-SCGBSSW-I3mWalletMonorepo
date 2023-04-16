@@ -46,7 +46,7 @@ JWKjose.alg
 
 #### Defined in
 
-[src/ts/types.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/fa98063/src/ts/types.ts#L24)
+[src/ts/types.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/58c6997/src/ts/types.ts#L24)
 
 ___
 
