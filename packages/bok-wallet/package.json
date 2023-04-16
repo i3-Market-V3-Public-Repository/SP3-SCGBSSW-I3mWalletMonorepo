@@ -92,6 +92,7 @@
     "./dist/esm/index.node": "./dist/index.node.esm.js",
     "./dist/index.node": "./dist/index.node.cjs",
     "./dist/index.node.esm": "./dist/index.node.esm.js",
+    "./package.json": "./package.json",
     "./types": "./dist/index.d.ts"
   },
   "imports": {
