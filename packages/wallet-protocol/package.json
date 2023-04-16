@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol",
-  "version": "2.5.7",
+  "version": "2.5.8",
   "description": "The implementation of a protocol that can securely connect the i3M Wallet with a JS application.",
   "keywords": [
     "i3-market",
@@ -129,7 +129,7 @@
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.1.0",
     "@types/chai": "^4.2.22",
-    "@types/mocha": "^10.0.0", 
+    "@types/mocha": "^10.0.0",
     "c8": "^7.12.0",
     "chai": "^4.3.3",
     "dotenv": "^16.0.3",

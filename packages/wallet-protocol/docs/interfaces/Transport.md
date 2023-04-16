@@ -45,7 +45,7 @@
 
 #### Defined in
 
-[transport/transport.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L6)
+[transport/transport.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L6)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L9)
+[transport/transport.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L9)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L4)
+[transport/transport.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L4)
 
 ___
 
@@ -119,7 +119,7 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L5)
+[transport/transport.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L5)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L8)
+[transport/transport.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L8)
 
 ___
 
@@ -170,4 +170,4 @@ ___
 
 #### Defined in
 
-[transport/transport.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/wallet-protocol/src/ts/transport/transport.ts#L7)
+[transport/transport.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/wallet-protocol/src/ts/transport/transport.ts#L7)

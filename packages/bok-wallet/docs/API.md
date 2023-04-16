@@ -1,4 +1,4 @@
-# @i3m/bok-wallet - v2.5.7
+# @i3m/bok-wallet - v2.5.8
 
 ## Table of contents
 
@@ -28,7 +28,7 @@
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/bok-wallet/src/ts/types.ts#L3)
+[bok-wallet/src/ts/types.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/bok-wallet/src/ts/types.ts#L3)
 
 ## Functions
 
@@ -48,4 +48,4 @@
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:301](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a824401/packages/base-wallet/dist/index.d.ts#L301)
+[base-wallet/dist/index.d.ts:301](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/34e48f6/packages/base-wallet/dist/index.d.ts#L301)
