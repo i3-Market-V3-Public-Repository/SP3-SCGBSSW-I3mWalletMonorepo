@@ -59,7 +59,7 @@ const main = async () => {
     try {
       const resp = await sessionManager.fetch(urlInput.value, {
         method: methodInput.value,
-        headers: headers,
+        headers,
         body
       })
       if (resp.status < 300 && resp.status >= 200) {

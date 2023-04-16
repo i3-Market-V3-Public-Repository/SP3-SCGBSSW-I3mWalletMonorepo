@@ -1,4 +1,4 @@
-import { BaseWallet } from '@i3m/base-wallet/types'
+import type { BaseWallet } from '@i3m/base-wallet'
 import { WalletApi } from '#pkg'
 
 interface Identity {

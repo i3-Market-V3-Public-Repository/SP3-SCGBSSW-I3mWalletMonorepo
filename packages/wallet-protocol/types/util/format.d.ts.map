@@ -1,1 +1,0 @@
-{"version":3,"file":"format.d.ts","sourceRoot":"","sources":["../../src/ts/util/format.ts"],"names":[],"mappings":"AAEA,eAAO,MAAM,MAAM;sBACC,MAAM,KAAG,UAAU;qBAIpB,UAAU,KAAG,MAAM;qBAInB,MAAM,QAAQ,MAAM,KAAG,UAAU;wBAqB9B,UAAU,KAAG,MAAM;qBAStB,MAAM,KAAG,UAAU;qBASnB,UAAU,KAAG,MAAM;wBAIhB,UAAU,KAAG,MAAM;wBAInB,MAAM,KAAG,UAAU;CAGxC,CAAA"}

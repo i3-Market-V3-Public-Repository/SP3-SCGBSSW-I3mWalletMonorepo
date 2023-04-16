@@ -2,7 +2,8 @@
   "name": "@i3m/sw-wallet",
   "version": "2.5.7",
   "description": "An implementation of a software hierarchical deterministic wallet using the BaseWallet class defined in the @i3m/base-wallet package.",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "build:ts": "tsc --project tsconfig.build.json ",
     "build": "npm run build:ts",

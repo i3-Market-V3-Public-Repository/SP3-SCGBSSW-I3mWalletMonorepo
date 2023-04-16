@@ -1,0 +1,61 @@
+.__WALLET_PROTOCOL_OVERLAY__ {
+    position: absolute;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000AA;
+    font-family: 'sans-serif';
+    color: #202531;
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_MODAL__ {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #1A1E27;
+    border-radius: 5px;
+    padding: 10px 20px;
+    background-image: linear-gradient(to bottom left, white, #D2D6E1);
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_TITLE__ {
+    font-weight: bold;
+    padding: 5px;
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_MESSAGE__ {
+    opacity: 0.5;
+    padding: 5px;
+    font-size: 15px
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_INPUT_BOX__ {
+    display: flex;
+    margin: 20px;
+    height: 32px;
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_INPUT__ {
+    border-radius: 3px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    outline: none;
+    padding: 5px;
+    border: 2px solid #1A1E27;
+    border-right: none;
+}
+
+.__WALLET_PROTOCOL_OVERLAY__ .__WALLET_BUTTON__ {
+    height: 100%;
+    padding: 5px;
+    border-radius: 3px;
+    border: 2px solid #1A1E27;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    cursor: pointer;
+}

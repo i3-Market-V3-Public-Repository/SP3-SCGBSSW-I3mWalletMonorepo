@@ -95,7 +95,7 @@ export abstract class ResponderTransport<Req, Res> extends BaseTransport<Req, Re
     }
   }
 
-  async waitRequest<M extends Request['method'], T extends (Request & { method: M})> (method: M): Promise<SubjectData<T>> {
+  async waitRequest<M extends Request['method'], T extends (Request & { method: M })> (method: M): Promise<SubjectData<T>> {
     while (true) {
       const rpcRequest = await this.rpcSubject.promise
       if (rpcRequest.req.method !== method) {

@@ -1,4 +1,4 @@
-import { PinDialogOptions } from './types'
+import type { PinDialogOptions } from './types'
 
 /**
  * A PIN input dialog. In node is a promise that resolves to a PIN that is requested through the console to the end user. In browsers it shows an HTML formulary where to write the PIN, and returns a promise that resolves to that PIN when a user fills it and submits it.
