@@ -104,7 +104,7 @@
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
     "preversion": "npm run build && npm test",
     "version": "npm run docs && git add -A",
-    "test": "echo \"In order to test you nees a running instance of cloud-vault-server. Set it up and run npm run test:node\"",
+    "test": "echo \"In order to test you need a running instance of cloud-vault-server. Set it up and run npm run test:node\"",
     "test:node": "npm run test:node-cjs && npm run test:node-esm",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
