@@ -104,7 +104,8 @@
     "mocha-ts:browser-headless": "node build/testing/browser/index.cjs headless ",
     "preversion": "npm run build && npm test",
     "version": "npm run docs && git add -A",
-    "test": "npm run test:node-cjs && npm run test:node-esm",
+    "test": "echo \"In order to test you nees a running instance of cloud-vault-server. Set it up and run npm run test:node\"",
+    "test:node": "npm run test:node-cjs && npm run test:node-esm",
     "test:node-cjs": "npm run mocha-ts:cjs ",
     "test:node-esm": "npm run mocha-ts ",
     "watch": "npm run mocha-ts:watch "
@@ -150,10 +151,10 @@
     "@types/chai": "^4.2.22",
     "@types/eventsource": "^1.1.11",
     "@types/mocha": "^10.0.0",
+    "@types/prompt-sync": "^4.2.0",
     "@types/uuid": "^9.0.1",
     "c8": "^7.12.0",
     "chai": "^4.3.3",
-    "dotenv": "^16.0.3",
     "glob": "^10.0.0",
     "json5": "^2.2.0",
     "minimatch": "^9.0.0",
@@ -173,6 +174,7 @@
   "dependencies": {
     "axios": "^1.2.5",
     "axios-retry": "^3.4.0",
+    "dotenv": "^16.0.3",
     "eventsource": "^2.0.2"
   }
 }
