@@ -173,7 +173,8 @@ describe('@i3m/server-wallet', function () {
     }
 
     before(async function () {
-      dataSharingAgreement = (await import('./dataSharingAgreementTemplate.json')).default as WalletComponents.Schemas.DataSharingAgreement
+      const dataSharingAgreementJsonModule = await import('./dataSharingAgreementTemplate.json')
+      dataSharingAgreement = (dataSharingAgreementJsonModule.default ?? dataSharingAgreementJsonModule) as WalletComponents.Schemas.DataSharingAgreement
 
       dataSharingAgreement.parties.providerDid = identities.alice
       dataSharingAgreement.parties.consumerDid = identities.bob

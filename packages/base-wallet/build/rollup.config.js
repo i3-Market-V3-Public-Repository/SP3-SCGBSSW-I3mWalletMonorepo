@@ -31,9 +31,6 @@ const tsConfigPath = join(rootDir, 'tsconfig.json')
 // }
 
 function isDevDependency (moduleName) {
-  if (pkgJson.devDependencies.include(moduleName)) {
-    return true
-  }
   const packageEntry = pkgJsonLock.packages['node_modules/' + moduleName]
   return (packageEntry ?? {}).dev === true
 }
@@ -165,17 +162,12 @@ export default [
         ...sourcemapOutputOptions,
         format: 'cjs',
         exports: 'auto',
-        plugins: [
-          terser()
-        ]
+        interop: 'auto',
+        dynamicImportInCjs: false,
+        plugins: [terser()]
       }
     ],
     plugins: [
-      replace({
-        'await import(': 'require(',
-        delimiters: ['', ''],
-        preventAssignment: true
-      }),
       replace({
         IS_BROWSER: false,
         _MODULE_TYPE: "'CJS'",

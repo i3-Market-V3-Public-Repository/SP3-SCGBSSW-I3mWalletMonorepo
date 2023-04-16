@@ -13,12 +13,14 @@ const templateFilePath = path.join(rootDir, pkgJson.directories.src, 'docs/index
 let template = fs.readFileSync(templateFilePath, { encoding: 'utf-8' })
 
 async function main () {
-  // Let us replace variables and badges
-  variableReplacements()
-
   // Generate API doc with typedoc
   await typedoc()
+
+  // Translate relaitive links to project's root
   replaceRelativeLinks()
+
+  // Let us replace variables and badges
+  variableReplacements()
 
   const readmeFile = path.join(rootDir, 'README.md')
   fs.writeFileSync(readmeFile, template)
@@ -50,7 +52,7 @@ async function typedoc () {
 
   // If you want TypeDoc to load tsconfig.json / typedoc.json files
   app.options.addReader(new TypeDoc.TSConfigReader())
-  app.options.addReader(new TypeDoc.TypeDocReader())
+  // app.options.addReader(new TypeDoc.TypeDocReader())
 
   app.bootstrap({
     // typedoc options here
@@ -78,31 +80,39 @@ async function typedoc () {
 }
 
 function getRepositoryData () {
+  let ret
   if (typeof pkgJson.repository === 'string') {
     const repodata = pkgJson.repository.split(/[:/]/)
     const repoProvider = repodata[0]
     if (repoProvider === 'github' || repoProvider === 'gitlab' || repoProvider === 'bitbucket') {
-      return {
+      ret = {
         repoProvider,
         repoUsername: repodata[1],
         repoName: repodata.slice(2).join('/')
       }
-    } else return null
-  } else {
-    if (pkgJson.repository.url !== 'undefined') {
-      const regex = /(?:.+?\+)?http[s]?:\/\/(?<repoProvider>[\w._-]+)\.\w{2,3}\/(?<repoUsername>[\w._-]+)\/(?<repoName>[\w._\-/]+?)\.git/
-      const match = pkgJson.repository.url.match(regex)
-      return {
-        repoProvider: match[1],
-        repoUsername: match[2],
-        repoName: match[3]
-      }
+    }
+  } else if (typeof pkgJson.repository === 'object' && pkgJson.repository.type === 'git' && pkgJson.repository.url !== 'undefined') {
+    const regex = /(?:.+?\+)?http[s]?:\/\/(?<repoProvider>[\w._-]+)\.\w{2,3}\/(?<repoUsername>[\w._-]+)\/(?<repoName>[\w._\-/]+?)\.git/
+    const match = pkgJson.repository.url.match(regex)
+    ret = {
+      repoProvider: match[1],
+      repoUsername: match[2],
+      repoName: match[3],
+      repoDirectory: pkgJson.repository.directory
     }
   }
+  if (typeof ret === 'object') {
+    if (typeof pkgJson.nodeBrowserSkel === 'object' && typeof pkgJson.nodeBrowserSkel.git === 'object' && typeof pkgJson.nodeBrowserSkel.git.branch === 'string') {
+      ret.branch = pkgJson.nodeBrowserSkel.git.branch
+    } else {
+      ret.branch = (ret.repoProvider === 'github') ? 'main' : 'master'
+    }
+  }
+  return ret
 }
 
 function variableReplacements () {
-  const { repoProvider, repoUsername, repoName } = getRepositoryData() || { repoProvider: null, repoUsername: null, repoName: null }
+  const { repoProvider, repoUsername, repoName, repoDirectory, branch } = getRepositoryData() || {}
 
   const regex = /^(?:(?<scope>@.*?)\/)?(?<name>.*)/ // We are going to take only the package name part if there is a scope, e.g. @my-org/package-name
   const { name } = pkgJson.name.match(regex).groups
@@ -112,22 +122,33 @@ function variableReplacements () {
   const esmBundlePath = pkgJson.exports['./esm-browser-bundle'] !== undefined ? path.relative('.', pkgJson.exports['./esm-browser-bundle']) : undefined
   const umdBundlePath = pkgJson.exports['./umd-browser-bundle'] !== undefined ? path.relative('.', pkgJson.exports['./umd-browser-bundle']) : undefined
 
-  let iifeBundle, esmBundle, umdBundle, workflowBadget, coverallsBadge
+  let useWorkflowBadge = false
+  let useCoverallsBadge = false
+  if (pkgJson.nodeBrowserSkel !== undefined && pkgJson.nodeBrowserSkel.badges !== undefined) {
+    if (pkgJson.nodeBrowserSkel.badges.workflow === true) {
+      useWorkflowBadge = true
+    }
+    if (pkgJson.nodeBrowserSkel.badges.coveralls === true) {
+      useCoverallsBadge = true
+    }
+  }
+
+  let iifeBundle, esmBundle, umdBundle, workflowBadge, coverallsBadge
+
   if (repoProvider) {
     switch (repoProvider) {
       case 'github':
-        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${iifeBundlePath})` : undefined
-        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${esmBundlePath})` : undefined
-        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/main/${umdBundlePath})` : undefined
-        workflowBadget = `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml)`
-        coverallsBadge = ''
-        // coverallsBadge = `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=main)](https://coveralls.io/github/${repoUsername}/${repoName}?branch=main)`
+        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${iifeBundlePath})` : undefined
+        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${esmBundlePath})` : undefined
+        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${umdBundlePath})` : undefined
+        workflowBadge = useWorkflowBadge ? `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml)` : undefined
+        coverallsBadge = useCoverallsBadge ? `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=${branch})](https://coveralls.io/github/${repoUsername}/${repoName}?branch=${branch})` : undefined
         break
 
       case 'gitlab':
-        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${iifeBundlePath}?inline=false)` : undefined
-        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${esmBundlePath}?inline=false)` : undefined
-        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/master/${umdBundlePath}?inline=false)` : undefined
+        iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${iifeBundlePath}?inline=false)` : undefined
+        esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${esmBundlePath}?inline=false)` : undefined
+        umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://gitlab.com/${repoUsername}/${repoName}/-/raw/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${umdBundlePath}?inline=false)` : undefined
         break
 
       default:
@@ -145,7 +166,7 @@ function variableReplacements () {
     .replace(/\{\{UMD_BUNDLE\}\}/g, umdBundle || 'UMD bundle')
 
   if (repoProvider && repoProvider === 'github') {
-    template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, (workflowBadget ?? '') + (coverallsBadge ? '\n' + coverallsBadge : '') + '\n')
+    template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, (workflowBadge ? `${workflowBadge}\n` : '') + (coverallsBadge ? `${coverallsBadge}\n` : ''))
   } else {
     template = template.replace(/\{\{GITHUB_ACTIONS_BADGES\}\}\n/gs, '')
   }
