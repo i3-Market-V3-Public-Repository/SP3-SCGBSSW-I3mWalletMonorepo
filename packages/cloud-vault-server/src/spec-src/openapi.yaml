@@ -61,6 +61,10 @@ paths:
         '302':
           description: oidc
           headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
             Location:
               description: redirect to oidc login
               schema:
@@ -103,6 +107,10 @@ paths:
         '302':
           description: oidc
           headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
             Location:
               description: redirect to oidc login
               schema:
@@ -125,23 +133,56 @@ paths:
           - vc
           - vc:provider
           - vc:consumer
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]+$
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: string
+            pattern: ^[A-Za-z0-9_-]+$
       responses:
         '201':
           description: OK
+          headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: "./schema/registration.yaml#/components/schemas/RegistrationResponse"
         '204':
           description: Vault for logged in identity has been cleared
+          headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
         '409':
           description: user already registered
+          headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
           content:
             application/json:
               schema:
                 $ref: "./schema/api-error.yaml#/components/schemas/ErrorAlreadyRegistered"
         '404':
           description: the identity requesting to delete her/his vault has not previously registered to have one
+          headers:
+            Set-Cookie:
+              description: Cookies
+              schema:
+                type: string
           content:
             application/json:
               schema:

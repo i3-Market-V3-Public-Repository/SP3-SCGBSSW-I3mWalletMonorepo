@@ -366,6 +366,14 @@ export namespace OpenApiComponents {
 export namespace OpenApiPaths {
     export namespace ApiV2RegistrationCb {
         export namespace Get {
+            export namespace Parameters {
+                export type Code = string // ^[A-Za-z0-9_-]+$
+                export type State = string // ^[A-Za-z0-9_-]+$
+            }
+            export interface QueryParameters {
+                code: Parameters.Code /* ^[A-Za-z0-9_-]+$ */;
+                state: Parameters.State /* ^[A-Za-z0-9_-]+$ */;
+            }
             export namespace Responses {
                 export type $201 = /**
                  * Registration Response
