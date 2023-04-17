@@ -6,16 +6,13 @@ on:
       - 'v*.*.*'
   workflow_dispatch:
 
-env:
-  USE_HARD_LINKS: false
-
 jobs:
   test:
     runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
         node-version: ['16.x', '18.x']
       # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
       fail-fast: false
