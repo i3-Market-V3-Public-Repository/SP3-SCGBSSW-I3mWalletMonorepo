@@ -365,13 +365,13 @@ export class CloudVaultManager {
       Buffer.from(JSON.stringify({
         did: vc.identity,
         username: credentials.username,
-        authkey: await VaultClient.computeAuthKey(DEFAULT_CLOUD_URL, credentials.username, credentials.password)
+        authkey: await VaultClient.computeAuthKey(this.client.serverUrl, credentials.username, credentials.password)
       })),
       publicJwk as JWK,
       'A256GCM'
     )
 
-    const res = `${DEFAULT_CLOUD_URL}${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
+    const res = `${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
     await shell.openExternal(res)
 
     return credentials
