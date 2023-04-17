@@ -1,4 +1,4 @@
-import { SessionStorage, SessionLocalStorageOptions } from '../types'
+import type { SessionStorage, SessionLocalStorageOptions } from '../types'
 
 export class SessionLocalStorage implements SessionStorage {
   protected key: string

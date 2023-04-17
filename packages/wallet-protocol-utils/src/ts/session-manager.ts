@@ -1,6 +1,6 @@
 import { Session, Transport, WalletProtocol } from '@i3m/wallet-protocol'
 import { BehaviorSubject, Subject } from 'rxjs'
-import { SessionStorage, SessionStorageOptions, SessionManagerOpts, SessionManagerOptions } from './types'
+import type { SessionStorage, SessionStorageOptions, SessionManagerOpts, SessionManagerOptions } from './types'
 
 /**
  * A session manager is used to create, remove, set and load wallet-protocol sessions created after sucessful pairing with a i3M-Wallet app.

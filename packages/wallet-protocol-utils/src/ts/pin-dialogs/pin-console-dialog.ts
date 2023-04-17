@@ -1,5 +1,5 @@
-import * as readline from 'node:readline/promises'
-import { PinConsoleDialogOptions } from '../types'
+import * as readline from 'readline/promises'
+import type { PinConsoleDialogOptions } from '../types'
 /**
  * A PIN input dialog for Node.js. The PIN is requested through the terminal/console.
  *

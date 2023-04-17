@@ -1,7 +1,7 @@
 // @ts-expect-error
 import styleCss from '../../pin-dialog.css'
 
-import { PinHtmlFormDialogOptions } from '../types'
+import type { PinHtmlFormDialogOptions } from '../types'
 
 const defaultHtmlOptions: Required<PinHtmlFormDialogOptions> = {
   overlayClass: 'wallet-protocol-overlay',

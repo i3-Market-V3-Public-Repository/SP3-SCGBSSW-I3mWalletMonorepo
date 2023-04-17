@@ -30,7 +30,7 @@ BaseWalletModel.identities
 
 #### Defined in
 
-[base-wallet/types/app/store.d.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/app/store.d.ts#L36)
+[base-wallet/dist/index.d.ts:155](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L155)
 
 ___
 
@@ -44,7 +44,7 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/bok-wallet/src/ts/types.ts#L13)
+[bok-wallet/src/ts/types.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/bok-wallet/src/ts/types.ts#L13)
 
 ___
 
@@ -54,7 +54,7 @@ ___
 
 #### Index signature
 
-▪ [id: `string`]: `Resource`
+▪ [id: `string`]: `Resource$1`
 
 #### Inherited from
 
@@ -62,4 +62,4 @@ BaseWalletModel.resources
 
 #### Defined in
 
-[base-wallet/types/app/store.d.ts:33](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/app/store.d.ts#L33)
+[base-wallet/dist/index.d.ts:152](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L152)

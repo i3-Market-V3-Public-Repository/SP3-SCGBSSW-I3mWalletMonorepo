@@ -1,1 +1,0 @@
-{"version":3,"file":"did-jwt-verify.d.ts","sourceRoot":"","sources":["../../src/ts/utils/did-jwt-verify.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,MAAM,EAAE,MAAM,WAAW,CAAA;AAElC,OAAO,EAAE,WAAW,EAAE,MAAM,mCAAmC,CAAA;AAgC/D;;;;;;;;KAQK;AACL,wBAAsB,YAAY,CAAE,GAAG,EAAE,MAAM,EAAE,MAAM,EAAE,MAAM,EAAE,qBAAqB,CAAC,EAAE,GAAG,GAAG,OAAO,CAAC,WAAW,CAAC,YAAY,CAAC,SAAS,CAAC,IAAI,CAAC,CAmD9I"}

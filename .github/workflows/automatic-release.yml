@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*.*.*'
+  workflow_dispatch:
+
+env:
+  USE_HARD_LINKS: false
 
 jobs:
   test:
@@ -13,7 +17,10 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         node-version: ['16.x', '18.x']
-
+      # When set to true, GitHub cancels all in-progress jobs if any matrix job fails.
+      fail-fast: false
+      # The maximum number of jobs that can run simultaneously. Set to 1 if you can't run tests in parallel
+      # max-parallel: 1
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
@@ -22,6 +29,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+          registry-url: "https://registry.npmjs.org"
       
       - name: Install root dependecies
         run: npm ci

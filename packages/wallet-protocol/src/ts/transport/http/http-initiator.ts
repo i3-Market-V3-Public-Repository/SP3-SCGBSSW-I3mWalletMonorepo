@@ -9,7 +9,7 @@ export interface HttpRequest {
   init?: RequestInit
 }
 
-export interface HttpResponse{
+export interface HttpResponse {
   status: number
   body: string
 }

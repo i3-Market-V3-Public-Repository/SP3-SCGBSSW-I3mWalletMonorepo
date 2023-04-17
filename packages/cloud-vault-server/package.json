@@ -1,6 +1,6 @@
 {
   "name": "@i3m/cloud-vault-server",
-  "version": "2.5.7",
+  "version": "2.5.9",
   "private": "true",
   "description": "A secure encrypted backup on the cloud for the i3-MARKET wallet",
   "keywords": [
@@ -64,7 +64,8 @@
     "openapi:json": "ts-node build/createOASJsonBundle.ts",
     "openapi:types": "ts-node build/openApiTypes.ts",
     "start": "node dist/index.js",
-    "test": "mocha -r ts-node/register 'test/**/*.ts' test-fixtures/server.ts",
+    "test": "echo \"In order to test you need a running instance of cloud-vault-server. Set it up and run npm run test:node\"",
+    "test:node": "mocha -r ts-node/register 'test/**/*.ts' test-fixtures/server.ts",
     "mocha-ts": "mocha -r ts-node/register test-fixtures/server.ts -- ",
     "tsc": "tsc -p tsconfig.build.json",
     "version": "npm run build && npm run test && npm run git:add",

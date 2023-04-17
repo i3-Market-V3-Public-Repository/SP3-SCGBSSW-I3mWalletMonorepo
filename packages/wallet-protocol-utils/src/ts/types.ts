@@ -1,4 +1,4 @@
-import { Transport, WalletProtocol } from '@i3m/wallet-protocol'
+import type { Transport, WalletProtocol } from '@i3m/wallet-protocol'
 
 export type CanBePromise<T> = Promise<T> | T
 

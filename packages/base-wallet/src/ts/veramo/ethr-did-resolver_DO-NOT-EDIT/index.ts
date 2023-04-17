@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { getResolver } from './resolver'
 import { EthrDidController } from './controller'
 import {

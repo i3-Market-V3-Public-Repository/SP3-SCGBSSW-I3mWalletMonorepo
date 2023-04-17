@@ -25,7 +25,7 @@
 
 #### Defined in
 
-[src/ts/app/dialog.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L15)
+[src/ts/app/dialog.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L15)
 
 ___
 
@@ -39,7 +39,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L6)
+[src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L6)
 
 ___
 
@@ -53,7 +53,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L4)
+[src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L4)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L16)
+[src/ts/app/dialog.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L16)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L5)
+[src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L5)
 
 ___
 
@@ -91,4 +91,4 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/f802a57/packages/base-wallet/src/ts/app/dialog.ts#L3)
+[src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/base-wallet/src/ts/app/dialog.ts#L3)

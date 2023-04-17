@@ -31,7 +31,7 @@ export class EthrDidMultipleRpcResolver implements Omit<EthrDidResolver, 'contra
           if (providerConfs[index] === undefined) providerConfs[index] = []
           providerConfs[index].push({
             name: conf.network,
-            rpcUrl: rpcUrl
+            rpcUrl
           })
         })
       } else {

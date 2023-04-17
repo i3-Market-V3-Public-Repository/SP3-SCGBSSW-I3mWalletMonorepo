@@ -1,8 +1,9 @@
 {
   "name": "@i3m/sw-wallet",
-  "version": "2.5.7",
+  "version": "2.5.8",
   "description": "An implementation of a software hierarchical deterministic wallet using the BaseWallet class defined in the @i3m/base-wallet package.",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "build:ts": "tsc --project tsconfig.build.json ",
     "build": "npm run build:ts",
@@ -67,7 +68,7 @@
   "license": "EUPL-1.2",
   "dependencies": {
     "@ethersproject/hdnode": "^5.3.0",
-    "@i3m/base-wallet": "^2.5.7",
+    "@i3m/base-wallet": "^2.5.8",
     "debug": "^4.3.1",
     "ethers": "^5.3.0",
     "lodash": "^4.17.21",

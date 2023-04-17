@@ -28,7 +28,7 @@ WalletOptionsSettings.dialog
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-options.d.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/wallet/wallet-options.d.ts#L8)
+[base-wallet/dist/index.d.ts:247](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L247)
 
 ___
 
@@ -42,7 +42,7 @@ WalletOptionsSettings.provider
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-options.d.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/wallet/wallet-options.d.ts#L11)
+[base-wallet/dist/index.d.ts:250](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L250)
 
 ___
 
@@ -56,7 +56,7 @@ WalletOptionsSettings.providersData
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-options.d.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/wallet/wallet-options.d.ts#L12)
+[base-wallet/dist/index.d.ts:251](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L251)
 
 ___
 
@@ -70,7 +70,7 @@ WalletOptionsSettings.store
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-options.d.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/wallet/wallet-options.d.ts#L9)
+[base-wallet/dist/index.d.ts:248](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L248)
 
 ___
 
@@ -84,4 +84,4 @@ WalletOptionsSettings.toast
 
 #### Defined in
 
-[base-wallet/types/wallet/wallet-options.d.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1e32caa/packages/base-wallet/types/wallet/wallet-options.d.ts#L10)
+[base-wallet/dist/index.d.ts:249](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/base-wallet/dist/index.d.ts#L249)

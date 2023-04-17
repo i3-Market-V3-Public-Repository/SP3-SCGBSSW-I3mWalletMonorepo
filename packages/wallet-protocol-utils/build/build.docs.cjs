@@ -52,7 +52,7 @@ async function typedoc () {
 
   // If you want TypeDoc to load tsconfig.json / typedoc.json files
   app.options.addReader(new TypeDoc.TSConfigReader())
-  app.options.addReader(new TypeDoc.TypeDocReader())
+  // app.options.addReader(new TypeDoc.TypeDocReader())
 
   app.bootstrap({
     // typedoc options here
@@ -141,7 +141,7 @@ function variableReplacements () {
         iifeBundle = iifeBundlePath !== undefined ? `[IIFE bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${iifeBundlePath})` : undefined
         esmBundle = esmBundlePath !== undefined ? `[ESM bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${esmBundlePath})` : undefined
         umdBundle = umdBundlePath !== undefined ? `[UMD bundle](https://raw.githubusercontent.com/${repoUsername}/${repoName}/${branch}/${repoDirectory !== undefined ? repoDirectory + '/' : ''}${umdBundlePath})` : undefined
-        workflowBadge = useWorkflowBadge ? `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/automatic-release.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/automatic-release.yml)` : undefined
+        workflowBadge = useWorkflowBadge ? `[![Node.js CI](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/${repoUsername}/${repoName}/actions/workflows/build-and-test.yml)` : undefined
         coverallsBadge = useCoverallsBadge ? `[![Coverage Status](https://coveralls.io/repos/github/${repoUsername}/${repoName}/badge.svg?branch=${branch})](https://coveralls.io/github/${repoUsername}/${repoName}?branch=${branch})` : undefined
         break
 

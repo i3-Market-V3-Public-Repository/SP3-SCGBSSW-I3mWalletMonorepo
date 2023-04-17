@@ -79,7 +79,7 @@ export class CloudVaultManager {
 
   protected resetClient (url: string): void {
     const newUrl = CloudVaultManager.buildCloudUrl(url)
-    if (this.client.serverUrl !== newUrl) {
+    if (this.client.serverRootUrl !== newUrl) {
       this.client = this.buildClient(newUrl)
       this.bindClientEvents()
     }

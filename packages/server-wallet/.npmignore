@@ -1,9 +1,8 @@
 # Build scripts
 build
-prebuild
 
 # Test files
-./test
+test
 __tests__
 **/*.spec.ts
 test-vectors
@@ -45,6 +44,7 @@ src/docs
 # Test temporal files
 .mocha-ts
 .tsconfig.json
+.types
 
 # docs temporal files
 .nojekyll

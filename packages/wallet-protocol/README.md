@@ -50,7 +50,7 @@ import * as walletProtocol from '@i3m/wallet-protocol'
 > declare module '@i3m/wallet-protocol/dist/esm/index.browser' // use the specific file you were importing
 > ```
 
-You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/dist/bundles/umd.js) and manually add it to your project, or, if you have already installed `@i3m/wallet-protocol` in your project, just get the bundles from `node_modules/@i3m/wallet-protocol/dist/bundles/`.
+You can also download the [IIFE bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/packages/wallet-protocol/dist/bundle.iife.js), the [ESM bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/packages/wallet-protocol/dist/bundle.esm.min.js) or the [UMD bundle](https://raw.githubusercontent.com/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/main/packages/wallet-protocol/dist/bundle.umd.js) and manually add it to your project, or, if you have already installed `@i3m/wallet-protocol` in your project, just get the bundles from `node_modules/@i3m/wallet-protocol/dist/bundles/`.
 
 ## API reference documentation
 

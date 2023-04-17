@@ -30,6 +30,7 @@ export class VaultClient extends EventEmitter {
   opts?: VaultClientOpts
   serverRootUrl: string
   serverPrefix: string
+  serverUrl: string
 
   private wellKnownCvsConfigurationPromise?: {
     promise: Promise<OpenApiComponents.Schemas.CvsConfiguration>
@@ -54,6 +55,7 @@ export class VaultClient extends EventEmitter {
     const url = new URL(serverUrl)
     this.serverRootUrl = url.origin
     this.serverPrefix = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname
+    this.serverUrl = this.serverRootUrl + this.serverPrefix
 
     this._state = VAULT_STATE.NOT_INITIALIZED
 

@@ -2,7 +2,7 @@ import { BinaryLike, KeyObject, createCipheriv, createDecipheriv, createSecretKe
 import { tmpdir } from 'os'
 import { mkdir, readFile, writeFile, rm } from 'fs/promises'
 import { dirname, join } from 'path'
-import { SessionStorage, SessionFileStorageOptions } from '../types'
+import type { SessionStorage, SessionFileStorageOptions } from '../types'
 
 export class SessionFileStorage implements SessionStorage {
   filepath: string // a path to the file that will be used to store wallet session data

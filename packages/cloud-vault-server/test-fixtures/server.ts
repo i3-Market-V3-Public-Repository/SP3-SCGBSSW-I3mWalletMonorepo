@@ -12,6 +12,9 @@ before(async function () {
     await server.dbConnection.db.initialized
   } catch (error) {
     console.log('\x1b[91mALL TEST SKIPPED: A connection to a DB has not been setup\x1b[0m')
+    if (this.server !== undefined) {
+      (this.server as Server).server.close()
+    }
     this.skip()
   }
 })
