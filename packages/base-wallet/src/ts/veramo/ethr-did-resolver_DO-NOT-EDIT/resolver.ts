@@ -1,4 +1,4 @@
--e // @ts-nocheck
+// @ts-nocheck
 import { Base58 } from '@ethersproject/basex'
 import { BigNumber } from '@ethersproject/bignumber'
 import { Block, BlockTag } from '@ethersproject/providers'

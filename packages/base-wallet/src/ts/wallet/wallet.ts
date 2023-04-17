@@ -14,16 +14,16 @@ export interface Wallet {
 
   wipe: () => Promise<void>
   // Api methods
-  identityList (queryParameters: WalletPaths.IdentityList.QueryParameters): Promise<WalletPaths.IdentityList.Responses.$200>
-  identityCreate (requestBody: WalletPaths.IdentityCreate.RequestBody): Promise<WalletPaths.IdentityCreate.Responses.$201>
-  identitySelect (queryParameters: WalletPaths.IdentitySelect.QueryParameters): Promise<WalletPaths.IdentitySelect.Responses.$200>
-  identitySign (pathParameters: WalletPaths.IdentitySign.PathParameters, requestBody: WalletPaths.IdentitySign.RequestBody): Promise<WalletPaths.IdentitySign.Responses.$200>
-  identityInfo (pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200>
-  identityDeployTransaction (pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletPaths.IdentityDeployTransaction.RequestBody): Promise<WalletPaths.IdentityDeployTransaction.Responses.$200>
-  resourceList (queryParameters: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200>
-  resourceCreate (requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201>
-  selectiveDisclosure (pathParameters: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200>
-  transactionDeploy (requestBody: WalletPaths.TransactionDeploy.RequestBody): Promise<WalletPaths.TransactionDeploy.Responses.$200>
-  didJwtVerify (requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200>
-  providerinfoGet (): Promise<WalletPaths.ProviderinfoGet.Responses.$200>
+  identityList: (queryParameters: WalletPaths.IdentityList.QueryParameters) => Promise<WalletPaths.IdentityList.Responses.$200>
+  identityCreate: (requestBody: WalletPaths.IdentityCreate.RequestBody) => Promise<WalletPaths.IdentityCreate.Responses.$201>
+  identitySelect: (queryParameters: WalletPaths.IdentitySelect.QueryParameters) => Promise<WalletPaths.IdentitySelect.Responses.$200>
+  identitySign: (pathParameters: WalletPaths.IdentitySign.PathParameters, requestBody: WalletPaths.IdentitySign.RequestBody) => Promise<WalletPaths.IdentitySign.Responses.$200>
+  identityInfo: (pathParameters: WalletPaths.IdentityInfo.PathParameters) => Promise<WalletPaths.IdentityInfo.Responses.$200>
+  identityDeployTransaction: (pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletPaths.IdentityDeployTransaction.RequestBody) => Promise<WalletPaths.IdentityDeployTransaction.Responses.$200>
+  resourceList: (queryParameters: WalletPaths.ResourceList.QueryParameters) => Promise<WalletPaths.ResourceList.Responses.$200>
+  resourceCreate: (requestBody: WalletPaths.ResourceCreate.RequestBody) => Promise<WalletPaths.ResourceCreate.Responses.$201>
+  selectiveDisclosure: (pathParameters: WalletPaths.SelectiveDisclosure.PathParameters) => Promise<WalletPaths.SelectiveDisclosure.Responses.$200>
+  transactionDeploy: (requestBody: WalletPaths.TransactionDeploy.RequestBody) => Promise<WalletPaths.TransactionDeploy.Responses.$200>
+  didJwtVerify: (requestBody: WalletPaths.DidJwtVerify.RequestBody) => Promise<WalletPaths.DidJwtVerify.Responses.$200>
+  providerinfoGet: () => Promise<WalletPaths.ProviderinfoGet.Responses.$200>
 }

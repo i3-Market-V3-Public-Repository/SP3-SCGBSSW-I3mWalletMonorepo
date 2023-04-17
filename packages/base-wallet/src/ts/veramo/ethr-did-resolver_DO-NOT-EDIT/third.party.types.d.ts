@@ -1,2 +1,2 @@
--e // @ts-nocheck
+// @ts-nocheck
 declare module 'ganache-cli'

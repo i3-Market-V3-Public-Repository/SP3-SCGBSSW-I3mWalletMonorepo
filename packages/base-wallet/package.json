@@ -79,10 +79,10 @@
     "mocha-ts": "./.mocha-ts"
   },
   "scripts": {
-    "build": "npm run lint && npm run build:iwallet && npm run build:js && npm run docs",
+    "build": "npm run build:iwallet && npm run lint && npm run build:js && npm run docs",
     "prebuild:iwallet": "tsc --esModuleInterop --resolveJsonModule prebuild/walletInterface.cts",
     "build:iwallet": "node prebuild/walletInterface.cjs",
-    "prebuild:js": "cp -r node_modules/ethr-did-resolver/src/*.ts src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/ && for file in src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/*.ts; do echo -e \"// @ts-nocheck\n$(cat $file)\" > $file; done",
+    "prebuild:js": "cp -r node_modules/ethr-did-resolver/src/*.ts src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/ && for file in src/ts/veramo/ethr-did-resolver_DO-NOT-EDIT/*.ts; do echo \"// @ts-nocheck\n$(cat $file)\" > $file; done",
     "build:js": "rollup -c build/rollup.config.js",
     "postbuild:js": "rimraf .types",
     "clean": "rimraf .mocha-ts coverage dist types .types docs",
