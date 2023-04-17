@@ -1,4 +1,5 @@
 import { Session, HttpInitiatorTransport } from '@i3m/wallet-protocol'
+import { WalletApiError } from './error'
 import { DidJwtApi, DisclosureApi, IdentitiesApi, ProviderInfoApi, ResourcesApi, TransactionApi } from './models'
 import { ApiExecutor, Params, Body, ApiMethod } from './types'
 
@@ -48,6 +49,10 @@ export class WalletApi implements ApiExecutor {
         body
       }
     })
-    return JSON.parse(resp.body)
+    const respBody = JSON.parse(resp.body)
+    if (resp.status >= 300 || resp.status < 200) {
+      throw new WalletApiError(respBody.reason ?? 'Unknown reason', resp.status, respBody)
+    }
+    return respBody
   }
 }

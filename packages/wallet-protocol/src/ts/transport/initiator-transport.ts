@@ -13,6 +13,7 @@ import {
 } from '../internal'
 import { BaseTransport } from './transport'
 import { CommitmentRequest, NonceRevealRequest, PublicKeyExchangeRequest, Request, VerificationChallengeRequest } from './request'
+import { InvalidPinError } from '../errors'
 
 export interface InitiatorOptions {
   host: string
@@ -44,9 +45,13 @@ export abstract class InitiatorTransport<Req, Res> extends BaseTransport<Req, Re
   async prepare (protocol: WalletProtocol, publicKey: string): Promise<PKEData> {
     const connString = await this.opts.getConnectionString()
     if (connString === '') {
-      throw new Error('empty connection string')
+      throw new InvalidPinError('empty connection string')
     }
-    this.connString = ConnectionString.fromString(connString, this.opts.l)
+    try {
+      this.connString = ConnectionString.fromString(connString, this.opts.l)
+    } catch (err) {
+      throw new InvalidPinError('invalid pin format')
+    }
 
     const lLen = Math.ceil(this.opts.l / 8)
     const ra = new Uint8Array(lLen)
@@ -61,7 +66,7 @@ export abstract class InitiatorTransport<Req, Res> extends BaseTransport<Req, Re
 
   async publicKeyExchange (protocol: WalletProtocol, pkeData: PKEData): Promise<ProtocolPKEData> {
     if (this.connString === undefined) {
-      throw new Error('missing connection string')
+      throw new InvalidPinError('missing connection string')
     }
 
     const response = await this.sendRequest<PublicKeyExchangeRequest>({

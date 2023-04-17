@@ -57,6 +57,7 @@ export const pinHtmlFormDialog = async (opts: PinHtmlFormDialogOptions = default
   const pinInput = document.createElement('input')
   inputBox.appendChild(pinInput)
   pinInput.className = options.inputClass
+  pinInput.autofocus = true
   pinInput.setAttribute('placeholder', 'pin...')
 
   const pairButton = document.createElement('button')
@@ -69,6 +70,11 @@ export const pinHtmlFormDialog = async (opts: PinHtmlFormDialogOptions = default
       document.body.removeChild(overlay)
       resolve(value ?? '')
     }
+    pinInput.addEventListener('keypress', (ev) => {
+      if (ev.key === 'Enter') {
+        close(pinInput.value)
+      }
+    })
     pairButton.addEventListener('click', () => close(pinInput.value))
     overlay.addEventListener('click', (ev) => {
       if (ev.target === overlay) {

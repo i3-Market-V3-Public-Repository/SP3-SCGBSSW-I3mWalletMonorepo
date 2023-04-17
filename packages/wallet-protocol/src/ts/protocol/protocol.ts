@@ -9,7 +9,8 @@ import {
   constants,
   format,
   digest,
-  bufferUtils
+  bufferUtils,
+  InvalidPinError
 } from '../internal'
 import { EventEmitter } from './event-emitter'
 import { AuthData, ProtocolAuthData, ProtocolPKEData } from './state'
@@ -62,20 +63,20 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
     const validLengths = receivedCx.length === sentCx.length &&
       receivedNx.length === sentNx.length
     if (!validLengths) {
-      throw new Error('invalid received auth data length')
+      throw new InvalidPinError('invalid received auth data length')
     }
 
     // Check different Cx
     const equalCx = receivedCx.every((byte, i) => byte === sentCx[i])
     if (equalCx) {
-      throw new Error('received and sent Cx are the same')
+      throw new InvalidPinError('received and sent Cx are the same')
     }
 
     // Check valid Cx
     const expectedCx = await this.computeCx(fullPkeData, receivedNx, r)
     const validCx = expectedCx.every((byte, i) => byte === receivedCx[i])
     if (!validCx) {
-      throw new Error('received a wrong Cx')
+      throw new InvalidPinError('received a wrong Cx')
     }
   }
 
@@ -124,7 +125,15 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
       const pkeData = await this.transport.prepare(this, publicKey)
 
       // Perform public key exchange
-      const fullPkeData = await this.transport.publicKeyExchange(this, pkeData)
+      let fullPkeData: ProtocolPKEData
+      try {
+        fullPkeData = await this.transport.publicKeyExchange(this, pkeData)
+      } catch (err) {
+        if (err instanceof TypeError) {
+          throw new InvalidPinError(err.message)
+        }
+        throw err
+      }
 
       // Prepare authenticate
       const r = await this.computeR(fullPkeData.a.rx, fullPkeData.b.rx)

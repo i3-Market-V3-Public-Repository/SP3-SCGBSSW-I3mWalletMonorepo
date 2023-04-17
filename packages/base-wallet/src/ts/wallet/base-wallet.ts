@@ -376,7 +376,7 @@ export class BaseWallet<
     }
 
     if (selectedDid === undefined) {
-      throw new WalletError('Selective disclousure cancelled by the user')
+      throw new WalletError('Selective disclousure cancelled by the user', { status: 403 })
     }
     const selectedIdentity = validIdentities[selectedDid]
 
