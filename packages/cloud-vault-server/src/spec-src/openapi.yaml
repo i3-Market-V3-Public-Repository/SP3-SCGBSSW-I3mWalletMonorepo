@@ -365,7 +365,7 @@ components:
   securitySchemes:
     i3m:  # the i3-market SSI authentication
       type: openIdConnect
-      openIdConnectUrl: https://OIDC_PROVIDER_URI/.well-known/openid-configuration
+      openIdConnectUrl: OIDC_PROVIDER_URI/.well-known/openid-configuration
     
     bearerAuth:  # This server's HTTP bearer authentication (using JWT)
       type: http
