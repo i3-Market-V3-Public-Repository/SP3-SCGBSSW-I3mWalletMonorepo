@@ -1,3 +1,11 @@
+class WalletApiError extends Error {
+    constructor(message, code, body) {
+        super(message);
+        this.code = code;
+        this.body = body;
+    }
+}
+
 class IdentitiesApi {
     constructor(api) {
         this.api = api;
@@ -194,8 +202,12 @@ class WalletApi {
                 body
             }
         });
-        return JSON.parse(resp.body);
+        const respBody = JSON.parse(resp.body);
+        if (resp.status >= 300 || resp.status < 200) {
+            throw new WalletApiError(respBody.reason ?? 'Unknown reason', resp.status, respBody);
+        }
+        return respBody;
     }
 }
 
-export { WalletApi };
+export { WalletApi, WalletApiError };

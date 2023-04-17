@@ -135,6 +135,9 @@ interface CodeGenerator {
 }
 declare const defaultCodeGenerator: CodeGenerator;
 
+declare class InvalidPinError extends Error {
+}
+
 interface Transport<Req = any, Res = any> {
     prepare: (protocol: WalletProtocol, publicKey: string) => Promise<PKEData>;
     publicKeyExchange: (protocol: WalletProtocol, pkeData: PKEData) => Promise<ProtocolPKEData>;
@@ -263,4 +266,4 @@ declare class HttpResponderTransport extends ResponderTransport<http.IncomingMes
     use(listener: http.RequestListener): void;
 }
 
-export { AuthData, BaseTransport, CodeGenerator, ConnectionString, HttpInitiatorTransport, HttpRequest, HttpResponderOptions, HttpResponderTransport, HttpResponse, Identity, MasterKey, PKEData, ProtocolAuthData, ProtocolPKEData, Session, Transport, TransportRequest, TransportResponse, WalletProtocol, _default as constants, defaultCodeGenerator };
+export { AuthData, BaseTransport, CodeGenerator, ConnectionString, HttpInitiatorTransport, HttpRequest, HttpResponderOptions, HttpResponderTransport, HttpResponse, Identity, InvalidPinError, MasterKey, PKEData, ProtocolAuthData, ProtocolPKEData, Session, Transport, TransportRequest, TransportResponse, WalletProtocol, _default as constants, defaultCodeGenerator };

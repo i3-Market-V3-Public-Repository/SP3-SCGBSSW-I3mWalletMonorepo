@@ -11,3 +11,4 @@ This module runs perfectly in node.js and browsers
 ### Classes
 
 - [WalletApi](classes/WalletApi.md)
+- [WalletApiError](classes/WalletApiError.md)

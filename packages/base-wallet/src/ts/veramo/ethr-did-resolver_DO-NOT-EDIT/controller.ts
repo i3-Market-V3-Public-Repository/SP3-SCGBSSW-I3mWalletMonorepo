@@ -1,4 +1,4 @@
-// @ts-nocheck
+-e // @ts-nocheck
 import { Signer } from '@ethersproject/abstract-signer'
 import { CallOverrides, Contract } from '@ethersproject/contracts'
 import { BlockTag, JsonRpcProvider, Provider, TransactionReceipt } from '@ethersproject/providers'

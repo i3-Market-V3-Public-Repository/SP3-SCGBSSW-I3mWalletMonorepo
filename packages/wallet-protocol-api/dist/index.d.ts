@@ -66,4 +66,10 @@ declare class WalletApi implements ApiExecutor {
     executeQuery<T>(api: ApiMethod, pathParams: Params, queryParams: Params, bodyObject: Body): Promise<T>;
 }
 
-export { WalletApi };
+declare class WalletApiError extends Error {
+    code: number;
+    body: any;
+    constructor(message: string, code: number, body: any);
+}
+
+export { WalletApi, WalletApiError };

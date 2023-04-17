@@ -46,7 +46,7 @@ InitiatorTransport<HttpRequest, HttpResponse\>.constructor
 
 #### Defined in
 
-[transport/initiator-transport.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L30)
+[src/ts/transport/initiator-transport.ts:31](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L31)
 
 ## Properties
 
@@ -60,7 +60,7 @@ InitiatorTransport.connString
 
 #### Defined in
 
-[transport/initiator-transport.ts:28](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L28)
+[src/ts/transport/initiator-transport.ts:29](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L29)
 
 ___
 
@@ -74,7 +74,7 @@ InitiatorTransport.opts
 
 #### Defined in
 
-[transport/initiator-transport.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L25)
+[src/ts/transport/initiator-transport.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L26)
 
 ## Methods
 
@@ -99,7 +99,7 @@ InitiatorTransport.authentication
 
 #### Defined in
 
-[transport/initiator-transport.ts:90](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L90)
+[src/ts/transport/initiator-transport.ts:95](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L95)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[transport/http/http-initiator.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L25)
+[src/ts/transport/http/http-initiator.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L25)
 
 ___
 
@@ -144,7 +144,7 @@ InitiatorTransport.finish
 
 #### Defined in
 
-[transport/initiator-transport.ts:129](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L129)
+[src/ts/transport/initiator-transport.ts:134](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L134)
 
 ___
 
@@ -169,7 +169,7 @@ InitiatorTransport.prepare
 
 #### Defined in
 
-[transport/initiator-transport.ts:44](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L44)
+[src/ts/transport/initiator-transport.ts:45](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L45)
 
 ___
 
@@ -194,7 +194,7 @@ InitiatorTransport.publicKeyExchange
 
 #### Defined in
 
-[transport/initiator-transport.ts:62](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L62)
+[src/ts/transport/initiator-transport.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L67)
 
 ___
 
@@ -220,7 +220,7 @@ InitiatorTransport.send
 
 #### Defined in
 
-[transport/http/http-initiator.ts:88](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L88)
+[src/ts/transport/http/http-initiator.ts:88](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L88)
 
 ___
 
@@ -250,7 +250,7 @@ InitiatorTransport.sendRequest
 
 #### Defined in
 
-[transport/http/http-initiator.ts:70](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L70)
+[src/ts/transport/http/http-initiator.ts:70](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/http/http-initiator.ts#L70)
 
 ___
 
@@ -275,4 +275,4 @@ InitiatorTransport.verification
 
 #### Defined in
 
-[transport/initiator-transport.ts:119](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/733c681/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L119)
+[src/ts/transport/initiator-transport.ts:124](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol/src/ts/transport/initiator-transport.ts#L124)

@@ -60,7 +60,7 @@ A session manager is used to create, remove, set and load wallet-protocol sessio
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L15)
+[wallet-protocol-utils/src/ts/session-manager.ts:15](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L15)
 
 ## Properties
 
@@ -70,7 +70,7 @@ A session manager is used to create, remove, set and load wallet-protocol sessio
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L10)
+[wallet-protocol-utils/src/ts/session-manager.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L10)
 
 ___
 
@@ -94,7 +94,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L39)
+[wallet-protocol-utils/src/ts/session-manager.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L39)
 
 ___
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L11)
+[wallet-protocol-utils/src/ts/session-manager.ts:11](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L11)
 
 ___
 
@@ -114,7 +114,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L13)
+[wallet-protocol-utils/src/ts/session-manager.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L13)
 
 ___
 
@@ -124,7 +124,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L9)
+[wallet-protocol-utils/src/ts/session-manager.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L9)
 
 ___
 
@@ -134,7 +134,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L12)
+[wallet-protocol-utils/src/ts/session-manager.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L12)
 
 ## Accessors
 
@@ -148,7 +148,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L35)
+[wallet-protocol-utils/src/ts/session-manager.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L35)
 
 ## Methods
 
@@ -162,7 +162,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L49)
+[wallet-protocol-utils/src/ts/session-manager.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L49)
 
 ___
 
@@ -176,7 +176,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L80)
+[wallet-protocol-utils/src/ts/session-manager.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L80)
 
 ___
 
@@ -190,7 +190,7 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L61)
+[wallet-protocol-utils/src/ts/session-manager.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L61)
 
 ___
 
@@ -210,4 +210,4 @@ ___
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/session-manager.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/a3f9689/packages/wallet-protocol-utils/src/ts/session-manager.ts#L67)
+[wallet-protocol-utils/src/ts/session-manager.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/13bce7cb/packages/wallet-protocol-utils/src/ts/session-manager.ts#L67)

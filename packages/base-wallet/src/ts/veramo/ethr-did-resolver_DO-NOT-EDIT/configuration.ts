@@ -1,4 +1,4 @@
-// @ts-nocheck
+-e // @ts-nocheck
 import { BigNumber } from '@ethersproject/bignumber'
 import { Contract, ContractFactory } from '@ethersproject/contracts'
 import { InfuraProvider, JsonRpcProvider, Provider } from '@ethersproject/providers'

@@ -455,16 +455,16 @@ class WalletProtocol extends EventEmitter {
         const validLengths = receivedCx.length === sentCx.length &&
             receivedNx.length === sentNx.length;
         if (!validLengths) {
-            throw new Error('invalid received auth data length');
+            throw new InvalidPinError('invalid received auth data length');
         }
         const equalCx = receivedCx.every((byte, i) => byte === sentCx[i]);
         if (equalCx) {
-            throw new Error('received and sent Cx are the same');
+            throw new InvalidPinError('received and sent Cx are the same');
         }
         const expectedCx = await this.computeCx(fullPkeData, receivedNx, r);
         const validCx = expectedCx.every((byte, i) => byte === receivedCx[i]);
         if (!validCx) {
-            throw new Error('received a wrong Cx');
+            throw new InvalidPinError('received a wrong Cx');
         }
     }
     async computeMasterKey(ecdh, fullPkeData, fullAuthData) {
@@ -493,7 +493,16 @@ class WalletProtocol extends EventEmitter {
             await ecdh.generateKeys();
             const publicKey = await ecdh.getPublicKey();
             const pkeData = await this.transport.prepare(this, publicKey);
-            const fullPkeData = await this.transport.publicKeyExchange(this, pkeData);
+            let fullPkeData;
+            try {
+                fullPkeData = await this.transport.publicKeyExchange(this, pkeData);
+            }
+            catch (err) {
+                if (err instanceof TypeError) {
+                    throw new InvalidPinError(err.message);
+                }
+                throw err;
+            }
             const r = await this.computeR(fullPkeData.a.rx, fullPkeData.b.rx);
             const nx = await this.computeNx();
             const cx = await this.computeCx(fullPkeData, nx, r);
@@ -566,6 +575,9 @@ const defaultCodeGenerator = {
     }
 };
 
+class InvalidPinError extends Error {
+}
+
 class InitiatorTransport extends BaseTransport {
     constructor(opts = {}) {
         super();
@@ -581,9 +593,14 @@ class InitiatorTransport extends BaseTransport {
     async prepare(protocol, publicKey) {
         const connString = await this.opts.getConnectionString();
         if (connString === '') {
-            throw new Error('empty connection string');
+            throw new InvalidPinError('empty connection string');
         }
-        this.connString = ConnectionString.fromString(connString, this.opts.l);
+        try {
+            this.connString = ConnectionString.fromString(connString, this.opts.l);
+        }
+        catch (err) {
+            throw new InvalidPinError('invalid pin format');
+        }
         const lLen = Math.ceil(this.opts.l / 8);
         const ra = new Uint8Array(lLen);
         await random.randomFillBits(ra, 0, this.opts.l);
@@ -595,7 +612,7 @@ class InitiatorTransport extends BaseTransport {
     }
     async publicKeyExchange(protocol, pkeData) {
         if (this.connString === undefined) {
-            throw new Error('missing connection string');
+            throw new InvalidPinError('missing connection string');
         }
         const response = await this.sendRequest({
             method: 'publicKeyExchange',
@@ -957,4 +974,4 @@ class HttpResponderTransport extends ResponderTransport {
     }
 }
 
-export { BaseTransport, ConnectionString, HttpInitiatorTransport, HttpResponderTransport, MasterKey, Session, WalletProtocol, constants, defaultCodeGenerator };
+export { BaseTransport, ConnectionString, HttpInitiatorTransport, HttpResponderTransport, InvalidPinError, MasterKey, Session, WalletProtocol, constants, defaultCodeGenerator };
