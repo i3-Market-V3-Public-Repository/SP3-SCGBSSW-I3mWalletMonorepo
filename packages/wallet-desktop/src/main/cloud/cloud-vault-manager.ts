@@ -77,16 +77,24 @@ export class CloudVaultManager {
     })
   }
 
-  protected resetClient (url: string): void {
+  protected resetClient (url: string, force = false): void {
     const newUrl = CloudVaultManager.buildCloudUrl(url)
-    if (this.client.serverRootUrl !== newUrl) {
+    if (this.client.serverRootUrl !== newUrl || force) {
       this.client = this.buildClient(newUrl)
       this.bindClientEvents()
     }
   }
 
+  public restartClient (): void {
+    this.resetClient(this.client.serverUrl, true)
+  }
+
   protected buildClient (url: string): VaultClient {
     if (this.unbindClientEvents !== undefined) this.unbindClientEvents()
+    if (this.client !== undefined) {
+      this.client.close()
+    }
+
     const client = new VaultClient(url, {
       // TO-DO: add retry options to params
       defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours

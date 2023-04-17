@@ -3,7 +3,7 @@ import * as React from 'react'
 import { VaultState } from '@i3m/cloud-vault-client'
 import { Alert, Button, ButtonProps } from 'react-bootstrap'
 
-import { DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudSyncAction, syncCloudAction, toVaultState } from '@wallet/lib'
+import { clientRestartAction, DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudSyncAction, syncCloudAction, toVaultState } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { Details, Section } from '@wallet/renderer/components'
 
@@ -16,6 +16,7 @@ interface CloudVaultOperations {
   logout?: Operation
   sync?: Operation
   delete?: Operation
+  restart?: Operation
 }
 
 const bindOperation = (operation: keyof CloudVaultOperations, operations: CloudVaultOperations): ButtonProps => {
@@ -72,6 +73,10 @@ export function CloudVault (): JSX.Element {
     dispatch(syncCloudAction.create())
   }
 
+  const onRestart = (): void => {
+    dispatch(clientRestartAction.create())
+  }
+
   if (!publicCloudData.loggingIn) {
     if (state === toVaultState('connected')) {
       operations.logout = onLogout
@@ -84,6 +89,8 @@ export function CloudVault (): JSX.Element {
       operations.login = onLogin
       operations.register = onRegister
     }
+  } else {
+    operations.restart = onRestart
   }
 
   return (
@@ -105,6 +112,7 @@ export function CloudVault (): JSX.Element {
               <Button {...bindOperation('login', operations)}>Login</Button>
               <Button {...bindOperation('register', operations)}>Register</Button>
               <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
+              <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button>
             </Details.Buttons>
             <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('sync', operations)}>Force sync</Button>

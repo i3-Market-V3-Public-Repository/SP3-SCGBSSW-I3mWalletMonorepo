@@ -260,15 +260,19 @@ export class StoreManager extends StoreBag {
       cloudVaultData: {
         ...mem.cloudVaultData,
         unsyncedChanges
+      },
+      settings: {
+        ...mem.settings,
+        public: {
+          ...mem.settings.public,
+          cloud: {
+            ...mem.settings.public.cloud,
+            timestamp: timestamp ?? mem.settings.public.cloud?.timestamp,
+            unsyncedChanges
+          }
+        }
       }
     }))
-
-    const publicSettings = this.getStore('public-settings')
-    if (timestamp !== undefined) {
-      await publicSettings.set('cloud', { timestamp, unsyncedChanges })
-    } else {
-      await publicSettings.set('cloud.unsyncedChanges', unsyncedChanges)
-    }
   }
 
   public async bundleStores (): Promise<StoresBundle> {

@@ -42,7 +42,7 @@ export const cloudVaultMetadata: MetadataRecord = {
 if (process.env.NODE_ENV === 'development') {
   cloudVaultMetadata['Cloud Vault'].push({
     type: 'input',
-    label: 'Upload period time',
+    label: 'Upload period (in milliseconds)',
     key: 'private.cloud.uploadDebounceTime',
     placeholder: DEFAULT_UPLOAD_DEBOUNCE_TIME.toString()
   })
