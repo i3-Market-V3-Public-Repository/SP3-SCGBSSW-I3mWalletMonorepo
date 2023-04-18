@@ -24,6 +24,7 @@ import { StoreBag } from './store-bag'
 import { StoreBuilder } from './store-builder'
 import { StoreBundleData, StoreMetadata, StoresBundle } from './store-bundle'
 import { StoreProxy } from './store-proxy'
+import { VAULT_STATE } from '@i3m/cloud-vault-client'
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = { type: 'electron-store' }
 
@@ -370,9 +371,27 @@ export class StoreManager extends StoreBag {
 
     shm.update(mem => ({
       ...mem,
+      cloudVaultData: {
+        ...mem.cloudVaultData,
+        state: VAULT_STATE.INITIALIZED
+      },
       settings: {
         ...mem.settings,
-        cloud: undefined
+        public: {
+          ...mem.settings.public,
+          cloud: {
+            ...mem.settings.public.cloud,
+            timestamp: undefined,
+            unsyncedChanges: mem.settings.public.cloud?.unsyncedChanges ?? true
+          }
+        },
+        private: {
+          ...mem.settings.private,
+          cloud: {
+            ...mem.settings.private.cloud,
+            credentials: undefined
+          }
+        }
       }
     }))
     const publicSettings = this.getStore('public-settings')
