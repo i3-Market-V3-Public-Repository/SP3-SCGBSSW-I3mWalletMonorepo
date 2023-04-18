@@ -97,8 +97,8 @@ export class CloudVaultManager {
 
     const client = new VaultClient(url, {
       // TO-DO: add retry options to params
-      defaultRetryOptions: { // by default retry connections every 5 seconds for 24 hours
-        retries: 24 * 3600 / 5,
+      defaultRetryOptions: {
+        retries: 5 * 60 / 5, // one retry every 5 seconds for 5 minutes hours
         retryDelay: 5000
       }
     })
@@ -498,6 +498,16 @@ export class CloudVaultManager {
       cloudVaultData: {
         ...mem.cloudVaultData,
         state: VAULT_STATE.INITIALIZED
+      },
+      settings: {
+        ...mem.settings,
+        private: {
+          ...mem.settings.private,
+          cloud: {
+            ...mem.settings.private.cloud,
+            credentials: undefined
+          }
+        }
       }
     }))
     this.client.logout()

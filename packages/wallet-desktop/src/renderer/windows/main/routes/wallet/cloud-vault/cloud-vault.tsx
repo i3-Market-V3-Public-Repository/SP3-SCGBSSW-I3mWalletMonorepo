@@ -112,7 +112,7 @@ export function CloudVault (): JSX.Element {
               <Button {...bindOperation('login', operations)}>Login</Button>
               <Button {...bindOperation('register', operations)}>Register</Button>
               <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
-              <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button>
+              {/* <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button> */}
             </Details.Buttons>
             <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('sync', operations)}>Force sync</Button>
