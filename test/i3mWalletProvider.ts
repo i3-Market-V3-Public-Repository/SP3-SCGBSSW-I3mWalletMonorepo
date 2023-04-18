@@ -98,7 +98,7 @@ Steps for creating a token:
       it('should create a new identity for the consumer', async function () {
         // Create an identity for the consumer
         const resp = await consumerWallet.identityCreate({
-          alias: 'consumer'
+          alias: 'B'
         })
         chai.expect(resp.did).to.not.be.empty
         dids.consumer = resp.did
