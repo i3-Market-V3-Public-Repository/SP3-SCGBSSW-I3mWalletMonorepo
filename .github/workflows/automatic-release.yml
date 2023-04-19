@@ -57,6 +57,38 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+  docker:
+    needs: npm-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Login to GitLab docker registry
+        uses: docker/login-action@v2
+        with:
+          registry: 'registry.gitlab.com'
+          username: ${{ secrets.GITLAB_REGISTRY_USER }}
+          password: ${{ secrets.GITLAB_REGISTRY_TOKEN }}
+      
+      - name: get-npm-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: packages/cloud-vault-server
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          context: ./packages/cloud-vault-server/docker
+          push: true
+          build-args: VERSION=${{ steps.package-version.outputs.current-version}}
+          tags: registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:${{ steps.package-version.outputs.current-version}},registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:latest
+      
+      - name: Ansible deploy
+        run: |
+          curl --request POST --header "Authorization: Bearer ${{ secrets.ANSIBLE_DEPLOY_TOKEN }}" "${{ secrets.ANSIBLE_DEPLOY_URL }}"
+
   pack:
     name: pack and generate release draft
     needs: npm-publish

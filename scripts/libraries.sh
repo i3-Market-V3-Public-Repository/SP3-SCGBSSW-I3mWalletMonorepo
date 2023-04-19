@@ -26,4 +26,6 @@ publish packages/base-wallet
 publish packages/sw-wallet
 publish packages/bok-wallet
 publish packages/server-wallet
+publish packages/cloud-vault-server
+publish packages/cloud-vault-client
 # exit $ERROR
