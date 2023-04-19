@@ -32,5 +32,4 @@ jobs:
       
       - name: Ansible deploy
         run: |
-          apt update && apt install -y curl
           curl --request POST --header "Authorization: Bearer ${{ secrets.ANSIBLE_DEPLOY_TOKEN }}" "{{ secrets.ANSIBLE_DEPLOY_URL }}"
