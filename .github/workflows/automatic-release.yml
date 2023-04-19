@@ -86,7 +86,7 @@ jobs:
       
       - name: Ansible deploy
         run: |
-          curl --request POST --header "Authorization: Bearer ${{ secrets.ANSIBLE_DEPLOY_TOKEN }}" "{{ secrets.ANSIBLE_DEPLOY_URL }}"
+          curl --request POST --header "Authorization: Bearer ${{ secrets.ANSIBLE_DEPLOY_TOKEN }}" "${{ secrets.ANSIBLE_DEPLOY_URL }}"
 
   pack:
     name: pack and generate release draft
