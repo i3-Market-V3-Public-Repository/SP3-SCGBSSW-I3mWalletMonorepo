@@ -26,8 +26,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v4
         with:
+          context: ./packages/cloud-vault-server/docker
           push: true
-          tags: registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:${{ steps.package-version.outputs.current-version }},registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:latest
+          tags: registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:${{ steps.package-version.outputs.current-version}},registry.gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/cvs:latest
       
       - name: Ansible deploy
         run: |
