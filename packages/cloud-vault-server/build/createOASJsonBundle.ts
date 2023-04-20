@@ -7,8 +7,8 @@ import _ from 'lodash'
 import type { OpenAPIV3 } from 'openapi-types'
 
 import pkgJson from '../package.json'
-import { apiVersion } from '../src/config/openApi'
 
+const apiVersion = 'v' + pkgJson.version.split('.')[0]
 const rootDir = path.join(__dirname, '..')
 
 function iterateObject (obj: any, stringToReplace: string, replacement: string): void {

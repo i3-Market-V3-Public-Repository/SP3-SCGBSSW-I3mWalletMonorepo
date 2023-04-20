@@ -40,7 +40,7 @@ export default async function (router: Router): Promise<void> {
   router.get('/login', passport.authenticate('oidc', { scope: 'openid vc vc:provider vc:consumer' }))
 
   router.get('/cb', passport.authenticate('oidc', { session: false }),
-    async function (req: Request, res: Response<OpenApiPaths.ApiV2RegistrationCb.Get.Responses.$201 | OpenApiPaths.ApiV2RegistrationCb.Get.Responses.$204>, next) { // eslint-disable-line @typescript-eslint/no-misused-promises
+    async function (req: Request, res: Response<OpenApiPaths.ApiV2RegistrationCb.Get.Responses.$201>, next) { // eslint-disable-line @typescript-eslint/no-misused-promises
       const orig = req.cookies.orig
       const regUser = req.user as RegistrationUser
       res.clearCookie('reg-data').clearCookie('orig')
@@ -103,7 +103,10 @@ export default async function (router: Router): Promise<void> {
             }
             return next(err)
           })
-          res.status(204).end()
+          res.status(201).json({
+            status: 'deregistered',
+            username: regUser.did
+          })
           break
         }
         default: {

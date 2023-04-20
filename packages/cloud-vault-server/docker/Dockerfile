@@ -5,11 +5,8 @@
 FROM node:18-alpine
 
 # VERSION can be used to build docker with a specific NPM version of the @i3m/cloud-vault-server
-ARG VERSION=${VERSION}
-ENV npm_package_version=${VERSION}
+ARG VERSION=${VERSION:-latest}
 WORKDIR /app
-
-RUN ["/bin/sh", "-c", ": ${npm_package_version:?VERSION needs to be set and not null.}"]
 
 RUN \
     chown node.node /app &&\

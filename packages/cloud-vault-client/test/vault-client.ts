@@ -34,15 +34,16 @@ if (process.env.WCV_SERVER_URL === undefined || process.env.WCV_USERNAME === und
   localTesting = false
 }
 
+if (process.env.WCV_DID === undefined || process.env.WCV_DID === '') {
+  throw new Error('WCV_DID must be set in your .env file')
+}
+
 const user = {
   did: process.env.WCV_DID,
   username,
   password
 }
 
-if (user.did === undefined || user.did === '') {
-  throw new Error('WCV_DID must be set in your .env file')
-}
 const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
 async function runCommand (cmd: string, args: string[]): Promise<{ code: number | null, stdout: string, stderr: string }> {
@@ -203,7 +204,7 @@ describe('Wallet Cloud-Vault', function () {
         'A256GCM'
       )
       console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
-      const registration = prompt('Have you been able to register the user: [Yn]', { value: 'y' })
+      const registration = prompt('Have you been able to register the user? [Yn]', { value: 'y' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
       //   serverUrl + `/api/${apiVersion}/registration/register/` + data
@@ -229,13 +230,55 @@ describe('Wallet Cloud-Vault', function () {
         'A256GCM'
       )
       console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
-      const registration = prompt('Have you been able to register the user: [yN]', { value: 'N' })
+      const registration = prompt('Have you been able to register the user? [yN]', { value: 'N' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
       //   serverUrl + `/api/${apiVersion}/registration/register/` + data
       // )
       // chai.expect(res.status).to.equal('created')
       chai.expect(registration.toLocaleLowerCase()).to.equal('n')
+    } catch (error) {
+      console.log('error', error)
+      chai.expect(false).to.be.true
+    }
+  })
+
+  it('it should deregister the test user', async function () {
+    try {
+      console.log(`Click on the following link to deregister any account of did '${user.did}':\n${serverUrl}/api/${apiVersion}/registration/deregister`)
+      const registration = prompt('Have you been able to deregister? [Yn]', { value: 'y' })
+
+      // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      //   serverUrl + `/api/${apiVersion}/registration/register/` + data
+      // )
+      // chai.expect(res.status).to.equal('created')
+      chai.expect(registration.toLocaleLowerCase()).to.equal('y')
+    } catch (error) {
+      console.log('error', error)
+      chai.expect(false).to.be.true
+    }
+  })
+
+  it('it should register again the test user', async function () {
+    try {
+      const userData = {
+        did: user.did,
+        username: user.username,
+        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
+      }
+      const data = await jweEncrypt(
+        Buffer.from(JSON.stringify(userData)),
+        publicJwk as JWK,
+        'A256GCM'
+      )
+      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registration = prompt('Have you been able to register the user? [Yn]', { value: 'y' })
+
+      // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
+      //   serverUrl + `/api/${apiVersion}/registration/register/` + data
+      // )
+      // chai.expect(res.status).to.equal('created')
+      chai.expect(registration.toLocaleLowerCase()).to.equal('y')
     } catch (error) {
       console.log('error', error)
       chai.expect(false).to.be.true

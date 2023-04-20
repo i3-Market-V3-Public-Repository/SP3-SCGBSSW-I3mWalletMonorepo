@@ -19,7 +19,7 @@ export class Request {
   defaultCallOptions?: CallOptions
   defaultUrl?: string
   private _stop: boolean
-  uploading: {
+  ongoingRequests: {
     [url: string]: Array<Promise<AxiosResponse>>
   }
 
@@ -32,7 +32,7 @@ export class Request {
     this.axios = this.getAxiosInstance(opts?.retryOptions)
     this.defaultCallOptions = opts?.defaultCallOptions
     this.defaultUrl = opts?.defaultUrl
-    this.uploading = {}
+    this.ongoingRequests = {}
   }
 
   private getAxiosInstance (retryOptions?: RetryOptions): AxiosInstance {
@@ -53,13 +53,13 @@ export class Request {
     return axiosInstance
   }
 
-  async waitForUploadsToFinsh (url?: string): Promise<void> {
+  async waitForOngoingRequestsToFinsh (url?: string): Promise<void> {
     const url2 = (url !== undefined) ? url : this.defaultUrl
     if (url2 === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url oof the uploads you want to wait to finish' })
     }
-    if (this.uploading[url2] !== undefined) {
-      for (const promise of this.uploading[url2]) {
+    if (this.ongoingRequests[url2] !== undefined) {
+      for (const promise of this.ongoingRequests[url2]) {
         try {
           await promise
         } catch (error) { }
@@ -69,44 +69,72 @@ export class Request {
 
   async stop (): Promise<void> {
     this._stop = true
-    for (const url in this.uploading) {
-      await this.waitForUploadsToFinsh(url).catch()
+    for (const url in this.ongoingRequests) {
+      await this.waitForOngoingRequestsToFinsh(url).catch()
     }
     this._stop = false
   }
 
-  async get<T> (url: string, options?: CallOptions<T>): Promise<T>
-  async get<T> (options?: CallOptions<T>): Promise<T>
-  async get<T> (urlOrOptions?: string | CallOptions<T>, opts?: CallOptions<T>): Promise<T> {
-    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
-    if (url === undefined) {
-      throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
-    }
-    const options = (typeof urlOrOptions !== 'string') ? urlOrOptions : opts
+  private async request<T> (method: 'delete' | 'get' | 'post' | 'put', url: string, requestBody?: any, options?: CallOptions<T>): Promise<T> {
     const headers: AxiosRequestConfig['headers'] = {
       'Content-Type': 'application/json'
     }
     if (options?.bearerToken !== undefined) {
       headers.Authorization = 'Bearer ' + options.bearerToken
     }
-
     if (this._stop) {
       throw new VaultError('http-request-canceled', {
         request: {
-          method: 'GET',
+          method: method.toUpperCase(),
           url,
-          headers: headers as { [header: string]: string }
+          headers: headers as { [header: string]: string },
+          data: requestBody
         }
       })
     }
 
-    const res = await this.axios.get<T>(
-      url,
-      {
-        headers
-      }).catch(error => {
-      throw VaultError.from(error)
+    if ((method === 'post' || method === 'put') && options?.sequentialPost === true) {
+      await this.waitForOngoingRequestsToFinsh(url).catch()
+    }
+    this.ongoingRequests[url] = []
+
+    const requestPromise = (method === 'post' || method === 'put')
+      ? this.axios[method]<T>(
+        url,
+        requestBody,
+        {
+          headers
+        }
+      )
+      : this.axios[method]<T>(
+        url,
+        {
+          headers
+        }
+      )
+
+    const index = this.ongoingRequests[url].push(requestPromise) - 1
+    const res = await requestPromise.catch((err) => {
+      throw VaultError.from(err)
     })
+
+    const beforeUploadFinish = options?.beforeUploadFinish
+    if (beforeUploadFinish !== undefined) {
+      await beforeUploadFinish(res.data)
+    }
+
+    if (index === this.ongoingRequests[url].length - 1) {
+      this.ongoingRequests[url].pop() // eslint-disable-line @typescript-eslint/no-floating-promises
+    } else {
+      let i = index
+      do {
+        delete this.ongoingRequests[url][index] // eslint-disable-line @typescript-eslint/no-dynamic-delete
+        i--
+      } while (this.ongoingRequests[url][i] === undefined)
+    }
+    if (this.ongoingRequests[url].length === 0) {
+      delete this.ongoingRequests[url] // eslint-disable-line @typescript-eslint/no-dynamic-delete
+    }
 
     if (options?.responseStatus !== undefined && res.status !== options.responseStatus) {
       throw new VaultError('validation', {
@@ -125,94 +153,19 @@ export class Request {
     }
     const options = (typeof urlOrOptions !== 'string') ? urlOrOptions : opts
 
-    const headers: AxiosRequestConfig['headers'] = {
-      'Content-Type': 'application/json'
-    }
-    if (options?.bearerToken !== undefined) {
-      headers.Authorization = 'Bearer ' + options.bearerToken
-    }
-    if (this._stop) {
-      throw new VaultError('http-request-canceled', {
-        request: {
-          method: 'DELETE',
-          url,
-          headers: headers as { [header: string]: string }
-        }
-      })
-    }
-    const res = await this.axios.delete<T>(
-      url,
-      {
-        headers
-      }).catch(error => { throw VaultError.from(error) })
-    if (options?.responseStatus !== undefined && res.status !== options.responseStatus) {
-      throw new VaultError('validation', {
-        description: `Received HTTP status ${res.status} does not match the expected one (${options.responseStatus})`
-      }, { cause: 'HTTP status does not match the expected one' })
-    }
-    return res.data
+    return await this.request('delete', url, undefined, options)
   }
 
-  private async upload<T> (method: 'post' | 'put', url: string, requestBody: any, options?: CallOptions<T>): Promise<T> {
-    const headers: AxiosRequestConfig['headers'] = {
-      'Content-Type': 'application/json'
+  async get<T> (url: string, options?: CallOptions<T>): Promise<T>
+  async get<T> (options?: CallOptions<T>): Promise<T>
+  async get<T> (urlOrOptions?: string | CallOptions<T>, opts?: CallOptions<T>): Promise<T> {
+    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
+    if (url === undefined) {
+      throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
     }
-    if (options?.bearerToken !== undefined) {
-      headers.Authorization = 'Bearer ' + options.bearerToken
-    }
-    if (this._stop) {
-      throw new VaultError('http-request-canceled', {
-        request: {
-          method: method.toUpperCase(),
-          url,
-          headers: headers as { [header: string]: string },
-          data: requestBody
-        }
-      })
-    }
+    const options = (typeof urlOrOptions !== 'string') ? urlOrOptions : opts
 
-    if (options?.sequentialPost === true) {
-      await this.waitForUploadsToFinsh(url).catch()
-    }
-    this.uploading[url] = []
-
-    const postPromise = this.axios[method]<T>(
-      url,
-      requestBody,
-      {
-        headers
-      }
-    )
-
-    const index = this.uploading[url].push(postPromise) - 1
-    const res = await postPromise.catch((err) => {
-      throw VaultError.from(err)
-    })
-
-    const beforeUploadFinish = options?.beforeUploadFinish
-    if (beforeUploadFinish !== undefined) {
-      await beforeUploadFinish(res.data)
-    }
-
-    if (index === this.uploading[url].length - 1) {
-      this.uploading[url].pop() // eslint-disable-line @typescript-eslint/no-floating-promises
-    } else {
-      let i = index
-      do {
-        delete this.uploading[url][index] // eslint-disable-line @typescript-eslint/no-dynamic-delete
-        i--
-      } while (this.uploading[url][i] === undefined)
-    }
-    if (this.uploading[url].length === 0) {
-      delete this.uploading[url] // eslint-disable-line @typescript-eslint/no-dynamic-delete
-    }
-
-    if (options?.responseStatus !== undefined && res.status !== options.responseStatus) {
-      throw new VaultError('validation', {
-        description: `Received HTTP status ${res.status} does not match the expected one (${options.responseStatus})`
-      }, { cause: 'HTTP status does not match the expected one' })
-    }
-    return res.data
+    return await this.request('get', url, undefined, options)
   }
 
   async post<T> (url: string, requestBody: any, options?: CallOptions<T>): Promise<T>
@@ -231,7 +184,7 @@ export class Request {
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
     }
-    return await this.upload('post', url, requestBody, options)
+    return await this.request('post', url, requestBody, options)
   }
 
   async put<T> (url: string, requestBody: any, options?: CallOptions<T>): Promise<T>
@@ -250,6 +203,6 @@ export class Request {
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
     }
-    return await this.upload('put', url, requestBody, options)
+    return await this.request('put', url, requestBody, options)
   }
 }

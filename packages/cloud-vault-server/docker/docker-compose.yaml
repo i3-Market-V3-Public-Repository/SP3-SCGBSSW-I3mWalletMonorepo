@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:15
     container_name: db
-    restart: always
+    restart: unless-stopped
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:
@@ -16,7 +16,7 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
-    restart: always
+    restart: unless-stopped
     volumes:
       - pgadmin:/var/lib/pgadmin
     ports:
@@ -36,6 +36,7 @@ services:
       dockerfile: ./docker/Dockerfile.development
     image: i3m/cvs
     container_name: cvs
+    restart: unless-stopped
     env_file:
       - cvs.env
     environment:
@@ -55,7 +56,7 @@ services:
 
   backplane:
     image: registry.gitlab.com/i3-market/code/backplane/backplane-api-gateway/backplane:latest-with-integrator
-    restart: always
+    restart: unless-stopped
     container_name: backplane
     env_file:
       - backplane.env

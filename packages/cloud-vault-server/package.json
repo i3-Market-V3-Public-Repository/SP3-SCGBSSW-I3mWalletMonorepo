@@ -51,6 +51,7 @@
   },
   "scripts": {
     "build": "npm run clean:ts && npm run lint && npm run openapi && npm run tsc",
+    "postbuild": "sed -i \"s/{{VERSION}}/${npm_package_version}/\" dist/config/general.js",
     "clean": "npm run clean:ts && npm run clean:openapi",
     "clean:ts": "rimraf dist types",
     "clean:openapi": "rimraf src/spec/openapi.json src/spec/openapi.yaml dist/spec types/openapi.d.ts",

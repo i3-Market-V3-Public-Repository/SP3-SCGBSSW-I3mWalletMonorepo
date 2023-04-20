@@ -234,10 +234,11 @@ export namespace OpenApiComponents {
             /**
              * whether the proposed username has been registered or not (because another one was previously registered)
              */
-            status: "created" | "already registered";
+            status: "created" | "already registered" | "deregistered";
             /**
              * - `status === 'created'`: the registered username
              * - `status === 'already registered'`: the username that was previously registered fot the same DID.
+             * - `status === 'deregistered'`: the deregistered DID.
              *
              */
             username: string;
@@ -366,8 +367,12 @@ export namespace OpenApiComponents {
 export namespace OpenApiPaths {
     export namespace ApiV2RegistrationCb {
         export namespace Get {
+            export interface HeaderParameters {
+                Cookie?: Parameters.Cookie;
+            }
             export namespace Parameters {
                 export type Code = string // ^[A-Za-z0-9_-]+$
+                export type Cookie = string;
                 export type State = string // ^[A-Za-z0-9_-]+$
             }
             export interface QueryParameters {
@@ -511,6 +516,20 @@ export namespace OpenApiPaths {
     }
     export namespace ApiV2VaultEvents {
         export namespace Get {
+            export interface HeaderParameters {
+                Authorization?: /**
+                 * example:
+                 * Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
+                 */
+                Parameters.Authorization;
+            }
+            export namespace Parameters {
+                /**
+                 * example:
+                 * Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
+                 */
+                export type Authorization = string;
+            }
             export namespace Responses {
                 export interface $200 {
                 }
@@ -536,6 +555,20 @@ export namespace OpenApiPaths {
     }
     export namespace ApiV2VaultToken {
         export namespace Post {
+            export interface HeaderParameters {
+                Authorization?: /**
+                 * example:
+                 * Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
+                 */
+                Parameters.Authorization;
+            }
+            export namespace Parameters {
+                /**
+                 * example:
+                 * Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
+                 */
+                export type Authorization = string;
+            }
             export type RequestBody = /**
              * AuthorizationRequest
              * A set of registered username and authkey in order to get the server's token. `authkey` is a secret securely derived from the user's password, so can be recovered if the user remembers the password. `authkey` will work as a standard password server side.

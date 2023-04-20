@@ -146,6 +146,11 @@ paths:
           schema:
             type: string
             pattern: ^[A-Za-z0-9_-]+$
+        - name: Cookie
+          in: header
+          required: false
+          schema:
+            type: string
       responses:
         '201':
           description: OK
@@ -200,6 +205,12 @@ paths:
         The endpoint to get a valid bearer token to access the vault. Valid credentials (`username`, `authkey`) must be provided.
       tags:
         - 'Cloud-Vault Server: Vault'
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            example: Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
       requestBody:
         required: true
         content:
@@ -235,6 +246,12 @@ paths:
         - 'Cloud-Vault Server: Vault'
       security:
         - bearerAuth: []
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+            example: Bearer KucetZ5cVnxApIMwuFgskKYiY-g7hnsKUe_Pf5HgLBh
       responses:
         '200':
           description: |

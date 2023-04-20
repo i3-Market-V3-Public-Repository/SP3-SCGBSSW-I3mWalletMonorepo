@@ -169,7 +169,7 @@ export class VaultClient extends EventEmitter {
 
     this.es.addEventListener('storage-updated', (e) => {
       const vaultRequest = this.vaultRequest as Request
-      vaultRequest.waitForUploadsToFinsh().finally(() => {
+      vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
         const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
         if (msg.timestamp !== this.timestamp) {
           this.timestamp = msg.timestamp
@@ -180,7 +180,7 @@ export class VaultClient extends EventEmitter {
 
     this.es.addEventListener('storage-deleted', (e) => {
       const vaultRequest = this.vaultRequest as Request
-      vaultRequest.waitForUploadsToFinsh().finally(() => {
+      vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
         this.logout()
         this.emit('storage-deleted')
       }).catch(reason => {})
@@ -258,7 +258,7 @@ export class VaultClient extends EventEmitter {
     }
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
     try {
-      await (this.vaultRequest as Request).waitForUploadsToFinsh()
+      await (this.vaultRequest as Request).waitForOngoingRequestsToFinsh()
       const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
       const data = await request.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
         cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
@@ -289,7 +289,7 @@ export class VaultClient extends EventEmitter {
     try {
       const vaultRequest = this.vaultRequest as Request
 
-      await vaultRequest.waitForUploadsToFinsh()
+      await vaultRequest.waitForOngoingRequestsToFinsh()
 
       const data = await vaultRequest.get<OpenApiPaths.ApiV2Vault.Get.Responses.$200>(
         {

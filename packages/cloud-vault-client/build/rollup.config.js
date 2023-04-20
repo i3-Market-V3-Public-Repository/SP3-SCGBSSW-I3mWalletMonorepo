@@ -45,7 +45,7 @@ if (existsSync(input) !== true) throw new Error('The entry point should be index
 const tsPluginOptions = {
   tsconfig: tsConfigPath,
   outDir: undefined,
-  include: ['src/ts/**/*', 'build/typings/is-browser.d.ts'],
+  include: ['src/ts/**/*', 'build/typings/**/*.d.ts'],
   exclude: ['src/**/*.spec.ts']
 }
 
@@ -172,6 +172,7 @@ export default [
         IS_BROWSER: false,
         environment: 'nodejs',
         _MODULE_TYPE: "'CJS'",
+        _NPM_PKG_VERSION: `'${process.env.npm_package_version}'` ?? "'0.0.1'",
         preventAssignment: true
       }),
       rollupPluginTs(tsPluginOptions),
@@ -202,6 +203,7 @@ export default [
       replace({
         IS_BROWSER: false,
         _MODULE_TYPE: "'ESM'",
+        _NPM_PKG_VERSION: `'${process.env.npm_package_version}'` ?? "'0.0.1'",
         __filename: 'fileURLToPath(import.meta.url)',
         __dirname: 'fileURLToPath(new URL(\'.\', import.meta.url))',
         preventAssignment: true

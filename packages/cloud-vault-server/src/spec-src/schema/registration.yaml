@@ -46,8 +46,10 @@ components:
           enum:
             - created
             - already registered
+            - deregistered
         username:
           type: string
           description: |
             - `status === 'created'`: the registered username
             - `status === 'already registered'`: the username that was previously registered fot the same DID.
+            - `status === 'deregistered'`: the deregistered DID.
