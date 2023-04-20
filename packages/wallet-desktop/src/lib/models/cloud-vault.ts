@@ -5,5 +5,8 @@ export interface CloudVaultData {
   syncing: boolean
   loggingIn: boolean
   unsyncedChanges: boolean
-  registrationUrl?: string
+  registration?: {
+    url: string
+    username: string
+  }
 }

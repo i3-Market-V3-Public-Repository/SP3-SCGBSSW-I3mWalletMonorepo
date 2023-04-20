@@ -53,7 +53,7 @@ export function CloudVault (): JSX.Element {
   const username = privateCloudSettings?.credentials?.username
   const url = publicCloudSettings?.url ?? DEFAULT_CLOUD_URL
   const unsynced = publicCloudData.unsyncedChanges
-  const registrationUrl = publicCloudData.registrationUrl
+  const registration = publicCloudData.registration
   const operations: CloudVaultOperations = {}
 
   const onLogin = (): void => {
@@ -113,15 +113,16 @@ export function CloudVault (): JSX.Element {
             <Details.Input label='URL' value={url} />
           </Details.Grid>
         </Details.Body>
-        { registrationUrl !== undefined ? (
+        { registration !== undefined ? (
           <Details.Body>
             <Details.Title>Register</Details.Title>
             <Alert>
-              You started a registartion process. Please, click this <ExternalLink href={registrationUrl}>link</ExternalLink> to
+              You started the registartion process for the user "{registration.username}". Please, click this <ExternalLink href={registration.url}>link</ExternalLink> to
               finish it. After your account is properly created, you have to login using the button bellow.
             </Alert>
             <Details.Grid>
-              <Details.Input label='Registration URL' value={registrationUrl} />
+              <Details.Input label='Username' value={registration.username} />
+              <Details.Input label='Registration URL' value={registration.url} />
             </Details.Grid>
           </Details.Body>
         ) : null}
@@ -133,9 +134,9 @@ export function CloudVault (): JSX.Element {
             <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('login', operations)}>Login</Button>
               <Button {...bindOperation('register', operations)}>Register</Button>
-              <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
               {/* <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button> */}
               <Button {...bindOperation('sync', operations)}>Force sync</Button>
+              <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
               <Button {...bindOperation('delete', operations)} variant='danger'>Delete cloud</Button>
               <Button {...bindOperation('stop', operations)} variant='danger'>Stop</Button>
             </Details.Buttons>

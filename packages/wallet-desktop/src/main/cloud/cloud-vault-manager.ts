@@ -283,12 +283,16 @@ export class CloudVaultManager extends CloudVaultFlows {
       'A256GCM'
     )
 
+    const username = credentials.username
     const registrationUrl = `${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
     sharedMemoryManager.update((mem) => ({
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        registrationUrl
+        registration: {
+          url: registrationUrl,
+          username
+        }
       }
     }))
 
