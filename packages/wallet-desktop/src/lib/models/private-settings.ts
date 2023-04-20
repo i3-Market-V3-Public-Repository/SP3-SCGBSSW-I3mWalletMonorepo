@@ -40,10 +40,16 @@ export interface Credentials {
 export interface CloudVaultPrivateSettings {
   credentials?: Credentials
   uploadDebounceTime?: number
+
+  // TODO: Not implemented yet
+  retries?: number            // number of retries
+  retryDelay?: number         // time between retries in milliseconds
 }
 
 export const DEFAULT_CLOUD_URL = 'http://localhost:3000'
 export const DEFAULT_UPLOAD_DEBOUNCE_TIME = 2000
+export const DEFAULT_CLOUD_VAULT_RETRIES = 1 * 60 / 5 // Retry during one minute
+export const DEFAULT_CLOUD_VAULT_RETRY_DELAY = 5000
 
 export const DEFAULT_WALLET_PACKAGES = [
   '@i3m/sw-wallet',

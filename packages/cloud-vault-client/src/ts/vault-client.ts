@@ -208,6 +208,7 @@ export class VaultClient extends EventEmitter {
 
   close (): void {
     this.logout()
+    this.vaultRequest?.stop().catch(() => {})
     this.wellKnownCvsConfigurationPromise?.stop()
     this.wellKnownCvsConfigurationPromise?.promise.catch(() => {})
     this.state = VAULT_STATE.NOT_INITIALIZED

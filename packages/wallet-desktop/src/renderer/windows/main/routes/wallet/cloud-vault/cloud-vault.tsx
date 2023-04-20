@@ -1,11 +1,11 @@
 
-import * as React from 'react'
 import { VaultState } from '@i3m/cloud-vault-client'
+import * as React from 'react'
 import { Alert, Button, ButtonProps } from 'react-bootstrap'
 
-import { clientRestartAction, DEFAULT_CLOUD_URL, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudSyncAction, syncCloudAction, toVaultState } from '@wallet/lib'
+import { clientRestartAction, DEFAULT_CLOUD_URL, deleteCloudAction, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudAction, syncCloudAction, toVaultState } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
-import { Details, Section } from '@wallet/renderer/components'
+import { Details, ExternalLink, Section } from '@wallet/renderer/components'
 
 import './cloud-vault.scss'
 
@@ -17,6 +17,7 @@ interface CloudVaultOperations {
   sync?: Operation
   delete?: Operation
   restart?: Operation
+  stop?: Operation
 }
 
 const bindOperation = (operation: keyof CloudVaultOperations, operations: CloudVaultOperations): ButtonProps => {
@@ -24,6 +25,7 @@ const bindOperation = (operation: keyof CloudVaultOperations, operations: CloudV
   if (operations[operation] !== undefined) {
     props.onClick = operations[operation]
   } else {
+    props.style = { display: 'none' }
     props.disabled = true
   }
 
@@ -51,6 +53,7 @@ export function CloudVault (): JSX.Element {
   const username = privateCloudSettings?.credentials?.username
   const url = publicCloudSettings?.url ?? DEFAULT_CLOUD_URL
   const unsynced = publicCloudData.unsyncedChanges
+  const registrationUrl = publicCloudData.registrationUrl
   const operations: CloudVaultOperations = {}
 
   const onLogin = (): void => {
@@ -66,11 +69,15 @@ export function CloudVault (): JSX.Element {
   }
 
   const onDelete = (): void => {
-    dispatch(stopCloudSyncAction.create())
+    dispatch(deleteCloudAction.create())
   }
 
   const onSync = (): void => {
     dispatch(syncCloudAction.create())
+  }
+
+  const onStop = (): void => {
+    dispatch(stopCloudAction.create())
   }
 
   const onRestart = (): void => {
@@ -91,6 +98,7 @@ export function CloudVault (): JSX.Element {
     }
   } else {
     operations.restart = onRestart
+    operations.stop = onStop
   }
 
   return (
@@ -105,18 +113,31 @@ export function CloudVault (): JSX.Element {
             <Details.Input label='URL' value={url} />
           </Details.Grid>
         </Details.Body>
+        { registrationUrl !== undefined ? (
+          <Details.Body>
+            <Details.Title>Register</Details.Title>
+            <Alert>
+              You started a registartion process. Please, click this <ExternalLink href={registrationUrl}>link</ExternalLink> to
+              finish it. After your account is properly created, you have to login using the button bellow.
+            </Alert>
+            <Details.Grid>
+              <Details.Input label='Registration URL' value={registrationUrl} />
+            </Details.Grid>
+          </Details.Body>
+        ) : null}
         <Details.Separator />
         <Details.Body>
           <Details.Grid>
-            <Details.Buttons title='Cloud connection'>
+            {/* <Details.Buttons title='Cloud connection'>
+            </Details.Buttons> */}
+            <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('login', operations)}>Login</Button>
               <Button {...bindOperation('register', operations)}>Register</Button>
               <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
               {/* <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button> */}
-            </Details.Buttons>
-            <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('sync', operations)}>Force sync</Button>
               <Button {...bindOperation('delete', operations)} variant='danger'>Delete cloud</Button>
+              <Button {...bindOperation('stop', operations)} variant='danger'>Stop</Button>
             </Details.Buttons>
           </Details.Grid>
         </Details.Body>

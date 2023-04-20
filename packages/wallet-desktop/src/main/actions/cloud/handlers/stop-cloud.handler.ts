@@ -1,9 +1,9 @@
 import {
-  stopCloudSyncAction as actionBuilder
+  stopCloudAction as actionBuilder
 } from '@wallet/lib'
 import { ActionHandlerBuilder } from '@wallet/main/internal'
 
-export const stopCloudSync: ActionHandlerBuilder<typeof actionBuilder> = (
+export const stopCloud: ActionHandlerBuilder<typeof actionBuilder> = (
   locals
 ) => {
   return {
@@ -12,7 +12,7 @@ export const stopCloudSync: ActionHandlerBuilder<typeof actionBuilder> = (
       const { cloudVaultManager } = locals
 
       // Call the internal function
-      await cloudVaultManager.stopVaultSync()
+      await cloudVaultManager.stop()
 
       return { response: undefined, status: 200 }
     }

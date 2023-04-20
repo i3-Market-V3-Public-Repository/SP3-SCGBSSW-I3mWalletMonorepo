@@ -1,9 +1,9 @@
 import {
-  startCloudSyncAction as actionBuilder
+  deleteCloudAction as actionBuilder
 } from '@wallet/lib'
 import { ActionHandlerBuilder } from '@wallet/main/internal'
 
-export const startCloudSync: ActionHandlerBuilder<typeof actionBuilder> = (
+export const deleteCloud: ActionHandlerBuilder<typeof actionBuilder> = (
   locals
 ) => {
   return {
@@ -12,7 +12,7 @@ export const startCloudSync: ActionHandlerBuilder<typeof actionBuilder> = (
       const { cloudVaultManager } = locals
 
       // Call the internal function
-      await cloudVaultManager.startVaultSync()
+      await cloudVaultManager.delete()
 
       return { response: undefined, status: 200 }
     }
