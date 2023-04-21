@@ -1,6 +1,6 @@
 {
   "name": "wallet-desktop",
-  "version": "2.5.11",
+  "version": "2.5.12",
   "description": "A cross-platform wallet app",
   "main": "dist/src/main",
   "scripts": {
@@ -84,7 +84,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@i3m/base-wallet": "^2.5.11",
     "@i3m/bok-wallet": "^2.5.11",
-    "@i3m/cloud-vault-client": "^2.5.11",
+    "@i3m/cloud-vault-client": "^2.5.12",
     "@i3m/sw-wallet": "^2.5.11",
     "@i3m/wallet-desktop-openapi": "^2.5.11",
     "@i3m/wallet-protocol": "^2.5.11",
