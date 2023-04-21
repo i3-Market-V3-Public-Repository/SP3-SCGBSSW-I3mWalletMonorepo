@@ -42,8 +42,8 @@ export interface CloudVaultPrivateSettings {
   uploadDebounceTime?: number
 
   // TODO: Not implemented yet
-  retries?: number            // number of retries
-  retryDelay?: number         // time between retries in milliseconds
+  retries?: number // number of retries
+  retryDelay?: number // time between retries in milliseconds
 }
 
 export const DEFAULT_CLOUD_URL = 'http://localhost:3000'

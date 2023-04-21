@@ -9,7 +9,7 @@ export function InternalLink (props: React.PropsWithChildren<Props>): JSX.Elemen
   const children = props.children ?? href
 
   return (
-    <a href={href} target='_blank'>
+    <a href={href} target='_blank' rel='noreferrer'>
       {children}
     </a>
   )

@@ -1,10 +1,10 @@
-import { VerifiableCredentialResource } from "@i3m/base-wallet"
-import { Credentials } from "@wallet/lib"
+import { VerifiableCredentialResource } from '@i3m/base-wallet'
+import { Credentials } from '@wallet/lib'
 
 import { Locals, WalletDesktopError } from '@wallet/main/internal'
 
 export class CloudVaultFlows {
-  constructor(protected locals: Locals) {}
+  constructor (protected locals: Locals) {}
 
   async getCloudVaultUrl (): Promise<string> {
     const { storeManager, dialog } = this.locals

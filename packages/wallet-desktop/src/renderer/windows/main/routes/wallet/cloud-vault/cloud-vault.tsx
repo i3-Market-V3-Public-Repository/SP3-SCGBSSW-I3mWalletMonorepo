@@ -113,7 +113,7 @@ export function CloudVault (): JSX.Element {
             <Details.Input label='URL' value={url} />
           </Details.Grid>
         </Details.Body>
-        { registration !== undefined ? (
+        {registration !== undefined ? (
           <Details.Body>
             <Details.Title>Register</Details.Title>
             <Alert>
