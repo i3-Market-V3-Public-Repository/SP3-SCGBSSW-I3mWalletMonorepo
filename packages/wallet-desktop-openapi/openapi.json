@@ -1209,23 +1209,6 @@
         },
         "additionalProperties": true
       },
-      "ApiError": {
-        "type": "object",
-        "title": "Error",
-        "required": [
-          "code",
-          "message"
-        ],
-        "properties": {
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
-        }
-      },
       "EthereumAddress": {
         "description": "Ethereum Address in EIP-55 format (with checksum)",
         "type": "string",
@@ -1267,6 +1250,23 @@
         "required": [
           "did"
         ]
+      },
+      "ApiError": {
+        "type": "object",
+        "title": "Error",
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
       },
       "JwkPair": {
         "type": "object",

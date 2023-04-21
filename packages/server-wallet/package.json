@@ -1,6 +1,6 @@
 {
   "name": "@i3m/server-wallet",
-  "version": "2.5.10",
+  "version": "2.5.11",
   "description": "Get a ready-to-go Wallet requiring no user interaction and using a simple file to store wallet data. It should be used only when no human interaction is possible.",
   "keywords": [
     "wallet",
@@ -117,7 +117,7 @@
   },
   "devDependencies": {
     "@i3m/non-repudiation-library": "^2.5.0",
-    "@i3m/wallet-desktop-openapi": "^2.5.10",
+    "@i3m/wallet-desktop-openapi": "^2.5.11",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-json": "^6.0.0",
@@ -151,7 +151,7 @@
     "typescript": "^4.9.0"
   },
   "dependencies": {
-    "@i3m/base-wallet": "^2.5.10",
-    "@i3m/bok-wallet": "^2.5.10"
+    "@i3m/base-wallet": "^2.5.11",
+    "@i3m/bok-wallet": "^2.5.11"
   }
 }
