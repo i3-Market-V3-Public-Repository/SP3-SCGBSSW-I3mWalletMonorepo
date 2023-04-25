@@ -1,5 +1,6 @@
 
 import { Toast } from '@i3m/base-wallet'
+import axios, { Axios } from 'axios'
 import {
   ActionReducer, ApiManager, AuthManager, CloudVaultManager, ConnectManager, ElectronDialog, FeatureContext, FeatureManager, KeysManager, MainContext,
   RuntimeManager, SharedMemoryManager, StoreManager, TaskManager, Tray, VersionManager, WalletDesktopError, WalletFactory, WindowManager
@@ -16,6 +17,7 @@ export interface Locals {
   readonly storeManager: StoreManager
   readonly actionReducer: ActionReducer
   readonly taskManager: TaskManager
+  readonly axios: Axios
 
   // UI
   readonly tray: Tray
@@ -40,8 +42,15 @@ export type LocalsKey = keyof Locals
 export type PropInitializer<T> = ((ctx: MainContext, locals: Locals) => Promise<T>) | T
 export type LocalsSetter = <T extends LocalsKey>(prop: T, initializer: PropInitializer<Locals[T]>) => Promise<void>
 
+export function baseLocals (): Partial<Locals> {
+  return {
+    packageJson,
+    axios
+  }
+}
+
 export function createLocalsProxy (ctx: MainContext): [Locals, LocalsSetter] {
-  const locals: Partial<Locals> = { packageJson }
+  const locals = baseLocals()
   const localsProxy = new Proxy(locals, {
     get (target, p: LocalsKey, receiver) {
       const value = target[p]

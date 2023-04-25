@@ -1,5 +1,3 @@
-import { get, RequestOptions } from 'https'
-
 import {
   handlePromise,
   InvalidSettingsError,
@@ -57,7 +55,7 @@ export class VersionManager {
   }
 
   async verifyLatestVersion (): Promise<void> {
-    const lastestVersionInfoUrl = 'https://api.github.com/repos/i3-Market-V2-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/releases/latest'
+    const lastestVersionInfoUrl = 'https://api.github.com/repos/i3-Market-V3-Public-Repository/SP3-SCGBSSW-I3mWalletMonorepo/releases/latest'
     let firstTry = true
     let onlineVersion: string = ''
     while (onlineVersion === '') {
@@ -97,51 +95,22 @@ export class VersionManager {
   }
 
   async getRemoteJson (url: string): Promise<any> {
-    return await new Promise((resolve, reject) => {
-      const urlObject = new URL(url)
-      const opts: RequestOptions = {
-        host: urlObject.host,
-        port: urlObject.port,
-        protocol: urlObject.protocol,
-        path: urlObject.pathname,
-        headers: { 'User-Agent': 'I3M-Wallet-App' }
-      }
-      get(opts, (res) => {
-        const statusCode = res.statusCode ?? 0
-        const contentType = res.headers['content-type'] ?? ''
+    // TODO: If the maximum requests is exeded, we cannot get the latest version...
+    const res = await this.locals.axios.get(url)
+    const statusCode = res.status
+    const contentType = res.headers['content-type']?.toString() ?? ''
 
-        let error
-        // Any 2xx status code signals a successful response but
-        // here we're only checking for 200.
-        if (statusCode < 200 || statusCode >= 300) {
-          error = new Error('Request Failed.\n' +
-                            `Status Code: ${statusCode}`)
-        } else if (!/^application\/json/.test(contentType)) {
-          error = new Error('Invalid content-type.\n' +
-                            `Expected application/json but received ${contentType}`)
-        }
-        if (error != null) {
-          // Consume response data to free up memory
-          res.resume()
-          reject(error)
-          return
-        }
+    // Any 2xx status code signals a successful response but
+    // here we're only checking for 200.
+    if (statusCode < 200 || statusCode >= 300) {
+      throw new Error('Request Failed.\n' +
+                        `Status Code: ${statusCode}`)
+    } else if (!/^application\/json/.test(contentType)) {
+      throw new Error('Invalid content-type.\n' +
+                        `Expected application/json but received ${contentType}`)
+    }
 
-        res.setEncoding('utf8')
-        let rawData = ''
-        res.on('data', (chunk: string) => { rawData += chunk })
-        res.on('end', () => {
-          try {
-            const parsedData = JSON.parse(rawData)
-            resolve(parsedData)
-          } catch (e) {
-            reject(e)
-          }
-        })
-      }).on('error', (e) => {
-        reject(e)
-      })
-    })
+    return res.data
   }
 
   parseVersion (version: string): number[] {
