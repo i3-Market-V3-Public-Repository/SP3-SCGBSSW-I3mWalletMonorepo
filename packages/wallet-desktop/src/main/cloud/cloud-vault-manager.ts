@@ -400,7 +400,7 @@ export class CloudVaultManager extends CloudVaultFlows {
     }
   }
 
-  // Syncronization methods
+  // Synchronization methods
   async uploadVault (force = false): Promise<void> {
     if (this.isDisconnected) {
       return

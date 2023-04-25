@@ -269,6 +269,7 @@ declare class BaseWallet<Options extends WalletOptions<Model>, Model extends Bas
     protected resourceValidator: ResourceValidator;
     protected provider: string;
     protected providersData: Record<string, ProviderData>;
+    protected confirmations: Record<string, boolean>;
     constructor(opts: Options);
     executeTransaction(options?: TransactionOptions): Promise<void>;
     queryBalance(): Promise<void>;

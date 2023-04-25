@@ -63,7 +63,7 @@ export const pinHtmlFormDialog = async (opts: PinHtmlFormDialogOptions = default
   const pairButton = document.createElement('button')
   inputBox.appendChild(pairButton)
   pairButton.className = options.buttonClass
-  pairButton.innerText = 'Syncronize'
+  pairButton.innerText = 'Synchronize'
 
   return await new Promise((resolve, reject) => {
     const close = (value?: string): void => {

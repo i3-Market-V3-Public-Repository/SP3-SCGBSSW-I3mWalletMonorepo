@@ -8,7 +8,7 @@ import * as u8a from 'uint8arrays'
 import { v4 as uuid } from 'uuid'
 import { decodeJWS, jwsSignInput } from '../utils/jws'
 
-import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, Identity, KeyPairResource, Resource, Store, Toast } from '../app'
+import { BaseWalletModel, DataExchangeResource, DescriptorsMap, Dialog, DialogOptionContext, Identity, KeyPairResource, Resource, Store, Toast } from '../app'
 import { WalletError } from '../errors'
 import { KeyWallet } from '../keywallet'
 import { ResourceValidator } from '../resource'
@@ -83,6 +83,7 @@ export class BaseWallet<
   protected resourceValidator: ResourceValidator
   protected provider: string
   protected providersData: Record<string, ProviderData>
+  protected confirmations: Record<string, boolean>
 
   constructor (opts: Options) {
     this.dialog = opts.dialog
@@ -92,6 +93,7 @@ export class BaseWallet<
     this.resourceValidator = new ResourceValidator()
     this.provider = opts.provider ?? DEFAULT_PROVIDER
     this.providersData = opts.providersData ?? DEFAULT_PROVIDERS_DATA
+    this.confirmations = {}
 
     // Init veramo framework
     this.veramo = new Veramo(this.store, this.keyWallet, this.providersData)
@@ -438,14 +440,14 @@ export class BaseWallet<
         let continueSelectiveDisclosure: boolean | undefined
         if (missingEssentials.length > 0) {
           continueSelectiveDisclosure = await this.dialog.confirmation({
-            message: `You skipped the mandatory claims: ${missingEssentials.join(', ')}. <b>The selective disclosure will be canceled</b>. \nContinue?`,
+            message: `You skipped the mandatory claims: ${missingEssentials.join(', ')}. <b>The selective disclosure will be cancelled</b>. \nContinue?`,
             acceptMsg: 'No',
             rejectMsg: 'Yes',
             allowCancel: false
           })
         } else if (credentials.length === 0) {
           continueSelectiveDisclosure = await this.dialog.confirmation({
-            message: 'You did not select any claim.<b>The selective disclosure will be canceled</b>. \nContinue?',
+            message: 'You did not select any claim.<b>The selective disclosure will be cancelled</b>. \nContinue?',
             acceptMsg: 'No',
             rejectMsg: 'Yes',
             allowCancel: false
@@ -513,6 +515,29 @@ export class BaseWallet<
    */
   async identityCreate (requestBody: WalletPaths.IdentityCreate.RequestBody): Promise<WalletPaths.IdentityCreate.Responses.$201> {
     const { alias } = requestBody
+    if (alias !== undefined) {
+      const identities = await this.getIdentities()
+      for (const identity of Object.values(identities)) {
+        if (identity.alias === alias) {
+          this.toast.show({
+            message: 'Alias already exists',
+            details: `An identity with alias ${alias} already exists. If you want to create a new one, please the delete the old one first`,
+            type: 'warning'
+          })
+          return { did: identity.did }
+        }
+      }
+    }
+    
+    const confirmation = await this.dialog.confirmation({
+      message: `Are you sure you want to create an identity${alias !== undefined ? ` with alias '${alias}'` : ''}?`,
+      acceptMsg: 'Yes',
+      rejectMsg: 'No'
+    })
+    if (confirmation !== true) {
+      throw new WalletError('User cancelled the operation', { status: 403 })
+    }
+
     const { did } = await this.veramo.agent.didManagerCreate({
       alias,
       provider: this.provider
@@ -706,6 +731,7 @@ export class BaseWallet<
         filters.push((resource) => resource.parentResource === undefined)
       }
     }
+
     // TODO: Use wallet-protocol token to get the application name
     const consentText = `One application wants to retrieve all your stored resources${extraConsent.length > 0 ? ' with:\n' + extraConsent.join('\n\t') : ''}.\nDo you agree?`
     const confirmation = await this.dialog.confirmation({
@@ -714,7 +740,7 @@ export class BaseWallet<
       rejectMsg: 'No'
     })
     if (confirmation === false) {
-      throw new WalletError('User cannceled the operation', { status: 403 })
+      throw new WalletError('User cancelled the operation', { status: 403 })
     }
 
     const resourcesMap = await this.getResources()
@@ -827,7 +853,7 @@ export class BaseWallet<
           message: `Do you want to add the following verifiable credential: \n${credentialSubject}`
         })
         if (confirmation !== true) {
-          throw new WalletError('User cannceled the operation', { status: 403 })
+          throw new WalletError('User cancelled the operation', { status: 403 })
         }
         break
       }
@@ -836,7 +862,7 @@ export class BaseWallet<
           message: 'Do you want to add an object into your wallet?'
         })
         if (confirmation !== true) {
-          throw new WalletError('User cannceled the operation', { status: 403 })
+          throw new WalletError('User cancelled the operation', { status: 403 })
         }
         break
       }
@@ -845,7 +871,7 @@ export class BaseWallet<
           message: `Do you want to add the following keys to your wallet?\n\t${JSON.stringify(resource.resource.keyPair, undefined, 2)}`
         })
         if (confirmation !== true) {
-          throw new WalletError('User cannceled the operation', { status: 403 })
+          throw new WalletError('User cancelled the operation', { status: 403 })
         }
         break
       }
@@ -855,7 +881,7 @@ export class BaseWallet<
           message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${dataSharingAgreement.parties.consumerDid}`
         })
         if (confirmation !== true) {
-          throw new WalletError('User cannceled the operation', { status: 403 })
+          throw new WalletError('User cancelled the operation', { status: 403 })
         }
 
         const parentId = await digest(keyPair!.publicJwk)
@@ -880,21 +906,37 @@ export class BaseWallet<
       case 'NonRepudiationProof': {
         const decodedProof: NrProofPayload = decodeJWS(resource.resource).payload
 
-        const confirmation = await this.dialog.confirmation({
-          message: `Do you want to add a non repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`
-        })
-        if (confirmation !== true) {
-          throw new WalletError('User cannceled the operation', { status: 403 })
+        const dataExchange = decodedProof.exchange
+        const { id, cipherblockDgst, blockCommitment, secretCommitment, ...dataExchangeAgreement } = dataExchange
+        const parentId = await digest(dataExchangeAgreement)
+
+        const alreadyConfirmed = this.confirmations[parentId]
+
+        if (!alreadyConfirmed) {
+          const yes = { value: 'yes', text: 'Yes', context: 'success' as DialogOptionContext }
+          const no = { value: 'no', text: 'No', context: 'danger' as DialogOptionContext }
+          const yesToAll = { value: 'yesToAll', text: 'Yes to all for this data sharing agreement', context: 'success' as DialogOptionContext }
+          const confirmation = await this.dialog.select({
+            message: `Do you want to add a non repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`,
+            values: [yes, yesToAll, no],
+            getText: (option) => option.text,
+            getContext: (option) => option.context
+          })
+
+          if (confirmation === undefined || confirmation.value === 'no') {
+            throw new WalletError('User cancelled the operation', { status: 403 })
+          }
+
+          if (confirmation.value === 'yesToAll') {
+            this.confirmations[parentId] = true
+          }
         }
 
         // If the data exchange has not been yet created, add it to the resources
         if (!await this.store.has(`resources.${resource.parentResource as string}`)) {
-          const dataExchange = decodedProof.exchange
-          const { id, cipherblockDgst, blockCommitment, secretCommitment, ...dataExchangeAgreement } = dataExchange
-
           const dataExchangeResource: DataExchangeResource = {
             id,
-            parentResource: await digest(dataExchangeAgreement),
+            parentResource: parentId,
             type: 'DataExchange',
             resource: dataExchange
           }
