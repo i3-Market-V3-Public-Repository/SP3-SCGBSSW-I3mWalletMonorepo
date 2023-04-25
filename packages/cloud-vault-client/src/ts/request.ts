@@ -10,8 +10,8 @@ export interface RetryOptions {
 interface CallOptions<T = unknown> {
   bearerToken?: string
   responseStatus?: number
-  sequentialPost?: boolean // post/put to the same url will be handled sequentially
-  beforeUploadFinish?: (data: T) => Promise<void>
+  sequential?: boolean // request will be performed sequentially
+  beforeRequestFinish?: (data: T) => Promise<void>
 }
 
 export class Request {
@@ -45,7 +45,9 @@ export class Request {
           return retryOptions.retryDelay
         },
         retryCondition: (err) => {
-          return !this._stop && isNetworkOrIdempotentRequestError(err)
+          const cond1 = isNetworkOrIdempotentRequestError(err)
+          const cond2 = !this._stop
+          return cond2 && cond1
         }
       })
     }
@@ -93,7 +95,7 @@ export class Request {
       })
     }
 
-    if ((method === 'post' || method === 'put') && options?.sequentialPost === true) {
+    if (options?.sequential === true) {
       await this.waitForOngoingRequestsToFinsh(url).catch()
     }
     this.ongoingRequests[url] = []
@@ -118,9 +120,9 @@ export class Request {
       throw VaultError.from(err)
     })
 
-    const beforeUploadFinish = options?.beforeUploadFinish
-    if (beforeUploadFinish !== undefined) {
-      await beforeUploadFinish(res.data)
+    const beforeRequestFinishes = options?.beforeRequestFinish
+    if (beforeRequestFinishes !== undefined) {
+      await beforeRequestFinishes(res.data)
     }
 
     if (index === this.ongoingRequests[url].length - 1) {

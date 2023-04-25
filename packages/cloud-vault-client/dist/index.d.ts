@@ -43,8 +43,8 @@ interface RetryOptions {
 interface CallOptions<T = unknown> {
     bearerToken?: string;
     responseStatus?: number;
-    sequentialPost?: boolean;
-    beforeUploadFinish?: (data: T) => Promise<void>;
+    sequential?: boolean;
+    beforeRequestFinish?: (data: T) => Promise<void>;
 }
 declare class Request {
     axios: AxiosInstance;

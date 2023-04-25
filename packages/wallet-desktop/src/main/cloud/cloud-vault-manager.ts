@@ -262,7 +262,7 @@ export class CloudVaultManager extends CloudVaultFlows {
 
     const url = await this.getCloudVaultUrl()
     this.resetClient(url)
-    await this.client.initialized
+    // await this.client.initialized
 
     let credentials = cloud?.credentials
     if (credentials === undefined) {
@@ -316,7 +316,7 @@ export class CloudVaultManager extends CloudVaultFlows {
     try {
       const url = await this.getCloudVaultUrl()
       this.resetClient(url)
-      await this.client.initialized
+      // await this.client.initialized
 
       let credentials = cloud?.credentials
       if (credentials === undefined) {

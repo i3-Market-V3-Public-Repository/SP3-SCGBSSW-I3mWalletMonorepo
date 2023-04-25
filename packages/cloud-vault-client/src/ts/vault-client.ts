@@ -67,7 +67,8 @@ export class VaultClient extends EventEmitter {
       this._initialized.then(() => {
         resolve()
       }).catch(() => {
-        this._initialized = this.init().then(() => {
+        this._initialized = this.init()
+        this._initialized.then(() => {
           resolve()
         }).catch((reason) => {
           reject(reason)
@@ -210,7 +211,7 @@ export class VaultClient extends EventEmitter {
     this.logout()
     this.vaultRequest?.stop().catch(() => {})
     this.wellKnownCvsConfigurationPromise?.stop()
-    this.wellKnownCvsConfigurationPromise?.promise.catch(() => {})
+    // this.wellKnownCvsConfigurationPromise?.promise.catch(() => {})
     this.state = VAULT_STATE.NOT_INITIALIZED
   }
 
@@ -240,7 +241,7 @@ export class VaultClient extends EventEmitter {
       retryOptions: this.opts?.defaultRetryOptions,
       defaultCallOptions: {
         bearerToken: this.token,
-        sequentialPost: true
+        sequential: true
       },
       defaultUrl: cvsConf.vault_configuration.v2.vault_endpoint
     })
@@ -351,7 +352,7 @@ export class VaultClient extends EventEmitter {
       const data = await vaultRequest.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(requestBody, {
         bearerToken: this.token,
         responseStatus: 201,
-        beforeUploadFinish: async (data) => {
+        beforeRequestFinish: async (data) => {
           this.timestamp = data.timestamp
         }
       })
@@ -409,7 +410,7 @@ export class VaultClient extends EventEmitter {
       serverUrl + '/.well-known/cvs-configuration', { responseStatus: 200 })
 
     return {
-      stop: request.stop,
+      stop: async () => await request.stop(),
       promise
     }
   }
