@@ -1,15 +1,16 @@
 import type { ConnectedEvent, StorageUpdatedEvent } from '@i3m/cloud-vault-server'
 import type { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi'
-import { Request, RetryOptions } from './request'
 import { randomBytes } from 'crypto'
 import { EventEmitter } from 'events'
 import EventSource from 'eventsource'
 import { apiVersion } from './config'
 import { VaultError } from './error'
 import { KeyManager } from './key-manager'
+import { Request, RetryOptions } from './request'
 
 import type { ArgsForEvent, VaultEventName } from './events'
 import { VAULT_STATE, VaultState, stateFromError } from './vault-state'
+import { JWK, jweEncrypt } from '@i3m/non-repudiation-library'
 
 export type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void
 
@@ -33,23 +34,15 @@ export class VaultClient extends EventEmitter {
   timestamp?: number
   token?: string
   name: string
-  opts?: VaultClientOpts
   serverRootUrl: string
   serverPrefix: string
   serverUrl: string
-
-  initialized: Promise<void>
-
-  private wellKnownCvsConfigurationPromise?: {
-    promise: Promise<OpenApiComponents.Schemas.CvsConfiguration>
-    stop: () => void
-  }
 
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
 
   state: Promise<VaultState>
 
-  private vaultRequest?: Request
+  private readonly request: Request
   private keyManager?: KeyManager
 
   private es?: EventSource
@@ -58,30 +51,24 @@ export class VaultClient extends EventEmitter {
     super({ captureRejections: true })
 
     this.name = opts?.name ?? randomBytes(16).toString('hex')
-    this.opts = opts
     const url = new URL(serverUrl)
     this.serverRootUrl = url.origin
     this.serverPrefix = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname
     this.serverUrl = this.serverRootUrl + this.serverPrefix
 
-    this.state = new Promise((resolve, reject) => {
-      resolve(VAULT_STATE.NOT_INITIALIZED)
+    this.request = new Request({
+      retryOptions: {
+        retries: 1200 * 24, // will retry for 24 hours
+        retryDelay: 3000,
+        ...opts?.defaultRetryOptions
+      },
+      defaultCallOptions: {
+        sequential: true
+      }
     })
 
-    this.initialized = new Promise((resolve, reject) => {
-      this.state.then((state) => {
-        this.switchToState(VAULT_STATE.INITIALIZED).then(() => {
-          resolve()
-        })
-          .catch((err) => {
-            reject(err)
-            this.state = new Promise((resolve, reject) => {
-              resolve(VAULT_STATE.NOT_INITIALIZED)
-            })
-          })
-      }).catch(error => {
-        reject(error)
-      })
+    this.state = new Promise((resolve, reject) => {
+      resolve(VAULT_STATE.NOT_INITIALIZED)
     })
   }
 
@@ -102,41 +89,39 @@ export class VaultClient extends EventEmitter {
 
   protected async switchToState (newState: VaultState, opts?: LoginOptions): Promise<VaultState> {
     let currentState = await this.state
-    if (currentState === newState) return currentState
+    if (currentState === newState) {
+      return currentState
+    }
 
     if (newState < VAULT_STATE.NOT_INITIALIZED || newState > VAULT_STATE.CONNECTED) {
-      throw new Error('invalid state')
+      throw new VaultError('error', new Error('invalid state'))
     }
 
-    while (newState - currentState > 1) {
-      currentState = await this.switchToState(currentState + 1 as VaultState, opts)
-    }
-    while (currentState - newState > 1) {
-      currentState = await this.switchToState(currentState - 1 as VaultState, opts)
-    }
-
-    this.state = new Promise((resolve, reject) => {
-      this._switchToState(currentState, newState, opts).then((state) => {
-        resolve(state)
-        this.emit('state-changed', state)
-      }).catch(err => {
-        console.log(err)
-        resolve(currentState)
+    const i = (newState > currentState) ? 1 : -1
+    while (currentState !== newState) {
+      let error
+      this.state = new Promise((resolve, reject) => {
+        this._switchToState(currentState, currentState + i as VaultState, opts).then((state) => {
+          resolve(state)
+          this.emit('state-changed', state)
+        }).catch((err) => {
+          error = err
+          resolve(currentState)
+        })
       })
-    })
-
-    return await this.state
+      currentState = await this.state
+      if (error !== undefined) {
+        throw VaultError.from(error)
+      }
+    }
+    return currentState
   }
 
   private async _switchToState (currentState: VaultState, newState: VaultState, opts?: LoginOptions): Promise<VaultState> {
     switch (newState) {
       case VAULT_STATE.NOT_INITIALIZED:
         // Only option is to come from INITIALIZED
-        this.wellKnownCvsConfigurationPromise?.stop()
-        await this.wellKnownCvsConfigurationPromise?.promise.catch()
-        delete this.wellKnownCvsConfigurationPromise
         delete this.wellKnownCvsConfiguration
-
         this.state = new Promise((resolve, reject) => {
           resolve(VAULT_STATE.NOT_INITIALIZED)
         })
@@ -144,17 +129,11 @@ export class VaultClient extends EventEmitter {
 
       case VAULT_STATE.INITIALIZED:
         if (currentState === VAULT_STATE.NOT_INITIALIZED) {
-          this.wellKnownCvsConfigurationPromise = VaultClient.getWellKnownCvsConfiguration(this.serverRootUrl + this.serverPrefix, {
-            retries: 1200 * 24, // will retry for 24 hours
-            retryDelay: 3000
-          })
-
-          this.wellKnownCvsConfiguration = await this.wellKnownCvsConfigurationPromise.promise.catch(err => {
+          this.wellKnownCvsConfiguration = await this.request.get<OpenApiComponents.Schemas.CvsConfiguration>(this.serverRootUrl + this.serverPrefix + '/.well-known/cvs-configuration', { responseStatus: 200 }).catch(err => {
             throw new VaultError('not-initialized', err)
           })
         } else { // this.state === VAULT_STATE.LOGGED_IN
-          await this.vaultRequest?.stop()
-          delete this.vaultRequest
+          await this.request?.stop()
 
           delete this.token
           delete this.timestamp
@@ -178,10 +157,9 @@ export class VaultClient extends EventEmitter {
             authkey: (this.keyManager as KeyManager).authKey
           }
 
-          const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
           const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
-          const data = await request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
+          const data = await this.request.post<OpenApiPaths.ApiV2VaultToken.Post.Responses.$200>(
             cvsConf.vault_configuration.v2.token_endpoint,
             reqBody,
             { responseStatus: 200 }
@@ -189,14 +167,7 @@ export class VaultClient extends EventEmitter {
 
           this.token = data.token
 
-          this.vaultRequest = new Request({
-            retryOptions: this.opts?.defaultRetryOptions,
-            defaultCallOptions: {
-              bearerToken: this.token,
-              sequential: true
-            },
-            defaultUrl: cvsConf.vault_configuration.v2.vault_endpoint
-          })
+          this.request.defaultUrl = cvsConf.vault_configuration.v2.vault_endpoint
 
           this.timestamp = opts.timestamp
         } else { // this.state === VAULT_STATE.CONNECTED
@@ -239,7 +210,7 @@ export class VaultClient extends EventEmitter {
         })
 
         this.es.addEventListener('storage-updated', (e) => {
-          const vaultRequest = this.vaultRequest as Request
+          const vaultRequest = this.request
           vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
             const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
             if (msg.timestamp !== this.timestamp) {
@@ -250,7 +221,7 @@ export class VaultClient extends EventEmitter {
         })
 
         this.es.addEventListener('storage-deleted', (e) => {
-          const vaultRequest = this.vaultRequest as Request
+          const vaultRequest = this.request
           vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
             this.logout().catch(err => { throw err })
             this.emit('storage-deleted')
@@ -279,8 +250,17 @@ export class VaultClient extends EventEmitter {
     await this.keyManager.initialized
   }
 
+  async init (): Promise<void> {
+    if (await this.state > VAULT_STATE.INITIALIZED) {
+      throw new VaultError('unknown', 'to init the client, it should NOT be INITIALIZED')
+    }
+    await this.switchToState(VAULT_STATE.INITIALIZED)
+  }
+
   async login (username: string, password: string, timestamp?: number): Promise<void> {
-    await this.initialized
+    if (await this.state !== VAULT_STATE.INITIALIZED) {
+      throw new VaultError('unknown', 'in order to login you should be in state INITIALIZED')
+    }
     await this.switchToState(VAULT_STATE.CONNECTED, {
       username,
       password,
@@ -289,6 +269,9 @@ export class VaultClient extends EventEmitter {
   }
 
   async logout (): Promise<void> {
+    if (await this.state < VAULT_STATE.LOGGED_IN) {
+      throw new VaultError('unknown', 'in order to log out you should be in state LOGGED IN or CONNECTED')
+    }
     await this.switchToState(VAULT_STATE.INITIALIZED)
   }
 
@@ -297,19 +280,17 @@ export class VaultClient extends EventEmitter {
   }
 
   async getRemoteStorageTimestamp (): Promise<number | null> {
-    if (await this.state !== VAULT_STATE.LOGGED_IN) {
-      throw new VaultError('unauthorized', new Error('you must be logged in'))
+    if (await this.state < VAULT_STATE.LOGGED_IN) {
+      throw new VaultError('unauthorized', 'you must be logged in')
     }
 
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
     try {
-      await (this.vaultRequest as Request).waitForOngoingRequestsToFinsh()
-      const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
-      const data = await request.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
+      const data = await this.request.get<OpenApiPaths.ApiV2VaultTimestamp.Get.Responses.$200>(
         cvsConf.vault_configuration[apiVersion].timestamp_endpoint,
         {
-          bearerToken: this.token,
-          responseStatus: 200
+          responseStatus: 200,
+          bearerToken: this.token
         }
       )
 
@@ -332,14 +313,10 @@ export class VaultClient extends EventEmitter {
     this.emit('sync-start', startTs)
 
     try {
-      const vaultRequest = this.vaultRequest as Request
-
-      await vaultRequest.waitForOngoingRequestsToFinsh()
-
-      const data = await vaultRequest.get<OpenApiPaths.ApiV2Vault.Get.Responses.$200>(
+      const data = await this.request.get<OpenApiPaths.ApiV2Vault.Get.Responses.$200>(
         {
-          bearerToken: this.token,
-          responseStatus: 200
+          responseStatus: 200,
+          bearerToken: this.token
         }
       )
 
@@ -359,12 +336,13 @@ export class VaultClient extends EventEmitter {
       }
     } catch (error) {
       this.emit('sync-stop', startTs, Date.now())
-      await this.switchToState(stateFromError(await this.state, error))
+      const newState = stateFromError(await this.state, error)
+      await this.switchToState(newState)
       throw VaultError.from(error)
     }
   }
 
-  async updateStorage (storage: VaultStorage, force: boolean = false, retryOptions?: RetryOptions): Promise<number> {
+  async updateStorage (storage: VaultStorage, force: boolean = false): Promise<number> {
     if (await this.state < VAULT_STATE.LOGGED_IN) {
       throw new VaultError('unauthorized', undefined)
     }
@@ -392,10 +370,9 @@ export class VaultClient extends EventEmitter {
         timestamp: storage.timestamp
       }
 
-      const vaultRequest = this.vaultRequest as Request
-      const data = await vaultRequest.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(requestBody, {
-        bearerToken: this.token,
+      const data = await this.request.post<OpenApiPaths.ApiV2Vault.Post.Responses.$201>(requestBody, {
         responseStatus: 201,
+        bearerToken: this.token,
         beforeRequestFinish: async (data) => {
           this.timestamp = data.timestamp
         }
@@ -417,9 +394,8 @@ export class VaultClient extends EventEmitter {
     }
 
     try {
-      const vaultRequest = this.vaultRequest as Request
-      await vaultRequest.stop()
-      await vaultRequest.delete<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
+      await this.request.stop()
+      await this.request.delete<OpenApiPaths.ApiV2Vault.Delete.Responses.$204>(
         {
           bearerToken: this.token,
           responseStatus: 204
@@ -434,41 +410,35 @@ export class VaultClient extends EventEmitter {
     }
   }
 
-  async getServerPublicKey (): Promise<OpenApiComponents.Schemas.JwkEcPublicKey> {
-    await this.initialized.catch(err => {
-      throw new VaultError('unknown', err)
-    })
-    const currentState = await this.state
-    if (currentState === VAULT_STATE.NOT_INITIALIZED) {
-      throw new VaultError('not-initialized', undefined)
-    }
+  async getRegistrationUrl (username: string, password: string, did: string): Promise<string> {
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-    const request = new Request({ retryOptions: this.opts?.defaultRetryOptions })
-    const data = await request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
+    const responseData = await this.request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
       cvsConf.registration_configuration.public_jwk_endpoint,
       { responseStatus: 200 }
     )
-    return data.jwk
-  }
+    const publicJwk = responseData.jwk
 
-  static getWellKnownCvsConfiguration (serverUrl: string, opts?: RetryOptions): {
-    stop: () => Promise<void>
-    promise: Promise<OpenApiPaths.WellKnownCvsConfiguration.Get.Responses.$200>
-  } {
-    const request = new Request({ retryOptions: opts })
-    const promise = request.get<OpenApiPaths.WellKnownCvsConfiguration.Get.Responses.$200>(
-      serverUrl + '/.well-known/cvs-configuration', { responseStatus: 200 })
-
-    return {
-      stop: async () => await request.stop(),
-      promise
+    const userData = {
+      did,
+      username,
+      authkey: await this.computeAuthKey(username, password)
     }
+
+    const regData = await jweEncrypt(
+      Buffer.from(JSON.stringify(userData)),
+      publicJwk as JWK,
+      'A256GCM'
+    )
+
+    return cvsConf.registration_configuration.registration_endpoint.replace('{data}', regData)
   }
 
-  static async computeAuthKey (serverUrl: string, username: string, password: string, retryOptions?: RetryOptions): Promise<string> {
-    const cvsConf = VaultClient.getWellKnownCvsConfiguration(serverUrl, retryOptions)
-    const opts = await cvsConf.promise
-    const keyManager = new KeyManager(username, password, opts.vault_configuration[apiVersion].key_derivation)
+  private async computeAuthKey (username: string, password: string): Promise<string> {
+    if (await this.state < VAULT_STATE.INITIALIZED) {
+      throw new VaultError('not-initialized', undefined)
+    }
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const keyManager = new KeyManager(username, password, cvsConf.vault_configuration[apiVersion].key_derivation)
     await keyManager.initialized
     return keyManager.authKey
   }

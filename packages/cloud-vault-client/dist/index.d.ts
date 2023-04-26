@@ -1,8 +1,8 @@
 /// <reference types="node" />
-import { OpenApiComponents, OpenApiPaths } from '@i3m/cloud-vault-server/types/openapi';
+import { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi';
 import { KeyObject } from 'crypto';
-import { AxiosInstance, AxiosResponse } from 'axios';
 import { EventEmitter } from 'events';
+import { AxiosResponse } from 'axios';
 
 declare class SecretKey {
     private readonly key;
@@ -47,9 +47,9 @@ interface CallOptions<T = unknown> {
     beforeRequestFinish?: (data: T) => Promise<void>;
 }
 declare class Request {
-    axios: AxiosInstance;
-    defaultCallOptions?: CallOptions;
-    defaultUrl?: string;
+    private readonly axios;
+    _defaultCallOptions: CallOptions;
+    _defaultUrl?: string;
     private _stop;
     ongoingRequests: {
         [url: string]: Array<Promise<AxiosResponse>>;
@@ -59,6 +59,10 @@ declare class Request {
         defaultCallOptions?: CallOptions;
         defaultUrl?: string;
     });
+    get defaultUrl(): string | undefined;
+    set defaultUrl(url: string | undefined);
+    get defaultCallOptions(): CallOptions;
+    set defaultCallOptions(opts: CallOptions);
     private getAxiosInstance;
     waitForOngoingRequestsToFinsh(url?: string): Promise<void>;
     stop(): Promise<void>;
@@ -119,15 +123,12 @@ declare class VaultClient extends EventEmitter {
     timestamp?: number;
     token?: string;
     name: string;
-    opts?: VaultClientOpts;
     serverRootUrl: string;
     serverPrefix: string;
     serverUrl: string;
-    initialized: Promise<void>;
-    private wellKnownCvsConfigurationPromise?;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
     state: Promise<VaultState>;
-    private vaultRequest?;
+    private readonly request;
     private keyManager?;
     private es?;
     constructor(serverUrl: string, opts?: VaultClientOpts);
@@ -138,19 +139,16 @@ declare class VaultClient extends EventEmitter {
     private _switchToState;
     private _initEventSourceClient;
     private _initKeyManager;
+    init(): Promise<void>;
     login(username: string, password: string, timestamp?: number): Promise<void>;
     logout(): Promise<void>;
     close(): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
-    updateStorage(storage: VaultStorage, force?: boolean, retryOptions?: RetryOptions): Promise<number>;
+    updateStorage(storage: VaultStorage, force?: boolean): Promise<number>;
     deleteStorage(): Promise<void>;
-    getServerPublicKey(): Promise<OpenApiComponents.Schemas.JwkEcPublicKey>;
-    static getWellKnownCvsConfiguration(serverUrl: string, opts?: RetryOptions): {
-        stop: () => Promise<void>;
-        promise: Promise<OpenApiPaths.WellKnownCvsConfiguration.Get.Responses.$200>;
-    };
-    static computeAuthKey(serverUrl: string, username: string, password: string, retryOptions?: RetryOptions): Promise<string>;
+    getRegistrationUrl(username: string, password: string, did: string): Promise<string>;
+    private computeAuthKey;
 }
 
 type VaultErrorData = {

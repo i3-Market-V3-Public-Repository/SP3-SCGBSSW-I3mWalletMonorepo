@@ -46,7 +46,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b55ce2a/packages/wallet-protocol-api/src/ts/error.ts#L3)
+[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/wallet-protocol-api/src/ts/error.ts#L3)
 
 ## Properties
 
@@ -56,7 +56,7 @@ Error.constructor
 
 #### Defined in
 
-[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b55ce2a/packages/wallet-protocol-api/src/ts/error.ts#L3)
+[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/wallet-protocol-api/src/ts/error.ts#L3)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b55ce2a/packages/wallet-protocol-api/src/ts/error.ts#L3)
+[src/ts/error.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/wallet-protocol-api/src/ts/error.ts#L3)
 
 ___
 

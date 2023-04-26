@@ -72,21 +72,21 @@ export class CloudVaultManager extends CloudVaultFlows {
     })
   }
 
-  protected resetClient (url: string, force = false): void {
+  protected async resetClient (url: string, force = false): Promise<void> {
     const newUrl = CloudVaultManager.buildCloudUrl(url)
     if (this.client.serverUrl !== newUrl || force) {
       const client = this.buildClient(newUrl)
 
       if (this.client !== undefined) {
-        this.client.close()
+        await this.client.close()
       }
       this.client = client
       this.bindClientEvents()
     }
   }
 
-  public restartClient (): void {
-    this.resetClient(this.client.serverUrl, true)
+  public async restartClient (): Promise<void> {
+    await this.resetClient(this.client.serverUrl, true)
   }
 
   protected buildClient (url: string): VaultClient {
@@ -261,7 +261,7 @@ export class CloudVaultManager extends CloudVaultFlows {
     const { sharedMemoryManager } = this.locals
 
     const url = await this.getCloudVaultUrl()
-    this.resetClient(url)
+    await this.resetClient(url)
     // await this.client.initialized
 
     let credentials = cloud?.credentials
@@ -315,7 +315,7 @@ export class CloudVaultManager extends CloudVaultFlows {
 
     try {
       const url = await this.getCloudVaultUrl()
-      this.resetClient(url)
+      await this.resetClient(url)
       // await this.client.initialized
 
       let credentials = cloud?.credentials
@@ -357,7 +357,7 @@ export class CloudVaultManager extends CloudVaultFlows {
 
   async stop (): Promise<void> {
     await this.logout()
-    this.client.close()
+    await this.client.close()
   }
 
   async register (): Promise<void> {
@@ -371,7 +371,7 @@ export class CloudVaultManager extends CloudVaultFlows {
   async logout (): Promise<void> {
     // We modify the state before the logout to remove the disconnected toast!
     await this.locals.storeManager.onStopCloudService()
-    this.client.logout()
+    await this.client.logout()
   }
 
   async login (cloud?: CloudVaultPrivateSettings): Promise<void> {
