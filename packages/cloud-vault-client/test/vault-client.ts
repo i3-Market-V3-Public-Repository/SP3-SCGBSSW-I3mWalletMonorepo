@@ -168,27 +168,30 @@ describe('Wallet Cloud-Vault', function () {
   })
 
   after('Close clients', function (done) {
-    client1.close()
-    client2.close()
-
-    if (localTesting) {
-      const server: Server | undefined = this.server
-      if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
-        server.server.closeAllConnections()
-        server.server.close((err) => {
-          done(err)
-        })
-      } else {
-        done()
-      }
-      stopLocalDb().then(() => {
-        done()
-      }).catch((err) => {
-        done(err)
-      })
-    } else {
-      done()
-    }
+    client1.close().then(() => {
+      client2.close().then(() => {
+        if (localTesting) {
+          const server: Server | undefined = this.server
+          if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
+            server.server.closeAllConnections()
+            server.server.close((err) => {
+              done(err)
+            })
+          } else {
+            done()
+          }
+          stopLocalDb().then(() => {
+            done()
+          }).catch((err) => {
+            done(err)
+          })
+        } else {
+          done()
+        }
+      }).catch(err2 => done(err2))
+        .finally(() => done())
+    }).catch(err1 => done(err1))
+      .finally(() => done())
   })
 
   it('it should register the test user', async function () {

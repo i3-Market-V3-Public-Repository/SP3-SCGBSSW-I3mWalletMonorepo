@@ -110,6 +110,11 @@ interface VaultClientOpts {
     name?: string;
     defaultRetryOptions?: RetryOptions;
 }
+interface LoginOptions {
+    username: string;
+    password: string;
+    timestamp?: number;
+}
 declare class VaultClient extends EventEmitter {
     timestamp?: number;
     token?: string;
@@ -118,26 +123,24 @@ declare class VaultClient extends EventEmitter {
     serverRootUrl: string;
     serverPrefix: string;
     serverUrl: string;
+    initialized: Promise<void>;
     private wellKnownCvsConfigurationPromise?;
     wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration;
-    private _state;
-    private _initialized;
+    state: Promise<VaultState>;
     private vaultRequest?;
     private keyManager?;
     private es?;
     constructor(serverUrl: string, opts?: VaultClientOpts);
-    get initialized(): Promise<void>;
-    get state(): typeof this$1._state;
-    set state(newState: typeof this$1._state);
     emit<T extends VaultEventName>(eventName: T, ...args: ArgsForEvent<T>): boolean;
     on<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
     once<T extends VaultEventName>(event: T, cb: CbOnEventFn<T>): this;
-    private init;
-    private initEventSourceClient;
-    private initKeyManager;
-    logout(): void;
-    close(): void;
+    protected switchToState(newState: VaultState, opts?: LoginOptions): Promise<VaultState>;
+    private _switchToState;
+    private _initEventSourceClient;
+    private _initKeyManager;
     login(username: string, password: string, timestamp?: number): Promise<void>;
+    logout(): Promise<void>;
+    close(): Promise<void>;
     getRemoteStorageTimestamp(): Promise<number | null>;
     getStorage(): Promise<VaultStorage>;
     updateStorage(storage: VaultStorage, force?: boolean, retryOptions?: RetryOptions): Promise<number>;
