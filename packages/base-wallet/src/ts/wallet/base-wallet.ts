@@ -528,7 +528,7 @@ export class BaseWallet<
         }
       }
     }
-    
+
     const confirmation = await this.dialog.confirmation({
       message: `Are you sure you want to create an identity${alias !== undefined ? ` with alias '${alias}'` : ''}?`,
       acceptMsg: 'Yes',
