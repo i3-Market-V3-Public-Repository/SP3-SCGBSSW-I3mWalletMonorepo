@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1f1f2a1/packages/bok-wallet/src/ts/types.ts#L6)
+[bok-wallet/src/ts/types.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/bok-wallet/src/ts/types.ts#L6)
 
 ___
 
@@ -27,7 +27,7 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1f1f2a1/packages/bok-wallet/src/ts/types.ts#L9)
+[bok-wallet/src/ts/types.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/bok-wallet/src/ts/types.ts#L9)
 
 ___
 
@@ -37,7 +37,7 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1f1f2a1/packages/bok-wallet/src/ts/types.ts#L8)
+[bok-wallet/src/ts/types.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/bok-wallet/src/ts/types.ts#L8)
 
 ___
 
@@ -47,4 +47,4 @@ ___
 
 #### Defined in
 
-[bok-wallet/src/ts/types.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/1f1f2a1/packages/bok-wallet/src/ts/types.ts#L7)
+[bok-wallet/src/ts/types.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/bok-wallet/src/ts/types.ts#L7)

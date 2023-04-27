@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-desktop-openapi",
-  "version": "2.5.10",
+  "version": "2.5.11",
   "description": "i3M-Wallet Developers API that can be used to interact with the i3M-Wallet. In production it is encapsulated inside a secure connection. Please use the @i3m/wallet-protocol-api to interact with the wallet.",
   "main": "openapi.json",
   "exports": {

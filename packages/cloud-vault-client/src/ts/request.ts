@@ -15,9 +15,9 @@ interface CallOptions<T = unknown> {
 }
 
 export class Request {
-  axios: AxiosInstance
-  defaultCallOptions?: CallOptions
-  defaultUrl?: string
+  private readonly axios: AxiosInstance
+  _defaultCallOptions: CallOptions
+  _defaultUrl?: string
   private _stop: boolean
   ongoingRequests: {
     [url: string]: Array<Promise<AxiosResponse>>
@@ -30,9 +30,28 @@ export class Request {
   }) {
     this._stop = false
     this.axios = this.getAxiosInstance(opts?.retryOptions)
-    this.defaultCallOptions = opts?.defaultCallOptions
-    this.defaultUrl = opts?.defaultUrl
+    this._defaultCallOptions = opts?.defaultCallOptions ?? {}
+    this._defaultUrl = opts?.defaultUrl
     this.ongoingRequests = {}
+  }
+
+  get defaultUrl (): string | undefined {
+    return this.defaultUrl
+  }
+
+  set defaultUrl (url: string | undefined) {
+    this._defaultUrl = url
+  }
+
+  get defaultCallOptions (): CallOptions {
+    return this._defaultCallOptions
+  }
+
+  set defaultCallOptions (opts: CallOptions) {
+    this._defaultCallOptions = {
+      ...this._defaultCallOptions,
+      ...opts
+    }
   }
 
   private getAxiosInstance (retryOptions?: RetryOptions): AxiosInstance {
@@ -56,7 +75,7 @@ export class Request {
   }
 
   async waitForOngoingRequestsToFinsh (url?: string): Promise<void> {
-    const url2 = (url !== undefined) ? url : this.defaultUrl
+    const url2 = (url !== undefined) ? url : this._defaultUrl
     if (url2 === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url oof the uploads you want to wait to finish' })
     }
@@ -116,27 +135,19 @@ export class Request {
       )
 
     const index = this.ongoingRequests[url].push(requestPromise) - 1
-    const res = await requestPromise.catch((err) => {
-      throw VaultError.from(err)
-    })
+
+    const res = await requestPromise
+      .catch((axiosError) => {
+        delete this.ongoingRequests[url][index] // eslint-disable-line @typescript-eslint/no-dynamic-delete
+        throw VaultError.from(axiosError)
+      })
 
     const beforeRequestFinishes = options?.beforeRequestFinish
     if (beforeRequestFinishes !== undefined) {
       await beforeRequestFinishes(res.data)
     }
 
-    if (index === this.ongoingRequests[url].length - 1) {
-      this.ongoingRequests[url].pop() // eslint-disable-line @typescript-eslint/no-floating-promises
-    } else {
-      let i = index
-      do {
-        delete this.ongoingRequests[url][index] // eslint-disable-line @typescript-eslint/no-dynamic-delete
-        i--
-      } while (this.ongoingRequests[url][i] === undefined)
-    }
-    if (this.ongoingRequests[url].length === 0) {
-      delete this.ongoingRequests[url] // eslint-disable-line @typescript-eslint/no-dynamic-delete
-    }
+    delete this.ongoingRequests[url][index] // eslint-disable-line @typescript-eslint/no-dynamic-delete
 
     if (options?.responseStatus !== undefined && res.status !== options.responseStatus) {
       throw new VaultError('validation', {
@@ -149,7 +160,7 @@ export class Request {
   async delete<T> (url: string, options?: CallOptions<T>): Promise<T>
   async delete<T> (options?: CallOptions<T>): Promise<T>
   async delete<T> (urlOrOptions?: string | CallOptions, opts?: CallOptions<T>): Promise<T> {
-    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
+    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this._defaultUrl
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
     }
@@ -161,7 +172,7 @@ export class Request {
   async get<T> (url: string, options?: CallOptions<T>): Promise<T>
   async get<T> (options?: CallOptions<T>): Promise<T>
   async get<T> (urlOrOptions?: string | CallOptions<T>, opts?: CallOptions<T>): Promise<T> {
-    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this.defaultUrl
+    const url = (typeof urlOrOptions === 'string') ? urlOrOptions : this._defaultUrl
     if (url === undefined) {
       throw new VaultError('error', new Error('no url or defaultUrl provided'), { cause: 'you should create the Request object with a defaultUrl or pass the url to the HTTP method' })
     }
@@ -179,7 +190,7 @@ export class Request {
       requestBody = requestBodyOrOptions
       options = opts
     } else {
-      url = this.defaultUrl
+      url = this._defaultUrl
       requestBody = urlOrRequestBody
       options = requestBodyOrOptions
     }
@@ -198,7 +209,7 @@ export class Request {
       requestBody = requestBodyOrOptions
       options = opts
     } else {
-      url = this.defaultUrl
+      url = this._defaultUrl
       requestBody = urlOrRequestBody
       options = requestBodyOrOptions
     }

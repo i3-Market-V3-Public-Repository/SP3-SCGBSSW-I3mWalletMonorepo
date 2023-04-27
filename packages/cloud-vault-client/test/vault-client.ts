@@ -2,7 +2,6 @@
 import { VaultClient, VaultError } from '#pkg'
 import { Server } from '@i3m/cloud-vault-server'
 import type { OpenApiComponents } from '@i3m/cloud-vault-server/types/openapi'
-import { importJwk, jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 import { expect } from 'chai'
 import { spawn } from 'child_process'
 import { randomBytes } from 'crypto'
@@ -43,8 +42,6 @@ const user = {
   username,
   password
 }
-
-const apiVersion: string = 'v' + (process.env.npm_package_version?.split('.')[0] ?? '2')
 
 async function runCommand (cmd: string, args: string[]): Promise<{ code: number | null, stdout: string, stderr: string }> {
   const command = spawn(cmd, args, {
@@ -100,7 +97,6 @@ describe('Wallet Cloud-Vault', function () {
   this.timeout(60000) // ms
   let client1: VaultClient
   let client2: VaultClient
-  let publicJwk: OpenApiComponents.Schemas.JwkEcPublicKey
 
   before('should connect two clients to the Cloud Vault Server and get the server\'s public key', async function () {
     if (localTesting) {
@@ -132,6 +128,9 @@ describe('Wallet Cloud-Vault', function () {
       }
     })
 
+    await client1.init()
+    await client2.init()
+
     function getTime (timestamp: number): string {
       const date = new Date(timestamp)
       return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
@@ -155,55 +154,37 @@ describe('Wallet Cloud-Vault', function () {
     client2.on('sync-stop', (startTs, stopTs) => {
       console.log(client2.name, '-> sync stopped: ', getTime(startTs), getTime(stopTs))
     })
-
-    const resPublicJwk = await client1.getServerPublicKey()
-    chai.expect(publicJwk).to.not.be.null
-    if (resPublicJwk !== null) publicJwk = resPublicJwk
-    try {
-      await importJwk(publicJwk as JWK)
-      chai.expect(true)
-    } catch (error) {
-      this.skip()
-    }
   })
 
   after('Close clients', function (done) {
-    client1.close()
-    client2.close()
-
-    if (localTesting) {
-      const server: Server | undefined = this.server
-      if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
-        server.server.closeAllConnections()
-        server.server.close((err) => {
-          done(err)
-        })
-      } else {
-        done()
-      }
-      stopLocalDb().then(() => {
-        done()
-      }).catch((err) => {
-        done(err)
-      })
-    } else {
-      done()
-    }
+    client1.close().then(() => {
+      client2.close().then(() => {
+        if (localTesting) {
+          const server: Server | undefined = this.server
+          if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
+            server.server.closeAllConnections()
+            server.server.close((err) => {
+              stopLocalDb().then(() => {
+                done()
+              }).catch((err) => {
+                done(err)
+              })
+            })
+          } else {
+            done()
+          }
+        } else {
+          done()
+        }
+      }).catch(err2 => done(err2))
+    }).catch(err1 => done(err1))
   })
 
   it('it should register the test user', async function () {
     try {
-      const userData = {
-        did: user.did,
-        username: user.username,
-        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
-      }
-      const data = await jweEncrypt(
-        Buffer.from(JSON.stringify(userData)),
-        publicJwk as JWK,
-        'A256GCM'
-      )
-      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registrationUrl = await client1.getRegistrationUrl(user.username, user.password, user.did)
+      console.log(`Click on the following link to register user:\n${registrationUrl}`)
+
       const registration = prompt('Have you been able to register the user? [Yn]', { value: 'y' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
@@ -219,17 +200,9 @@ describe('Wallet Cloud-Vault', function () {
 
   it('it should fail registering the same user again', async function () {
     try {
-      const userData = {
-        did: user.did,
-        username: user.username,
-        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
-      }
-      const data = await jweEncrypt(
-        Buffer.from(JSON.stringify(userData)),
-        publicJwk as JWK,
-        'A256GCM'
-      )
-      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registrationUrl = await client1.getRegistrationUrl(user.username, user.password, user.did)
+      console.log(`Click on the following link to register user:\n${registrationUrl}`)
+
       const registration = prompt('Have you been able to register the user? [yN]', { value: 'N' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
@@ -245,7 +218,8 @@ describe('Wallet Cloud-Vault', function () {
 
   it('it should deregister the test user', async function () {
     try {
-      console.log(`Click on the following link to deregister any account of did '${user.did}':\n${serverUrl}/api/${apiVersion}/registration/deregister`)
+      const cvsConf = client1.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+      console.log(`Click on the following link to deregister any account of did '${user.did}':\n${cvsConf.registration_configuration.deregistration_endpoint}`)
       const registration = prompt('Have you been able to deregister? [Yn]', { value: 'y' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
@@ -261,17 +235,9 @@ describe('Wallet Cloud-Vault', function () {
 
   it('it should register again the test user', async function () {
     try {
-      const userData = {
-        did: user.did,
-        username: user.username,
-        authkey: await VaultClient.computeAuthKey(serverUrl, user.username, user.password)
-      }
-      const data = await jweEncrypt(
-        Buffer.from(JSON.stringify(userData)),
-        publicJwk as JWK,
-        'A256GCM'
-      )
-      console.log(`Click on the following link to register user '${user.username}':\n${serverUrl}/api/${apiVersion}/registration/register/${data}`)
+      const registrationUrl = await client1.getRegistrationUrl(user.username, user.password, user.did)
+      console.log(`Click on the following link to register user:\n${registrationUrl}`)
+
       const registration = prompt('Have you been able to register the user? [Yn]', { value: 'y' })
 
       // const res = await request.get<OpenApiPaths.ApiV2RegistrationRegister$Data.Get.Responses.$201>(
@@ -307,7 +273,9 @@ describe('Wallet Cloud-Vault', function () {
       await client1.login(user.username, user.password)
       await client2.login(user.username, user.password)
       clientsConnected = true
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+    }
     chai.expect(clientsConnected).to.be.true
   })
 

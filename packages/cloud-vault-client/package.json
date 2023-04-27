@@ -1,6 +1,6 @@
 {
   "name": "@i3m/cloud-vault-client",
-  "version": "2.5.10",
+  "version": "2.5.12",
   "description": "A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vault server",
   "keywords": [
     "vault",
@@ -138,8 +138,7 @@
     }
   },
   "devDependencies": {
-    "@i3m/cloud-vault-server": "^2.5.10",
-    "@i3m/non-repudiation-library": "^2.5.7",
+    "@i3m/cloud-vault-server": "^2.5.12",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-json": "^6.0.0",
@@ -172,6 +171,7 @@
     "typescript": "^4.9.0"
   },
   "dependencies": {
+    "@i3m/non-repudiation-library": "^2.5.7",
     "axios": "^1.2.5",
     "axios-retry": "^3.4.0",
     "dotenv": "^16.0.3",

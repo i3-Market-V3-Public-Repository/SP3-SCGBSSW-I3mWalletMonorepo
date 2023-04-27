@@ -1,5 +1,4 @@
 import { CbOnEventFn as ClientCallback, VaultClient, VaultStorage, VAULT_STATE } from '@i3m/cloud-vault-client'
-import { jweEncrypt, JWK } from '@i3m/non-repudiation-library'
 
 import { CloudVaultPrivateSettings, CloudVaultPublicSettings, Credentials, TaskDescription } from '@wallet/lib'
 import { getVersionDate, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, SyncTimestamps, WalletDesktopError } from '@wallet/main/internal'
@@ -67,16 +66,15 @@ export class CloudVaultManager {
   protected bindSyncEvents (): void {
     const { syncManager } = this.locals
 
-    // FIXME: incomplete...
     syncManager.on('conflict', async (ev) => {
-      const direction = await this.flows.askConflictResolution(ev.localTimestamp, ev.remoteTimestamp)
+      const direction = await this.flows.askConflictResolution(this.timestamps.local, this.timestamps.remote)
       await ev.resolve(direction, true) // After event resolution always force
     })
 
     syncManager.on('update', async (ev) => {
       switch (ev.direction) {
         case 'pull':
-          await this.restoreVault()
+          await this.restoreVault(ev.vault)
           break
 
         case 'push':
@@ -105,6 +103,7 @@ export class CloudVaultManager {
         retryDelay: 5000
       }
     })
+    await client.init()
 
     const onStateChange: ClientCallback<'state-changed'> = (state) => {
       const prevState = shm.memory.cloudVaultData.state
@@ -134,7 +133,7 @@ export class CloudVaultManager {
     const onStorageUpdated: ClientCallback<'storage-updated'> = (remoteTimestamp) => {
       const versionDate = getVersionDate(remoteTimestamp)
       logger.debug(`Getting a new cloud vault version (${versionDate})`)
-      const promise = syncManager.sync({ remoteTimestamp })
+      const promise = syncManager.sync({ timestamps: this.timestamps })
       handlePromise(this.locals, promise)
     }
 
@@ -250,12 +249,11 @@ export class CloudVaultManager {
   }
 
   // *************** Task Methods *************** //
-  // FIXME: pending update
   protected async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<Credentials> {
     const errorMessage = 'Vault user registration error'
     const { sharedMemoryManager } = this.locals
 
-    const client = this.createClientBinding()
+    const client = await this.createClientBinding()
 
     let credentials = cloud?.credentials
     if (credentials === undefined) {
@@ -264,28 +262,20 @@ export class CloudVaultManager {
     await this.flows.askPasswordConfirmation(credentials)
 
     const vc = await this.flows.askRegistrationCredential(errorMessage)
-    const publicJwk = await client.getServerPublicKey()
-
-    const data = await jweEncrypt(
-      Buffer.from(JSON.stringify({
-        did: vc.identity,
-        username: credentials.username,
-        authkey: await VaultClient.computeAuthKey(this.client.serverUrl, credentials.username, credentials.password)
-      })),
-      publicJwk as JWK,
-      'A256GCM'
-    )
+    if (vc.identity === undefined) {
+      throw new WalletDesktopError('Invalid identity', {
+        message: 'Invalid verifiable credential',
+        details: `The verifiable credential '${vc.id}' has no associated identity`
+      })
+    }
 
     const username = credentials.username
-    const registrationUrl = `${this.client.wellKnownCvsConfiguration?.registration_configuration.registration_endpoint.replace('{data}', data) ?? ''}`
+    const url = await client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
     sharedMemoryManager.update((mem) => ({
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        registration: {
-          url: registrationUrl,
-          username
-        }
+        registration: { url, username }
       }
     }))
 

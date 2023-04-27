@@ -9,10 +9,10 @@ export const restartClient: ActionHandlerBuilder<typeof actionBuilder> = (
   return {
     type: actionBuilder.type,
     async handle (action) {
-      const { cloudVaultManager } = locals
+      // const { cloudVaultManager } = locals
 
       // Call the internal function
-      await cloudVaultManager.restartClient()
+      // await cloudVaultManager.restartClient()
 
       return { response: undefined, status: 200 }
     }

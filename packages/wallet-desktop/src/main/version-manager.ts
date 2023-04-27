@@ -98,7 +98,7 @@ export class VersionManager {
     // TODO: If the maximum requests is exeded, we cannot get the latest version...
     const res = await this.locals.axios.get(url)
     const statusCode = res.status
-    const contentType = res.headers['content-type']?.toString() ?? ''
+    const contentType = res.headers['content-type']?.toString() as string ?? ''
 
     // Any 2xx status code signals a successful response but
     // here we're only checking for 200.
