@@ -66,9 +66,18 @@ export class CloudVaultFlows {
     return url
   }
 
-  async askCredentials (errorMessage: string): Promise<Credentials> {
-    const { dialog } = this.locals
-    const loginData = await dialog.form<Credentials>({
+  async askCredentials (errorMessage: string, credentials?: Credentials): Promise<Credentials> {
+    const { dialog, sharedMemoryManager: shm, storeManager } = this.locals
+    if (credentials !== undefined) {
+      return credentials
+    }
+
+    const cloud = shm.memory.settings.private.cloud
+    if (cloud?.credentials !== undefined) {
+      return cloud.credentials
+    }
+  
+    credentials = await dialog.form<Credentials>({
       title: 'Cloud Vault',
       descriptors: {
         username: { type: 'text', message: 'Introduce your username' },
@@ -76,14 +85,16 @@ export class CloudVaultFlows {
       },
       order: ['username', 'password']
     })
-    if (loginData === undefined) {
+    if (credentials === undefined) {
       throw new WalletDesktopError('You need to provide a valid username and password.', {
         severity: 'error',
         message: errorMessage,
         details: 'You need to provide a valid username and password.'
       })
     }
-    return loginData
+
+    await storeManager.silentStoreCredentials(credentials)
+    return credentials
   }
 
   async askPasswordConfirmation (credential: Credentials): Promise<void> {

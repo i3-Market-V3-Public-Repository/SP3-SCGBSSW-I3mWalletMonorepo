@@ -113,14 +113,14 @@ describe('Wallet Cloud-Vault', function () {
       }
     }
 
-    client1 = new VaultClient(serverUrl, {
+    client1 = new VaultClient({
       name: '1',
       defaultRetryOptions: { // retry every 5 seconds for 24 hours
         retries: 24 * 720,
         retryDelay: 5000
       }
     })
-    client2 = new VaultClient(serverUrl, {
+    client2 = new VaultClient({
       name: '2',
       defaultRetryOptions: { // retry every 5 seconds for 24 hours
         retries: 24 * 720,
@@ -128,8 +128,8 @@ describe('Wallet Cloud-Vault', function () {
       }
     })
 
-    await client1.init()
-    await client2.init()
+    await client1.init(serverUrl)
+    await client2.init(serverUrl)
 
     function getTime (timestamp: number): string {
       const date = new Date(timestamp)
@@ -164,6 +164,9 @@ describe('Wallet Cloud-Vault', function () {
           if (server !== undefined && server.server.listening) { // eslint-disable-line @typescript-eslint/prefer-optional-chain
             server.server.closeAllConnections()
             server.server.close((err) => {
+              if (err !== undefined) {
+                done(err)
+              }
               stopLocalDb().then(() => {
                 done()
               }).catch((err) => {

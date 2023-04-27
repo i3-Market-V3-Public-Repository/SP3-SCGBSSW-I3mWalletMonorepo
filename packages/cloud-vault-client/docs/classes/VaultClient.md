@@ -15,8 +15,6 @@
 ### Properties
 
 - [name](VaultClient.md#name)
-- [serverPrefix](VaultClient.md#serverprefix)
-- [serverRootUrl](VaultClient.md#serverrooturl)
 - [serverUrl](VaultClient.md#serverurl)
 - [state](VaultClient.md#state)
 - [timestamp](VaultClient.md#timestamp)
@@ -64,13 +62,12 @@
 
 ### constructor
 
-• **new VaultClient**(`serverUrl`, `opts?`)
+• **new VaultClient**(`opts?`)
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `serverUrl` | `string` |
 | `opts?` | [`VaultClientOpts`](../interfaces/VaultClientOpts.md) |
 
 #### Overrides
@@ -79,7 +76,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L50)
+[cloud-vault-client/src/ts/vault-client.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L50)
 
 ## Properties
 
@@ -89,37 +86,17 @@ EventEmitter.constructor
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L36)
-
-___
-
-### serverPrefix
-
-• **serverPrefix**: `string`
-
-#### Defined in
-
-[cloud-vault-client/src/ts/vault-client.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L38)
-
-___
-
-### serverRootUrl
-
-• **serverRootUrl**: `string`
-
-#### Defined in
-
-[cloud-vault-client/src/ts/vault-client.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L37)
+[cloud-vault-client/src/ts/vault-client.ts:36](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L36)
 
 ___
 
 ### serverUrl
 
-• **serverUrl**: `string`
+• `Optional` **serverUrl**: `string`
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L39)
+[cloud-vault-client/src/ts/vault-client.ts:37](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L37)
 
 ___
 
@@ -129,7 +106,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:43](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L43)
+[cloud-vault-client/src/ts/vault-client.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L41)
 
 ___
 
@@ -139,7 +116,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L34)
+[cloud-vault-client/src/ts/vault-client.ts:34](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L34)
 
 ___
 
@@ -149,7 +126,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L35)
+[cloud-vault-client/src/ts/vault-client.ts:35](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L35)
 
 ___
 
@@ -159,7 +136,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:41](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L41)
+[cloud-vault-client/src/ts/vault-client.ts:39](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L39)
 
 ___
 
@@ -270,7 +247,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:278](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L278)
+[cloud-vault-client/src/ts/vault-client.ts:311](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L311)
 
 ___
 
@@ -284,7 +261,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:391](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L391)
+[cloud-vault-client/src/ts/vault-client.ts:424](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L424)
 
 ___
 
@@ -315,7 +292,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L75)
+[cloud-vault-client/src/ts/vault-client.ts:75](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L75)
 
 ___
 
@@ -353,7 +330,7 @@ EventEmitter.eventNames
 
 #### Defined in
 
-cloud-vault-client/node_modules/@types/node/events.d.ts:673
+cloud-vault-client/node_modules/@types/node/events.d.ts:669
 
 ___
 
@@ -400,7 +377,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:413](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L413)
+[cloud-vault-client/src/ts/vault-client.ts:446](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L446)
 
 ___
 
@@ -414,7 +391,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:282](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L282)
+[cloud-vault-client/src/ts/vault-client.ts:315](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L315)
 
 ___
 
@@ -428,32 +405,35 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:308](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L308)
+[cloud-vault-client/src/ts/vault-client.ts:341](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L341)
 
 ___
 
 ### init
 
-▸ **init**(): `Promise`<`void`\>
+▸ **init**(`serverUrl`): `Promise`<`string`\>
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `serverUrl` | `string` |
 
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<`string`\>
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:253](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L253)
+[cloud-vault-client/src/ts/vault-client.ts:280](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L280)
 
 ___
 
 ### listenerCount
 
-▸ **listenerCount**(`eventName`, `listener?`): `number`
+▸ **listenerCount**(`eventName`): `number`
 
 Returns the number of listeners listening to the event named `eventName`.
-
-If `listener` is provided, it will return how many times the listener
-is found in the list of the listeners of the event.
 
 **`Since`**
 
@@ -464,7 +444,6 @@ v3.2.0
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `eventName` | `string` \| `symbol` | The name of the event being listened for |
-| `listener?` | `Function` | The event handler function |
 
 #### Returns
 
@@ -476,7 +455,7 @@ EventEmitter.listenerCount
 
 #### Defined in
 
-cloud-vault-client/node_modules/@types/node/events.d.ts:620
+cloud-vault-client/node_modules/@types/node/events.d.ts:616
 
 ___
 
@@ -536,7 +515,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:260](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L260)
+[cloud-vault-client/src/ts/vault-client.ts:293](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L293)
 
 ___
 
@@ -550,7 +529,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:271](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L271)
+[cloud-vault-client/src/ts/vault-client.ts:304](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L304)
 
 ___
 
@@ -612,7 +591,7 @@ EventEmitter.on
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L80)
+[cloud-vault-client/src/ts/vault-client.ts:80](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L80)
 
 ___
 
@@ -643,7 +622,7 @@ EventEmitter.once
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:85](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L85)
+[cloud-vault-client/src/ts/vault-client.ts:85](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L85)
 
 ___
 
@@ -685,7 +664,7 @@ EventEmitter.prependListener
 
 #### Defined in
 
-cloud-vault-client/node_modules/@types/node/events.d.ts:638
+cloud-vault-client/node_modules/@types/node/events.d.ts:634
 
 ___
 
@@ -725,7 +704,7 @@ EventEmitter.prependOnceListener
 
 #### Defined in
 
-cloud-vault-client/node_modules/@types/node/events.d.ts:654
+cloud-vault-client/node_modules/@types/node/events.d.ts:650
 
 ___
 
@@ -978,7 +957,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:90](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L90)
+[cloud-vault-client/src/ts/vault-client.ts:90](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L90)
 
 ___
 
@@ -999,7 +978,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:345](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/b8285f6/packages/cloud-vault-client/src/ts/vault-client.ts#L345)
+[cloud-vault-client/src/ts/vault-client.ts:378](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L378)
 
 ___
 

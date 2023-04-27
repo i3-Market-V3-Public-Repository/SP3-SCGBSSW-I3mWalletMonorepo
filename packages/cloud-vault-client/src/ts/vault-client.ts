@@ -34,9 +34,7 @@ export class VaultClient extends EventEmitter {
   timestamp?: number
   token?: string
   name: string
-  serverRootUrl: string
-  serverPrefix: string
-  serverUrl: string
+  serverUrl?: string
 
   wellKnownCvsConfiguration?: OpenApiComponents.Schemas.CvsConfiguration
 
@@ -47,14 +45,12 @@ export class VaultClient extends EventEmitter {
 
   private es?: EventSource
 
-  constructor (serverUrl: string, opts?: VaultClientOpts) {
+  private switchingState: Promise<void>
+
+  constructor (opts?: VaultClientOpts) {
     super({ captureRejections: true })
 
     this.name = opts?.name ?? randomBytes(16).toString('hex')
-    const url = new URL(serverUrl)
-    this.serverRootUrl = url.origin
-    this.serverPrefix = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname
-    this.serverUrl = this.serverRootUrl + this.serverPrefix
 
     this.request = new Request({
       retryOptions: {
@@ -69,6 +65,10 @@ export class VaultClient extends EventEmitter {
 
     this.state = new Promise((resolve, reject) => {
       resolve(VAULT_STATE.NOT_INITIALIZED)
+    })
+
+    this.switchingState = new Promise((resolve, reject) => {
+      resolve()
     })
   }
 
@@ -88,6 +88,32 @@ export class VaultClient extends EventEmitter {
   }
 
   protected async switchToState (newState: VaultState, opts?: LoginOptions): Promise<VaultState> {
+    if (newState < VAULT_STATE.LOGGED_IN) {
+      await this.request.stop()
+    }
+    await this.switchingState
+    let error: VaultError | undefined
+    let state: VaultState | undefined
+    this.switchingState = new Promise((resolve, reject) => {
+      this._switchToStatePromise(newState, opts)
+        .then((finalState) => {
+          state = finalState
+        })
+        .catch((err) => {
+          error = VaultError.from(err)
+        })
+        .finally(() => {
+          resolve()
+        })
+    })
+    await this.switchingState
+    if (error !== undefined) {
+      throw error
+    }
+    return state as VaultState
+  }
+
+  private async _switchToStatePromise (newState: VaultState, opts?: LoginOptions): Promise<VaultState> {
     let currentState = await this.state
     if (currentState === newState) {
       return currentState
@@ -121,6 +147,7 @@ export class VaultClient extends EventEmitter {
     switch (newState) {
       case VAULT_STATE.NOT_INITIALIZED:
         // Only option is to come from INITIALIZED
+        delete this.serverUrl
         delete this.wellKnownCvsConfiguration
         this.state = new Promise((resolve, reject) => {
           resolve(VAULT_STATE.NOT_INITIALIZED)
@@ -129,7 +156,7 @@ export class VaultClient extends EventEmitter {
 
       case VAULT_STATE.INITIALIZED:
         if (currentState === VAULT_STATE.NOT_INITIALIZED) {
-          this.wellKnownCvsConfiguration = await this.request.get<OpenApiComponents.Schemas.CvsConfiguration>(this.serverRootUrl + this.serverPrefix + '/.well-known/cvs-configuration', { responseStatus: 200 }).catch(err => {
+          this.wellKnownCvsConfiguration = await this.request.get<OpenApiComponents.Schemas.CvsConfiguration>(this.serverUrl as string + '/.well-known/cvs-configuration', { responseStatus: 200 }).catch(err => {
             throw new VaultError('not-initialized', err)
           })
         } else { // this.state === VAULT_STATE.LOGGED_IN
@@ -250,16 +277,22 @@ export class VaultClient extends EventEmitter {
     await this.keyManager.initialized
   }
 
-  async init (): Promise<void> {
+  async init (serverUrl: string): Promise<string> {
+    const url = new URL(serverUrl)
+    const serverRootUrl = url.origin
+    const serverPrefix = url.pathname.endsWith('/') ? url.pathname.slice(0, -1) : url.pathname
+    this.serverUrl = serverRootUrl + serverPrefix
+
     if (await this.state > VAULT_STATE.INITIALIZED) {
-      throw new VaultError('unknown', 'to init the client, it should NOT be INITIALIZED')
+      throw new VaultError('error', new Error('to init the client, it should NOT be INITIALIZED'))
     }
     await this.switchToState(VAULT_STATE.INITIALIZED)
+    return this.serverUrl
   }
 
   async login (username: string, password: string, timestamp?: number): Promise<void> {
     if (await this.state !== VAULT_STATE.INITIALIZED) {
-      throw new VaultError('unknown', 'in order to login you should be in state INITIALIZED')
+      throw new VaultError('error', new Error('in order to login you should be in state INITIALIZED'))
     }
     await this.switchToState(VAULT_STATE.CONNECTED, {
       username,
@@ -270,7 +303,7 @@ export class VaultClient extends EventEmitter {
 
   async logout (): Promise<void> {
     if (await this.state < VAULT_STATE.LOGGED_IN) {
-      throw new VaultError('unknown', 'in order to log out you should be in state LOGGED IN or CONNECTED')
+      throw new VaultError('error', new Error('in order to log out you should be in state LOGGED IN or CONNECTED'))
     }
     await this.switchToState(VAULT_STATE.INITIALIZED)
   }

@@ -10,16 +10,11 @@ interface Params {
   publicCloud?: CloudVaultPublicSettings
 }
 
-interface VaultClientBinding {
-  client: VaultClient
-  closeCurrentClient: () => void
-}
-
 export class CloudVaultManager {
   protected failed: boolean
   protected flows: CloudVaultFlows
   protected pendingSyncs: number[]
-  protected clientBinding?: VaultClientBinding
+  protected client: VaultClient
 
   // Static initialization
   static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
@@ -40,9 +35,16 @@ export class CloudVaultManager {
     this.flows = new CloudVaultFlows(locals)
     this.failed = false
     this.pendingSyncs = []
+    this.client = new VaultClient({
+      // TO-DO: add retry options to params
+      defaultRetryOptions: {
+        retries: 1 * 60 / 5, // one retry every 5 seconds for 5 minutes hours
+        retryDelay: 5000
+      }
+    })
     this.bindRuntimeEvents()
     this.bindSyncEvents()
-    // this.bindClientEvents()
+    this.bindClientEvents()
   }
 
   protected bindRuntimeEvents (): void {
@@ -56,7 +58,7 @@ export class CloudVaultManager {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
         if (cloud?.credentials !== undefined) {
-          const asyncLogin = this.login(cloud)
+          const asyncLogin = this.login()
           handlePromise(this.locals, asyncLogin)
         }
       }
@@ -88,22 +90,8 @@ export class CloudVaultManager {
     })
   }
 
-  protected async createClientBinding (): Promise<VaultClient> {
-    if (this.clientBinding !== undefined) {
-      return this.clientBinding.client
-    }
-
+  protected async bindClientEvents (): Promise<void> {
     const { sharedMemoryManager: shm, syncManager } = this.locals
-
-    const url = await this.flows.askCloudVaultUrl()
-    const client = new VaultClient(url, {
-      // TO-DO: add retry options to params
-      defaultRetryOptions: {
-        retries: 1 * 60 / 5, // one retry every 5 seconds for 5 minutes hours
-        retryDelay: 5000
-      }
-    })
-    await client.init()
 
     const onStateChange: ClientCallback<'state-changed'> = (state) => {
       const prevState = shm.memory.cloudVaultData.state
@@ -172,27 +160,11 @@ export class CloudVaultManager {
       }
     }
 
-    client.on('state-changed', onStateChange)
-    client.on('storage-updated', onStorageUpdated)
-    client.on('empty-storage', onEmptyStorage)
-    client.on('sync-start', onSyncStart)
-    client.on('sync-stop', onSyncStop)
-
-    this.clientBinding = {
-      client,
-      closeCurrentClient: () => {
-        delete this.clientBinding
-
-        client.off('state-changed', onStateChange)
-        client.off('storage-updated', onStorageUpdated)
-        client.off('sync-start', onSyncStart)
-        client.off('sync-stop', onSyncStop)
-
-        client.close()
-      }
-    }
-
-    return client
+    this.client.on('state-changed', onStateChange)
+    this.client.on('storage-updated', onStorageUpdated)
+    this.client.on('empty-storage', onEmptyStorage)
+    this.client.on('sync-start', onSyncStart)
+    this.client.on('sync-stop', onSyncStop)
   }
 
   protected async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
@@ -243,7 +215,7 @@ export class CloudVaultManager {
   get timestamps (): SyncTimestamps {
     const { sharedMemoryManager: shm } = this.locals
     return {
-      remote: this.clientBinding?.client.timestamp,
+      remote: this.client.timestamp,
       local: shm.memory.settings.public.cloud?.timestamp
     }
   }
@@ -253,7 +225,7 @@ export class CloudVaultManager {
     const errorMessage = 'Vault user registration error'
     const { sharedMemoryManager } = this.locals
 
-    const client = await this.createClientBinding()
+    await this.initializeClientIfNeeded()
 
     let credentials = cloud?.credentials
     if (credentials === undefined) {
@@ -270,7 +242,7 @@ export class CloudVaultManager {
     }
 
     const username = credentials.username
-    const url = await client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
+    const url = await this.client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
     sharedMemoryManager.update((mem) => ({
       ...mem,
       cloudVaultData: {
@@ -282,7 +254,7 @@ export class CloudVaultManager {
     return credentials
   }
 
-  protected async loginTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
+  protected async loginTask (task: LabeledTaskHandler): Promise<void> {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
@@ -297,16 +269,9 @@ export class CloudVaultManager {
     }))
 
     try {
-      const client = await this.createClientBinding()
-      // await this.client.initialized
-
-      let credentials = cloud?.credentials
-      if (credentials === undefined) {
-        credentials = await this.flows.askCredentials(errorMessage)
-      }
-
-      await client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
-      await storeManager.onCloudLogin(credentials)
+      await this.initializeClientIfNeeded()
+      const credentials = await this.flows.askCredentials(errorMessage)
+      await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
     } finally {
       shm.update(mem => ({
         ...mem,
@@ -320,15 +285,15 @@ export class CloudVaultManager {
   }
 
   // *************** Client Methods *************** //
-  async delete (): Promise<void> {
-    if (this.clientBinding === undefined) {
-      throw new WalletDesktopError('delete vault error', {
-        message: 'Delete Vault',
-        severity: 'error',
-        details: 'You cannot delete a vault if the vault client is not created. Are you already logged in?'
-      })
+  async initializeClientIfNeeded (): Promise<void> {
+    const state = await this.client.state
+    if (state === VAULT_STATE.NOT_INITIALIZED) {
+      const url = await this.flows.askCloudVaultUrl()
+      await this.client.init(url)
     }
+  }
 
+  async delete (): Promise<void> {
     const { dialog } = this.locals
     const confirm = await dialog.confirmation({
       title: 'Cloud Vault',
@@ -342,36 +307,20 @@ export class CloudVaultManager {
 
     // We modify the state before the logout to remove the disconnected toast!
     await this.locals.storeManager.onStopCloudService()
-    await this.clientBinding.client.deleteStorage().catch(...handleErrorCatch(this.locals))
+    await this.client.deleteStorage().catch(...handleErrorCatch(this.locals))
     await this.logout()
   }
 
   async stop (): Promise<void> {
-    if (this.clientBinding === undefined) {
-      throw new WalletDesktopError('stop vault error', {
-        message: 'Stop Vault Client',
-        severity: 'error',
-        details: 'You cannot stop the vault client if it is not created yet. Are you already logged in?'
-      })
-    }
-
     // We modify the state before the logout to remove the disconnected toast!
     await this.locals.storeManager.onStopCloudService()
-    this.clientBinding.closeCurrentClient()
+    await this.client.close()
   }
 
   async logout (): Promise<void> {
-    if (this.clientBinding === undefined) {
-      throw new WalletDesktopError('stop vault error', {
-        message: 'Stop Vault Client',
-        severity: 'error',
-        details: 'You cannot log out if you are not logged in.'
-      })
-    }
-
     // We modify the state before the logout to remove the disconnected toast!
     await this.locals.storeManager.onStopCloudService()
-    this.clientBinding.client.logout()
+    this.client.logout()
   }
 
   async register (): Promise<void> {
@@ -382,23 +331,22 @@ export class CloudVaultManager {
     })
   }
 
-  async login (cloud?: CloudVaultPrivateSettings): Promise<void> {
+  async login (): Promise<void> {
     const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.loginTask(task, cloud)
+      return await this.loginTask(task)
     })
   }
 
   // *************** Sync *************** //
   async storeVault (force = false): Promise<void> {
-    if (this.isDisconnected || this.clientBinding === undefined) {
+    if (this.isDisconnected) {
       return
     }
 
     const { sharedMemoryManager: sh, storeManager } = this.locals
 
-    const client = this.clientBinding.client
     const cloud = sh.memory.settings.public.cloud
     const bundle = await storeManager.bundleStores()
     const bundleJSON = JSON.stringify(bundle)
@@ -408,22 +356,21 @@ export class CloudVaultManager {
     }
 
     const versionDate = getVersionDate(vault.timestamp)
-    logger.debug(`Uploading to cloud vault (${client.serverUrl}) the version (${versionDate})`)
-    const newTimestamp = await client.updateStorage(vault, force)
+    logger.debug(`Uploading to cloud vault (${this.client.serverUrl}) the version (${versionDate})`)
+    const newTimestamp = await this.client.updateStorage(vault, force)
 
     await storeManager.onCloudSynced(newTimestamp)
   }
 
   async restoreVault (vault?: VaultStorage): Promise<void> {
-    if (this.isDisconnected || this.clientBinding === undefined) {
+    if (this.isDisconnected) {
       return
     }
 
     const { storeManager } = this.locals
     
     if (vault === undefined) {
-      const client = this.clientBinding.client
-      vault = await client.getStorage()
+      vault = await this.client.getStorage()
     }
     if (vault.timestamp === undefined) {
       throw new WalletDesktopError('Invalid vault timestamp!')

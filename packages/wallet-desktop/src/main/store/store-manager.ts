@@ -347,7 +347,7 @@ export class StoreManager extends StoreBag {
   }
 
   // Event handlers
-  public async onCloudLogin (credentials: Credentials): Promise<void> {
+  public async silentStoreCredentials (credentials: Credentials): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const silentPrivateSettings = this.silentBag.getStore('private-settings')
     await silentPrivateSettings.set('cloud.credentials', credentials)
