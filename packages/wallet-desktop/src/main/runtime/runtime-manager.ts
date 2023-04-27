@@ -13,7 +13,7 @@ import {
   logger,
   MainContext, PropInitializer,
   SharedMemoryManager,
-  StoreManager, StoreMigration, TaskManager,
+  StoreManager, StoreMigration, SynchronizationManager, TaskManager,
   ToastManager,
   Tray,
   VersionManager,
@@ -99,7 +99,8 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
       ['toast', ToastManager.initialize],
       ['walletFactory', WalletFactory.initialize],
       ['featureManager', FeatureManager.initialize],
-      ['featureContext', FeatureManager.initializeContext]
+      ['featureContext', FeatureManager.initializeContext],
+      ['syncManager', SynchronizationManager.initialize]
     ])
 
     this.addLocalsModule('after-start', [

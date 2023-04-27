@@ -3,7 +3,7 @@ import { Toast } from '@i3m/base-wallet'
 import axios, { Axios } from 'axios'
 import {
   ActionReducer, ApiManager, AuthManager, CloudVaultManager, ConnectManager, ElectronDialog, FeatureContext, FeatureManager, KeysManager, MainContext,
-  RuntimeManager, SharedMemoryManager, StoreManager, TaskManager, Tray, VersionManager, WalletDesktopError, WalletFactory, WindowManager
+  RuntimeManager, SharedMemoryManager, StoreManager, SynchronizationManager, TaskManager, Tray, VersionManager, WalletDesktopError, WalletFactory, WindowManager
 } from '@wallet/main/internal'
 import packageJson from '../../../package.json'
 
@@ -31,6 +31,7 @@ export interface Locals {
   readonly windowManager: WindowManager
   readonly apiManager: ApiManager
   readonly cloudVaultManager: CloudVaultManager
+  readonly syncManager: SynchronizationManager
 
   // Security
   readonly keysManager: KeysManager

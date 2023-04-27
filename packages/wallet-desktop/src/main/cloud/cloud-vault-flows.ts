@@ -1,12 +1,40 @@
 import { VerifiableCredentialResource } from '@i3m/base-wallet'
 import { Credentials } from '@wallet/lib'
 
-import { Locals, WalletDesktopError } from '@wallet/main/internal'
+import { getVersionDate, Locals, WalletDesktopError } from '@wallet/main/internal'
+import { SyncDirection } from './sync-manager'
 
 export class CloudVaultFlows {
   constructor (protected locals: Locals) {}
 
-  async getCloudVaultUrl (): Promise<string> {
+  async askConflictResolution (localTimestamp?: number, remoteTimestamp?: number): Promise<SyncDirection> {
+    const { dialog } = this.locals
+
+    const optionBuilder = dialog.useOptionsBuilder()
+    const remote = optionBuilder.add('Remote version')
+    const local = optionBuilder.add('Local version')
+    optionBuilder.add('Cancel', 'danger')
+
+    const localVersion = getVersionDate(localTimestamp)
+    const remoteVersion = getVersionDate(remoteTimestamp)
+
+    const response = await dialog.select({
+      title: 'Cloud Vault',
+      message: `There has been a conflict between the local version (${localVersion}) and the remote version ('${remoteVersion}).\n\n Which version would you want to use?`,
+      allowCancel: true,
+      ...optionBuilder
+    })
+
+    if (optionBuilder.compare(remote, response)) {
+      return 'pull'
+    } else if (optionBuilder.compare(local, response)) {
+      return 'push'
+    }
+
+    return 'none'
+  }
+
+  async askCloudVaultUrl (): Promise<string> {
     const { storeManager, dialog } = this.locals
     const publicSettings = storeManager.getStore('public-settings')
     let cloud = await publicSettings.get('cloud')
@@ -38,7 +66,7 @@ export class CloudVaultFlows {
     return url
   }
 
-  async getCredentials (errorMessage: string): Promise<Credentials> {
+  async askCredentials (errorMessage: string): Promise<Credentials> {
     const { dialog } = this.locals
     const loginData = await dialog.form<Credentials>({
       title: 'Cloud Vault',
@@ -58,7 +86,7 @@ export class CloudVaultFlows {
     return loginData
   }
 
-  async confirmPassword (credential: Credentials): Promise<void> {
+  async askPasswordConfirmation (credential: Credentials): Promise<void> {
     const { dialog } = this.locals
     const totalTries = 3
     let triesLeft = totalTries
@@ -81,7 +109,7 @@ export class CloudVaultFlows {
     })
   }
 
-  async getRegistrationCredential (errorMessage: string): Promise<VerifiableCredentialResource> {
+  async askRegistrationCredential (errorMessage: string): Promise<VerifiableCredentialResource> {
     const { dialog } = this.locals
 
     const resources = Object.values(this.locals.sharedMemoryManager.memory.resources)

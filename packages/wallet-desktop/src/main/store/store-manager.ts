@@ -302,10 +302,10 @@ export class StoreManager extends StoreBag {
   public async restoreStores (bundle: StoresBundle): Promise<void> {
     const { to } = this.ctx.storeMigrationProxy
 
-    const { versionManager, sharedMemoryManager: shm, keysManager, cloudVaultManager: cvm, walletFactory } = this.locals
+    const { versionManager, sharedMemoryManager: shm, keysManager, walletFactory } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
       // TODO: Maybe raise exception
-      return await cvm.conflict({})
+      return await this.locals.syncManager.conflict()
     }
 
     for (const [, storeBundle] of Object.entries(bundle.stores)) {
