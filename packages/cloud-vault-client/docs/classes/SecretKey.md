@@ -30,7 +30,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/secret-key.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/secret-key.ts#L8)
+[cloud-vault-client/src/ts/secret-key.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/secret-key.ts#L8)
 
 ## Properties
 
@@ -40,7 +40,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/secret-key.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/secret-key.ts#L6)
+[cloud-vault-client/src/ts/secret-key.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/secret-key.ts#L6)
 
 ## Methods
 
@@ -60,7 +60,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/secret-key.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/secret-key.ts#L30)
+[cloud-vault-client/src/ts/secret-key.ts:30](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/secret-key.ts#L30)
 
 ___
 
@@ -80,4 +80,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/secret-key.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/secret-key.ts#L13)
+[cloud-vault-client/src/ts/secret-key.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/secret-key.ts#L13)

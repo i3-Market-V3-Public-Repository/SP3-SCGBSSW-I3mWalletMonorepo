@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L27)
+[cloud-vault-client/src/ts/key-manager.ts:27](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L27)
 
 ## Properties
 
@@ -68,7 +68,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L23)
+[cloud-vault-client/src/ts/key-manager.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L23)
 
 ___
 
@@ -78,7 +78,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
+[cloud-vault-client/src/ts/key-manager.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L24)
 
 ___
 
@@ -88,7 +88,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L22)
+[cloud-vault-client/src/ts/key-manager.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L22)
 
 ## Accessors
 
@@ -102,7 +102,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L52)
+[cloud-vault-client/src/ts/key-manager.ts:52](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L52)
 
 ___
 
@@ -116,4 +116,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/key-manager.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/key-manager.ts#L59)
+[cloud-vault-client/src/ts/key-manager.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29a576/packages/cloud-vault-client/src/ts/key-manager.ts#L59)

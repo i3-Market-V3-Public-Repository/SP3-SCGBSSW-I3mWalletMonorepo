@@ -448,7 +448,7 @@ export class VaultClient extends EventEmitter {
   async getRegistrationUrl (username: string, password: string, did: string, passwordStrengthOptions?: PasswordStrengthOptions): Promise<string> {
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
 
-    await passwordCheck(password, passwordStrengthOptions)
+    passwordCheck(password, passwordStrengthOptions)
 
     const responseData = await this.request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
       cvsConf.registration_configuration.public_jwk_endpoint,
