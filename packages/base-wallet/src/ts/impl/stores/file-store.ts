@@ -2,7 +2,8 @@ import { mkdir, rm } from 'fs/promises'
 import { EventEmitter } from 'events'
 // TODO: Use atomically
 // import { readFileSync, writeFileSync } from 'atomically'
-import { writeFileSync, readFileSync } from 'fs'
+import writeFileAtomic from 'write-file-atomic'
+import { readFileSync } from 'fs'
 import _ from 'lodash'
 import { BinaryLike, createCipheriv, createDecipheriv, createSecretKey, KeyObject, randomBytes, scrypt } from 'crypto'
 import { dirname } from 'path'
@@ -108,9 +109,11 @@ export class FileStore<T extends Record<string, any> = Record<string, unknown>> 
 
   private async setModel (model: T): Promise<void> {
     if (this.key === undefined) {
-      writeFileSync(this.filepath, JSON.stringify(model), { encoding: 'utf8' })
+      // writeFileSync(this.filepath, JSON.stringify(model), { encoding: 'utf8' })
+      await writeFileAtomic(this.filepath, JSON.stringify(model))
     } else {
-      writeFileSync(this.filepath, await this.encryptModel(model))
+      // writeFileSync(this.filepath, await this.encryptModel(model))
+      await writeFileAtomic(this.filepath, await this.encryptModel(model))
     }
   }
 

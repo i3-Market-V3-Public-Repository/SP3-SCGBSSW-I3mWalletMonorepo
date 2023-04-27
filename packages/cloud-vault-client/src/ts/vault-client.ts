@@ -11,6 +11,7 @@ import { Request, RetryOptions } from './request'
 import type { ArgsForEvent, VaultEventName } from './events'
 import { VAULT_STATE, VaultState, stateFromError } from './vault-state'
 import { JWK, jweEncrypt } from '@i3m/non-repudiation-library'
+import { passwordCheck, PasswordStrengthOptions } from './password-checker'
 
 export type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void
 
@@ -22,6 +23,7 @@ export interface VaultStorage {
 export interface VaultClientOpts {
   name?: string
   defaultRetryOptions?: RetryOptions
+  passwordStrengthOptions?: PasswordStrengthOptions
 }
 
 interface LoginOptions {
@@ -443,8 +445,11 @@ export class VaultClient extends EventEmitter {
     }
   }
 
-  async getRegistrationUrl (username: string, password: string, did: string): Promise<string> {
+  async getRegistrationUrl (username: string, password: string, did: string, passwordStrengthOptions?: PasswordStrengthOptions): Promise<string> {
     const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+
+    await passwordCheck(password, passwordStrengthOptions)
+
     const responseData = await this.request.get<OpenApiPaths.ApiV2RegistrationPublicJwk.Get.Responses.$200>(
       cvsConf.registration_configuration.public_jwk_endpoint,
       { responseStatus: 200 }

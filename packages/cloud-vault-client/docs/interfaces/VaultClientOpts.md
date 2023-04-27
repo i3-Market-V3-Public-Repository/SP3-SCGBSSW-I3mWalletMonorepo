@@ -6,6 +6,7 @@
 
 - [defaultRetryOptions](VaultClientOpts.md#defaultretryoptions)
 - [name](VaultClientOpts.md#name)
+- [passwordStrengthOptions](VaultClientOpts.md#passwordstrengthoptions)
 
 ## Properties
 
@@ -15,7 +16,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L24)
+[cloud-vault-client/src/ts/vault-client.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/vault-client.ts#L25)
 
 ___
 
@@ -25,4 +26,14 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/vault-client.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/0cc6e536/packages/cloud-vault-client/src/ts/vault-client.ts#L23)
+[cloud-vault-client/src/ts/vault-client.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/vault-client.ts#L24)
+
+___
+
+### passwordStrengthOptions
+
+• `Optional` **passwordStrengthOptions**: [`PasswordStrengthOptions`](PasswordStrengthOptions.md)
+
+#### Defined in
+
+[cloud-vault-client/src/ts/vault-client.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c14eb66/packages/cloud-vault-client/src/ts/vault-client.ts#L26)

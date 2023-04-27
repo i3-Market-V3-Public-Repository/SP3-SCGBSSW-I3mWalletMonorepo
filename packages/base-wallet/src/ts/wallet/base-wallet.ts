@@ -521,7 +521,7 @@ export class BaseWallet<
         if (identity.alias === alias) {
           this.toast.show({
             message: 'Alias already exists',
-            details: `An identity with alias ${alias} already exists. If you want to create a new one, please the delete the old one first`,
+            details: `An identity with alias ${alias} already exists. If you want to create a new one, please delete the old one first`,
             type: 'warning'
           })
           return { did: identity.did }

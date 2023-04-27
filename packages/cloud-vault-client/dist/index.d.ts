@@ -105,6 +105,16 @@ type VaultEvent = {
 type VaultEventName = keyof VaultEvent;
 type ArgsForEvent<T extends VaultEventName> = VaultEvent[T];
 
+interface PasswordStrengthOptions {
+    minLength?: number;
+    uppercase?: boolean;
+    lowercase?: boolean;
+    numbers?: boolean;
+    symbols?: boolean;
+    allowedSymbols?: string;
+}
+declare function passwordCheck(password: string, options?: PasswordStrengthOptions): void;
+
 type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void;
 interface VaultStorage {
     storage: Buffer;
@@ -113,6 +123,7 @@ interface VaultStorage {
 interface VaultClientOpts {
     name?: string;
     defaultRetryOptions?: RetryOptions;
+    passwordStrengthOptions?: PasswordStrengthOptions;
 }
 interface LoginOptions {
     username: string;
@@ -147,7 +158,7 @@ declare class VaultClient extends EventEmitter {
     getStorage(): Promise<VaultStorage>;
     updateStorage(storage: VaultStorage, force?: boolean): Promise<number>;
     deleteStorage(): Promise<void>;
-    getRegistrationUrl(username: string, password: string, did: string): Promise<string>;
+    getRegistrationUrl(username: string, password: string, did: string, passwordStrengthOptions?: PasswordStrengthOptions): Promise<string>;
     private computeAuthKey;
 }
 
@@ -189,6 +200,7 @@ type VaultErrorData = {
     };
     unauthorized: any;
     'invalid-credentials': any;
+    'weak-password': string;
     'invalid-timestamp': any;
     error: Error;
     unknown: any;
@@ -207,4 +219,4 @@ declare class VaultError<T extends VaultErrorName = VaultErrorName> extends Erro
 }
 declare function checkErrorType<T extends VaultErrorName>(err: VaultError, type: T): err is VaultError<T>;
 
-export { CbOnEventFn, DataForError, KeyDerivationOptions, KeyManager, Request, RetryOptions, ScryptOptions, SecretKey, VAULT_STATE, VaultClient, VaultClientOpts, VaultError, VaultErrorData, VaultErrorName, VaultState, VaultStorage, checkErrorType, deriveKey };
+export { CbOnEventFn, DataForError, KeyDerivationOptions, KeyManager, PasswordStrengthOptions, Request, RetryOptions, ScryptOptions, SecretKey, VAULT_STATE, VaultClient, VaultClientOpts, VaultError, VaultErrorData, VaultErrorName, VaultState, VaultStorage, checkErrorType, deriveKey, passwordCheck };

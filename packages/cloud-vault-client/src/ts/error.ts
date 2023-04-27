@@ -34,6 +34,7 @@ export type VaultErrorData = { // eslint-disable-line @typescript-eslint/consist
   }
   unauthorized: any
   'invalid-credentials': any
+  'weak-password': string
   'invalid-timestamp': any
   error: Error // unknown error generated as an instance of Error
   unknown: any // unknown error not as an instance of Error

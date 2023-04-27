@@ -24,7 +24,7 @@ if (process.env.WCV_SERVER_URL === undefined || process.env.WCV_USERNAME === und
   console.log('No server setup provided. Using local testing server. You need docker and docker compose for it to work')
   serverUrl = 'http://localhost:3000'
   username = 'testUser'
-  password = 'mysuperpassword'
+  password = 'mySuperPassword&2'
   localTesting = true
 } else {
   serverUrl = process.env.WCV_SERVER_URL
