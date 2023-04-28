@@ -113,6 +113,7 @@ interface PasswordStrengthOptions {
     symbols?: boolean;
     allowedSymbols?: string;
 }
+declare const defaultPasswordStrengthOptions: Required<PasswordStrengthOptions>;
 declare function passwordCheck(password: string, options?: PasswordStrengthOptions): void;
 
 type CbOnEventFn<T extends VaultEventName> = (...args: ArgsForEvent<T>) => void;
@@ -219,4 +220,4 @@ declare class VaultError<T extends VaultErrorName = VaultErrorName> extends Erro
 }
 declare function checkErrorType<T extends VaultErrorName>(err: VaultError, type: T): err is VaultError<T>;
 
-export { CbOnEventFn, DataForError, KeyDerivationOptions, KeyManager, PasswordStrengthOptions, Request, RetryOptions, ScryptOptions, SecretKey, VAULT_STATE, VaultClient, VaultClientOpts, VaultError, VaultErrorData, VaultErrorName, VaultState, VaultStorage, checkErrorType, deriveKey, passwordCheck };
+export { CbOnEventFn, DataForError, KeyDerivationOptions, KeyManager, PasswordStrengthOptions, Request, RetryOptions, ScryptOptions, SecretKey, VAULT_STATE, VaultClient, VaultClientOpts, VaultError, VaultErrorData, VaultErrorName, VaultState, VaultStorage, checkErrorType, defaultPasswordStrengthOptions, deriveKey, passwordCheck };

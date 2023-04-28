@@ -87,7 +87,7 @@ const main = async () => {
   removeButton.addEventListener('click', () => sessionManager.removeSession())
 
   //
-  await sessionManager.loadSession()
+  await sessionManager.removeSession()
   await sessionManager.createIfNotExists()
 }
 window.onload = main

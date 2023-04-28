@@ -5,7 +5,7 @@ interface ParentFilter<T extends Resource> {
   type?: T['type']
 }
 
-function checkFilter <T extends Resource>(resource: Resource, filter: ParentFilter<T>): boolean {
+function checkFilter <T extends Resource> (resource: Resource, filter: ParentFilter<T>): boolean {
   let filterPass = true
   if (filter.type !== undefined) {
     filterPass = filterPass && resource.type === filter.type
@@ -14,8 +14,7 @@ function checkFilter <T extends Resource>(resource: Resource, filter: ParentFilt
   return filterPass
 }
 
-
-export function getResourceParent <T extends Resource>(shm: SharedMemory, resource: Resource, filter: ParentFilter<T>): T  | undefined {
+export function getResourceParent <T extends Resource> (shm: SharedMemory, resource: Resource, filter: ParentFilter<T>): T | undefined {
   if (resource.parentResource === undefined) {
     return undefined
   }

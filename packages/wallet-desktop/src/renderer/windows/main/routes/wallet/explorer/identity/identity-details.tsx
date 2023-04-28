@@ -33,7 +33,7 @@ export function IdentityDetails (props: Props): JSX.Element {
     .filter((resource) => {
       return resource.identity === identity.did
     })
-
+  const resourcesSummary = resources.reduce(resourceSummary, {})
   const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
   const alias = identity.alias ?? identity.did
 
@@ -48,13 +48,17 @@ export function IdentityDetails (props: Props): JSX.Element {
             <Details.Input label='Ethereum address' value={address} />
           </Details.Grid>
         </Details.Body>
-        <Details.Body>
-          <Details.Title>Content</Details.Title>
-          <JsonUi
-            prop='Resources'
-            value={resources.reduce(resourceSummary, {})}
-          />
-        </Details.Body>
+        {
+          (Object.keys(resourcesSummary).length > 0) ? (
+            <Details.Body>
+              <Details.Title>Content</Details.Title>
+              <JsonUi
+                prop='Resources'
+                value={resourcesSummary}
+              />
+            </Details.Body>
+          ) : ''
+        }
       </Details>
     </Section>
   )

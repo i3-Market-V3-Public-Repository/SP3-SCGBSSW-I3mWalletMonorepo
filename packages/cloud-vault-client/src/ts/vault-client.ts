@@ -199,15 +199,15 @@ export class VaultClient extends EventEmitter {
           this.request.defaultUrl = cvsConf.vault_configuration.v2.vault_endpoint
 
           this.timestamp = opts.timestamp
-        } else { // this.state === VAULT_STATE.CONNECTED
-          this.es?.close()
-          delete this.es
+
+          this._initEventSourceClient().catch(err => {
+            throw err
+          })
         }
         break
 
       case VAULT_STATE.CONNECTED:
         // this.state === VAULT_STATE.LOGGED_IN
-        await this._initEventSourceClient()
         break
 
       default:
@@ -217,59 +217,62 @@ export class VaultClient extends EventEmitter {
   }
 
   private async _initEventSourceClient (): Promise<void> {
-    return await new Promise((resolve, reject) => {
-      try {
-        const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
-        const esUrl = cvsConf.vault_configuration[apiVersion].events_endpoint
-        this.es = new EventSource(esUrl, {
-          headers: {
-            Authorization: 'Bearer ' + (this.token as string)
-          }
-        })
-
-        this.es.addEventListener('connected', (e) => {
-          const msg = JSON.parse(e.data) as ConnectedEvent['data']
-          if (msg.timestamp === undefined) {
-            this.emit('empty-storage')
-          } else if (msg.timestamp !== this.timestamp) {
-            this.timestamp = msg.timestamp
-            this.emit('storage-updated', this.timestamp)
-          }
-          resolve()
-        })
-
-        this.es.addEventListener('storage-updated', (e) => {
-          const vaultRequest = this.request
-          vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
-            const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
-            if (msg.timestamp !== this.timestamp) {
-              this.timestamp = msg.timestamp
-              this.emit('storage-updated', this.timestamp)
-            }
-          }).catch(reason => {})
-        })
-
-        this.es.addEventListener('storage-deleted', (e) => {
-          const vaultRequest = this.request
-          vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
-            this.logout().catch(err => { throw err })
-            this.emit('storage-deleted')
-          }).catch(reason => {})
-        })
-
-        this.es.onerror = (e) => {
-          this.state.then((state) => {
-            this.switchToState(stateFromError(state, e)).catch((reason) => {
-              console.error(reason)
-            })
-          }).catch(reason => {
-            console.error(reason)
-          })
-        }
-      } catch (error) {
-        reject(error)
+    if (this.es !== undefined) {
+      return
+    }
+    const cvsConf = this.wellKnownCvsConfiguration as OpenApiComponents.Schemas.CvsConfiguration
+    const esUrl = cvsConf.vault_configuration[apiVersion].events_endpoint
+    this.es = new EventSource(esUrl, {
+      headers: {
+        Authorization: 'Bearer ' + (this.token as string)
       }
     })
+
+    this.es.addEventListener('connected', (e) => {
+      const msg = JSON.parse(e.data) as ConnectedEvent['data']
+      if (msg.timestamp === undefined) {
+        this.emit('empty-storage')
+      } else if (msg.timestamp !== this.timestamp) {
+        this.timestamp = msg.timestamp
+        this.emit('storage-updated', this.timestamp)
+      }
+      this.switchToState(VAULT_STATE.CONNECTED).catch(err => {
+        throw err
+      })
+    })
+
+    this.es.addEventListener('storage-updated', (e) => {
+      const vaultRequest = this.request
+      vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
+        const msg = JSON.parse(e.data) as StorageUpdatedEvent['data']
+        if (msg.timestamp !== this.timestamp) {
+          this.timestamp = msg.timestamp
+          this.emit('storage-updated', this.timestamp)
+        }
+      }).catch(reason => {})
+    })
+
+    this.es.addEventListener('storage-deleted', (e) => {
+      const vaultRequest = this.request
+      vaultRequest.waitForOngoingRequestsToFinsh().finally(() => {
+        this.logout().catch(err => { throw err })
+        this.emit('storage-deleted')
+      }).catch(reason => {})
+    })
+
+    this.es.onerror = (e) => {
+      this.state.then((state) => {
+        this.switchToState(stateFromError(state, e)).catch((reason) => {
+          console.error(reason)
+        })
+      }).catch(reason => {
+        console.error(reason)
+      })
+    }
+
+    this.es.onmessage = (m) => {
+      console.log(m)
+    }
   }
 
   private async _initKeyManager (username: string, password: string): Promise<void> {
@@ -293,8 +296,9 @@ export class VaultClient extends EventEmitter {
   }
 
   async login (username: string, password: string, timestamp?: number): Promise<void> {
-    if (await this.state !== VAULT_STATE.INITIALIZED) {
-      throw new VaultError('error', new Error('in order to login you should be in state INITIALIZED'))
+    const currentState = await this.state
+    if (currentState !== VAULT_STATE.INITIALIZED && currentState !== VAULT_STATE.LOGGED_IN) {
+      throw new VaultError('error', new Error('in order to login you should be in state INITIALIZED or LOGGED IN but not receiving SSE events'))
     }
     await this.switchToState(VAULT_STATE.CONNECTED, {
       username,

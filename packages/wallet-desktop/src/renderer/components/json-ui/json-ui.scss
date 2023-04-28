@@ -20,7 +20,7 @@ $accordion-border-color: bootstrapUtils.shade-color(i3m.$primary, 10%);
     background-color: $accordion-bg;
   }
 
-  .json-ui-text, .json-ui-boolean {
+  .json-ui-text, .json-ui-boolean, .json-ui-number {
     padding: 10px 20px;
     display: flex;
     align-items: center;

@@ -18,6 +18,8 @@ interface Props<T> {
   prop: string
 }
 
+const labelWidth: number = 4 // maximum is 11 (label + content = 12)
+
 function JsonArray (props: InternalProps<any[]>): JSX.Element {
   const { value, prop, fullProp } = props
 
@@ -66,8 +68,8 @@ function JsonText (props: InternalProps<string>): JSX.Element {
 
   return (
     <Form.Group as={Row} className='json-ui-text' controlId={fullProp}>
-      <Form.Label column sm='2' title={prop}>{prop}</Form.Label>
-      <Col sm='10'>
+      <Form.Label column sm={labelWidth} title={prop}>{prop}</Form.Label>
+      <Col sm={12 - labelWidth}>
         <InputGroup>
           <Form.Control type='text' disabled size='sm' value={value} />
           <InputGroup.Text className='copy-button' onClick={() => writeClipboard(value.toString())}>
@@ -84,8 +86,8 @@ function JsonBoolean (props: InternalProps<boolean>): JSX.Element {
 
   return (
     <Form.Group as={Row} className='json-ui-boolean' controlId={fullProp}>
-      <Form.Label column sm='2' title={prop}>{prop}</Form.Label>
-      <Col sm='10'>
+      <Form.Label column sm={labelWidth} title={prop}>{prop}</Form.Label>
+      <Col sm={12 - labelWidth}>
         <Form.Switch disabled checked={value} />
       </Col>
     </Form.Group>
@@ -99,8 +101,8 @@ function JsonNumber (props: InternalProps<number>): JSX.Element {
 
   return (
     <Form.Group as={Row} className='json-ui-number' controlId={fullProp}>
-      <Form.Label column sm='2' title={prop}>{prop}</Form.Label>
-      <Col sm='10'>
+      <Form.Label column sm={labelWidth} title={prop}>{prop}</Form.Label>
+      <Col sm={12 - labelWidth}>
         <InputGroup>
           <Form.Control type='number' size='sm' value={value} disabled />
           <InputGroup.Text className='copy-button' onClick={() => writeClipboard(value.toString())}>

@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { Identity, NonRepudiationProofResource } from '@i3m/base-wallet'
-import { NrProofPayload } from '@i3m/non-repudiation-library/types'
+import type { NrProofPayload } from '@i3m/non-repudiation-library'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
 import { getResourceName } from '@wallet/renderer/util'
@@ -53,8 +53,8 @@ export function ProofDetails (props: Props): JSX.Element {
       </Details.Body>
       <Details.Body>
         <Details.Title>Content</Details.Title>
-        <JsonUi prop='Claims' value={{ claims: proofPayload }} />
-        <JsonUi prop='Data' value={{ claims: resource.resource }} />
+        <JsonUi prop='Claims' value={proofPayload} />
+        <JsonUi prop='JSON Web Signature' value={{ 'compact serialization': resource.resource }} />
       </Details.Body>
     </>
   )

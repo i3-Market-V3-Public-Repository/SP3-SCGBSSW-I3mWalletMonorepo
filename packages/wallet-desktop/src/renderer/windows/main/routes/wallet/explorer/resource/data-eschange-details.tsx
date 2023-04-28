@@ -1,33 +1,30 @@
 import * as React from 'react'
+import { startCase } from 'lodash'
 
-import { ContractResource, KeyPairResource } from '@i3m/base-wallet'
+import { ContractResource, DataExchangeResource, KeyPairResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
 import { getResourceName } from '@wallet/renderer/util'
 
 interface Props {
-  resource: ContractResource
+  resource: DataExchangeResource
 }
 
-export function ContractDetails (props: Props): JSX.Element {
+export function DataExchangeDetails (props: Props): JSX.Element {
   const { resource } = props
   const [sharedMemory] = useSharedMemory()
   const name = getResourceName(props.resource)
 
   let identity: string | undefined
   let role: string | undefined
-  let publicJwk: string | undefined
-
   if (resource.parentResource !== undefined) {
-    const keyPair = sharedMemory.resources[resource.parentResource] as KeyPairResource
-    identity = getResourceName(keyPair)
-    publicJwk = keyPair.resource.keyPair.publicJwk
-  }
-  if (publicJwk === undefined) {
-    publicJwk = resource.resource.keyPair?.publicJwk
-  }
-  if (publicJwk !== undefined) {
-    role = (publicJwk === resource.resource.dataSharingAgreement.dataExchangeAgreement.orig) ? 'provider' : 'consumer'
+    const contract = sharedMemory.resources[resource.parentResource] as ContractResource
+    if (contract.parentResource !== undefined) {
+      const keyPair = sharedMemory.resources[contract.parentResource] as KeyPairResource
+      identity = getResourceName(keyPair)
+      const publicJwk = contract?.resource.keyPair?.publicJwk
+      role = (publicJwk === resource.resource.orig) ? 'provider' : 'consumer'
+    }
   }
 
   return (
@@ -48,8 +45,7 @@ export function ContractDetails (props: Props): JSX.Element {
       </Details.Body>
       <Details.Body>
         <Details.Title>Content</Details.Title>
-        <JsonUi prop='Data Sharing Agreement' value={resource.resource.dataSharingAgreement} />
-        <JsonUi prop='Key Pair' value={{ ...resource.resource.keyPair, privateJwk: undefined }} />
+        <JsonUi prop={startCase(resource.type)} value={resource.resource} />
       </Details.Body>
     </>
   )
