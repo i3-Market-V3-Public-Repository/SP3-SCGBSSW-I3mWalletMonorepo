@@ -35,9 +35,6 @@
 		},
 		{
 			"path": "packages/wallet-desktop-openapi"
-		},
-		{
-			"path": "packages/wallet-cli"
 		}
 	],
 	"settings": {
