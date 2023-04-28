@@ -221,7 +221,7 @@ export class CloudVaultManager {
   }
 
   // *************** Task Methods *************** //
-  protected async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
+  protected async registerTask (task: LabeledTaskHandler): Promise<void> {
     const errorMessage = 'Vault user registration error'
     const { sharedMemoryManager: shm } = this.locals
 
@@ -229,17 +229,14 @@ export class CloudVaultManager {
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        loggingIn: true
+        blocking: true
       }
     }))
 
     try {
       await this.initializeClientIfNeeded()
 
-      let credentials = cloud?.credentials
-      if (credentials === undefined) {
-        credentials = await this.flows.askCredentials(errorMessage)
-      }
+      const credentials = await this.flows.askCredentials(errorMessage)
       await this.flows.askPasswordConfirmation(credentials)
 
       const vc = await this.flows.askRegistrationCredential(errorMessage)
@@ -264,13 +261,13 @@ export class CloudVaultManager {
         ...mem,
         cloudVaultData: {
           ...mem.cloudVaultData,
-          loggingIn: false
+          blocking: false
         }
       }))
     }
   }
 
-  protected async loginTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<void> {
+  protected async loginTask (task: LabeledTaskHandler, optCredentails?: Credentials): Promise<void> {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
@@ -280,13 +277,13 @@ export class CloudVaultManager {
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        loggingIn: true
+        blocking: true
       }
     }))
 
     try {
       await this.initializeClientIfNeeded()
-      const credentials = await this.flows.askCredentials(errorMessage)
+      const credentials = await this.flows.askCredentials(errorMessage, { credentials: optCredentails,  store: true })
       await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
       shm.update(mem => ({
         ...mem,
@@ -300,7 +297,7 @@ export class CloudVaultManager {
         ...mem,
         cloudVaultData: {
           ...mem.cloudVaultData,
-          loggingIn: false
+          blocking: false
         }
       }))
     }

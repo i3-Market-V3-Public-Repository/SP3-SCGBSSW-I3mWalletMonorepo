@@ -65,8 +65,11 @@ export class CloudVaultFlows {
     return url
   }
 
-  async askCredentials (errorMessage: string, credentials?: Credentials): Promise<Credentials> {
+  async askCredentials (errorMessage: string, opts?: { credentials?: Credentials, store?: boolean}): Promise<Credentials> {
     const { dialog, sharedMemoryManager: shm, storeManager } = this.locals
+    let credentials = opts?.credentials
+    let storeCredentials = opts?.store ?? false
+
     if (credentials !== undefined) {
       return credentials
     }
@@ -93,7 +96,10 @@ export class CloudVaultFlows {
     }
 
     passwordCheck(credentials.password)
-    await storeManager.silentStoreCredentials(credentials)
+    if (storeCredentials) {
+      await storeManager.silentStoreCredentials(credentials)
+    }
+
     return credentials
   }
 

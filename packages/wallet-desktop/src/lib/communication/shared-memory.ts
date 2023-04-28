@@ -58,7 +58,7 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
     cloudVaultData: {
       state: toVaultState('not-initialized'),
       syncing: false,
-      loggingIn: false
+      blocking: false
     },
     ...values
   }
