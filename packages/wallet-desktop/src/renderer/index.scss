@@ -16,6 +16,5 @@
   // $accordion-button-active-bg:    bootstrapUtils.tint-color(i3m.$dark-secondary, 90%),
   // $accordion-button-active-color: bootstrapUtils.shade-color(i3m.$dark-secondary, 10%),
 );
-@use 'styles/bootstrap-typeahead.scss' as bootstrapTypeahead;
 
 @include i3m.styles;
