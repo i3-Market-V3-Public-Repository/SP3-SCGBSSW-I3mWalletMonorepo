@@ -16,9 +16,9 @@ export class ConnectManager {
   public walletProtocolTransport: HttpResponderTransport
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<ConnectManager> {
-    const { storeManager } = locals
-    const privateSettings = storeManager.getStore('private-settings')
-    const jwk = await privateSettings.get('secret') as JWK
+    const { sharedMemoryManager: shm } = locals
+
+    const jwk = shm.memory.settings.private.secret as JWK
     const key = await importJWK(jwk, 'HS256')
     return new ConnectManager(locals, { key }) // no se puede
   }

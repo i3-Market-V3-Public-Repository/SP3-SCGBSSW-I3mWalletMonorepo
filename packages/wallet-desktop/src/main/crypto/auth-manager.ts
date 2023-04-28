@@ -16,8 +16,8 @@ export class AuthManager {
   protected _justRegistered: boolean
 
   public static async initialize (ctx: MainContext, locals: Locals): Promise<AuthManager> {
-    const publicSettings = locals.storeManager.getStore('public-settings')
-    const auth = await publicSettings.get('auth')
+    const { sharedMemoryManager: shm } = locals
+    const { auth } = shm.memory.settings.public
 
     return new AuthManager(ctx, locals, {
       registered: auth !== undefined
@@ -125,8 +125,9 @@ export class AuthManager {
       encKeys
     }
     await keyCtx.encKeys.prepareEncryption(keyCtx)
-    await keyCtx.encKeys.storeSettings(this.locals, keyCtx)
 
+    // Store the new auth and enc
+    await keyCtx.encKeys.storeSettings(this.locals, keyCtx)
     await keyCtx.authKeys.register(keyCtx)
     await keyCtx.authKeys.storeSettings(this.locals, keyCtx)
 
@@ -134,11 +135,11 @@ export class AuthManager {
   }
 
   private async localAuth (): Promise<KeyContext> {
-    const publicSettings = this.locals.storeManager.getStore('public-settings')
-    const auth = await publicSettings.get('auth')
-    const authKeys = loadAuthKeyAlgorithm(auth)
+    const { sharedMemoryManager: shm } = this.locals
+    const { auth, enc } = shm.memory.settings.public
 
-    const enc = await publicSettings.get('enc')
+    // Load current auth and enc algorithms
+    const authKeys = loadAuthKeyAlgorithm(auth)
     const encKeys = loadEncKeyAlgorithm(auth, enc)
 
     const keyCtx: KeyContext = {
@@ -165,12 +166,10 @@ export class AuthManager {
       throw new AuthenticationError('Tries exceeded')
     }
 
-    await this.locals.keysManager.migrate(keyCtx)
-
     return keyCtx
   }
 
-  async authenticate (task: LabeledTaskHandler): Promise<KeyContext> {
+  async authenticate (task: LabeledTaskHandler): Promise<void> {
     let keyCtx
 
     if (!this.registered) {
@@ -183,7 +182,6 @@ export class AuthManager {
 
     this._authenticated = true
     this.locals.keysManager.setKeyContext(keyCtx)
-
-    return keyCtx
+    this.ctx.keyCtx = keyCtx
   }
 }

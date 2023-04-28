@@ -1,0 +1,12 @@
+
+@mixin buttons {
+
+  .copy-button {
+    cursor: pointer;
+    > svg {
+      width: 15px;
+      height: 15px;
+    }
+  }
+
+}

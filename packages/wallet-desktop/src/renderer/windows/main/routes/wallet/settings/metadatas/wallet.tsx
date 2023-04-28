@@ -1,10 +1,12 @@
+import * as React from 'react'
 import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 
 import { PrivateSettings, Provider, showToastAction } from '@wallet/lib'
-import { ActionDispatcher } from '@wallet/renderer/communication'
+import { ActionDispatcher, useSharedMemory } from '@wallet/renderer/communication'
 
 import { ArraySettingsMetadata, MetadataRecord, ObjectSettingsMetadata } from '../settings-metadata'
+import { JsonUi } from '@wallet/renderer/components'
 
 const defaultProvider = (): Provider => {
   const id = uuid()
@@ -104,8 +106,27 @@ const providersMetadata: ArraySettingsMetadata<Provider> = {
   }
 }
 
+function DefaultProviders (): JSX.Element {
+  const [shm] = useSharedMemory()
+
+  return (
+    <>
+      {Object.entries(shm.defaultProviders).map(([id, provider]) => (
+        <JsonUi key={id} prop={id} value={provider} defaultActiveKey={[]} />
+      ))}
+    </>
+  )
+}
+
 export const walletMetadata: MetadataRecord = {
   Wallet: [
+    {
+      type: 'info',
+      description: {
+        title: 'Default providers',
+        message: <DefaultProviders />
+      }
+    },
     providersMetadata
   ]
 }

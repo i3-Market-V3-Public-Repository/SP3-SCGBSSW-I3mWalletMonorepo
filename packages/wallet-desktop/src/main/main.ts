@@ -42,7 +42,8 @@ export default async (argv: string[]): Promise<void> => {
     const ctx = initContext<MainContext>({
       args: parseArguments(),
       appPath: path.resolve(__dirname, '../../'),
-      storeMigrationProxy: createStoreMigrationProxy()
+      storeMigrationProxy: createStoreMigrationProxy(),
+      initialPublicSettings: undefined as any
     })
 
     // Initialize locals

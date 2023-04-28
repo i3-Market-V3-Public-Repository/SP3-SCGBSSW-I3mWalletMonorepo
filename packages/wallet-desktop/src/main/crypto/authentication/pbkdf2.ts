@@ -54,8 +54,18 @@ export class Pbkdf2AuthKeys implements AuthenticationKeys {
       salt: this.salt.toString('base64'),
       localAuth: this.localAuth.export().toString('base64')
     }
-    const publicSettings = locals.storeManager.getStore('public-settings')
-    await publicSettings.set('auth', auth)
+
+    const { sharedMemoryManager: shm } = locals
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        public: {
+          ...mem.settings.public,
+          auth
+        }
+      }
+    }))
   }
 
   async migrationNeeded (): Promise<boolean> {

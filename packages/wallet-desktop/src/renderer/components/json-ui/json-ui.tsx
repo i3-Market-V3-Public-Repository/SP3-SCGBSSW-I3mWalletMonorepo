@@ -4,7 +4,7 @@ import { useAction } from '@wallet/renderer/communication'
 import { useClipboard } from '@wallet/renderer/hooks/use-clipboard'
 import * as React from 'react'
 
-import { Accordion, Col, Form, InputGroup, Row } from 'react-bootstrap'
+import { Accordion, AccordionProps, Col, Form, InputGroup, Row } from 'react-bootstrap'
 import './json-ui.scss'
 
 interface InternalProps<T> {
@@ -13,7 +13,7 @@ interface InternalProps<T> {
   fullProp: string
 }
 
-interface Props<T> {
+interface Props<T> extends AccordionProps {
   value: T
   prop: string
 }
@@ -133,13 +133,21 @@ export function JsonProxy (props: InternalProps<any>): JSX.Element | null {
 }
 
 export function JsonUi (props: Props<any>): JSX.Element | null {
+  const { value, prop, ...accordionProps } = props
   const internalProps: InternalProps<any> = {
-    ...props,
+    prop,
+    value,
     fullProp: props.prop
+  }
+  const defaultProps: AccordionProps = {
+    className: 'json-ui',
+    flush: true,
+    alwaysOpen: true,
+    defaultActiveKey: [props.prop]
   }
 
   return (
-    <Accordion className='json-ui' flush alwaysOpen defaultActiveKey={[props.prop]}>
+    <Accordion {...{ ...defaultProps, ...accordionProps }}>
       <JsonProxy {...internalProps} />
     </Accordion>
   )

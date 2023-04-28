@@ -1,5 +1,4 @@
 import { KeyObject } from 'crypto'
-import _ from 'lodash'
 
 import { KeyContext, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 import { currentAuthAlgorithm, getCurrentAuthKeys } from './authentication'
@@ -15,7 +14,16 @@ export class KeysManager {
     return new KeysManager(ctx, locals)
   }
 
-  constructor (protected ctx: MainContext, protected locals: Locals) { }
+  constructor (protected ctx: MainContext, protected locals: Locals) {
+    this.bindRuntimeEvents()
+  }
+
+  bindRuntimeEvents (): void {
+    const { runtimeManager } = this.locals
+    runtimeManager.on('after-migration', async () => {
+      delete this.ctx.keyCtx
+    })
+  }
 
   get authKeys (): AuthenticationKeys {
     if (this._authKeys === undefined) {
@@ -36,48 +44,29 @@ export class KeysManager {
     this._encKeys = keyCtx.encKeys
   }
 
-  public async migrate (oldCtx: KeyContext): Promise<void> {
-    const { storeMigrationProxy } = this.ctx
-    const { runtimeManager } = this.locals
+  public async migrate (keyCtx: KeyContext): Promise<void> {
+    const { sharedMemoryManager: shm, runtimeManager } = this.locals
 
-    const newCtx: KeyContext = _.clone(oldCtx)
-    const migrateAuth = async (): Promise<void> => {
-      logger.debug(`Migrate authentication keys from ${auth?.algorithm ?? 'default'} to '${currentAuthAlgorithm}'`)
-      newCtx.authKeys = await getCurrentAuthKeys()
-
+    const { auth, enc } = shm.memory.settings.public
+    const authMigrationNeeded = auth?.algorithm !== currentAuthAlgorithm || await keyCtx.authKeys.migrationNeeded()
+    if (authMigrationNeeded) {
       runtimeManager.on('migration', async () => {
-        await newCtx.authKeys.register(newCtx)
-        await newCtx.authKeys.storeSettings(this.locals, newCtx)
-        this._authKeys = newCtx.authKeys
-      })
-    }
-    const migrateEnc = async (): Promise<void> => {
-      logger.debug(`Migrate encryption keys from '${enc?.algorithm ?? 'default'}' to '${currentEncAlgorithm}'`)
-
-      newCtx.encKeys = await getCurrentEncKeys()
-      await newCtx.encKeys.prepareEncryption(oldCtx)
-
-      storeMigrationProxy.to.encKeys = newCtx.encKeys
-      storeMigrationProxy.from.encKeys = oldCtx.encKeys
-      runtimeManager.on('migration', async () => {
-        await newCtx.encKeys.storeSettings(this.locals, oldCtx)
-        this._encKeys = newCtx.encKeys
+        logger.debug(`Migrate authentication keys from ${auth?.algorithm ?? 'default'} to '${currentAuthAlgorithm}'`)
+        const authKeys = await getCurrentAuthKeys()
+        await authKeys.register(keyCtx)
+        await authKeys.storeSettings(this.locals, keyCtx)
       })
     }
 
-    const publicSettings = this.locals.storeManager.getStore('public-settings')
-    const auth = await publicSettings.get('auth')
-    if (auth?.algorithm !== currentAuthAlgorithm) {
-      await migrateAuth()
-    } else if (await oldCtx.authKeys.migrationNeeded()) {
-      await migrateAuth()
-    }
+    const encMigrationNeeded = enc?.algorithm !== currentEncAlgorithm || await keyCtx.encKeys.migrationNeeded()
+    if (encMigrationNeeded) {
+      runtimeManager.on('migration', async () => {
+        logger.debug(`Migrate encryption keys from '${enc?.algorithm ?? 'default'}' to '${currentEncAlgorithm}'`)
 
-    const enc = await publicSettings.get('enc')
-    if (enc?.algorithm !== currentEncAlgorithm) {
-      await migrateEnc()
-    } else if (await oldCtx.encKeys.migrationNeeded()) {
-      await migrateEnc()
+        const encKeys = await getCurrentEncKeys()
+        await encKeys.storeSettings(this.locals, keyCtx)
+        await encKeys.prepareEncryption(keyCtx)
+      })
     }
   }
 

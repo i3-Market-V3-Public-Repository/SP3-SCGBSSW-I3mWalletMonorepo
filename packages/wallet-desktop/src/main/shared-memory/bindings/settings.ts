@@ -2,23 +2,24 @@ import _ from 'lodash'
 import { Locals, handleCanBePromise } from '@wallet/main/internal'
 
 export const bindWithSettings = async (locals: Locals): Promise<void> => {
-  const { sharedMemoryManager, storeManager } = locals
+  const { sharedMemoryManager: shm, storeManager } = locals
+
+  // Update stores
   const privStore = storeManager.getStore('private-settings')
-  const privData = await privStore.getStore()
+  await privStore.set(shm.memory.settings.private)
 
   const pubStore = storeManager.getStore('public-settings')
-  const pubData = await pubStore.getStore()
+  await pubStore.set(shm.memory.settings.public)
 
-  // Update private settings
-  sharedMemoryManager.update((mem) => ({
-    ...mem,
-    settings: {
-      private: privData,
-      public: pubData
-    }
-  }))
+  // shm.update((mem) => ({
+  //   ...mem,
+  //   settings: {
+  //     private: privData,
+  //     public: pubData
+  //   }
+  // }))
 
-  sharedMemoryManager.on('change', ({ curr, prev, ctx }) => {
+  shm.on('change', ({ curr, prev, ctx }) => {
     const modifiers = ctx?.modifiers ?? {}
     if (modifiers['no-settings-update'] !== true) {
       if (!_.isEqual(curr.settings.private, prev.settings.private)) {

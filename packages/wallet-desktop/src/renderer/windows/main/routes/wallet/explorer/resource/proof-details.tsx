@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { ContractResource, DataExchangeResource, KeyPairResource, NonRepudiationProofResource } from '@i3m/base-wallet'
+import { DataExchangeResource, NonRepudiationProofResource } from '@i3m/base-wallet'
 import type { NrProofPayload } from '@i3m/non-repudiation-library'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
@@ -45,7 +45,7 @@ export function ProofDetails (props: Props): JSX.Element {
         verificationPublicJwk = dea.resource.orig
         break
       default:
-        break;
+        break
     }
   }
 
@@ -66,10 +66,12 @@ export function ProofDetails (props: Props): JSX.Element {
       <Details.Body>
         <Details.Title>Content</Details.Title>
         <JsonUi prop='Claims' value={proofPayload} />
-        <JsonUi prop='JSON Web Signature' value={{
-          'compact serialization': resource.resource,
-          'verification public JWK': verificationPublicJwk ?? undefined
-        }} />
+        <JsonUi
+          prop='JSON Web Signature' value={{
+            'compact serialization': resource.resource,
+            'verification public JWK': verificationPublicJwk ?? undefined
+          }}
+        />
       </Details.Body>
     </>
   )

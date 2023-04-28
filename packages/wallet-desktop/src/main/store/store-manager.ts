@@ -5,7 +5,7 @@ import fs from 'fs/promises'
 
 import {
   createDefaultPrivateSettings,
-  Credentials, storeChangedAction, StoreClass,
+  Credentials, PrivateSettings, storeChangedAction, StoreClass,
   StoreClasses, StoreModel, StoreModels, StoreSettings
 } from '@wallet/lib'
 import {
@@ -18,13 +18,13 @@ import {
   WalletDesktopError
 } from '@wallet/main/internal'
 
-import { currentStoreType, StoreOptions } from './builders'
-import { StoreOptionsBuilder } from './migration'
+import { VAULT_STATE } from '@i3m/cloud-vault-client'
+import _ from 'lodash'
+import { StoreOptions } from './builders'
 import { StoreBag } from './store-bag'
 import { StoreBuilder } from './store-builder'
 import { StoreBundleData, StoreMetadata, StoresBundle } from './store-bundle'
-import { StoreProxy } from './store-proxy'
-import { VAULT_STATE } from '@i3m/cloud-vault-client'
+import { StoreProxyBuilder } from './store-proxy'
 
 const DEFAULT_STORE_SETTINGS: StoreSettings = { type: 'electron-store' }
 
@@ -66,6 +66,14 @@ export class StoreManager extends StoreBag {
       task.setDetails('Migrating and loading encrypted stores')
       await this.loadWalletStores()
     })
+  }
+
+  get defaultStoreSettings (): StoreSettings {
+    return this.builder.defaultStoreSettings
+  }
+
+  set defaultStoreSettings (value: StoreSettings) {
+    this.builder.defaultStoreSettings = value
   }
 
   protected async handleStoreBackup<T> (storePath: string, options: StoreOptions<T>): Promise<void> {
@@ -120,47 +128,61 @@ export class StoreManager extends StoreBag {
       options: fixedOptions
     }
 
+    // Store on store bag
     this.setStore(publicSettings, publicMetadata, 'public-settings')
 
-    // Migrate to last store type
-    this.builder.storeInfo = await publicSettings.get('store') ?? DEFAULT_STORE_SETTINGS
-    if (this.builder.storeInfo.type !== currentStoreType) {
-      const { storeMigrationProxy } = this.ctx
-      const { runtimeManager } = this.locals
+    // Backup initial public settings data
+    const publicSettingsData = await publicSettings.getStore()
+    this.ctx.initialPublicSettings = publicSettingsData
 
-      storeMigrationProxy.from.storeType = this.builder.storeInfo.type
-      storeMigrationProxy.to.storeType = currentStoreType
-      runtimeManager.on('migration', async (to) => {
-        this.builder.storeInfo.type = currentStoreType
-        await publicSettings.set('store', { type: currentStoreType })
-      })
-    }
+    // Store settings inside shared memory
+    const { sharedMemoryManager: shm } = this.locals
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        public: publicSettingsData
+      }
+    }))
+
+    // Set default StoreBuilder settings
+    this.defaultStoreSettings = shm.memory.settings.public.store ?? DEFAULT_STORE_SETTINGS
   }
 
   public async loadPrivateSettings (): Promise<void> {
-    const { keysManager } = this.locals
-    const publicSettings = this.getStore('public-settings')
-    const { version, auth, cloud, store, enc, ...rest } = await publicSettings.getStore()
+    const { keysManager, sharedMemoryManager: shm } = this.locals
+    const { version, auth, cloud, store, enc, ...rest } = shm.memory.settings.public
     const options: Partial<StoreOptions<any>> = {
-      fileExtension: 'enc.json'
+      defaults: Object.assign({}, createDefaultPrivateSettings(), rest),
+      fileExtension: 'enc.json',
+      encryptionKey: await keysManager.computeSettingsKey(),
+      onBeforeBuild: async (storePath, opts) => {
+        await this.handleStoreBackup(storePath, opts)
+      }
     }
 
-    await this.executeOptionsBuilders(async (migration) => ({
-      defaults: Object.assign({}, createDefaultPrivateSettings(), rest),
-      encryptionKey: await keysManager.computeSettingsKey(migration.encKeys),
-      onBeforeBuild: async (storePath, opts) => {
-        if (migration.direction === 'from') {
-          await this.handleStoreBackup(storePath, opts)
-        }
-      },
-      ...options
-    }), 'private-settings')
+    const [privateSettings, fixedOptions] = await this.builder.buildStore({ ...options })
+
+    // Store on store bag
+    this.sendStoreToBag(privateSettings, fixedOptions, 'private-settings')
+
+    // Backup initial public settings data
+    const privateSettingsData = await privateSettings.getStore()
+    this.ctx.initialPublicSettings = privateSettingsData
+
+    // Store settings inside shared memory
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        private: privateSettingsData
+      }
+    }))
   }
 
   public async loadWalletStores (): Promise<void> {
-    const { walletFactory } = this.locals
-    const privateSettings = this.getStore('private-settings')
-    const walletSettings = await privateSettings.get('wallet')
+    const { walletFactory, sharedMemoryManager: shm } = this.locals
+    const walletSettings = shm.memory.settings.private.wallet
     const walletOptionsBuilders = Object
       .values(walletSettings.wallets)
       .map((wallet) => ({
@@ -169,34 +191,38 @@ export class StoreManager extends StoreBag {
       }))
       .filter(({ storeFeature }) => storeFeature !== undefined)
       .map(({ wallet, storeFeature }) => {
-        const optionBuilder: StoreOptionsBuilder<any> = async (migration) => await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts, migration.encKeys)
-
         return {
           walletName: wallet.name,
-          optionBuilder
+          wallet,
+          storeFeature
         }
       })
 
-    for (const { walletName, optionBuilder } of walletOptionsBuilders) {
-      await this.executeOptionsBuilders(optionBuilder, 'wallet', walletName)
+    for (const { walletName, wallet, storeFeature } of walletOptionsBuilders) {
+      const options = await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts)
+      const [walletStore, fixedOptions] = await this.builder.buildStore({ ...options })
+      this.sendStoreToBag(walletStore, fixedOptions, 'wallet', walletName)
     }
   }
 
   // Store Bag methods
   public async buildWalletStore (walletName: string): Promise<void> {
-    const { walletFactory } = this.locals
-    const privateSettings = this.getStore('private-settings')
-    const walletSettings = await privateSettings.get('wallet')
+    const { walletFactory, sharedMemoryManager: shm } = this.locals
+    const walletSettings = shm.memory.settings.private.wallet
     const wallet = walletSettings?.wallets[walletName]
     if (wallet === undefined) {
       throw new WalletDesktopError('Wallet metadata not found')
     }
-    const storeFeature = walletFactory.getWalletFeature<StoreFeatureOptions>(wallet.package, 'store')
-    const builder: StoreOptionsBuilder<StoreModel> = async (migration) => {
-      return await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts, migration.encKeys)
-    }
 
-    await this.executeOptionsBuilders(builder, 'wallet', walletName)
+    const storeFeature = walletFactory.getWalletFeature<StoreFeatureOptions>(wallet.package, 'store')
+    const options = await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts)
+    const [walletStore, fixedOptions] = await this.builder.buildStore({ ...options })
+    this.sendStoreToBag(walletStore, fixedOptions, 'wallet', walletName)
+  }
+
+  public deleteStoreById (storeId: string): void {
+    super.deleteStoreById(storeId)
+    this.silentBag.deleteStoreById(storeId)
   }
 
   protected sendStoreToBag <T extends StoreClass> (
@@ -208,7 +234,7 @@ export class StoreManager extends StoreBag {
     const { actionReducer } = this.locals
     const metadata: StoreMetadata<T> = { type, args, options }
 
-    const storeProxy = new StoreProxy(store)
+    const storeProxy = new StoreProxyBuilder(store)
     const beforeChange = async (): Promise<void> => {
       await this.onBeforeChange(type, store)
     }
@@ -233,22 +259,42 @@ export class StoreManager extends StoreBag {
     this.silentBag.setStoreById(store, metadata, id)
   }
 
-  protected async executeOptions <T extends StoreClass>(
-    options: StoreOptions<StoreModels[T]>,
-    type: T,
-    ...args: StoreClasses[T]
-  ): Promise<void> {
-    const [store, fixedOptions] = await this.builder.buildStore(options)
-    this.sendStoreToBag(store, fixedOptions, type, ...args)
-  }
+  public async migrateStores (): Promise<void> {
+    const { sharedMemoryManager: shm, keysManager } = this.locals
+    for (const [id, prevStore] of Object.entries(this.stores)) {
+      // Build new store options
+      const metadata = this.getStoreMetadataById(id)
+      const type = metadata.type
+      let data
+      if (type === 'public-settings') {
+        continue
+      }
+      if (type === 'private-settings') {
+        data = shm.memory.settings.private
+      } else {
+        data = await prevStore.getStore()
+      }
+      const args = metadata.args
+      const oldOptions = _.pick(metadata.options, ['fileExtension', 'name']) as StoreOptions<StoreModel | PrivateSettings>
+      // const filepath = getPath(this.ctx, this.locals, oldOptions)
 
-  protected async executeOptionsBuilders <T extends StoreClass>(
-    optionsBuilder: StoreOptionsBuilder<any>,
-    type: T,
-    ...args: StoreClasses[T]
-  ): Promise<void> {
-    const [store, options] = await this.builder.buildOptionsBuilder(optionsBuilder)
-    this.sendStoreToBag(store, options, type, ...args)
+      delete oldOptions.cwd
+      let encryptionKey: KeyObject
+      if (type === 'private-settings') {
+        encryptionKey = await keysManager.computeSettingsKey()
+      } else {
+        const [, uuid] = oldOptions.name.split('.')
+        encryptionKey = await keysManager.computeWalletKey(uuid)
+      }
+      const newOptions = { ...oldOptions, encryptionKey, defaults: data }
+
+      // Remove old store
+      this.deleteStoreById(id)
+
+      // Create new store
+      const [store, fixedOptions] = await this.builder.buildStore<StoreModels[typeof type]>(newOptions)
+      this.sendStoreToBag(store, fixedOptions, type, ...args)
+    }
   }
 
   // Cloud Sync
@@ -296,8 +342,6 @@ export class StoreManager extends StoreBag {
   }
 
   public async restoreStores (bundle: StoresBundle): Promise<void> {
-    const { to } = this.ctx.storeMigrationProxy
-
     const { versionManager, sharedMemoryManager: shm, keysManager, walletFactory } = this.locals
     if (bundle.version !== versionManager.softwareVersion) {
       // TODO: Maybe raise exception
@@ -310,15 +354,16 @@ export class StoreManager extends StoreBag {
         // Create the store first
         let encryptionKey: KeyObject
 
-        // TODO: Fix this better or juan kills you
+        // TODO: Fix this better or juan will hate you for ever
         delete options.cwd
         if (type === 'private-settings') {
-          encryptionKey = await keysManager.computeSettingsKey(to.encKeys)
+          encryptionKey = await keysManager.computeSettingsKey()
         } else {
           const [, uuid] = options.name.split('.')
-          encryptionKey = await keysManager.computeWalletKey(uuid, to.encKeys)
+          encryptionKey = await keysManager.computeWalletKey(uuid)
         }
-        await this.executeOptions({ ...options, encryptionKey, storeType: to.storeType }, type, ...args)
+        const [store, fixedOptions] = await this.builder.buildStore<StoreModels[typeof type]>({ ...options, encryptionKey })
+        this.sendStoreToBag(store, fixedOptions, type, ...args)
       }
 
       const store = this.silentBag.getStore(type, ...args)

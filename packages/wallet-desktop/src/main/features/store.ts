@@ -18,6 +18,7 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
     if (!storeManager.hasStore('wallet', walletName)) {
       await storeManager.buildWalletStore(walletName)
     }
+    // TODO: Should we allow use the getStore method outside??
     locals.featureContext.store = storeManager.getStore('wallet', walletName)
     locals.sharedMemoryManager.update((mem) => ({ ...mem, hasStore: true }))
   },

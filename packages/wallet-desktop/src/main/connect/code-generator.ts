@@ -7,8 +7,7 @@ export class JwtCodeGenerator implements CodeGenerator {
   constructor (protected key: KeyLike | Uint8Array, protected locals: Locals) { }
 
   async generate (masterKey: MasterKey): Promise<Uint8Array> {
-    const { storeManager } = this.locals
-    const privateSettings = storeManager.getStore('private-settings')
+    const { sharedMemoryManager: shm } = this.locals
     const payload = masterKey.toJSON()
     const iat = Math.trunc(new Date().getTime() / 1000)
     const token = new EncryptJWT(payload)
@@ -18,7 +17,7 @@ export class JwtCodeGenerator implements CodeGenerator {
       .setSubject(masterKey.to.name)
       .setIssuedAt(iat)
 
-    const connect = await privateSettings.get('connect')
+    const connect = shm.memory.settings.private.connect
     if (connect.enableTokenExpiration) {
       const exp = iat + connect.tokenTTL
       token.setExpirationTime(exp)

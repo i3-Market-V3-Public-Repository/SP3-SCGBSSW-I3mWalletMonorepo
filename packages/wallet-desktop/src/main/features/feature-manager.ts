@@ -43,8 +43,8 @@ export class FeatureManager {
       return walletName
     }
 
-    const privateSettings = this.locals.storeManager.getStore('private-settings')
-    const walletSettings = await privateSettings.get('wallet')
+    const { sharedMemoryManager: shm } = this.locals
+    const walletSettings = shm.memory.settings.private.wallet
     if (walletSettings.current === undefined) {
       throw new Error('Wallet settings is undefined')
     }

@@ -9,14 +9,6 @@ $details-separator-color: transparentize(bootstrapUtils.tint-color(i3m.$dark, 10
   max-width: 1000px;
   min-width: 350px;
 
-  .copy-button {
-    cursor: pointer;
-    > svg {
-      width: 15px;
-      height: 15px;
-    }
-  }
-
   .details-separator {
     flex: 1;
     border-bottom: 1px solid $details-separator-color;

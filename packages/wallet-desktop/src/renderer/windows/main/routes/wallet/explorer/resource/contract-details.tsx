@@ -3,7 +3,7 @@ import * as React from 'react'
 import { ContractResource, KeyPairResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
-import { getResourceName } from '@wallet/renderer/util'
+import { getResourceName, getResourceParent } from '@wallet/renderer/util'
 
 interface Props {
   resource: ContractResource
@@ -18,10 +18,10 @@ export function ContractDetails (props: Props): JSX.Element {
   let role: string | undefined
   let publicJwk: string | undefined
 
-  if (resource.parentResource !== undefined) {
-    const keyPair = sharedMemory.resources[resource.parentResource] as KeyPairResource
+  const keyPair = getResourceParent<KeyPairResource>(sharedMemory, resource, { type: 'KeyPair' })
+  if (keyPair != null) {
     identity = getResourceName(keyPair)
-    publicJwk = keyPair.resource.keyPair.publicJwk
+    publicJwk = keyPair?.resource.keyPair?.publicJwk
   }
   if (publicJwk === undefined) {
     publicJwk = resource.resource.keyPair?.publicJwk

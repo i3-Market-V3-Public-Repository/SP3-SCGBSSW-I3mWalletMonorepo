@@ -1,10 +1,10 @@
-import * as React from 'react'
 import { startCase } from 'lodash'
+import * as React from 'react'
 
-import { ContractResource, DataExchangeResource, KeyPairResource } from '@i3m/base-wallet'
+import { DataExchangeResource, KeyPairResource } from '@i3m/base-wallet'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
-import { getResourceName } from '@wallet/renderer/util'
+import { getResourceName, getResourceParent } from '@wallet/renderer/util'
 
 interface Props {
   resource: DataExchangeResource
@@ -17,14 +17,11 @@ export function DataExchangeDetails (props: Props): JSX.Element {
 
   let identity: string | undefined
   let role: string | undefined
-  if (resource.parentResource !== undefined) {
-    const contract = sharedMemory.resources[resource.parentResource] as ContractResource
-    if (contract.parentResource !== undefined) {
-      const keyPair = sharedMemory.resources[contract.parentResource] as KeyPairResource
-      identity = getResourceName(keyPair)
-      const publicJwk = contract?.resource.keyPair?.publicJwk
-      role = (publicJwk === resource.resource.orig) ? 'provider' : 'consumer'
-    }
+  const keyPair = getResourceParent<KeyPairResource>(sharedMemory, resource, { type: 'KeyPair' })
+  if (keyPair != null) {
+    identity = getResourceName(keyPair)
+    const publicJwk = keyPair?.resource.keyPair?.publicJwk
+    role = (publicJwk === resource.resource.orig) ? 'provider' : 'consumer'
   }
 
   return (

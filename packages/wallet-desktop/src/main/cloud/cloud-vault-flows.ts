@@ -36,9 +36,8 @@ export class CloudVaultFlows {
   }
 
   async askCloudVaultUrl (): Promise<string> {
-    const { storeManager, dialog } = this.locals
-    const publicSettings = storeManager.getStore('public-settings')
-    const cloud = await publicSettings.get('cloud')
+    const { storeManager, sharedMemoryManager: shm, dialog } = this.locals
+    const cloud = shm.memory.settings.public.cloud
     let url = cloud?.url
 
     if (!filled(url)) {
@@ -68,7 +67,7 @@ export class CloudVaultFlows {
   async askCredentials (errorMessage: string, opts?: { credentials?: Credentials, store?: boolean}): Promise<Credentials> {
     const { dialog, sharedMemoryManager: shm, storeManager } = this.locals
     let credentials = opts?.credentials
-    let storeCredentials = opts?.store ?? false
+    const storeCredentials = opts?.store ?? false
 
     if (credentials !== undefined) {
       return credentials

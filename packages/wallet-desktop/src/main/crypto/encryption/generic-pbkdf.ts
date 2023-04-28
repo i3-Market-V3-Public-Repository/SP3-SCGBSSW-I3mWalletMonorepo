@@ -90,13 +90,23 @@ export class GenericPbkdfEncKeys implements EncryptionKeys {
   }
 
   async storeSettings (locals: Locals, keyCtx: KeyContext): Promise<void> {
-    const encSettings: GenericPbkdfEncSettings = {
+    const enc: GenericPbkdfEncSettings = {
       algorithm: 'generic-pbkdf',
       salt: this.salt.toString('base64'),
       key_derivation: this.kd
     }
-    const publicSettings = locals.storeManager.getStore('public-settings')
-    await publicSettings.set('enc', encSettings)
+
+    const { sharedMemoryManager: shm } = locals
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        public: {
+          ...mem.settings.public,
+          enc
+        }
+      }
+    }))
   }
 
   async migrationNeeded (): Promise<boolean> {

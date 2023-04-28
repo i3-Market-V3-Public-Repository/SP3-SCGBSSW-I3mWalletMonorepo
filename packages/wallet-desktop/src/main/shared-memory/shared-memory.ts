@@ -46,7 +46,7 @@ export class SharedMemoryManager extends EventEmitter {
       await bindWithWindowManager(this.locals)
     })
 
-    runtimeManager.on('after-load', async () => {
+    runtimeManager.on('after-migration', async () => {
       await bindWithSettings(this.locals)
       await bindWithWalletFactory(this.locals)
     })

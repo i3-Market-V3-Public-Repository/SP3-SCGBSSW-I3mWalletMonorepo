@@ -22,7 +22,7 @@ interface StoreEvents {
   'after-delete': []
 }
 
-export class StoreProxy<T extends Record<string, any> = Record<string, unknown>> extends AsyncEventHandler<StoreEvents> {
+export class StoreProxyBuilder<T extends Record<string, any> = Record<string, unknown>> extends AsyncEventHandler<StoreEvents> {
   constructor (protected store: Store<T>) {
     super()
     this.emit = this.emit.bind(this)

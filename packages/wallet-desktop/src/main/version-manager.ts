@@ -18,8 +18,8 @@ export class VersionManager {
   settingsVersion: string
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<VersionManager> {
-    const publicSettings = locals.storeManager.getStore('public-settings')
-    const version = await publicSettings.get('version')
+    const { sharedMemoryManager: shm } = locals
+    const { version } = shm.memory.settings.public
 
     return new VersionManager(locals, {
       settingsVersion: version
@@ -40,10 +40,6 @@ export class VersionManager {
       // Do not await verifyLatestVersion!
       // If there is no internet connection it will freeze the application
       handlePromise(this.locals, this.verifyLatestVersion())
-    })
-
-    runtimeManager.on('after-migration', async () => {
-      await this.finishMigration()
     })
   }
 
@@ -158,9 +154,18 @@ export class VersionManager {
     return false
   }
 
-  async finishMigration (): Promise<void> {
-    const publicSettings = this.locals.storeManager.getStore('public-settings')
-    await publicSettings.set('version', this.softwareVersion)
+  async migrateSettingsVersion (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        public: {
+          ...mem.settings.public,
+          version: this.softwareVersion
+        }
+      }
+    }))
     this.settingsVersion = this.softwareVersion
 
     logger.debug('Migration finished')

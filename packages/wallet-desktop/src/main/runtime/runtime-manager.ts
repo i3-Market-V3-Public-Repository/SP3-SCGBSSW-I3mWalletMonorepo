@@ -21,6 +21,9 @@ import {
   WindowManager
 } from '@wallet/main/internal'
 
+import { RuntimeScript } from './runtime-script'
+import { migrate } from './scripts'
+
 /**
  * Application launch events
  *
@@ -80,10 +83,11 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     this.load = this.load.bind(this)
     this.ui = this.ui.bind(this)
 
-    this.setupModules(this.ctx, this.locals)
+    this.setup(this.ctx, this.locals)
   }
 
-  setupModules (ctx: MainContext, locals: Locals): void {
+  setup (ctx: MainContext, locals: Locals): void {
+    // ** Initializers **
     this.addLocalsModule('before-launch', [
       ['taskManager', TaskManager.initialize],
       ['sharedMemoryManager', SharedMemoryManager.initialize],
@@ -116,6 +120,9 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
       ['connectManager', ConnectManager.initialize],
       ['apiManager', ApiManager.initialize]
     ])
+
+    // ** Scripts **
+    this.executeScript('migration', migrate)
   }
 
   whenIsLoadded (prop: LocalsKey): RuntimeEvent | 'never' {
@@ -132,6 +139,10 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
         await this.setLocals(prop, initializer)
       }
     })
+  }
+
+  executeScript (evType: RuntimeEvent, script: RuntimeScript): void {
+    this.on(evType, async () => { await script(this.ctx, this.locals) })
   }
 
   async emit<E extends keyof RuntimeEvents>(evType: E, ...args: RuntimeEvents[E]): Promise<void> {

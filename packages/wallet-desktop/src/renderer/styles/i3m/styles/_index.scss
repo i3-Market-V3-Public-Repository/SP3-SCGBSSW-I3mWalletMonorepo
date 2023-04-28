@@ -2,9 +2,11 @@
 @import './reset';
 @import './scroll';
 @import './spinner';
+@import './buttons';
 
 @mixin styles {
   @include reset;
   @include scroll;
   @include spinner;
+  @include buttons;
 }

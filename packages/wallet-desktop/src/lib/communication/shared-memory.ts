@@ -2,6 +2,7 @@ import { Resource, Identity, WalletMetadata, ToastOptions } from '@i3m/base-wall
 
 import { PrivateSettings, createDefaultPrivateSettings, DialogData, ConnectData, CloudVaultData, toVaultState, PublicSettings } from '../internal'
 import { WalletTask } from './tasks'
+import type { ProviderData } from '@i3m/base-wallet'
 
 export interface WalletMetadataMap {
   [packageName: string]: WalletMetadata
@@ -34,6 +35,7 @@ export interface SharedMemory {
   connectData: ConnectData
   cloudVaultData: CloudVaultData
   tasks: WalletTask[]
+  defaultProviders: Record<string, ProviderData>
 }
 
 export function createDefaultSharedMemory (values?: Partial<SharedMemory>): SharedMemory {
@@ -60,6 +62,7 @@ export function createDefaultSharedMemory (values?: Partial<SharedMemory>): Shar
       syncing: false,
       blocking: false
     },
+    defaultProviders: {},
     ...values
   }
 }

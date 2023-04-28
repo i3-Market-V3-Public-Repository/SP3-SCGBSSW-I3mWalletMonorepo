@@ -3,6 +3,7 @@ import { ActionDispatcher } from '@wallet/renderer/communication'
 
 export interface BaseMetadata<T = any> {
   description?: {
+    title?: string
     message: ((item: ItemMetadata, value: T) => JSX.Element) | JSX.Element
     visible?: ((item: ItemMetadata, value: T) => boolean) | boolean
   }

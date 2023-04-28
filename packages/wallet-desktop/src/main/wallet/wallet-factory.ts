@@ -47,12 +47,21 @@ export class WalletFactory {
   protected bindRuntimeEvents (): void {
     const { runtimeManager } = this.locals
     runtimeManager.on('wallet-metadatas', async () => {
+      await this.loadDefaultProviders()
       await this.loadWalletsMetadata()
     })
 
     runtimeManager.on('ui', async () => {
       await this.loadCurrentWallet()
     })
+  }
+
+  async loadDefaultProviders (): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    shm.update((mem) => ({
+      ...mem,
+      defaultProviders: DEFAULT_PROVIDERS_DATA
+    }))
   }
 
   async loadWalletsMetadata (): Promise<void> {
@@ -81,8 +90,8 @@ export class WalletFactory {
   }
 
   async loadCurrentWallet (): Promise<void> {
-    const privateSettings = this.locals.storeManager.getStore('private-settings')
-    const wallet = await privateSettings.get('wallet')
+    const { sharedMemoryManager: shm } = this.locals
+    const { wallet } = shm.memory.settings.private
     if (wallet.current === undefined) {
       logger.debug('No wallets stored into the configuration')
       return
@@ -93,17 +102,15 @@ export class WalletFactory {
   }
 
   async buildWalletTask (walletName: string, task: LabeledTaskHandler): Promise<Wallet> {
-    const { storeManager, featureContext, featureManager, dialog, toast } = this.locals
-    const privateSettings = storeManager.getStore('private-settings')
-    const { wallets } = await privateSettings.get('wallet')
-    const providers = await privateSettings.get('providers')
+    const { sharedMemoryManager: shm, featureContext, featureManager, dialog, toast } = this.locals
+    const { wallet, providers } = shm.memory.settings.private
     const providersData = providers.reduce<Record<string, ProviderData>>(
       (prev, curr) => {
         prev[`did:ethr:${curr.network}`] = curr
         return prev
       }, { ...DEFAULT_PROVIDERS_DATA })
 
-    const walletInfo = wallets[walletName]
+    const walletInfo = wallet.wallets[walletName]
     if (walletInfo === undefined) {
       throw new Error('Inconsistent data!')
     }
@@ -176,9 +183,8 @@ export class WalletFactory {
   }
 
   async deleteWallet (walletName: string): Promise<void> {
-    const { storeManager } = this.locals
-    const privateSettings = storeManager.getStore('private-settings')
-    const { wallets, current } = await privateSettings.get('wallet')
+    const { sharedMemoryManager: shm, storeManager } = this.locals
+    const { wallets, current } = shm.memory.settings.private.wallet
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
     if (walletInfo === undefined) {
@@ -199,6 +205,8 @@ export class WalletFactory {
     if (currentWallet === walletName) {
       currentWallet = undefined
     }
+
+    storeManager.deleteStore('wallet', walletName)
 
     this.locals.sharedMemoryManager.update((mem) => ({
       ...mem,

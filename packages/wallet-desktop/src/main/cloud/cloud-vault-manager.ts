@@ -18,12 +18,10 @@ export class CloudVaultManager {
 
   // Static initialization
   static async initialize (ctx: MainContext, locals: Locals): Promise<CloudVaultManager> {
-    const { storeManager } = locals
-    const privSettings = storeManager.getStore('private-settings')
-    const privateCloud = await privSettings.get('cloud')
+    const { sharedMemoryManager: shm } = locals
 
-    const pubSettings = storeManager.getStore('public-settings')
-    const publicCloud = await pubSettings.get('cloud')
+    const privateCloud = shm.memory.settings.private.cloud
+    const publicCloud = shm.memory.settings.public.cloud
 
     return new CloudVaultManager(ctx, locals, {
       privateCloud,
@@ -48,15 +46,14 @@ export class CloudVaultManager {
   }
 
   protected bindRuntimeEvents (): void {
-    const { authManager, runtimeManager, storeManager } = this.locals
+    const { authManager, runtimeManager, sharedMemoryManager: shm } = this.locals
 
     // Cloud vault workflow
     runtimeManager.on('cloud-auth', async (task) => {
       if (authManager.justRegistered) {
         await this.firstTimeSync(task)
       } else {
-        const privateSettings = storeManager.getStore('private-settings')
-        const cloud = await privateSettings.get('cloud')
+        const cloud = shm.memory.settings.private.cloud
         if (cloud?.credentials !== undefined) {
           const asyncLogin = this.login(cloud.credentials)
           handlePromise(this.locals, asyncLogin)
@@ -268,11 +265,10 @@ export class CloudVaultManager {
   }
 
   protected async loginTask (task: LabeledTaskHandler, optCredentails?: Credentials): Promise<void> {
-    const { sharedMemoryManager: shm, storeManager } = this.locals
+    const { sharedMemoryManager: shm } = this.locals
     const errorMessage = 'Vault login error'
 
-    const publicSettings = storeManager.getStore('public-settings')
-    const publicCloudSettings = await publicSettings.get('cloud')
+    const publicCloudSettings = shm.memory.settings.public.cloud
     shm.update(mem => ({
       ...mem,
       cloudVaultData: {
@@ -283,7 +279,7 @@ export class CloudVaultManager {
 
     try {
       await this.initializeClientIfNeeded()
-      const credentials = await this.flows.askCredentials(errorMessage, { credentials: optCredentails,  store: true })
+      const credentials = await this.flows.askCredentials(errorMessage, { credentials: optCredentails, store: true })
       await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
       shm.update(mem => ({
         ...mem,

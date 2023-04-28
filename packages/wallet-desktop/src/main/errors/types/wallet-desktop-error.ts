@@ -29,7 +29,7 @@ export class WalletDesktopError extends Error {
       resetSettings: false,
       severity: 'warning',
       message: 'Something wrong happend...',
-      details: 'Contact with the developers to fix this issue.'
+      details: `info: ${message}. Contact with the developers to fix this issue.`
     }, options ?? {})
     this.critical = this.options.critical
     this.details = this.options.details

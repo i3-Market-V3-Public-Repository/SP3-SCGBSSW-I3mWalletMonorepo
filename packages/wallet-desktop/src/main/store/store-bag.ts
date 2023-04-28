@@ -74,7 +74,6 @@ export class StoreBag {
   }
 
   //
-
   public getStore <T extends StoreClass>(type: T, ...args: StoreClasses[T]): Store<StoreModels[T]> {
     const storeId = StoreBag.getStoreId(type, ...args)
     return this.getStoreById(storeId)

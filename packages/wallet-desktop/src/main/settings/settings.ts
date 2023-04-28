@@ -11,17 +11,21 @@ export type PublicSettingsOptions = Partial<StoreOptions<PublicSettings>>
 // ** PUBLIC SETTINGS **
 
 export async function fixPublicSettings (locals: Locals): Promise<void> {
-  const publicSettings = locals.storeManager.getStore('public-settings')
-  const publicSettingsValues = await publicSettings.getStore()
+  const { sharedMemoryManager: shm } = locals
 
   // Clean public settings
-  await publicSettings.clear()
-  await publicSettings.set(
-    _<PublicSettings>(publicSettingsValues)
-      .pick('version', 'auth', 'enc', 'store', 'cloud')
-      .omitBy(_.isUndefined)
-      .value()
-  )
+  const cleanPublicSettings = _<PublicSettings>(shm.memory.settings.public)
+    .pick('version', 'auth', 'enc', 'store', 'cloud')
+    .omitBy(_.isUndefined)
+    .value() as PublicSettings
+
+  shm.update((mem) => ({
+    ...mem,
+    settings: {
+      ...mem.settings,
+      public: cleanPublicSettings
+    }
+  }))
 }
 
 // ** PRIVATE SETTINGS **
@@ -42,27 +46,39 @@ function validProviders (providers: Provider[]): boolean {
 }
 
 export const fixPrivateSettings = async (locals: Locals): Promise<void> => {
-  const { storeManager } = locals
-  const settings = storeManager.getStore('private-settings')
+  const { sharedMemoryManager: shm } = locals
 
   await fixPublicSettings(locals)
-  const providers = await settings.get('providers')
 
-  // Setup default providers
+  const privateSettings = shm.memory.settings.private
+
+  let providers = privateSettings.providers
   if (!validProviders(providers)) {
-    await settings.set('providers', [
-      { name: 'Rinkeby', network: 'rinkeby', rpcUrl: ['https://rpc.ankr.com/eth_rinkeby'] }
-    ])
+    providers = [{ name: 'Rinkeby', network: 'rinkeby', rpcUrl: ['https://rpc.ankr.com/eth_rinkeby'] }]
   }
 
-  const wallet = await settings.get('wallet')
+  const wallet = privateSettings.wallet
   wallet.packages = DEFAULT_WALLET_PACKAGES
-  await settings.set('wallet', wallet)
 
-  const secret = await settings.get('secret')
+  let secret = privateSettings.secret
   if (secret === undefined) {
     const key = await generateSecret('HS256', { extractable: true })
-    const jwk = await exportJWK(key)
-    await settings.set('secret', jwk)
+    secret = await exportJWK(key)
   }
+
+  // Setup default providers
+  shm.update((mem) => {
+    return {
+      ...mem,
+      settings: {
+        ...mem.settings,
+        private: {
+          ...mem.settings.private,
+          providers,
+          wallet,
+          secret
+        }
+      }
+    }
+  })
 }

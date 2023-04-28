@@ -4,8 +4,8 @@ import _ from 'lodash'
 
 import { useSharedMemory } from '@wallet/renderer/communication'
 
-import { ItemMetadata, BaseMetadata } from './settings-metadata'
 import { SharedMemory } from '@wallet/lib'
+import { BaseMetadata, ItemMetadata } from './settings-metadata'
 
 interface Props {
   metadata: ItemMetadata
@@ -49,9 +49,19 @@ export function SettingsDescription (props: Props): JSX.Element | null {
     message = description.message
   }
 
+  const title = description.title
+
   return (
     <div className='settings-description'>
-      {message}
+      {title !== undefined ? (
+        <div className='settings-description-title'>
+          <label>{title}</label>
+        </div>
+      ) : null}
+      <div className='settings-description-message'>
+        {message}
+      </div>
+
     </div>
   )
 }
