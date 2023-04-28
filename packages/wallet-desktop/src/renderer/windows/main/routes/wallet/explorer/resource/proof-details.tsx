@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { Identity, NonRepudiationProofResource } from '@i3m/base-wallet'
+import { ContractResource, DataExchangeResource, KeyPairResource, NonRepudiationProofResource } from '@i3m/base-wallet'
 import type { NrProofPayload } from '@i3m/non-repudiation-library'
 import { useSharedMemory } from '@wallet/renderer/communication'
 import { Details, JsonUi } from '@wallet/renderer/components'
@@ -30,11 +30,24 @@ export function ProofDetails (props: Props): JSX.Element {
   }
   const proofType = proofPayload?.proofType ?? 'Unknown'
 
-  let identity: Identity | undefined
-  if (resource.identity !== undefined) {
-    identity = sharedMemory.identities[resource.identity]
+  let verificationPublicJwk: string | undefined
+
+  if (resource.parentResource !== undefined) {
+    const dea = sharedMemory.resources[resource.parentResource] as DataExchangeResource
+    switch (proofType) {
+      case 'PoO':
+        verificationPublicJwk = dea.resource.orig
+        break
+      case 'PoR':
+        verificationPublicJwk = dea.resource.dest
+        break
+      case 'PoP':
+        verificationPublicJwk = dea.resource.orig
+        break
+      default:
+        break;
+    }
   }
-  const identityAlias = identity?.alias
 
   return (
     <>
@@ -45,16 +58,18 @@ export function ProofDetails (props: Props): JSX.Element {
           <Details.Input label='Name' value={name} />
           <Details.Input label='Resource type' value={resource.type} />
           <Details.Input label='Proof type' value={proofType} />
-          {identityAlias !== undefined
-            ? (
-              <Details.Input label='From identity' value={identityAlias} />
-            ) : null}
+          {(verificationPublicJwk !== undefined) ? (
+            <Details.Input label='Verification Public JWK' value={verificationPublicJwk} />
+          ) : ''}
         </Details.Grid>
       </Details.Body>
       <Details.Body>
         <Details.Title>Content</Details.Title>
         <JsonUi prop='Claims' value={proofPayload} />
-        <JsonUi prop='JSON Web Signature' value={{ 'compact serialization': resource.resource }} />
+        <JsonUi prop='JSON Web Signature' value={{
+          'compact serialization': resource.resource,
+          'verification public JWK': verificationPublicJwk ?? undefined
+        }} />
       </Details.Body>
     </>
   )
