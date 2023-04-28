@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/types.ts:90](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/00dbbfe/src/ts/types.ts#L90)
+[src/ts/types.ts:90](https://gitlab.com/i3-market/code/wp3/t3.2/conflict-resolution/non-repudiation-library/-/blob/39d8ec3/src/ts/types.ts#L90)
 
 ___
 
