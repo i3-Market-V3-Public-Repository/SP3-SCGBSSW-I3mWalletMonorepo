@@ -1,8 +1,138 @@
-function e(e,r=!1,t=!0){let n="";n=(e=>{const r=[];for(let t=0;t<e.length;t+=32768)r.push(String.fromCharCode.apply(null,e.subarray(t,t+32768)));return btoa(r.join(""))})("string"==typeof e?(new TextEncoder).encode(e):new Uint8Array(e));return r&&(n=function(e){return e.replace(/\+/g,"-").replace(/\//g,"_")}(n)),t||(n=n.replace(/=/g,"")),n}function r$4(e,r=!1){{let t=!1;if(/^[0-9a-zA-Z_-]+={0,2}$/.test(e))t=!0;else if(!/^[0-9a-zA-Z+/]*={0,2}$/.test(e))throw new Error("Not a valid base64 input");t&&(e=e.replace(/-/g,"+").replace(/_/g,"/").replace(/=/g,""));const n=new Uint8Array(atob(e).split("").map((e=>e.charCodeAt(0))));return r?(new TextDecoder).decode(n):n}}
+const base64Encode = (bytes) => {
+    const CHUNK_SIZE = 0x8000;
+    const arr = [];
+    for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
+        arr.push(String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK_SIZE)));
+    }
+    return btoa(arr.join(''));
+};
+const base64Decode = (encoded) => {
+    return new Uint8Array(atob(encoded)
+        .split('')
+        .map((c) => c.charCodeAt(0)));
+};
 
-function n$1(e,n=!1,t){const r=e.match(/^(0x)?([\da-fA-F]+)$/);if(null==r)throw new RangeError("input must be a hexadecimal string, e.g. '0x124fe3a' or '0214f1b2'");let o=r[2];if(void 0!==t){if(t<o.length/2)throw new RangeError(`expected byte length ${t} < input hex byte length ${Math.ceil(o.length/2)}`);o=o.padStart(2*t,"0");}return n?"0x"+o:o}function g$1(e,t=!1,r){{let o="";const a="0123456789abcdef";return (e=ArrayBuffer.isView(e)?new Uint8Array(e.buffer.slice(e.byteOffset,e.byteOffset+e.byteLength)):new Uint8Array(e)).forEach((e=>{o+=a[e>>4]+a[15&e];})),n$1(o,t,r)}}function l(e,t=!1){let r=n$1(e);return r=n$1(e,!1,Math.ceil(r.length/2)),Uint8Array.from(r.match(/[\da-fA-F]{2}/g).map((e=>parseInt(e,16)))).buffer}
+function encode$4(input, urlsafe = false, padding = true) {
+    let base64 = '';
+    {
+        const bytes = (typeof input === 'string')
+            ? (new TextEncoder()).encode(input)
+            : new Uint8Array(input);
+        base64 = base64Encode(bytes);
+    }
+    if (urlsafe)
+        base64 = base64ToBase64url(base64);
+    if (!padding)
+        base64 = removeBase64Padding(base64);
+    return base64;
+}
+function decode$5(base64, stringOutput = false) {
+    {
+        let urlsafe = false;
+        if (/^[0-9a-zA-Z_-]+={0,2}$/.test(base64)) {
+            urlsafe = true;
+        }
+        else if (!/^[0-9a-zA-Z+/]*={0,2}$/.test(base64)) {
+            throw new Error('Not a valid base64 input');
+        }
+        if (urlsafe)
+            base64 = base64urlToBase64(base64);
+        const bytes = base64Decode(base64);
+        return stringOutput
+            ? (new TextDecoder()).decode(bytes)
+            : bytes;
+    }
+}
+function base64ToBase64url(base64) {
+    return base64.replace(/\+/g, '-').replace(/\//g, '_');
+}
+function base64urlToBase64(base64url) {
+    return base64url.replace(/-/g, '+').replace(/_/g, '/').replace(/=/g, '');
+}
+function removeBase64Padding(str) {
+    return str.replace(/=/g, '');
+}
 
-function g(n,t=!1){if(n<1)throw new RangeError("byteLength MUST be > 0");return new Promise((function(e,r){{const r=new Uint8Array(n);if(n<=65536)self.crypto.getRandomValues(r);else for(let t=0;t<Math.ceil(n/65536);t++){const e=65536*t,o=e+65535<n?e+65535:n-1;self.crypto.getRandomValues(r.subarray(e,o));}t&&(r[0]=128|r[0]),e(r);}}))}function m(n,t=!1){if(n<1)throw new RangeError("byteLength MUST be > 0");{const e=new Uint8Array(n);if(n<=65536)self.crypto.getRandomValues(e);else for(let t=0;t<Math.ceil(n/65536);t++){const r=65536*t,o=r+65535<n?r+65535:n-1;self.crypto.getRandomValues(e.subarray(r,o));}return t&&(e[0]=128|e[0]),e}}
+function parseHex$1(a, prefix0x = false, byteLength) {
+    const hexMatch = a.match(/^(0x)?([\da-fA-F]+)$/);
+    if (hexMatch == null) {
+        throw new RangeError('input must be a hexadecimal string, e.g. \'0x124fe3a\' or \'0214f1b2\'');
+    }
+    let hex = hexMatch[2];
+    if (byteLength !== undefined) {
+        if (byteLength < hex.length / 2) {
+            throw new RangeError(`expected byte length ${byteLength} < input hex byte length ${Math.ceil(hex.length / 2)}`);
+        }
+        hex = hex.padStart(byteLength * 2, '0');
+    }
+    return (prefix0x) ? '0x' + hex : hex;
+}
+function bufToHex(buf, prefix0x = false, byteLength) {
+    {
+        let s = '';
+        const h = '0123456789abcdef';
+        if (ArrayBuffer.isView(buf))
+            buf = new Uint8Array(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+        else
+            buf = new Uint8Array(buf);
+        buf.forEach((v) => {
+            s += h[v >> 4] + h[v & 15];
+        });
+        return parseHex$1(s, prefix0x, byteLength);
+    }
+}
+function hexToBuf(hexStr, returnArrayBuffer = false) {
+    let hex = parseHex$1(hexStr);
+    hex = parseHex$1(hexStr, false, Math.ceil(hex.length / 2));
+    {
+        return Uint8Array.from(hex.match(/[\da-fA-F]{2}/g).map((h) => {
+            return parseInt(h, 16);
+        })).buffer;
+    }
+}
+
+function randBytes(byteLength, forceLength = false) {
+    if (byteLength < 1)
+        throw new RangeError('byteLength MUST be > 0');
+    return new Promise(function (resolve, reject) {
+        {
+            const buf = new Uint8Array(byteLength);
+            if (byteLength <= 65536) {
+                self.crypto.getRandomValues(buf);
+            }
+            else {
+                for (let i = 0; i < Math.ceil(byteLength / 65536); i++) {
+                    const begin = i * 65536;
+                    const end = ((begin + 65535) < byteLength) ? begin + 65535 : byteLength - 1;
+                    self.crypto.getRandomValues(buf.subarray(begin, end));
+                }
+            }
+            if (forceLength)
+                buf[0] = buf[0] | 128;
+            resolve(buf);
+        }
+    });
+}
+function randBytesSync(byteLength, forceLength = false) {
+    if (byteLength < 1)
+        throw new RangeError('byteLength MUST be > 0');
+    {
+        const buf = new Uint8Array(byteLength);
+        if (byteLength <= 65536) {
+            self.crypto.getRandomValues(buf);
+        }
+        else {
+            for (let i = 0; i < Math.ceil(byteLength / 65536); i++) {
+                const begin = i * 65536;
+                const end = ((begin + 65535) < byteLength) ? begin + 65535 : byteLength - 1;
+                self.crypto.getRandomValues(buf.subarray(begin, end));
+            }
+        }
+        if (forceLength)
+            buf[0] = buf[0] | 128;
+        return buf;
+    }
+}
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -118,13 +248,11 @@ var bn$1 = {exports: {}};
 var _nodeResolve_empty = {};
 
 var _nodeResolve_empty$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	default: _nodeResolve_empty
+    __proto__: null,
+    default: _nodeResolve_empty
 });
 
 var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(_nodeResolve_empty$1);
-
-bn$1.exports;
 
 (function (module) {
 	(function (module, exports) {
@@ -3770,13 +3898,13 @@ var utils$m = {};
 
 var brorand = {exports: {}};
 
-var r$3;
+var r$2;
 
 brorand.exports = function rand(len) {
-  if (!r$3)
-    r$3 = new Rand(null);
+  if (!r$2)
+    r$2 = new Rand(null);
 
-  return r$3.generate(len);
+  return r$2.generate(len);
 };
 
 function Rand(rand) {
@@ -6853,7 +6981,7 @@ RIPEMD160.prototype._update = function update(msg, start) {
   for (var j = 0; j < 80; j++) {
     var T = sum32(
       rotl32(
-        sum32_4(A, f(j, B, C, D), msg[r$2[j] + start], K(j)),
+        sum32_4(A, f(j, B, C, D), msg[r$1[j] + start], K(j)),
         s[j]),
       E);
     A = E;
@@ -6926,7 +7054,7 @@ function Kh(j) {
     return 0x00000000;
 }
 
-var r$2 = [
+var r$1 = [
   0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
   7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8,
   3, 10, 14, 4, 9, 15, 8, 1, 2, 7, 0, 6, 13, 11, 5, 12,
@@ -8997,10 +9125,10 @@ async function generateKeys(alg, privateKey, base64) {
     if (privateKey !== undefined) {
         if (typeof privateKey === 'string') {
             if (base64 === true) {
-                privKeyBuf = r$4(privateKey);
+                privKeyBuf = decode$5(privateKey);
             }
             else {
-                privKeyBuf = new Uint8Array(l(privateKey));
+                privKeyBuf = new Uint8Array(hexToBuf(privateKey));
             }
         }
         else {
@@ -9008,7 +9136,7 @@ async function generateKeys(alg, privateKey, base64) {
         }
     }
     else {
-        privKeyBuf = new Uint8Array(await g(keyLength));
+        privKeyBuf = new Uint8Array(await randBytes(keyLength));
     }
     const ec = new Ec('p' + namedCurve.substring(namedCurve.length - 3));
     const ecPriv = ec.keyFromPrivate(privKeyBuf);
@@ -9016,9 +9144,9 @@ async function generateKeys(alg, privateKey, base64) {
     const xHex = ecPub.getX().toString('hex').padStart(keyLength * 2, '0');
     const yHex = ecPub.getY().toString('hex').padStart(keyLength * 2, '0');
     const dHex = ecPriv.getPrivate('hex').padStart(keyLength * 2, '0');
-    const x = e(l(xHex), true, false);
-    const y = e(l(yHex), true, false);
-    const d = e(l(dHex), true, false);
+    const x = encode$4(hexToBuf(xHex), true, false);
+    const y = encode$4(hexToBuf(yHex), true, false);
+    const d = encode$4(hexToBuf(dHex), true, false);
     const privateJwk = { kty: 'EC', crv: namedCurve, x, y, d, alg };
     const publicJwk = { ...privateJwk };
     delete publicJwk.d;
@@ -9585,7 +9713,7 @@ const isDisjoint = (...headers) => {
 function isObjectLike(value) {
     return typeof value === 'object' && value !== null;
 }
-function isObject$1(input) {
+function isObject$2(input) {
     if (!isObjectLike(input) || Object.prototype.toString.call(input) !== '[object Object]') {
         return false;
     }
@@ -9949,7 +10077,7 @@ var asKeyObject = parse$1;
 
 async function importJWK(jwk, alg, octAsKeyObject) {
     var _a;
-    if (!isObject$1(jwk)) {
+    if (!isObject$2(jwk)) {
         throw new TypeError('JWK must be an object');
     }
     alg || (alg = jwk.alg);
@@ -10103,7 +10231,7 @@ async function decryptKeyManagement(alg, key, encryptedKey, joseHeader, options)
         case 'ECDH-ES+A128KW':
         case 'ECDH-ES+A192KW':
         case 'ECDH-ES+A256KW': {
-            if (!isObject$1(joseHeader.epk))
+            if (!isObject$2(joseHeader.epk))
                 throw new JWEInvalid(`JOSE Header "epk" (Ephemeral Public Key) missing or invalid`);
             if (!ecdhAllowed(key))
                 throw new JOSENotSupported('ECDH with the provided key is not allowed or not supported by your javascript runtime');
@@ -10222,7 +10350,7 @@ const validateAlgorithms = (option, algorithms) => {
 
 async function flattenedDecrypt(jwe, key, options) {
     var _a;
-    if (!isObject$1(jwe)) {
+    if (!isObject$2(jwe)) {
         throw new JWEInvalid('Flattened JWE must be an object');
     }
     if (jwe.protected === undefined && jwe.header === undefined && jwe.unprotected === undefined) {
@@ -10246,10 +10374,10 @@ async function flattenedDecrypt(jwe, key, options) {
     if (jwe.aad !== undefined && typeof jwe.aad !== 'string') {
         throw new JWEInvalid('JWE AAD incorrect type');
     }
-    if (jwe.header !== undefined && !isObject$1(jwe.header)) {
+    if (jwe.header !== undefined && !isObject$2(jwe.header)) {
         throw new JWEInvalid('JWE Shared Unprotected Header incorrect type');
     }
-    if (jwe.unprotected !== undefined && !isObject$1(jwe.unprotected)) {
+    if (jwe.unprotected !== undefined && !isObject$2(jwe.unprotected)) {
         throw new JWEInvalid('JWE Per-Recipient Unprotected Header incorrect type');
     }
     let parsedProt;
@@ -10694,7 +10822,7 @@ const verify = async (alg, key, signature, data) => {
 
 async function flattenedVerify(jws, key, options) {
     var _a;
-    if (!isObject$1(jws)) {
+    if (!isObject$2(jws)) {
         throw new JWSInvalid('Flattened JWS must be an object');
     }
     if (jws.protected === undefined && jws.header === undefined) {
@@ -10709,7 +10837,7 @@ async function flattenedVerify(jws, key, options) {
     if (typeof jws.signature !== 'string') {
         throw new JWSInvalid('JWS Signature missing or incorrect type');
     }
-    if (jws.header !== undefined && !isObject$1(jws.header)) {
+    if (jws.header !== undefined && !isObject$2(jws.header)) {
         throw new JWSInvalid('JWS Unprotected Header incorrect type');
     }
     let parsedProt = {};
@@ -10808,10 +10936,10 @@ async function compactVerify(jws, key, options) {
 }
 
 async function generalVerify(jws, key, options) {
-    if (!isObject$1(jws)) {
+    if (!isObject$2(jws)) {
         throw new JWSInvalid('General JWS must be an object');
     }
-    if (!Array.isArray(jws.signatures) || !jws.signatures.every(isObject$1)) {
+    if (!Array.isArray(jws.signatures) || !jws.signatures.every(isObject$2)) {
         throw new JWSInvalid('JWS Signatures missing or incorrect type');
     }
     for (const signature of jws.signatures) {
@@ -10899,29 +11027,18 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
     }
     catch (_a) {
     }
-    if (!isObject$1(payload)) {
+    if (!isObject$2(payload)) {
         throw new JWTInvalid('JWT Claims Set must be a top-level JSON object');
     }
-    const { requiredClaims = [], issuer, subject, audience, maxTokenAge } = options;
-    if (maxTokenAge !== undefined)
-        requiredClaims.push('iat');
-    if (audience !== undefined)
-        requiredClaims.push('aud');
-    if (subject !== undefined)
-        requiredClaims.push('sub');
-    if (issuer !== undefined)
-        requiredClaims.push('iss');
-    for (const claim of new Set(requiredClaims.reverse())) {
-        if (!(claim in payload)) {
-            throw new JWTClaimValidationFailed(`missing required "${claim}" claim`, claim, 'missing');
-        }
-    }
+    const { issuer } = options;
     if (issuer && !(Array.isArray(issuer) ? issuer : [issuer]).includes(payload.iss)) {
         throw new JWTClaimValidationFailed('unexpected "iss" claim value', 'iss', 'check_failed');
     }
+    const { subject } = options;
     if (subject && payload.sub !== subject) {
         throw new JWTClaimValidationFailed('unexpected "sub" claim value', 'sub', 'check_failed');
     }
+    const { audience } = options;
     if (audience &&
         !checkAudiencePresence(payload.aud, typeof audience === 'string' ? [audience] : audience)) {
         throw new JWTClaimValidationFailed('unexpected "aud" claim value', 'aud', 'check_failed');
@@ -10942,7 +11059,7 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
     }
     const { currentDate } = options;
     const now = epoch(currentDate || new Date());
-    if ((payload.iat !== undefined || maxTokenAge) && typeof payload.iat !== 'number') {
+    if ((payload.iat !== undefined || options.maxTokenAge) && typeof payload.iat !== 'number') {
         throw new JWTClaimValidationFailed('"iat" claim must be a number', 'iat', 'invalid');
     }
     if (payload.nbf !== undefined) {
@@ -10961,9 +11078,9 @@ var jwtPayload = (protectedHeader, encodedPayload, options = {}) => {
             throw new JWTExpired('"exp" claim timestamp check failed', 'exp', 'check_failed');
         }
     }
-    if (maxTokenAge) {
+    if (options.maxTokenAge) {
         const age = now - payload.iat;
-        const max = typeof maxTokenAge === 'number' ? maxTokenAge : secs(maxTokenAge);
+        const max = typeof options.maxTokenAge === 'number' ? options.maxTokenAge : secs(options.maxTokenAge);
         if (age - tolerance > max) {
             throw new JWTExpired('"iat" claim timestamp check failed (too far in the past)', 'iat', 'check_failed');
         }
@@ -11181,7 +11298,7 @@ class GeneralSign {
 
 class ProduceJWT {
     constructor(payload) {
-        if (!isObject$1(payload)) {
+        if (!isObject$2(payload)) {
             throw new TypeError('JWT Claims Set MUST be an object');
         }
         this._payload = payload;
@@ -11272,7 +11389,7 @@ function decodeProtectedHeader(token) {
             throw new Error();
         }
         const result = JSON.parse(decoder.decode(decode$3(protectedB64u)));
-        if (!isObject$1(result)) {
+        if (!isObject$2(result)) {
             throw new Error();
         }
         return result;
@@ -11404,8 +11521,8 @@ async function jwsDecode(jws, publicJwk) {
     let header;
     let payload;
     try {
-        header = JSON.parse(r$4(match[1], true));
-        payload = JSON.parse(r$4(match[2], true));
+        header = JSON.parse(decode$5(match[1], true));
+        payload = JSON.parse(decode$5(match[2], true));
     }
     catch (error) {
         throw new NrError(error, ['invalid format', 'not a compact jws']);
@@ -11445,14 +11562,14 @@ async function oneTimeSecret(encAlg, secret, base64) {
     if (secret !== undefined) {
         if (typeof secret === 'string') {
             if (base64 === true) {
-                key = r$4(secret);
+                key = decode$5(secret);
             }
             else {
-                const parsedSecret = n$1(secret, false);
-                if (parsedSecret !== n$1(secret, false, secretLength)) {
+                const parsedSecret = parseHex$1(secret, false);
+                if (parsedSecret !== parseHex$1(secret, false, secretLength)) {
                     throw new NrError(new RangeError(`Expected hex length ${secretLength * 2} does not meet provided one ${parsedSecret.length / 2}`), ['invalid key']);
                 }
-                key = new Uint8Array(l(secret));
+                key = new Uint8Array(hexToBuf(secret));
             }
         }
         else {
@@ -11472,7 +11589,7 @@ async function oneTimeSecret(encAlg, secret, base64) {
     }
     const jwk = await exportJWK(key);
     jwk.alg = encAlg;
-    return { jwk: jwk, hex: g$1(r$4(jwk.k), false, secretLength) };
+    return { jwk: jwk, hex: bufToHex(decode$5(jwk.k), false, secretLength) };
 }
 
 async function verifyKeyPair(pubJWK, privJWK) {
@@ -11482,7 +11599,7 @@ async function verifyKeyPair(pubJWK, privJWK) {
     const pubKey = await importJwk(pubJWK);
     const privKey = await importJwk(privJWK);
     try {
-        const nonce = await g(16);
+        const nonce = await randBytes(16);
         const jws = await new GeneralSign(nonce)
             .addSignature(privKey)
             .setProtectedHeader({ alg: privJWK.alg })
@@ -11494,7 +11611,30 @@ async function verifyKeyPair(pubJWK, privJWK) {
     }
 }
 
-function r$1(r){return null!=r&&"object"==typeof r&&!Array.isArray(r)}function n(t){return r$1(t)||Array.isArray(t)?Array.isArray(t)?t.map((t=>Array.isArray(t)||r$1(t)?n(t):t)):Object.keys(t).sort().map((r=>[r,n(t[r])])):t}function t(r){return JSON.stringify(n(r))}
+function isObject$1(val) {
+    return (val != null) && (typeof val === 'object') && !(Array.isArray(val));
+}
+function objectToArraySortedByKey(obj) {
+    if (!isObject$1(obj) && !Array.isArray(obj)) {
+        return obj;
+    }
+    if (Array.isArray(obj)) {
+        return obj.map((item) => {
+            if (Array.isArray(item) || isObject$1(item)) {
+                return objectToArraySortedByKey(item);
+            }
+            return item;
+        });
+    }
+    return Object.keys(obj)
+        .sort()
+        .map((key) => {
+        return [key, objectToArraySortedByKey(obj[key])];
+    });
+}
+function hashable (obj) {
+    return JSON.stringify(objectToArraySortedByKey(obj));
+}
 
 function checkTimestamp(timestamp, notBefore, notAfter, tolerance = 2000) {
     if (timestamp < notBefore - tolerance) {
@@ -11526,7 +11666,7 @@ function jsonSort(obj) {
 
 function parseHex(a, prefix0x = false, byteLength) {
     try {
-        return n$1(a, prefix0x, byteLength);
+        return parseHex$1(a, prefix0x, byteLength);
     }
     catch (error) {
         throw new NrError(error, ['invalid format']);
@@ -11564,8 +11704,6 @@ async function sha(input, algorithm) {
 }
 
 var bn = {exports: {}};
-
-bn.exports;
 
 (function (module) {
 	(function (module, exports) {
@@ -15273,10 +15411,10 @@ Logger.errors = ErrorCode;
 Logger.levels = LogLevel;
 
 var lib_esm$k = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get ErrorCode () { return ErrorCode; },
-	get LogLevel () { return LogLevel; },
-	Logger: Logger
+    __proto__: null,
+    get ErrorCode () { return ErrorCode; },
+    get LogLevel () { return LogLevel; },
+    Logger: Logger
 });
 
 const version$n = "bytes/5.7.0";
@@ -15688,23 +15826,23 @@ function joinSignature(signature) {
 }
 
 var lib_esm$j = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	arrayify: arrayify,
-	concat: concat,
-	hexConcat: hexConcat,
-	hexDataLength: hexDataLength,
-	hexDataSlice: hexDataSlice,
-	hexStripZeros: hexStripZeros,
-	hexValue: hexValue,
-	hexZeroPad: hexZeroPad,
-	hexlify: hexlify,
-	isBytes: isBytes,
-	isBytesLike: isBytesLike,
-	isHexString: isHexString,
-	joinSignature: joinSignature,
-	splitSignature: splitSignature,
-	stripZeros: stripZeros,
-	zeroPad: zeroPad
+    __proto__: null,
+    arrayify: arrayify,
+    concat: concat,
+    hexConcat: hexConcat,
+    hexDataLength: hexDataLength,
+    hexDataSlice: hexDataSlice,
+    hexStripZeros: hexStripZeros,
+    hexValue: hexValue,
+    hexZeroPad: hexZeroPad,
+    hexlify: hexlify,
+    isBytes: isBytes,
+    isBytesLike: isBytesLike,
+    isHexString: isHexString,
+    joinSignature: joinSignature,
+    splitSignature: splitSignature,
+    stripZeros: stripZeros,
+    zeroPad: zeroPad
 });
 
 const version$m = "bignumber/5.7.0";
@@ -16482,14 +16620,14 @@ class Description {
 }
 
 var lib_esm$i = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	Description: Description,
-	checkProperties: checkProperties,
-	deepCopy: deepCopy,
-	defineReadOnly: defineReadOnly,
-	getStatic: getStatic,
-	resolveProperties: resolveProperties,
-	shallowCopy: shallowCopy
+    __proto__: null,
+    Description: Description,
+    checkProperties: checkProperties,
+    deepCopy: deepCopy,
+    defineReadOnly: defineReadOnly,
+    getStatic: getStatic,
+    resolveProperties: resolveProperties,
+    shallowCopy: shallowCopy
 });
 
 const version$k = "abi/5.7.0";
@@ -18146,8 +18284,8 @@ function keccak256$1(data) {
 }
 
 var lib_esm$h = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	keccak256: keccak256$1
+    __proto__: null,
+    keccak256: keccak256$1
 });
 
 const version$j = "rlp/5.7.0";
@@ -18268,9 +18406,9 @@ function decode$2(data) {
 }
 
 var lib_esm$g = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	decode: decode$2,
-	encode: encode$2
+    __proto__: null,
+    decode: decode$2,
+    encode: encode$2
 });
 
 const version$i = "address/5.7.0";
@@ -18402,12 +18540,12 @@ function getCreate2Address(from, salt, initCodeHash) {
 }
 
 var lib_esm$f = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	getAddress: getAddress,
-	getContractAddress: getContractAddress,
-	getCreate2Address: getCreate2Address,
-	getIcapAddress: getIcapAddress,
-	isAddress: isAddress
+    __proto__: null,
+    getAddress: getAddress,
+    getContractAddress: getContractAddress,
+    getCreate2Address: getCreate2Address,
+    getIcapAddress: getIcapAddress,
+    isAddress: isAddress
 });
 
 class AddressCoder extends Coder {
@@ -19234,17 +19372,17 @@ function nameprep(value) {
 }
 
 var lib_esm$e = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get UnicodeNormalizationForm () { return UnicodeNormalizationForm; },
-	Utf8ErrorFuncs: Utf8ErrorFuncs,
-	get Utf8ErrorReason () { return Utf8ErrorReason; },
-	_toEscapedUtf8String: _toEscapedUtf8String,
-	formatBytes32String: formatBytes32String,
-	nameprep: nameprep,
-	parseBytes32String: parseBytes32String,
-	toUtf8Bytes: toUtf8Bytes,
-	toUtf8CodePoints: toUtf8CodePoints,
-	toUtf8String: toUtf8String
+    __proto__: null,
+    get UnicodeNormalizationForm () { return UnicodeNormalizationForm; },
+    Utf8ErrorFuncs: Utf8ErrorFuncs,
+    get Utf8ErrorReason () { return Utf8ErrorReason; },
+    _toEscapedUtf8String: _toEscapedUtf8String,
+    formatBytes32String: formatBytes32String,
+    nameprep: nameprep,
+    parseBytes32String: parseBytes32String,
+    toUtf8Bytes: toUtf8Bytes,
+    toUtf8CodePoints: toUtf8CodePoints,
+    toUtf8String: toUtf8String
 });
 
 class StringCoder extends DynamicBytesCoder {
@@ -19419,9 +19557,9 @@ function encode$1(data) {
 }
 
 var lib_esm$d = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	decode: decode$1,
-	encode: encode$1
+    __proto__: null,
+    decode: decode$1,
+    encode: encode$1
 });
 
 /**
@@ -20357,15 +20495,15 @@ class TypedDataEncoder {
 }
 
 var lib_esm$c = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	_TypedDataEncoder: TypedDataEncoder,
-	dnsEncode: dnsEncode,
-	ensNormalize: ensNormalize,
-	hashMessage: hashMessage,
-	id: id$3,
-	isValidName: isValidName,
-	messagePrefix: messagePrefix,
-	namehash: namehash
+    __proto__: null,
+    _TypedDataEncoder: TypedDataEncoder,
+    dnsEncode: dnsEncode,
+    ensNormalize: ensNormalize,
+    hashMessage: hashMessage,
+    id: id$3,
+    isValidName: isValidName,
+    messagePrefix: messagePrefix,
+    namehash: namehash
 });
 
 const logger$j = new Logger(version$k);
@@ -20966,21 +21104,21 @@ class Interface {
 }
 
 var lib_esm$b = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	AbiCoder: AbiCoder,
-	ConstructorFragment: ConstructorFragment,
-	ErrorFragment: ErrorFragment,
-	EventFragment: EventFragment,
-	FormatTypes: FormatTypes,
-	Fragment: Fragment,
-	FunctionFragment: FunctionFragment,
-	Indexed: Indexed,
-	Interface: Interface,
-	LogDescription: LogDescription,
-	ParamType: ParamType,
-	TransactionDescription: TransactionDescription,
-	checkResultErrors: checkResultErrors,
-	defaultAbiCoder: defaultAbiCoder
+    __proto__: null,
+    AbiCoder: AbiCoder,
+    ConstructorFragment: ConstructorFragment,
+    ErrorFragment: ErrorFragment,
+    EventFragment: EventFragment,
+    FormatTypes: FormatTypes,
+    Fragment: Fragment,
+    FunctionFragment: FunctionFragment,
+    Indexed: Indexed,
+    Interface: Interface,
+    LogDescription: LogDescription,
+    ParamType: ParamType,
+    TransactionDescription: TransactionDescription,
+    checkResultErrors: checkResultErrors,
+    defaultAbiCoder: defaultAbiCoder
 });
 
 const version$f = "abstract-provider/5.7.0";
@@ -23849,10 +23987,10 @@ function computePublicKey(key, compressed) {
 }
 
 var lib_esm$a = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	SigningKey: SigningKey,
-	computePublicKey: computePublicKey,
-	recoverPublicKey: recoverPublicKey
+    __proto__: null,
+    SigningKey: SigningKey,
+    computePublicKey: computePublicKey,
+    recoverPublicKey: recoverPublicKey
 });
 
 const version$c = "transactions/5.7.0";
@@ -24227,13 +24365,13 @@ function parse(rawTransaction) {
 }
 
 var lib_esm$9 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get TransactionTypes () { return TransactionTypes; },
-	accessListify: accessListify,
-	computeAddress: computeAddress,
-	parse: parse,
-	recoverAddress: recoverAddress,
-	serialize: serialize
+    __proto__: null,
+    get TransactionTypes () { return TransactionTypes; },
+    accessListify: accessListify,
+    computeAddress: computeAddress,
+    parse: parse,
+    recoverAddress: recoverAddress,
+    serialize: serialize
 });
 
 const version$b = "contracts/5.7.0";
@@ -25235,10 +25373,10 @@ const Base58 = new BaseX("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuv
 //console.log(Base58.encode(Base58.decode("Qmd2V777o5XvJbYMeMb8k2nU5f8d3ciUQ5YpYuWhzv8iDj")))
 
 var lib_esm$8 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	Base32: Base32,
-	Base58: Base58,
-	BaseX: BaseX
+    __proto__: null,
+    Base32: Base32,
+    Base58: Base58,
+    BaseX: BaseX
 });
 
 var SupportedAlgorithm;
@@ -25270,12 +25408,12 @@ function computeHmac(algorithm, key, data) {
 }
 
 var lib_esm$7 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	get SupportedAlgorithm () { return SupportedAlgorithm; },
-	computeHmac: computeHmac,
-	ripemd160: ripemd160,
-	sha256: sha256$1,
-	sha512: sha512
+    __proto__: null,
+    get SupportedAlgorithm () { return SupportedAlgorithm; },
+    computeHmac: computeHmac,
+    ripemd160: ripemd160,
+    sha256: sha256$1,
+    sha512: sha512
 });
 
 function pbkdf2$1(password, salt, iterations, keylen, hashAlgorithm) {
@@ -25707,14 +25845,14 @@ function getAccountPath(index) {
 }
 
 var lib_esm$6 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	HDNode: HDNode,
-	defaultPath: defaultPath,
-	entropyToMnemonic: entropyToMnemonic,
-	getAccountPath: getAccountPath,
-	isValidMnemonic: isValidMnemonic,
-	mnemonicToEntropy: mnemonicToEntropy,
-	mnemonicToSeed: mnemonicToSeed
+    __proto__: null,
+    HDNode: HDNode,
+    defaultPath: defaultPath,
+    entropyToMnemonic: entropyToMnemonic,
+    getAccountPath: getAccountPath,
+    isValidMnemonic: isValidMnemonic,
+    mnemonicToEntropy: mnemonicToEntropy,
+    mnemonicToSeed: mnemonicToSeed
 });
 
 const version$7 = "random/5.7.0";
@@ -25768,9 +25906,9 @@ function shuffled(array) {
 }
 
 var lib_esm$5 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	randomBytes: randomBytes,
-	shuffled: shuffled
+    __proto__: null,
+    randomBytes: randomBytes,
+    shuffled: shuffled
 });
 
 var aesJs = {exports: {}};
@@ -27523,16 +27661,16 @@ function decryptJsonWalletSync(json, password) {
 }
 
 var lib_esm$4 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	decryptCrowdsale: decrypt$1,
-	decryptJsonWallet: decryptJsonWallet,
-	decryptJsonWalletSync: decryptJsonWalletSync,
-	decryptKeystore: decrypt,
-	decryptKeystoreSync: decryptSync,
-	encryptKeystore: encrypt,
-	getJsonWalletAddress: getJsonWalletAddress,
-	isCrowdsaleWallet: isCrowdsaleWallet,
-	isKeystoreWallet: isKeystoreWallet
+    __proto__: null,
+    decryptCrowdsale: decrypt$1,
+    decryptJsonWallet: decryptJsonWallet,
+    decryptJsonWalletSync: decryptJsonWalletSync,
+    decryptKeystore: decrypt,
+    decryptKeystoreSync: decryptSync,
+    encryptKeystore: encrypt,
+    getJsonWalletAddress: getJsonWalletAddress,
+    isCrowdsaleWallet: isCrowdsaleWallet,
+    isKeystoreWallet: isKeystoreWallet
 });
 
 const version$5 = "wallet/5.7.0";
@@ -27699,10 +27837,10 @@ function verifyTypedData(domain, types, value, signature) {
 }
 
 var lib_esm$3 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	Wallet: Wallet,
-	verifyMessage: verifyMessage,
-	verifyTypedData: verifyTypedData
+    __proto__: null,
+    Wallet: Wallet,
+    verifyMessage: verifyMessage,
+    verifyTypedData: verifyTypedData
 });
 
 const version$4 = "networks/5.7.1";
@@ -28415,10 +28553,10 @@ function poll(func, options) {
 }
 
 var lib_esm$2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	_fetchData: _fetchData,
-	fetchJson: fetchJson,
-	poll: poll
+    __proto__: null,
+    _fetchData: _fetchData,
+    fetchJson: fetchJson,
+    poll: poll
 });
 
 var ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
@@ -31755,10 +31893,10 @@ function sha256(types, values) {
 }
 
 var lib_esm$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	keccak256: keccak256,
-	pack: pack,
-	sha256: sha256
+    __proto__: null,
+    keccak256: keccak256,
+    pack: pack,
+    sha256: sha256
 });
 
 const version = "units/5.7.0";
@@ -31844,12 +31982,12 @@ function parseEther(ether) {
 }
 
 var lib_esm = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	commify: commify,
-	formatEther: formatEther,
-	formatUnits: formatUnits,
-	parseEther: parseEther,
-	parseUnits: parseUnits
+    __proto__: null,
+    commify: commify,
+    formatEther: formatEther,
+    formatUnits: formatUnits,
+    parseEther: parseEther,
+    parseUnits: parseUnits
 });
 
 function parseAddress(a) {
@@ -31879,7 +32017,7 @@ function getDltAddress(didOrKeyInHex) {
 }
 
 async function exchangeId(exchange) {
-    return e(await sha(t(exchange), 'SHA-256'), true, false);
+    return encode$4(await sha(hashable(exchange), 'SHA-256'), true, false);
 }
 
 async function createProof(payload, privateJwk) {
@@ -31921,7 +32059,7 @@ async function verifyProof(proof, expectedPayloadClaims, options) {
     }
     const payload = verification.payload;
     const issuer = payload.exchange[payload.iss];
-    if (t(publicJwk) !== t(JSON.parse(issuer))) {
+    if (hashable(publicJwk) !== hashable(JSON.parse(issuer))) {
         throw new Error(`The proof is issued by ${issuer} instead of ${JSON.stringify(publicJwk)}`);
     }
     const expectedClaimsDict = expectedPayloadClaims;
@@ -31933,7 +32071,7 @@ async function verifyProof(proof, expectedPayloadClaims, options) {
             const dataExchange = payload.exchange;
             checkDataExchange(dataExchange, expectedDataExchange);
         }
-        else if (expectedClaimsDict[key] !== '' && t(expectedClaimsDict[key]) !== t(payload[key])) {
+        else if (expectedClaimsDict[key] !== '' && hashable(expectedClaimsDict[key]) !== hashable(payload[key])) {
             throw new Error(`Proof's ${key}: ${JSON.stringify(payload[key], undefined, 2)} does not meet provided value ${JSON.stringify(expectedClaimsDict[key], undefined, 2)}`);
         }
     }
@@ -31947,7 +32085,7 @@ function checkDataExchange(dataExchange, expectedDataExchange) {
         }
     }
     for (const key in expectedDataExchange) {
-        if (expectedDataExchange[key] !== '' && t(expectedDataExchange[key]) !== t(dataExchange[key])) {
+        if (expectedDataExchange[key] !== '' && hashable(expectedDataExchange[key]) !== hashable(dataExchange[key])) {
             throw new Error(`dataExchange's ${key}: ${JSON.stringify(dataExchange[key], undefined, 2)} does not meet expected value ${JSON.stringify(expectedDataExchange[key], undefined, 2)}`);
         }
     }
@@ -32061,7 +32199,7 @@ async function checkDecryption(disputeRequest, wallet) {
         }
         throw error;
     }
-    const cipherblockDgst = e(await sha(drPayload.cipherblock, porPayload.exchange.hashAlg), true, false);
+    const cipherblockDgst = encode$4(await sha(drPayload.cipherblock, porPayload.exchange.hashAlg), true, false);
     if (cipherblockDgst !== porPayload.exchange.cipherblockDgst) {
         throw new NrError(new Error('cipherblock does not meet the committed (and already accepted) one'), ['invalid dispute request']);
     }
@@ -32189,13 +32327,13 @@ async function verifyResolution(resolution, pubJwk) {
 }
 
 var index$2 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	ConflictResolver: ConflictResolver,
-	checkCompleteness: checkCompleteness,
-	checkDecryption: checkDecryption,
-	generateVerificationRequest: generateVerificationRequest,
-	verifyPor: verifyPor,
-	verifyResolution: verifyResolution
+    __proto__: null,
+    ConflictResolver: ConflictResolver,
+    checkCompleteness: checkCompleteness,
+    checkDecryption: checkDecryption,
+    generateVerificationRequest: generateVerificationRequest,
+    verifyPor: verifyPor,
+    verifyResolution: verifyResolution
 });
 
 var address = "0x8d407A1722633bDD1dcf221474be7a44C05d7c2F";
@@ -32399,7 +32537,7 @@ const defaultDltConfig = {
 async function getSecretFromLedger(contract, signerAddress, exchangeId, timeout, secretLength) {
     let secretBn = BigNumber.from(0);
     let timestampBn = BigNumber.from(0);
-    const exchangeIdHex = parseHex(g$1(r$4(exchangeId)), true);
+    const exchangeIdHex = parseHex(bufToHex(decode$5(exchangeId)), true);
     let counter = 0;
     do {
         try {
@@ -32422,7 +32560,7 @@ async function getSecretFromLedger(contract, signerAddress, exchangeId, timeout,
 }
 async function secretUnisgnedTransaction(secretHex, exchangeId, agent) {
     const secret = BigNumber.from(parseHex(secretHex, true));
-    const exchangeIdHex = parseHex(g$1(r$4(exchangeId)), true);
+    const exchangeIdHex = parseHex(bufToHex(decode$5(exchangeId)), true);
     const unsignedTx = await agent.contract.populateTransaction.setRegistry(exchangeIdHex, secret, { gasLimit: agent.dltConfig.gasLimit });
     unsignedTx.nonce = await agent.nextNonce();
     unsignedTx.gasLimit = unsignedTx.gasLimit?._hex;
@@ -32733,10 +32871,10 @@ class EthersIoAgentOrig extends EthersIoAgent {
         this.count = -1;
         let privKey;
         if (privateKey === undefined) {
-            privKey = m(32);
+            privKey = randBytesSync(32);
         }
         else {
-            privKey = (typeof privateKey === 'string') ? new Uint8Array(l(privateKey)) : privateKey;
+            privKey = (typeof privateKey === 'string') ? new Uint8Array(hexToBuf(privateKey)) : privateKey;
         }
         const signingKey = new utils.SigningKey(privKey);
         this.signer = new Wallet(signingKey, this.provider);
@@ -32830,13 +32968,13 @@ class I3mServerWalletAgentOrig extends I3mServerWalletAgent {
 }
 
 var index$1 = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	EthersIoAgentDest: EthersIoAgentDest,
-	EthersIoAgentOrig: EthersIoAgentOrig,
-	I3mServerWalletAgentDest: I3mServerWalletAgentDest,
-	I3mServerWalletAgentOrig: I3mServerWalletAgentOrig,
-	I3mWalletAgentDest: I3mWalletAgentDest,
-	I3mWalletAgentOrig: I3mWalletAgentOrig
+    __proto__: null,
+    EthersIoAgentDest: EthersIoAgentDest,
+    EthersIoAgentOrig: EthersIoAgentOrig,
+    I3mServerWalletAgentDest: I3mServerWalletAgentDest,
+    I3mServerWalletAgentOrig: I3mServerWalletAgentOrig,
+    I3mWalletAgentDest: I3mWalletAgentDest,
+    I3mWalletAgentOrig: I3mWalletAgentOrig
 });
 
 var openapi = "3.0.3";
@@ -35348,23 +35486,8 @@ var paths = {
 										example: "i3m"
 									},
 									rpcUrl: {
-										oneOf: [
-											{
-												type: "string",
-												example: "http://95.211.3.250:8545"
-											},
-											{
-												type: "array",
-												items: {
-													type: "string"
-												},
-												uniqueItems: true,
-												example: [
-													"http://95.211.3.249:8545",
-													"http://95.211.3.250:8545"
-												]
-											}
-										]
+										type: "string",
+										example: "http://95.211.3.250:8545"
 									}
 								},
 								additionalProperties: true
@@ -38094,23 +38217,8 @@ var components = {
 					example: "i3m"
 				},
 				rpcUrl: {
-					oneOf: [
-						{
-							type: "string",
-							example: "http://95.211.3.250:8545"
-						},
-						{
-							type: "array",
-							items: {
-								type: "string"
-							},
-							uniqueItems: true,
-							example: [
-								"http://95.211.3.249:8545",
-								"http://95.211.3.250:8545"
-							]
-						}
-					]
+					type: "string",
+					example: "http://95.211.3.250:8545"
 				}
 			},
 			additionalProperties: true
@@ -65570,7 +65678,7 @@ async function validateDataSharingAgreementSchema(agreement) {
                 });
             }
         }
-        if (t(clonedAgreement) !== t(agreement)) {
+        if (hashable(clonedAgreement) !== hashable(agreement)) {
             errors.push(new NrError('Additional claims beyond the schema are not supported', ['invalid format']));
         }
     }
@@ -65705,7 +65813,7 @@ class NonRepudiationDest {
     }
     async verifyPoO(poo, cipherblock, options) {
         await this.initialized;
-        const cipherblockDgst = e(await sha(cipherblock, this.agreement.hashAlg), true, false);
+        const cipherblockDgst = encode$4(await sha(cipherblock, this.agreement.hashAlg), true, false);
         const { payload } = await jwsDecode(poo);
         const dataExchangePreview = {
             ...this.agreement,
@@ -65776,7 +65884,7 @@ class NonRepudiationDest {
         const verified = await verifyProof(pop, expectedPayloadClaims, opts);
         const secret = JSON.parse(verified.payload.secret);
         this.block.secret = {
-            hex: g$1(r$4(secret.k)),
+            hex: bufToHex(decode$5(secret.k)),
             jwk: secret
         };
         this.block.pop = {
@@ -65815,7 +65923,7 @@ class NonRepudiationDest {
             throw new Error('No cipherblock to decrypt');
         }
         const decryptedBlock = (await jweDecrypt(this.block.jwe, this.block.secret.jwk)).plaintext;
-        const decryptedDgst = e(await sha(decryptedBlock, this.agreement.hashAlg), true, false);
+        const decryptedDgst = encode$4(await sha(decryptedBlock, this.agreement.hashAlg), true, false);
         if (decryptedDgst !== this.exchange.blockCommitment) {
             throw new Error('Decrypted block does not meet the committed one');
         }
@@ -65895,9 +66003,9 @@ class NonRepudiationOrig {
             secret,
             jwe: await jweEncrypt(this.block.raw, secret.jwk, this.agreement.encAlg)
         };
-        const cipherblockDgst = e(await sha(this.block.jwe, this.agreement.hashAlg), true, false);
-        const blockCommitment = e(await sha(this.block.raw, this.agreement.hashAlg), true, false);
-        const secretCommitment = e(await sha(new Uint8Array(l(this.block.secret.hex)), this.agreement.hashAlg), true, false);
+        const cipherblockDgst = encode$4(await sha(this.block.jwe, this.agreement.hashAlg), true, false);
+        const blockCommitment = encode$4(await sha(this.block.raw, this.agreement.hashAlg), true, false);
+        const secretCommitment = encode$4(await sha(new Uint8Array(hexToBuf(this.block.secret.hex)), this.agreement.hashAlg), true, false);
         const dataExchangePreview = {
             ...this.agreement,
             cipherblockDgst,
@@ -65983,9 +66091,9 @@ class NonRepudiationOrig {
 }
 
 var index = /*#__PURE__*/Object.freeze({
-	__proto__: null,
-	NonRepudiationDest: NonRepudiationDest,
-	NonRepudiationOrig: NonRepudiationOrig
+    __proto__: null,
+    NonRepudiationDest: NonRepudiationDest,
+    NonRepudiationOrig: NonRepudiationOrig
 });
 
 export { index$2 as ConflictResolution, ENC_ALGS, EthersIoAgentDest, EthersIoAgentOrig, HASH_ALGS, I3mServerWalletAgentDest, I3mServerWalletAgentOrig, I3mWalletAgentDest, I3mWalletAgentOrig, KEY_AGREEMENT_ALGS, index as NonRepudiationProtocol, NrError, SIGNING_ALGS, index$1 as Signers, checkTimestamp, createProof, defaultDltConfig, exchangeId, generateKeys, getDltAddress, importJwk, jsonSort, jweDecrypt, jweEncrypt, jwsDecode, oneTimeSecret, parseAddress, parseHex, parseJwk, sha, validateDataExchange, validateDataExchangeAgreement, validateDataSharingAgreementSchema, verifyKeyPair, verifyProof };

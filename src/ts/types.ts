@@ -10,8 +10,9 @@ export type HashAlg = typeof HASH_ALGS[number]
 export type SigningAlg = typeof SIGNING_ALGS[number]
 export type EncryptionAlg = typeof ENC_ALGS[number]
 
+type DictKey = string | number | symbol
 export type Dict<T> = T & {
-  [key: string | symbol | number]: any | undefined
+  [key in DictKey]: any | undefined
 }
 
 export interface Algs {

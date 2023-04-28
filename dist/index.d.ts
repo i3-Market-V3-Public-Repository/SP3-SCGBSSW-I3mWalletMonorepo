@@ -4,7 +4,6 @@ export { ContractInterface } from '@ethersproject/contracts';
 import { JWK as JWK$1, JWTHeaderParameters, JWEHeaderParameters, KeyLike as KeyLike$1, CompactDecryptResult } from 'jose';
 export { KeyLike } from 'jose';
 import { ethers } from 'ethers';
-import { EventEmitter as EventEmitter$1 } from 'events';
 import { KeyObject } from 'crypto';
 
 declare const HASH_ALGS: readonly ["SHA-256", "SHA-384", "SHA-512"];
@@ -496,7 +495,11 @@ declare namespace WalletComponents {
              * i3m
              */
       network?: string
-      rpcUrl?: string | string[]
+      /**
+             * example:
+             * http://95.211.3.250:8545
+             */
+      rpcUrl?: string
     }
     /**
          * Receipt
@@ -882,8 +885,9 @@ declare namespace WalletPaths {
 type HashAlg = typeof HASH_ALGS[number];
 type SigningAlg = typeof SIGNING_ALGS[number];
 type EncryptionAlg = typeof ENC_ALGS[number];
+type DictKey = string | number | symbol;
 type Dict<T> = T & {
-    [key: string | symbol | number]: any | undefined;
+    [key in DictKey]: any | undefined;
 };
 interface Algs {
     hashAlg?: HashAlg;
@@ -1035,14 +1039,12 @@ declare class EthersIoAgentDest extends EthersIoAgent implements NrpDltAgentDest
     }>;
 }
 
-//# sourceMappingURL=index.d.ts.map
-
 declare class BaseECDH {
     generateKeys(): Promise<void>;
     getPublicKey(): Promise<string>;
     deriveBits(publicKeyHex: string): Promise<Uint8Array>;
 }
-type CipherAlgorithms = 'aes-256-gcm';
+declare type CipherAlgorithms = 'aes-256-gcm';
 declare class BaseCipher {
     readonly algorithm: CipherAlgorithms;
     readonly key: Uint8Array;
@@ -1152,8 +1154,8 @@ interface Transport<Req = any, Res = any> {
     send: (masterKey: MasterKey, code: Uint8Array, request: Req) => Promise<Res>;
     finish: (protocol: WalletProtocol) => void;
 }
-type TransportRequest<T> = T extends Transport<infer Req> ? Req : never;
-type TransportResponse<T> = T extends Transport<any, infer Res> ? Res : never;
+declare type TransportRequest<T> = T extends Transport<infer Req> ? Req : never;
+declare type TransportResponse<T> = T extends Transport<any, infer Res> ? Res : never;
 declare abstract class BaseTransport<Req, Res> implements Transport<Req, Res> {
     abstract prepare(protocol: WalletProtocol, publicKey: string): Promise<PKEData>;
     abstract publicKeyExchange(protocol: WalletProtocol, publicKey: PKEData): Promise<ProtocolPKEData>;
@@ -1187,7 +1189,7 @@ interface VerificationChallengeRequest {
 interface AcknowledgementRequest {
     method: 'acknowledgement';
 }
-type Request = PublicKeyExchangeRequest | CommitmentRequest | NonceRevealRequest | VerificationRequest | VerificationChallengeRequest | AcknowledgementRequest;
+declare type Request = PublicKeyExchangeRequest | CommitmentRequest | NonceRevealRequest | VerificationRequest | VerificationChallengeRequest | AcknowledgementRequest;
 
 interface InitiatorOptions {
     host: string;
@@ -1221,8 +1223,8 @@ declare class HttpInitiatorTransport extends InitiatorTransport<HttpRequest, Htt
     send(masterKey: MasterKey, code: Uint8Array, req: HttpRequest): Promise<HttpResponse>;
 }
 
-type Params = Record<string, string> | undefined;
-type Body = any;
+declare type Params = Record<string, string> | undefined;
+declare type Body = any;
 interface ApiMethod {
     path: string;
     method: string;
@@ -2285,6 +2287,52 @@ interface IResolver extends IPluginMethodMap {
     resolveDid(args: ResolveDidArgs): Promise<DIDResolutionResult>;
 }
 
+interface BaseDialogOptions {
+    title?: string;
+    message?: string;
+    timeout?: number;
+    allowCancel?: boolean;
+}
+interface TextOptions extends BaseDialogOptions {
+    hiddenText?: boolean;
+    default?: string;
+}
+interface ConfirmationOptions extends BaseDialogOptions {
+    acceptMsg?: string;
+    rejectMsg?: string;
+}
+interface SelectOptions<T> extends BaseDialogOptions {
+    values: T[];
+    getText?: (obj: T) => string;
+    getContext?: (obj: T) => DialogOptionContext;
+}
+interface TextFormDescriptor extends TextOptions {
+    type: 'text';
+}
+interface ConfirmationFormDescriptor extends ConfirmationOptions {
+    type: 'confirmation';
+}
+interface SelectFormDescriptor<T> extends SelectOptions<T> {
+    type: 'select';
+}
+declare type DialogOptionContext = 'success' | 'danger';
+declare type Descriptors<T = any> = TextFormDescriptor | ConfirmationFormDescriptor | SelectFormDescriptor<T>;
+declare type DescriptorsMap<T = any> = {
+    [K in keyof Partial<T>]: Descriptors<T[K]>;
+};
+interface FormOptions<T> extends BaseDialogOptions {
+    descriptors: DescriptorsMap<T>;
+    order: Array<keyof T>;
+}
+declare type DialogResponse<T> = Promise<T | undefined>;
+interface Dialog {
+    text: (options: TextOptions) => DialogResponse<string>;
+    confirmation: (options: ConfirmationOptions) => DialogResponse<boolean>;
+    authenticate: () => DialogResponse<boolean>;
+    select: <T>(options: SelectOptions<T>) => DialogResponse<T>;
+    form: <T>(options: FormOptions<T>) => DialogResponse<T>;
+}
+
 /**
  * An abstract class for the {@link @veramo/did-manager#DIDManager} identifier providers
  * @public
@@ -2316,6 +2364,56 @@ declare abstract class AbstractIdentifierProvider {
         id: string;
         options?: any;
     }, context: IAgentContext<IKeyManager>): Promise<any>;
+}
+
+declare type IContext$2 = IAgentContext<IKeyManager>;
+/**
+ * {@link @veramo/did-manager#DIDManager} identifier provider for `did:ethr` identifiers
+ * @public
+ */
+declare class EthrDIDProvider extends AbstractIdentifierProvider {
+    private defaultKms;
+    private network;
+    private web3Provider?;
+    private rpcUrl?;
+    private gas?;
+    private ttl?;
+    private registry?;
+    constructor(options: {
+        defaultKms: string;
+        network: string;
+        rpcUrl?: string;
+        web3Provider?: object;
+        ttl?: number;
+        gas?: number;
+        registry?: string;
+    });
+    createIdentifier({ kms, options }: {
+        kms?: string;
+        options?: any;
+    }, context: IContext$2): Promise<Omit<IIdentifier, 'provider'>>;
+    deleteIdentifier(identifier: IIdentifier, context: IContext$2): Promise<boolean>;
+    private getWeb3Provider;
+    addKey({ identifier, key, options }: {
+        identifier: IIdentifier;
+        key: IKey;
+        options?: any;
+    }, context: IContext$2): Promise<any>;
+    addService({ identifier, service, options }: {
+        identifier: IIdentifier;
+        service: IService;
+        options?: any;
+    }, context: IContext$2): Promise<any>;
+    removeKey(args: {
+        identifier: IIdentifier;
+        kid: string;
+        options?: any;
+    }, context: IContext$2): Promise<any>;
+    removeService(args: {
+        identifier: IIdentifier;
+        id: string;
+        options?: any;
+    }, context: IContext$2): Promise<any>;
 }
 
 /*! *****************************************************************************
@@ -3196,69 +3294,35 @@ interface ISelectiveDisclosure extends IPluginMethodMap {
     createProfilePresentation(args: ICreateProfileCredentialsArgs, context: IAgentContext<ICredentialIssuer & IDIDManager>): Promise<VerifiablePresentation>;
 }
 
-interface BaseDialogOptions {
-    title?: string;
-    message?: string;
-    timeout?: number;
-    allowCancel?: boolean;
-}
-interface TextOptions extends BaseDialogOptions {
-    hiddenText?: boolean;
-    default?: string;
-}
-interface ConfirmationOptions extends BaseDialogOptions {
-    acceptMsg?: string;
-    rejectMsg?: string;
-}
-interface SelectOptions<T> extends BaseDialogOptions {
-    values: T[];
-    getText?: (obj: T) => string;
-    getContext?: (obj: T) => DialogOptionContext;
-}
-interface TextFormDescriptor extends TextOptions {
-    type: 'text';
-}
-interface ConfirmationFormDescriptor extends ConfirmationOptions {
-    type: 'confirmation';
-}
-interface SelectFormDescriptor<T> extends SelectOptions<T> {
-    type: 'select';
-}
-type DialogOptionContext = 'success' | 'danger';
-type Descriptors<T = any> = TextFormDescriptor | ConfirmationFormDescriptor | SelectFormDescriptor<T>;
-type DescriptorsMap<T = any> = {
-    [K in keyof Partial<T>]: Descriptors<T[K]>;
-};
-interface FormOptions<T> extends BaseDialogOptions {
-    descriptors: DescriptorsMap<T>;
-    order: Array<keyof T>;
-}
-type DialogResponse<T> = Promise<T | undefined>;
-interface Dialog {
-    text: (options: TextOptions) => DialogResponse<string>;
-    confirmation: (options: ConfirmationOptions) => DialogResponse<boolean>;
-    authenticate: () => DialogResponse<boolean>;
-    select: <T>(options: SelectOptions<T>) => DialogResponse<T>;
-    form: <T>(options: FormOptions<T>) => DialogResponse<T>;
-}
-
 interface KeyWallet<T extends TypedArray = Uint8Array> {
+    /**
+     * Creates a key pair
+     *
+     * @returns a promise that resolves to the key id.
+     */
     createAccountKeyPair: () => Promise<string>;
+    /**
+     * Gets a public key
+     *
+     * @returns a promise that resolves to a public key
+     */
     getPublicKey: (id: string) => Promise<KeyLike>;
+    /**
+     * Signs input message and returns DER encoded typed array
+     */
     signDigest: (id: string, message: T) => Promise<T>;
+    /**
+     * @throws Error - Any error
+     */
     delete: (id: string) => Promise<boolean>;
+    /**
+     * @throws Error - Any error
+     */
     wipe: () => Promise<void>;
 }
 
-type PluginMap = IDIDManager & IKeyManager & IResolver & IMessageHandler & ISelectiveDisclosure & ICredentialIssuer;
-interface ProviderData {
-    network: string;
-    rpcUrl?: string | string[];
-    web3Provider?: object;
-    ttl?: number;
-    gas?: number;
-    registry?: string;
-}
+declare type PluginMap = IDIDManager & IKeyManager & IResolver & IMessageHandler & ISelectiveDisclosure & ICredentialIssuer;
+declare type ProviderData = Omit<ConstructorParameters<typeof EthrDIDProvider>[0], 'defaultKms'>;
 declare class Veramo<T extends BaseWalletModel = BaseWalletModel> {
     agent: TAgent<PluginMap>;
     providers: Record<string, AbstractIdentifierProvider>;
@@ -3268,16 +3332,16 @@ declare class Veramo<T extends BaseWalletModel = BaseWalletModel> {
     getProvider(name: string): AbstractIdentifierProvider;
 }
 
-type CanBePromise<T> = Promise<T> | T;
-type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array;
-type KeyLike = Uint8Array;
+declare type CanBePromise<T> = Promise<T> | T;
+declare type TypedArray = Int8Array | Uint8Array | Uint8ClampedArray | Int16Array | Uint16Array | Int32Array | Uint32Array | Float32Array | Float64Array | BigInt64Array | BigUint64Array;
+declare type KeyLike = Uint8Array;
 
-type Resource$1 = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & {
+declare type Resource$1 = WalletComponents.Schemas.Resource & WalletComponents.Schemas.ResourceId & {
     identity?: WalletComponents.Schemas.ObjectResource['identity'];
 } & {
     parentResource?: WalletComponents.Schemas.ObjectResource['parentResource'];
 };
-type Identity = IIdentifier;
+declare type Identity = IIdentifier;
 interface BaseWalletModel {
     resources: {
         [id: string]: Resource$1;
@@ -3287,27 +3351,56 @@ interface BaseWalletModel {
     };
 }
 interface Store<T extends Record<string, any> = Record<string, unknown>> {
+    /**
+     * Get an item.
+     *
+     * @param key - The key of the item to get.
+     * @param defaultValue - The default value if the item does not exist.
+    */
     get<Key extends keyof T>(key: Key): CanBePromise<T[Key]>;
     get<Key extends keyof T>(key: Key, defaultValue: Required<T>[Key]): CanBePromise<Required<T>[Key]>;
+    /**
+     * Set multiple keys at once.
+     * @param store
+     */
     set(store: Partial<T>): CanBePromise<void>;
+    /**
+     * Set an item.
+     * @param key - The key of the item to set
+     * @param value - The value to set
+     */
     set<Key extends keyof T>(key: Key, value: T[Key]): CanBePromise<void>;
     set(key: string, value: unknown): CanBePromise<void>;
+    /**
+     * Check if an item exists.
+     *
+     * @param key - The key of the item to check.
+     */
     has<Key extends keyof T>(key: Key): CanBePromise<boolean>;
     has(key: string): CanBePromise<boolean>;
+    /**
+     * Delete an item.
+     * @param key - The key of the item to delete.
+     */
     delete<Key extends keyof T>(key: Key): CanBePromise<void>;
     delete(key: string): CanBePromise<void>;
+    /**
+     * Delete all items.
+     */
     clear: () => CanBePromise<void>;
+    /**
+     * Return a readonly version of the complete store
+     * @returns The entire store
+     */
     getStore: () => CanBePromise<T>;
+    /**
+     * Get the path of the store
+     * @returns The store path
+     */
     getPath: () => string;
-    on(eventName: 'changed', listener: (changedAt: number) => void): this;
-    on(eventName: 'cleared', listener: (changedAt: number) => void): this;
-    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
-    emit(eventName: 'changed', changedAt: number): boolean;
-    emit(eventName: 'cleared', changedAt: number): boolean;
-    emit(eventName: string | symbol, ...args: any[]): boolean;
 }
 
-type ToastType = 'info' | 'success' | 'warning' | 'error';
+declare type ToastType = 'info' | 'success' | 'warning' | 'error';
 interface ToastOptions {
     message: string;
     type?: ToastType;
@@ -3323,8 +3416,8 @@ interface Validation {
     validated: boolean;
     errors: Error[];
 }
-type Resource = WalletComponents.Schemas.Resource;
-type Validator<T extends Resource> = (resource: T, veramo: Veramo) => Promise<Error[]>;
+declare type Resource = WalletComponents.Schemas.Resource;
+declare type Validator<T extends Resource> = (resource: T, veramo: Veramo) => Promise<Error[]>;
 declare class ResourceValidator {
     protected validators: {
         [key: string]: Validator<any> | undefined;
@@ -3373,7 +3466,7 @@ interface WalletOptionsSettings<T extends BaseWalletModel> {
     provider?: string;
     providersData?: Record<string, ProviderData>;
 }
-type WalletOptions<T extends BaseWalletModel> = WalletOptionsSettings<T> & WalletOptionsCryptoWallet;
+declare type WalletOptions<T extends BaseWalletModel> = WalletOptionsSettings<T> & WalletOptionsCryptoWallet;
 
 interface SelectIdentityOptions {
     reason?: string;
@@ -3382,7 +3475,7 @@ interface TransactionOptions {
     transaction?: string;
     notifyUser?: boolean;
 }
-type ResourceMap = BaseWalletModel['resources'];
+declare type ResourceMap = BaseWalletModel['resources'];
 declare class BaseWallet<Options extends WalletOptions<Model>, Model extends BaseWalletModel = BaseWalletModel> implements Wallet {
     dialog: Dialog;
     store: Store<Model>;
@@ -3401,41 +3494,126 @@ declare class BaseWallet<Options extends WalletOptions<Model>, Model extends Bas
     selectCredentialsForSdr(sdrMessage: IMessage): Promise<VerifiablePresentation | undefined>;
     getKeyWallet<T extends KeyWallet>(): T;
     call(functionMetadata: WalletFunctionMetadata): Promise<void>;
+    /**
+     * Gets a list of identities managed by this wallet
+     * @returns
+     */
     getIdentities(): Promise<BaseWalletModel['identities']>;
+    /**
+     * Returns a list of DIDs managed by this wallet
+     *
+     * @param queryParameters. You can filter by alias.
+     * @returns
+     */
     identityList(queryParameters: WalletPaths.IdentityList.QueryParameters): Promise<WalletPaths.IdentityList.Responses.$200>;
+    /**
+     * Creates an identity
+     * @param requestBody
+     * @returns the DID of the created identity
+     */
     identityCreate(requestBody: WalletPaths.IdentityCreate.RequestBody): Promise<WalletPaths.IdentityCreate.Responses.$201>;
     identitySelect(queryParameters: WalletPaths.IdentitySelect.QueryParameters): Promise<WalletPaths.IdentitySelect.Responses.$200>;
+    /**
+     * Signs using the identity set in pathParameters. Currently suporting RAW signatures of base64url-encoded data, arbritrary JSON objects (it returns a JWT); and transactions for the DLT.
+     * @param pathParameters
+     * @param requestBody
+     * @returns
+     */
     identitySign(pathParameters: WalletPaths.IdentitySign.PathParameters, requestBody: WalletPaths.IdentitySign.RequestBody): Promise<WalletPaths.IdentitySign.Responses.$200>;
+    /**
+     * Returns info regarding an identity. It includes DLT addresses bounded to the identity
+     *
+     * @param pathParameters
+     * @returns
+     */
     identityInfo(pathParameters: WalletPaths.IdentityInfo.PathParameters): Promise<WalletPaths.IdentityInfo.Responses.$200>;
     identityDeployTransaction(pathParameters: WalletPaths.IdentityDeployTransaction.PathParameters, requestBody: WalletComponents.Schemas.Transaction): Promise<WalletComponents.Schemas.Receipt>;
+    /**
+     * Get resources stored in the wallet's vault. It is the place where to find stored verfiable credentials, agreements, non-repudiable proofs.
+     * @returns
+     */
     getResources(): Promise<ResourceMap>;
     private getResource;
     private setResource;
+    /**
+     * Gets a list of resources stored in the wallet's vault.
+     * @returns
+     */
     resourceList(query: WalletPaths.ResourceList.QueryParameters): Promise<WalletPaths.ResourceList.Responses.$200>;
+    /**
+     * Deletes a given resource and all its children
+     * @param id
+     */
     deleteResource(id: string, requestConfirmation?: boolean): Promise<void>;
+    /**
+     * Deletes a given identity (DID) and all its associated resources
+     * @param did
+     */
     deleteIdentity(did: string): Promise<void>;
+    /**
+     * Securely stores in the wallet a new resource.
+     *
+     * @param requestBody
+     * @returns and identifier of the created resource
+     */
     resourceCreate(requestBody: WalletPaths.ResourceCreate.RequestBody): Promise<WalletPaths.ResourceCreate.Responses.$201>;
+    /**
+     * Initiates the flow of choosing which credentials to present after a selective disclosure request.
+     * @param pathParameters
+     * @returns
+     */
     selectiveDisclosure(pathParameters: WalletPaths.SelectiveDisclosure.PathParameters): Promise<WalletPaths.SelectiveDisclosure.Responses.$200>;
+    /**
+     * Deploys a transaction to the connected DLT
+     * @param requestBody
+     * @returns
+     */
     transactionDeploy(requestBody: WalletComponents.Schemas.SignedTransaction): Promise<WalletPaths.TransactionDeploy.Responses.$200>;
+    /**
+     * Verifies a JWT resolving the public key from the signer DID (no other kind of signer supported) and optionally check values for expected payload claims.
+     *
+     * The Wallet only supports the 'ES256K1' algorithm.
+     *
+     * Useful to verify JWT created by another wallet instance.
+     * @param requestBody
+     * @returns
+     */
     didJwtVerify(requestBody: WalletPaths.DidJwtVerify.RequestBody): Promise<WalletPaths.DidJwtVerify.Responses.$200>;
+    /**
+     * Retrieves information regarding the current connection to the DLT.
+     * @returns
+     */
     providerinfoGet(): Promise<WalletPaths.ProviderinfoGet.Responses.$200>;
 }
 
-declare class FileStore<T extends Record<string, any> = Record<string, unknown>> extends EventEmitter$1 implements Store<T> {
+/**
+ * A class that implements a storage for the wallet in a single file. The server wallet uses a file as storage.
+ *
+ * `filepath` is the path to the Wallet's storage file. If you are using a container it should be a path to a file that persists (like one in a volume)
+ *
+ * The wallet's storage-file can be encrypted for added security.
+ */
+declare class FileStore<T extends Record<string, any> = Record<string, unknown>> implements Store<T> {
     filepath: string;
     private key;
     private readonly _password?;
     private _passwordSalt?;
     initialized: Promise<void>;
     defaultModel: T;
+    /**
+     *
+     * @param filepath an absolute path to the file that will be used to store wallet data
+     * @param keyObject a key object holding a 32 bytes symmetric key to use for encryption/decryption of the storage
+     */
     constructor(filepath: string, keyObject?: KeyObject, defaultModel?: T);
+    /**
+     *
+     * @param filepath an absolute path to the file that will be used to store wallet data
+     * @param password if provided a key will be derived from the password and the store file will be encrypted
+     *
+     * @deprecated you should consider passing a more secure KeyObject derived from your password
+     */
     constructor(filepath: string, password?: string, defaultModel?: T);
-    on(eventName: 'changed', listener: (changedAt: number) => void): this;
-    on(eventName: 'cleared', listener: (changedAt: number) => void): this;
-    on(eventName: string | symbol, listener: (...args: any[]) => void): this;
-    emit(eventName: 'changed', changedAt: number): boolean;
-    emit(eventName: 'cleared', changedAt: number): boolean;
-    emit(eventName: string | symbol, ...args: any[]): boolean;
     private init;
     deriveKey(password: string, salt?: Buffer): Promise<void>;
     private getModel;
@@ -3444,8 +3622,8 @@ declare class FileStore<T extends Record<string, any> = Record<string, unknown>>
     private decryptModel;
     get(key: any, defaultValue?: any): Promise<any>;
     set(keyOrStore: any, value?: any): Promise<void>;
-    has(key: any): Promise<boolean>;
-    delete(key: any): Promise<void>;
+    has<Key extends 'accounts'>(key: Key): Promise<boolean>;
+    delete<Key extends 'accounts'>(key: Key): Promise<void>;
     clear(): Promise<void>;
     getStore(): Promise<T>;
     getPath(): string;
@@ -3472,7 +3650,7 @@ declare class ConsoleToast implements Toast {
     close(toastId: string): void;
 }
 
-type KeyType = 'Secp256k1';
+declare type KeyType = 'Secp256k1';
 interface Key {
     kid: string;
     type: KeyType;
