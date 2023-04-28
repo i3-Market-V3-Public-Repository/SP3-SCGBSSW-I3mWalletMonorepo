@@ -8,7 +8,7 @@ import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 
 import { Accordion, CloseButton } from 'react-bootstrap'
 import { executeFunctionOrValue } from './execute-function-or-value'
-import { SettingsCheckbox, SettingsInput, SettingsNumber } from './items'
+import { SettingsAutocomplete, SettingsCheckbox, SettingsInput, SettingsNumber } from './items'
 import { SettingsDescription } from './settings-description'
 import { ArraySettingsMetadata, ItemMetadata, ObjectSettingsMetadata, SettingsMetadata } from './settings-metadata'
 
@@ -175,6 +175,10 @@ export function SettingsItem (props: Props): JSX.Element | null {
 
     case 'object':
       item = <ObjectSettingsItem metadata={metadata} />
+      break
+
+    case 'autocomplete':
+      item = <SettingsAutocomplete metadata={metadata} />
       break
   }
 

@@ -1,5 +1,6 @@
 import { VerifiableCredentialResource } from '@i3m/base-wallet'
-import { Credentials } from '@wallet/lib'
+import { passwordCheck } from '@i3m/cloud-vault-client'
+import { Credentials, DEFAULT_CLOUD_URL, DEFAULT_VAULT_PROVIDERS, filled } from '@wallet/lib'
 
 import { getVersionDate, Locals, WalletDesktopError } from '@wallet/main/internal'
 import { SyncDirection } from './sync-manager'
@@ -37,25 +38,23 @@ export class CloudVaultFlows {
   async askCloudVaultUrl (): Promise<string> {
     const { storeManager, dialog } = this.locals
     const publicSettings = storeManager.getStore('public-settings')
-    let cloud = await publicSettings.get('cloud')
+    const cloud = await publicSettings.get('cloud')
+    let url = cloud?.url
 
-    if (cloud?.url === undefined) {
-      const vaultUrl = await dialog.text({
+    if (!filled(url)) {
+      const vaultUrl = await dialog.select({
         title: 'Cloud Vault',
-        message: 'You must provide the URL of your Cloud Vault server (i.e. https://my-vault-server.com:8000)',
-        allowCancel: true
+        message: `You must provide the URL of your Cloud Vault server (i.e. ${DEFAULT_CLOUD_URL})`,
+        allowCancel: true,
+        values: DEFAULT_VAULT_PROVIDERS
       })
+
       if (vaultUrl !== undefined) {
-        cloud = {
-          unsyncedChanges: false,
-          ...cloud,
-          url: vaultUrl
-        }
-        await publicSettings.set('cloud', cloud)
+        url = vaultUrl
+        await storeManager.silentStoreVaultUrl(vaultUrl)
       }
     }
 
-    const url = cloud?.url
     if (url === undefined) {
       throw new WalletDesktopError('Invalid URL for the Cloud Vault server', {
         message: 'Cloud Vault',
@@ -76,7 +75,7 @@ export class CloudVaultFlows {
     if (cloud?.credentials !== undefined) {
       return cloud.credentials
     }
-  
+
     credentials = await dialog.form<Credentials>({
       title: 'Cloud Vault',
       descriptors: {
@@ -93,6 +92,7 @@ export class CloudVaultFlows {
       })
     }
 
+    passwordCheck(credentials.password)
     await storeManager.silentStoreCredentials(credentials)
     return credentials
   }

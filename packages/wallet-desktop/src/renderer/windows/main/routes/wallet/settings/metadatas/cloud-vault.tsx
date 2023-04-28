@@ -1,4 +1,4 @@
-import { DEFAULT_CLOUD_URL, DEFAULT_UPLOAD_DEBOUNCE_TIME, showToastAction } from '@wallet/lib'
+import { DEFAULT_CLOUD_URL, DEFAULT_UPLOAD_DEBOUNCE_TIME, DEFAULT_VAULT_PROVIDERS, showToastAction } from '@wallet/lib'
 import { MetadataRecord } from '../settings-metadata'
 
 export const cloudVaultMetadata: MetadataRecord = {
@@ -14,8 +14,9 @@ export const cloudVaultMetadata: MetadataRecord = {
     //   }
     // },
     {
-      type: 'input',
+      type: 'autocomplete',
       label: 'Cloud URL',
+      options: DEFAULT_VAULT_PROVIDERS,
       key: 'public.cloud.url',
       placeholder: DEFAULT_CLOUD_URL,
       canUpdate (key, value, metadata, shm, dispatch) {

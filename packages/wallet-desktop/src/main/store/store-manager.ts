@@ -111,6 +111,8 @@ export class StoreManager extends StoreBag {
       }
     }
 
+    // NOTE: Public settings must always be not encrypted and using the electorn store.
+    // This guarantees compatibilities with future versions!
     const [publicSettings, fixedOptions] = await this.builder.buildStore({ ...options, storeType: 'electron-store' })
     const publicMetadata: StoreMetadata<'public-settings'> = {
       type: 'public-settings',
@@ -118,8 +120,6 @@ export class StoreManager extends StoreBag {
       options: fixedOptions
     }
 
-    // NOTE: Public settings must always be not encrypted and using the electorn store.
-    // This guarantees compatibilities with future versions!
     this.setStore(publicSettings, publicMetadata, 'public-settings')
 
     // Migrate to last store type
@@ -258,10 +258,6 @@ export class StoreManager extends StoreBag {
   ): Promise<void> {
     this.locals.sharedMemoryManager.update(mem => ({
       ...mem,
-      cloudVaultData: {
-        ...mem.cloudVaultData,
-        unsyncedChanges
-      },
       settings: {
         ...mem.settings,
         public: {
@@ -346,7 +342,6 @@ export class StoreManager extends StoreBag {
     }
   }
 
-  // Event handlers
   public async silentStoreCredentials (credentials: Credentials): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const silentPrivateSettings = this.silentBag.getStore('private-settings')
@@ -366,6 +361,27 @@ export class StoreManager extends StoreBag {
     }), { modifiers: { 'no-settings-update': true } })
   }
 
+  public async silentStoreVaultUrl (url: string): Promise<void> {
+    const { sharedMemoryManager: shm } = this.locals
+    const publicSettings = this.getStore('public-settings')
+    await publicSettings.set('cloud.url', url)
+    shm.update(mem => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        public: {
+          ...mem.settings.public,
+          cloud: {
+            unsyncedChanges: false,
+            ...mem.settings.public.cloud,
+            url: url
+          }
+        }
+      }
+    }), { modifiers: { 'no-settings-update': true } })
+  }
+
+  // Event handlers
   public async onStopCloudService (): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
 

@@ -25,6 +25,12 @@ export interface CheckboxSettingsMetadata extends BaseSettingsMetadata<boolean> 
   type: 'checkbox'
 }
 
+export interface AutocompleteSettingsMetadata extends BaseSettingsMetadata<string> {
+  type: 'autocomplete'
+  placeholder?: string
+  options: string[]
+}
+
 export interface InputSettingsMetadata extends BaseSettingsMetadata<string> {
   type: 'input'
   placeholder?: string
@@ -51,6 +57,7 @@ export interface ObjectSettingsMetadata<T extends Record<string, any> = any> ext
 export type SettingsMetadata =
   CheckboxSettingsMetadata |
   InputSettingsMetadata |
+  AutocompleteSettingsMetadata |
   NumberSettingsMetadata |
   ArraySettingsMetadata |
   ObjectSettingsMetadata

@@ -18,6 +18,12 @@ export async function handleVaultErrors (locals: Locals, err: VaultError): Promi
       message: 'Cloud Vault',
       details: 'Invalid credentials.'
     })
+  } else {
+    toast.show({
+      type: 'error',
+      message: 'Cloud Vault',
+      details: `${err.message}: ${err.data.toString() as string}; ${err.cause as string ?? 'unknown cause'}`
+    })
   }
 }
 

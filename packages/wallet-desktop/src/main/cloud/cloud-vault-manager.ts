@@ -58,7 +58,7 @@ export class CloudVaultManager {
         const privateSettings = storeManager.getStore('private-settings')
         const cloud = await privateSettings.get('cloud')
         if (cloud?.credentials !== undefined) {
-          const asyncLogin = this.login()
+          const asyncLogin = this.login(cloud.credentials)
           handlePromise(this.locals, asyncLogin)
         }
       }
@@ -90,7 +90,7 @@ export class CloudVaultManager {
     })
   }
 
-  protected async bindClientEvents (): Promise<void> {
+  protected bindClientEvents (): void {
     const { sharedMemoryManager: shm, syncManager } = this.locals
 
     const onStateChange: ClientCallback<'state-changed'> = (state) => {
@@ -221,40 +221,56 @@ export class CloudVaultManager {
   }
 
   // *************** Task Methods *************** //
-  protected async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<Credentials> {
+  protected async registerTask (task: LabeledTaskHandler, cloud?: CloudVaultPrivateSettings): Promise<void> {
     const errorMessage = 'Vault user registration error'
-    const { sharedMemoryManager } = this.locals
+    const { sharedMemoryManager: shm } = this.locals
 
-    await this.initializeClientIfNeeded()
-
-    let credentials = cloud?.credentials
-    if (credentials === undefined) {
-      credentials = await this.flows.askCredentials(errorMessage)
-    }
-    await this.flows.askPasswordConfirmation(credentials)
-
-    const vc = await this.flows.askRegistrationCredential(errorMessage)
-    if (vc.identity === undefined) {
-      throw new WalletDesktopError('Invalid identity', {
-        message: 'Invalid verifiable credential',
-        details: `The verifiable credential '${vc.id}' has no associated identity`
-      })
-    }
-
-    const username = credentials.username
-    const url = await this.client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
-    sharedMemoryManager.update((mem) => ({
+    shm.update(mem => ({
       ...mem,
       cloudVaultData: {
         ...mem.cloudVaultData,
-        registration: { url, username }
+        loggingIn: true
       }
     }))
 
-    return credentials
+    try {
+      await this.initializeClientIfNeeded()
+
+      let credentials = cloud?.credentials
+      if (credentials === undefined) {
+        credentials = await this.flows.askCredentials(errorMessage)
+      }
+      await this.flows.askPasswordConfirmation(credentials)
+
+      const vc = await this.flows.askRegistrationCredential(errorMessage)
+      if (vc.identity === undefined) {
+        throw new WalletDesktopError('Invalid identity', {
+          message: 'Invalid verifiable credential',
+          details: `The verifiable credential '${vc.id}' has no associated identity`
+        })
+      }
+
+      const username = credentials.username
+      const url = await this.client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
+      shm.update((mem) => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          registration: { url, username }
+        }
+      }))
+    } finally {
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          loggingIn: false
+        }
+      }))
+    }
   }
 
-  protected async loginTask (task: LabeledTaskHandler): Promise<void> {
+  protected async loginTask (task: LabeledTaskHandler, credentials?: Credentials): Promise<void> {
     const { sharedMemoryManager: shm, storeManager } = this.locals
     const errorMessage = 'Vault login error'
 
@@ -272,12 +288,18 @@ export class CloudVaultManager {
       await this.initializeClientIfNeeded()
       const credentials = await this.flows.askCredentials(errorMessage)
       await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          registration: undefined
+        }
+      }))
     } finally {
       shm.update(mem => ({
         ...mem,
         cloudVaultData: {
           ...mem.cloudVaultData,
-          unsyncedChanges: publicCloudSettings?.unsyncedChanges ?? false,
           loggingIn: false
         }
       }))
@@ -286,9 +308,15 @@ export class CloudVaultManager {
 
   // *************** Client Methods *************** //
   async initializeClientIfNeeded (): Promise<void> {
+    // If the url is different from the current one close the vault.
+    const url = await this.flows.askCloudVaultUrl()
+    if (this.client.serverUrl !== url) {
+      await this.client.close()
+    }
+
+    // If the vault is not initialized, initialize it.
     const state = await this.client.state
     if (state === VAULT_STATE.NOT_INITIALIZED) {
-      const url = await this.flows.askCloudVaultUrl()
       await this.client.init(url)
     }
   }
@@ -320,7 +348,21 @@ export class CloudVaultManager {
   async logout (): Promise<void> {
     // We modify the state before the logout to remove the disconnected toast!
     await this.locals.storeManager.onStopCloudService()
-    this.client.logout()
+
+    const { sharedMemoryManager: shm } = this.locals
+    if (shm.memory.cloudVaultData.registration !== undefined) {
+      shm.update(mem => ({
+        ...mem,
+        cloudVaultData: {
+          ...mem.cloudVaultData,
+          registration: undefined
+        }
+      }))
+    }
+
+    if (await this.client.state > VAULT_STATE.LOGGED_IN) {
+      await this.client.logout()
+    }
   }
 
   async register (): Promise<void> {
@@ -331,11 +373,11 @@ export class CloudVaultManager {
     })
   }
 
-  async login (): Promise<void> {
+  async login (credentials?: Credentials): Promise<void> {
     const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.loginTask(task)
+      return await this.loginTask(task, credentials)
     })
   }
 
@@ -356,7 +398,7 @@ export class CloudVaultManager {
     }
 
     const versionDate = getVersionDate(vault.timestamp)
-    logger.debug(`Uploading to cloud vault (${this.client.serverUrl}) the version (${versionDate})`)
+    logger.debug(`Uploading to cloud vault (${this.client.serverUrl ?? 'without url!'}) the version (${versionDate})`)
     const newTimestamp = await this.client.updateStorage(vault, force)
 
     await storeManager.onCloudSynced(newTimestamp)
@@ -368,7 +410,7 @@ export class CloudVaultManager {
     }
 
     const { storeManager } = this.locals
-    
+
     if (vault === undefined) {
       vault = await this.client.getStorage()
     }

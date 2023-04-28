@@ -4,7 +4,6 @@ import { AsyncEventHandler, Locals, MainContext, WalletDesktopError } from '@wal
 export type SyncDirection = 'pull' | 'push' | 'none'
 export type ResolveFunction = (direction: SyncDirection, force?: boolean) => Promise<void>
 
-
 interface UpdateSyncEvent {
   force?: boolean
   vault?: VaultStorage
@@ -51,7 +50,6 @@ function isAutoSync (opts: SyncOpts): opts is AutoSyncOpts {
 }
 
 export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
-
   static async initialize (ctx: MainContext, locals: Locals): Promise<SynchronizationManager> {
     return new SynchronizationManager(locals)
   }
@@ -69,7 +67,7 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
       if (err instanceof VaultError) {
         console.trace(err)
         if (checkErrorType(err, 'conflict')) {
-          return await this.emit('conflict', { resolve: this.resolve})
+          return await this.emit('conflict', { resolve: this.resolve })
         }
       }
       throw err
@@ -86,7 +84,7 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
       const fixedRemoteTimestamp = opts.timestamps.remote ?? 0
       const fixedLocalTimestamp = opts.timestamps.local ?? 0
       const unsyncedChanges = cloud?.unsyncedChanges ?? false
-  
+
       if (fixedRemoteTimestamp > fixedLocalTimestamp) {
         if (unsyncedChanges && opts.force !== true) {
           conflict = true

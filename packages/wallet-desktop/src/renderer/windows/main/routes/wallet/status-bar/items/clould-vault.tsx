@@ -18,7 +18,8 @@ export function CloudVault (): JSX.Element | null {
   let icon: JSX.Element | null = null
   let onClick: (() => void) | undefined
   let tooltip: string = 'Unknown state'
-  const { state, unsyncedChanges, syncing } = sharedMemory.cloudVaultData
+  const { state, syncing } = sharedMemory.cloudVaultData
+  const unsyncedChanges = sharedMemory.settings.public.cloud?.unsyncedChanges ?? false
 
   if (syncing) {
     icon = <Loader size='20px' className='loader' color='white' />

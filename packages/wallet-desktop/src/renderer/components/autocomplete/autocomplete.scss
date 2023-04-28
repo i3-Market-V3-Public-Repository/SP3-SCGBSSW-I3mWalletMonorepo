@@ -1,0 +1,46 @@
+
+$suggestion-border-radius: 3px;
+
+$autocomplete-border-color: transparentize(bootstrapUtils.tint-color(i3m.$dark, 10%), 0.5);
+$suggestion-hover-color: transparentize(i3m.$primary, 0.8);
+$suggestion-border-color: transparentize(i3m.$primary, 0.6);
+$suggestion-color: i3m.$primary;
+
+
+.autocomplete {
+  position: relative;
+  outline: none;
+
+  > .suggestions {
+    position: absolute;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: $suggestion-border-radius;
+    border: $autocomplete-border-color 1px solid;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+
+    > span {
+      &:first-child {
+        border-top-right-radius: none;
+        border-top-left-radius: none;
+      }
+
+      &:last-child {
+        border-bottom-right-radius: $suggestion-border-radius;
+        border-bottom-left-radius: $suggestion-border-radius;
+      }
+
+      padding: 10px 10px;
+      border: transparent 1px solid;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $suggestion-hover-color;
+        border-color: $suggestion-border-color;
+        color: $suggestion-color;
+      }
+    }
+  }
+}

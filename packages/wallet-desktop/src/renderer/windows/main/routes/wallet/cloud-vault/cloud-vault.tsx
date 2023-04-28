@@ -3,7 +3,7 @@ import { VaultState } from '@i3m/cloud-vault-client'
 import * as React from 'react'
 import { Alert, Button, ButtonProps } from 'react-bootstrap'
 
-import { clientRestartAction, DEFAULT_CLOUD_URL, deleteCloudAction, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudAction, syncCloudAction, toVaultState } from '@wallet/lib'
+import { clientRestartAction, DEFAULT_CLOUD_URL, deleteCloudAction, firstFilled, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudAction, syncCloudAction, toVaultState } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { Details, ExternalLink, Section } from '@wallet/renderer/components'
 
@@ -18,6 +18,8 @@ interface CloudVaultOperations {
   delete?: Operation
   restart?: Operation
   stop?: Operation
+  finishRegistration?: Operation
+  cancelRegistration?: Operation
 }
 
 const bindOperation = (operation: keyof CloudVaultOperations, operations: CloudVaultOperations): ButtonProps => {
@@ -51,8 +53,8 @@ export function CloudVault (): JSX.Element {
 
   const state = publicCloudData.state
   const username = privateCloudSettings?.credentials?.username
-  const url = publicCloudSettings?.url ?? DEFAULT_CLOUD_URL
-  const unsynced = publicCloudData.unsyncedChanges
+  const url = firstFilled(publicCloudSettings?.url, DEFAULT_CLOUD_URL)
+  const unsynced = publicCloudSettings?.unsyncedChanges ?? false
   const registration = publicCloudData.registration
   const operations: CloudVaultOperations = {}
 
@@ -89,6 +91,9 @@ export function CloudVault (): JSX.Element {
       operations.logout = onLogout
       operations.sync = onSync
       operations.delete = onDelete
+    } else if (registration !== undefined) {
+      operations.finishRegistration = onLogin
+      operations.cancelRegistration = onLogout
     } else if (privateCloudSettings?.credentials !== undefined) {
       operations.login = onLogin
       operations.logout = onLogout
@@ -133,11 +138,13 @@ export function CloudVault (): JSX.Element {
             </Details.Buttons> */}
             <Details.Buttons title='Cloud actions'>
               <Button {...bindOperation('login', operations)}>Login</Button>
+              <Button {...bindOperation('finishRegistration', operations)}>Finish registration</Button>
               <Button {...bindOperation('register', operations)}>Register</Button>
               {/* <Button {...bindOperation('restart', operations)} variant='danger'>Restart Client</Button> */}
               <Button {...bindOperation('sync', operations)}>Force sync</Button>
               <Button {...bindOperation('logout', operations)} variant='danger'>Logout</Button>
               <Button {...bindOperation('delete', operations)} variant='danger'>Delete cloud</Button>
+              <Button {...bindOperation('cancelRegistration', operations)} variant='danger'>Cancel registration</Button>
               <Button {...bindOperation('stop', operations)} variant='danger'>Stop</Button>
             </Details.Buttons>
           </Details.Grid>
