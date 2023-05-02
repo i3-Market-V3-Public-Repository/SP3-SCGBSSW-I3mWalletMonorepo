@@ -100,5 +100,18 @@ export const buildMenuBar = (locals: Locals): Menu => {
     template.unshift({ label: name })
   }
 
+  if (process.env.NODE_ENV) {
+    template.push({
+      label: 'Development',
+      submenu: [
+        {
+          label: 'Toogle developer tools',
+          accelerator: 'CommandOrControl+I',
+          role: 'toggleDevTools'
+        }
+      ]
+    })
+  }
+
   return Menu.buildFromTemplate(template)
 }
