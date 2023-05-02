@@ -25,7 +25,9 @@ export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
 
   async delete (walletName, opts, locals) {
     const { storeManager } = locals
-    storeManager.deleteStore('wallet', walletName)
+    if (storeManager.hasStore('wallet', walletName)) {
+      storeManager.deleteStore('wallet', walletName)
+    }
   },
 
   async stop (walletName, opts, locals) {

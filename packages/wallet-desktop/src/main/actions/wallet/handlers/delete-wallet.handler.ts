@@ -21,7 +21,7 @@ export const deleteWallet: ActionHandlerBuilder<typeof actionBuilder> = (
         message: `All data for the wallet '${walletName}' will be deleted. Are you sure?`
       })
       if (confirmation !== true) {
-        return { response: undefined, status: 500 }
+        return { response: undefined, status: 403 }
       }
 
       await walletFactory.deleteWallet(walletName)

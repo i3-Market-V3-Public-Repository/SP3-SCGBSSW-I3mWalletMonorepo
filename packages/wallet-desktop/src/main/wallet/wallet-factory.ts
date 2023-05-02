@@ -183,7 +183,7 @@ export class WalletFactory {
   }
 
   async deleteWallet (walletName: string): Promise<void> {
-    const { sharedMemoryManager: shm, storeManager } = this.locals
+    const { sharedMemoryManager: shm } = this.locals
     const { wallets, current } = shm.memory.settings.private.wallet
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
@@ -201,27 +201,33 @@ export class WalletFactory {
     }
     await featureManager.delete(walletName)
 
-    let currentWallet = current
-    if (currentWallet === walletName) {
-      currentWallet = undefined
-    }
-
-    storeManager.deleteStore('wallet', walletName)
-
-    this.locals.sharedMemoryManager.update((mem) => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        private: {
-          ...mem.settings.private,
-          wallet: {
-            ...mem.settings.private.wallet,
-            wallets: newWallets,
-            current: currentWallet
-          }
-        }
+    this.locals.sharedMemoryManager.update((mem) => {
+      let currentWallet = current
+      let resources = mem.resources
+      let identities = mem.identities
+      if (currentWallet === walletName) {
+        currentWallet = undefined
+        resources = {}
+        identities = {}
       }
-    }))
+      
+      return {
+        ...mem,
+        settings: {
+          ...mem.settings,
+          private: {
+            ...mem.settings.private,
+            wallet: {
+              ...mem.settings.private.wallet,
+              wallets: newWallets,
+              current: currentWallet
+            }
+          }
+        },
+        resources,
+        identities
+      }
+    })
   }
 
   async changeWallet (walletName: string): Promise<void> {
