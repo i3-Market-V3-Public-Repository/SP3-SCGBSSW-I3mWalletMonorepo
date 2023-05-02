@@ -11,15 +11,8 @@ interface Props extends SectionProps {
 }
 
 function resourceSummary (prev: any, resource: Resource): any {
-  const { type } = resource
-  const summary: any = { type }
-  switch (type) {
-    case 'VerifiableCredential':
-      summary.claims = getClaims(resource.resource)
-      break
-  }
-
-  const name = getResourceName(resource)
+  const summary = getClaims(resource.resource)
+  const name = getResourceName(resource, true)
   prev[name] = summary
 
   return prev
@@ -31,7 +24,7 @@ export function IdentityDetails (props: Props): JSX.Element {
   const resources = Object.keys(sharedMemory.resources)
     .map(id => sharedMemory.resources[id] as Resource)
     .filter((resource) => {
-      return resource.identity === identity.did
+      return resource.type === 'VerifiableCredential' && resource.identity === identity.did
     })
   const resourcesSummary = resources.reduce(resourceSummary, {})
   const address = ethers.utils.computeAddress(`0x${identity.keys[0].publicKeyHex}`)
@@ -51,11 +44,14 @@ export function IdentityDetails (props: Props): JSX.Element {
         {
           (Object.keys(resourcesSummary).length > 0) ? (
             <Details.Body>
-              <Details.Title>Content</Details.Title>
-              <JsonUi
-                prop='Resources'
-                value={resourcesSummary}
+              <Details.Title>Verifiable Credentials</Details.Title>
+              {Object.entries(resourcesSummary).map(([key, value], index) => (
+                <JsonUi
+                prop={key}
+                value={value}
+                key={index}
               />
+              ))}
             </Details.Body>
           ) : ''
         }

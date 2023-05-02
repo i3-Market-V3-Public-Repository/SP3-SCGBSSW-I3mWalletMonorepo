@@ -101,11 +101,15 @@ export class CloudVaultManager {
         }
       }))
 
-      if (prevState < VAULT_STATE.CONNECTED && state === VAULT_STATE.CONNECTED) {
+      if (state === VAULT_STATE.CONNECTED) {
         this.locals.toast.show({
           message: 'Cloud Vault connected',
           type: 'success'
         })
+        if (shm.memory.settings.public.cloud?.unsyncedChanges === true) {
+          const promise = syncManager.sync({direction: 'push'})
+          handlePromise(this.locals, promise)
+        }
       } else if (prevState === VAULT_STATE.CONNECTED && state < VAULT_STATE.CONNECTED) {
         this.locals.toast.show({
           message: 'Cloud Vault disconnected',

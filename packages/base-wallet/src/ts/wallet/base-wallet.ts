@@ -878,7 +878,7 @@ export class BaseWallet<
       case 'Contract': {
         const { dataSharingAgreement, keyPair } = resource.resource // They keyPair is assigned before validation, so it cannot be undefined
         const confirmation = await this.dialog.confirmation({
-          message: `Do you want to add the a data sharing agreement to your wallet?\n\tofferingId: ${dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${dataSharingAgreement.parties.consumerDid}`
+          message: `Do you want to add a data-sharing agreement to your wallet?\n\tofferingId: ${dataSharingAgreement.dataOfferingDescription.dataOfferingId}\n\tproviderDID: ${dataSharingAgreement.parties.providerDid}\n\tconsumerDID: ${dataSharingAgreement.parties.consumerDid}`
         })
         if (confirmation !== true) {
           throw new WalletError('User cancelled the operation', { status: 403 })
@@ -917,7 +917,7 @@ export class BaseWallet<
           const no = { value: 'no', text: 'No', context: 'danger' as DialogOptionContext }
           const yesToAll = { value: 'yesToAll', text: 'Yes to all for this data sharing agreement', context: 'success' as DialogOptionContext }
           const confirmation = await this.dialog.select({
-            message: `Do you want to add a non repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`,
+            message: `Do you want to add a non-repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`,
             values: [yes, yesToAll, no],
             getText: (option) => option.text,
             getContext: (option) => option.context

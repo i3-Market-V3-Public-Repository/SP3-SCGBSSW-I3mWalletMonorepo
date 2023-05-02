@@ -18,8 +18,12 @@ export function ProofDetails (props: Props): JSX.Element {
   // const dispatch = useAction()
 
   let proofPayload: NrProofPayload | undefined
+  let proofType = 'Unknown'
+  let iatDate = ''
   try {
     proofPayload = decodeJwt(resource.resource) as unknown as NrProofPayload
+    proofType = proofPayload.proofType
+    iatDate = (new Date(proofPayload.iat * 1000)).toString()
   } catch {
     // TODO: Cannot use dispach action because it refereshes this component and creates an infinite loop
     // dispatch(showToastAction.create({
@@ -28,21 +32,24 @@ export function ProofDetails (props: Props): JSX.Element {
     //   type: 'error'
     // }))
   }
-  const proofType = proofPayload?.proofType ?? 'Unknown'
 
   let verificationPublicJwk: string | undefined
 
+  let proofTypeExpanded = ''
   if (resource.parentResource !== undefined) {
     const dea = sharedMemory.resources[resource.parentResource] as DataExchangeResource
     switch (proofType) {
       case 'PoO':
         verificationPublicJwk = dea.resource.orig
+        proofTypeExpanded = 'Proof of Origin (PoO)'
         break
       case 'PoR':
         verificationPublicJwk = dea.resource.dest
+        proofTypeExpanded = 'Proof of Reception (PoR)'
         break
       case 'PoP':
         verificationPublicJwk = dea.resource.orig
+        proofTypeExpanded = 'Proof of Publication (PoP)'
         break
       default:
         break
@@ -57,7 +64,8 @@ export function ProofDetails (props: Props): JSX.Element {
           <Details.Input label='Id' value={resource.id} />
           <Details.Input label='Name' value={name} />
           <Details.Input label='Resource type' value={resource.type} />
-          <Details.Input label='Proof type' value={proofType} />
+          <Details.Input label='Proof type' value={proofTypeExpanded} />
+          <Details.Input label='Issued at' value={iatDate} />
           {(verificationPublicJwk !== undefined) ? (
             <Details.Input label='Verification Public JWK' value={verificationPublicJwk} />
           ) : ''}
