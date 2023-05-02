@@ -50,7 +50,7 @@ export function CloudVault (): JSX.Element {
 
   const state = publicCloudData.state
   const username = privateCloudSettings?.credentials?.username
-  const url = firstFilled(publicCloudSettings?.url, DEFAULT_CLOUD_URL)
+  const url = publicCloudSettings?.url
   const unsynced = publicCloudSettings?.unsyncedChanges ?? false
   const registration = publicCloudData.registration
   const operations: CloudVaultOperations = {}
@@ -104,7 +104,7 @@ export function CloudVault (): JSX.Element {
           <Details.Grid>
             <Details.Input label='Status' value={getStateText(state)} />
             {username !== undefined ? <Details.Input label='Username' value={username} /> : null}
-            <Details.Input label='URL' value={url} />
+            {url ? <Details.Input label='URL' value={url} /> : null}
           </Details.Grid>
         </Details.Body>
         {registration !== undefined ? (
