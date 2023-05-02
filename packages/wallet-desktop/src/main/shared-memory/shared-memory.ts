@@ -28,10 +28,10 @@ export class SharedMemoryManager extends EventEmitter {
   private _memory: SharedMemory
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<SharedMemoryManager> {
-    return new SharedMemoryManager(locals)
+    return new SharedMemoryManager(ctx, locals)
   }
 
-  constructor (protected locals: Locals, values?: Partial<SharedMemory>) {
+  constructor (protected ctx: MainContext, protected locals: Locals, values?: Partial<SharedMemory>) {
     super()
     this._memory = createDefaultSharedMemory(values)
     this.bindRuntimeEvents()
@@ -47,7 +47,7 @@ export class SharedMemoryManager extends EventEmitter {
     })
 
     runtimeManager.on('after-migration', async () => {
-      await bindWithSettings(this.locals)
+      await bindWithSettings(this.ctx, this.locals)
       await bindWithWalletFactory(this.locals)
     })
   }

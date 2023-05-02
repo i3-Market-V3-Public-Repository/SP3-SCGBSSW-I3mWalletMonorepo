@@ -9,10 +9,7 @@ import {
   Locals,
   LocalsSetter,
   logger,
-  MainContext,
-  RuntimeManager,
-  createStoreMigrationProxy,
-  parseArguments
+  MainContext, parseArguments, RuntimeManager
 } from './internal'
 
 async function executeRuntime (
@@ -41,9 +38,7 @@ export default async (argv: string[]): Promise<void> => {
     // Initialize context
     const ctx = initContext<MainContext>({
       args: parseArguments(),
-      appPath: path.resolve(__dirname, '../../'),
-      storeMigrationProxy: createStoreMigrationProxy(),
-      initialPublicSettings: undefined as any
+      appPath: path.resolve(__dirname, '../../')
     })
 
     // Initialize locals

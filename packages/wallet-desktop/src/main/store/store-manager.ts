@@ -5,7 +5,7 @@ import fs from 'fs/promises'
 
 import {
   createDefaultPrivateSettings,
-  Credentials, PrivateSettings, storeChangedAction, StoreClass,
+  Credentials, PrivateSettings, PublicSettings, storeChangedAction, StoreClass,
   StoreClasses, StoreModel, StoreModels, StoreSettings
 } from '@wallet/lib'
 import {
@@ -121,7 +121,7 @@ export class StoreManager extends StoreBag {
 
     // NOTE: Public settings must always be not encrypted and using the electorn store.
     // This guarantees compatibilities with future versions!
-    const [publicSettings, fixedOptions] = await this.builder.buildStore({ ...options, storeType: 'electron-store' })
+    const [publicSettings, fixedOptions] = await this.builder.buildStore<PublicSettings>({ ...options, storeType: 'electron-store' })
     const publicMetadata: StoreMetadata<'public-settings'> = {
       type: 'public-settings',
       args: [],
@@ -133,7 +133,7 @@ export class StoreManager extends StoreBag {
 
     // Backup initial public settings data
     const publicSettingsData = await publicSettings.getStore()
-    this.ctx.initialPublicSettings = publicSettingsData
+    this.ctx.initialPublicSettings = _.cloneDeep(publicSettingsData)
 
     // Store settings inside shared memory
     const { sharedMemoryManager: shm } = this.locals
@@ -161,14 +161,14 @@ export class StoreManager extends StoreBag {
       }
     }
 
-    const [privateSettings, fixedOptions] = await this.builder.buildStore({ ...options })
+    const [privateSettings, fixedOptions] = await this.builder.buildStore<PrivateSettings>({ ...options })
 
     // Store on store bag
     this.sendStoreToBag(privateSettings, fixedOptions, 'private-settings')
 
     // Backup initial public settings data
     const privateSettingsData = await privateSettings.getStore()
-    this.ctx.initialPublicSettings = privateSettingsData
+    this.ctx.initialPrivateSettings = _.cloneDeep(privateSettingsData)
 
     // Store settings inside shared memory
     shm.update((mem) => ({

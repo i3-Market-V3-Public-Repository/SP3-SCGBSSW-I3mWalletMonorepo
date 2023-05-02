@@ -13,7 +13,7 @@ import {
   logger,
   MainContext, PropInitializer,
   SharedMemoryManager,
-  StoreManager, StoreMigration, SynchronizationManager, TaskManager,
+  StoreManager, SynchronizationManager, TaskManager,
   ToastManager,
   Tray,
   VersionManager,
@@ -56,7 +56,7 @@ interface RuntimeEvents {
 
   'after-load': [task: LabeledTaskHandler]
 
-  'migration': [to: StoreMigration, task: LabeledTaskHandler]
+  'migration': [task: LabeledTaskHandler]
   'after-migration': [task: LabeledTaskHandler]
 
   // UI: give the user free access to the ui
@@ -182,7 +182,6 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
   }
 
   async load (task: LabeledTaskHandler): Promise<void> {
-    const { storeMigrationProxy } = this.ctx
     logger.debug('[RuntimeManager] Load!')
 
     await this.emit('private-settings', task)
@@ -192,7 +191,7 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     await this.emit('cloud-auth', task)
     await this.emit('fix-settings', task)
     await this.emit('after-load', task)
-    await this.emit('migration', storeMigrationProxy.to, task)
+    await this.emit('migration', task)
     await this.emit('after-migration', task)
   }
 
