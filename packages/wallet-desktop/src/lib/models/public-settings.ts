@@ -19,4 +19,5 @@ export interface PublicSettings {
   enc?: EncSettings
   store?: StoreSettings
   cloud?: CloudVaultPublicSettings
+  currentWallet?: string // Module name of the current wallet
 }

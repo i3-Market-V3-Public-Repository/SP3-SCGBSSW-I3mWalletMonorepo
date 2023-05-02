@@ -44,12 +44,12 @@ export class FeatureManager {
     }
 
     const { sharedMemoryManager: shm } = this.locals
-    const walletSettings = shm.memory.settings.private.wallet
-    if (walletSettings.current === undefined) {
+    const currentWallet = shm.memory.settings.public.currentWallet
+    if (currentWallet === undefined) {
       throw new Error('Wallet settings is undefined')
     }
 
-    return walletSettings.current
+    return currentWallet
   }
 
   async clearFeatures (walletName?: string): Promise<void> {

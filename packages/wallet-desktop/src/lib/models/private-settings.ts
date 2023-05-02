@@ -11,7 +11,6 @@ export interface WalletInfo {
 }
 
 export interface WalletSettings {
-  current?: string // Module name of the current wallet
   wallets: {
     [walletName: string]: WalletInfo
   }

@@ -11,16 +11,16 @@ export function CurrentWallet (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
 
-  const wallet = sharedMemory.settings.private.wallet
+  const currentWallet = sharedMemory.settings.public.currentWallet
 
   const onClick = (): void => {
     dispatch(selectWalletAction.create())
   }
 
-  return wallet.current !== undefined ? (
+  return currentWallet !== undefined ? (
     <StatusBarItem onClick={onClick}>
       <FontAwesomeIcon icon={faWallet} className='icon' />
-      <span>{wallet.current}</span>
+      <span>{currentWallet}</span>
     </StatusBarItem>
   ) : null
 }

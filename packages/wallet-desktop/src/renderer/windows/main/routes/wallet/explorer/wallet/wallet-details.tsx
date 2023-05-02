@@ -16,12 +16,13 @@ export function WalletDetails (props: Props): JSX.Element {
   const [sharedMemory] = useSharedMemory()
   const dispatch = useAction()
   const walletMetadata = sharedMemory.walletsMetadata[wallet.package]
+  const currentWallet = sharedMemory.settings.public.currentWallet
 
   const provider = getProvider(props.wallet.args.provider as string, sharedMemory)
   const providerName = provider?.name ?? 'Unknown'
   const walletFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? ['wallet']).includes('wallet'))
   const developerFunctions = walletMetadata.functions.filter((metadata) => (metadata.scopes ?? []).includes('developer'))
-  const enabled = wallet.name === sharedMemory.settings.private.wallet.current
+  const enabled = wallet.name === currentWallet
   const developerEnabled = sharedMemory.settings.private.developer.enableDeveloperFunctions
 
   const executeWalletFunction = (walletFunction: WalletFunctionMetadata): void => {

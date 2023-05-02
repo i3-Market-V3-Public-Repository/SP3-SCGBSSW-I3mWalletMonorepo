@@ -1,18 +1,9 @@
-import { ProviderData, Wallet, WalletBuilder, WalletMetadata, DEFAULT_PROVIDERS_DATA, Descriptors } from '@i3m/base-wallet'
-import { Provider, TaskDescription, WalletMetadataMap } from '@wallet/lib'
+import { DEFAULT_PROVIDERS_DATA, Descriptors, ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
+import { Provider, TaskDescription, WalletInfo, WalletMetadataMap } from '@wallet/lib'
 import {
-  logger,
-  Locals,
-  FeatureManager,
-  Feature,
-  storeFeature,
-  FeatureHandler,
-  StartFeatureError,
-  LabeledTaskHandler,
-  WalletDesktopError,
-  FeatureType,
-  MainContext
+  Feature, FeatureHandler, FeatureManager, FeatureType, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
 } from '@wallet/main/internal'
+import { v4 as uuid } from 'uuid'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
 
@@ -22,6 +13,12 @@ interface WalletFeatureMap {
 
 interface FeatureMap {
   [name: string]: FeatureHandler<any>
+}
+
+interface WalletCreationForm {
+  name: string
+  walletMetadata: [string, WalletMetadata]
+  provider: Provider
 }
 
 const featureMap: FeatureMap = {
@@ -92,13 +89,14 @@ export class WalletFactory {
   async loadCurrentWallet (): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const { wallet } = shm.memory.settings.private
-    if (wallet.current === undefined) {
+    const currentWallet = shm.memory.settings.public.currentWallet
+    if (currentWallet === undefined) {
       logger.debug('No wallets stored into the configuration')
       return
     }
     logger.debug(`The current configuration has the following wallets: ${Object.keys(wallet.wallets).join(', ')}`)
 
-    await this.changeWallet(wallet.current)
+    await this.changeWallet(currentWallet)
   }
 
   async buildWalletTask (walletName: string, task: LabeledTaskHandler): Promise<Wallet> {
@@ -172,10 +170,124 @@ export class WalletFactory {
     }
   }
 
+  async createWallet (): Promise<WalletInfo> {
+    const { sharedMemoryManager: shm, dialog } = this.locals
+    const walletPackages = shm.memory.walletsMetadata
+    const privateSettings = shm.memory.settings.private
+
+    const walletCreationForm = await dialog.form<WalletCreationForm>({
+      title: 'Wallet creation',
+      descriptors: {
+        name: { type: 'text', message: 'Introduce a name for the wallet', allowCancel: false },
+        walletMetadata: {
+          type: 'select',
+          message: 'Select a wallet type',
+          values: Object.entries<WalletMetadata>(walletPackages),
+          getText ([walletPackage, walletMetadata]) {
+            return walletMetadata.name
+          }
+        },
+        provider: this.providerSelect(privateSettings.providers)
+      },
+      order: ['name', 'walletMetadata', 'provider']
+    })
+
+    if (walletCreationForm === undefined) {
+      throw new WalletDesktopError('cannot create wallet: dialog cancelled', {
+        message: 'Create Wallet',
+        severity: 'warning',
+        details: 'Dialog cancelled'
+      })
+    }
+
+    // Wallet already exists
+    if (walletCreationForm.name in privateSettings.wallet.wallets) {
+      throw new WalletDesktopError(`cannot create wallet: ${walletCreationForm.name} already exists`, {
+        message: 'Create Wallet',
+        severity: 'warning',
+        details: `Wallet ${walletCreationForm.name} already exists`
+      })
+    }
+
+    const wallet: WalletInfo = {
+      name: walletCreationForm.name,
+      package: walletCreationForm.walletMetadata[0],
+      store: uuid(),
+      args: {
+        provider: `did:ethr:${walletCreationForm.provider.network}`
+      }
+    }
+
+    const name = walletCreationForm.name
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        private: {
+          ...mem.settings.private,
+          wallet: {
+            ...mem.settings.private.wallet,
+            // Add the wallet to the wallet map
+            wallets: {
+              ...mem.settings.private.wallet.wallets,
+              [name]: wallet
+            }
+          }
+        },
+        public: {
+          ...mem.settings.public,
+          currentWallet: mem.settings.public.currentWallet ?? name,
+        }
+      }
+    }))
+
+    return wallet
+  }
+
+  async selectWallet (walletName?: string): Promise<string> {
+    const { sharedMemoryManager: shm, dialog } = this.locals
+    if (walletName === undefined) {
+      walletName = await dialog.select({ values: this.walletNames })
+    }
+
+    if (walletName === undefined) {
+      throw new WalletDesktopError('cannot change wallet: user cancelled', {
+        message: 'Select wallet',
+        severity: 'warning',
+        details: 'User cancelled'
+      })
+    }
+
+    if (walletName === shm.memory.settings.public.currentWallet) {
+      return walletName
+    }
+
+    shm.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        private: {
+          ...mem.settings.private,
+          wallet: {
+            ...mem.settings.private.wallet
+          }
+        },
+        public: {
+          ...mem.settings.public,
+          currentWallet: walletName
+        }
+      },
+      identities: {},
+      resources: {}
+    }))
+
+    return walletName
+  }
+
   async buildWallet (walletName: string): Promise<Wallet> {
     const taskInfo: TaskDescription = {
       title: 'Build Wallet',
-      details: `Creating wallet ${walletName}`
+      details: `Building wallet ${walletName}`
     }
     return await this.locals.taskManager.createTask('labeled', taskInfo, async (task) => {
       return await this.buildWalletTask(walletName, task)
@@ -184,7 +296,8 @@ export class WalletFactory {
 
   async deleteWallet (walletName: string): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
-    const { wallets, current } = shm.memory.settings.private.wallet
+    const { wallets } = shm.memory.settings.private.wallet
+    const currentWallet = shm.memory.settings.public.currentWallet
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
     if (walletInfo === undefined) {
@@ -202,11 +315,11 @@ export class WalletFactory {
     await featureManager.delete(walletName)
 
     this.locals.sharedMemoryManager.update((mem) => {
-      let currentWallet = current
+      let current = currentWallet
       let resources = mem.resources
       let identities = mem.identities
-      if (currentWallet === walletName) {
-        currentWallet = undefined
+      if (current === walletName) {
+        current = undefined
         resources = {}
         identities = {}
       }
@@ -219,9 +332,12 @@ export class WalletFactory {
             ...mem.settings.private,
             wallet: {
               ...mem.settings.private.wallet,
-              wallets: newWallets,
-              current: currentWallet
+              wallets: newWallets
             }
+          },
+          public: {
+            ...mem.settings.public,
+            currentWallet: current
           }
         },
         resources,
@@ -261,9 +377,12 @@ export class WalletFactory {
           private: {
             ...mem.settings.private,
             wallet: {
-              ...mem.settings.private.wallet,
-              current: undefined
+              ...mem.settings.private.wallet
             }
+          },
+          public: {
+            ...mem.settings.public,
+            currentWallet: undefined
           }
         }
       }))
