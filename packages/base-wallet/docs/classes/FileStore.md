@@ -95,7 +95,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L32)
+[src/ts/impl/stores/file-store.ts:32](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L32)
 
 • **new FileStore**<`T`\>(`filepath`, `password?`, `defaultModel?`)
 
@@ -123,7 +123,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L40)
+[src/ts/impl/stores/file-store.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L40)
 
 ## Properties
 
@@ -133,7 +133,7 @@ EventEmitter.constructor
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L25)
+[src/ts/impl/stores/file-store.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L25)
 
 ___
 
@@ -143,7 +143,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L20)
+[src/ts/impl/stores/file-store.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L20)
 
 ___
 
@@ -153,7 +153,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L24)
+[src/ts/impl/stores/file-store.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L24)
 
 ___
 
@@ -270,7 +270,7 @@ Store.clear
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:214](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L214)
+[src/ts/impl/stores/file-store.ts:214](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L214)
 
 ___
 
@@ -296,7 +296,7 @@ Delete an item.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L205)
+[src/ts/impl/stores/file-store.ts:205](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L205)
 
 ___
 
@@ -317,7 +317,7 @@ ___
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:83](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L83)
+[src/ts/impl/stores/file-store.ts:83](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L83)
 
 ___
 
@@ -351,7 +351,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L66)
+[src/ts/impl/stores/file-store.ts:66](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L66)
 
 ▸ **emit**(`eventName`, `changedAt`): `boolean`
 
@@ -381,7 +381,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L67)
+[src/ts/impl/stores/file-store.ts:67](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L67)
 
 ▸ **emit**(`eventName`, `...args`): `boolean`
 
@@ -443,7 +443,7 @@ EventEmitter.emit
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L68)
+[src/ts/impl/stores/file-store.ts:68](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L68)
 
 ___
 
@@ -508,7 +508,7 @@ Get an item.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:177](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L177)
+[src/ts/impl/stores/file-store.ts:177](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L177)
 
 ___
 
@@ -555,7 +555,7 @@ Store.getPath
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:227](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L227)
+[src/ts/impl/stores/file-store.ts:227](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L227)
 
 ___
 
@@ -577,7 +577,7 @@ Store.getStore
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:221](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L221)
+[src/ts/impl/stores/file-store.ts:221](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L221)
 
 ___
 
@@ -603,7 +603,7 @@ Check if an item exists.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:198](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L198)
+[src/ts/impl/stores/file-store.ts:198](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L198)
 
 ___
 
@@ -739,7 +739,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L59)
+[src/ts/impl/stores/file-store.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L59)
 
 ▸ **on**(`eventName`, `listener`): [`FileStore`](FileStore.md)<`T`\>
 
@@ -772,7 +772,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L60)
+[src/ts/impl/stores/file-store.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L60)
 
 ▸ **on**(`eventName`, `listener`): [`FileStore`](FileStore.md)<`T`\>
 
@@ -825,7 +825,7 @@ EventEmitter.on
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L61)
+[src/ts/impl/stores/file-store.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L61)
 
 ___
 
@@ -1184,7 +1184,7 @@ Set multiple keys at once.
 
 #### Defined in
 
-[src/ts/impl/stores/file-store.ts:184](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/21cbec3/packages/base-wallet/src/ts/impl/stores/file-store.ts#L184)
+[src/ts/impl/stores/file-store.ts:184](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/impl/stores/file-store.ts#L184)
 
 ___
 
