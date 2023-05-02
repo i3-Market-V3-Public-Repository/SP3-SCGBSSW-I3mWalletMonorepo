@@ -1,6 +1,6 @@
 import { Resource } from '@i3m/base-wallet'
 
-export function getResourceName (resource: Resource): string {
+export function getResourceName (resource: Resource, doNotAddType: boolean = false): string {
   let name: string
   if (resource.name !== undefined) {
     name = resource.name
@@ -13,5 +13,5 @@ export function getResourceName (resource: Resource): string {
     name = resource.id
   }
 
-  return `[${resource.type}] ${name}`
+  return doNotAddType ? name : `[${resource.type}] ${name}`
 }
