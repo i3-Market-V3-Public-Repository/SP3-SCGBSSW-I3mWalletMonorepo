@@ -1,8 +1,9 @@
 import { DEFAULT_PROVIDERS_DATA, Descriptors, ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
 import { Provider, TaskDescription, WalletInfo, WalletMetadataMap } from '@wallet/lib'
 import {
-  Feature, FeatureHandler, FeatureManager, FeatureType, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
+  Feature, FeatureHandler, FeatureManager, FeatureType, filterUndefined, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
 } from '@wallet/main/internal'
+import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -234,10 +235,10 @@ export class WalletFactory {
             }
           }
         },
-        public: {
+        public: filterUndefined({
           ...mem.settings.public,
           currentWallet: mem.settings.public.currentWallet ?? name,
-        }
+        })
       }
     }))
 
@@ -272,10 +273,10 @@ export class WalletFactory {
             ...mem.settings.private.wallet
           }
         },
-        public: {
+        public: filterUndefined({
           ...mem.settings.public,
           currentWallet: walletName
-        }
+        })
       },
       identities: {},
       resources: {}
@@ -335,10 +336,10 @@ export class WalletFactory {
               wallets: newWallets
             }
           },
-          public: {
+          public: filterUndefined({
             ...mem.settings.public,
             currentWallet: current
-          }
+          })
         },
         resources,
         identities
@@ -380,10 +381,10 @@ export class WalletFactory {
               ...mem.settings.private.wallet
             }
           },
-          public: {
+          public: filterUndefined({
             ...mem.settings.public,
             currentWallet: undefined
-          }
+          })
         }
       }))
       return
