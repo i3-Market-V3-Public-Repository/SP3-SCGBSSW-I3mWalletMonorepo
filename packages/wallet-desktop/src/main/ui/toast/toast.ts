@@ -4,9 +4,9 @@ import { createDialogId, ToastData } from '@wallet/lib'
 import { Locals, MainContext } from '@wallet/main/internal'
 
 const TOAST_TIMEOUT_MAP: Map<ToastType, number> = new Map([
-  ['info', 2000],
-  ['success', 4000],
-  ['warning', 7000],
+  ['info', 10000],
+  ['success', 10000],
+  ['warning', 10000],
   ['error', 10000]
 ])
 
