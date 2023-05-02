@@ -109,6 +109,10 @@ export class ConnectManager {
         // await this.walletProtocol.finish()
 
         // Or just do nothing...
+        this.locals.toast.show({
+          message: 'Already pairing...',
+          type: 'warning'
+        })
         return
       }
 
