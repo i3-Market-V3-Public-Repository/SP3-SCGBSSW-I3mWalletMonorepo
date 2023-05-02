@@ -1,8 +1,7 @@
 import {
-  createWalletAction,
+  createWalletAction
 } from '@wallet/lib'
 import { ActionHandlerBuilder } from '@wallet/main/internal'
-
 
 export const createWallet: ActionHandlerBuilder<typeof createWalletAction> = (
   locals

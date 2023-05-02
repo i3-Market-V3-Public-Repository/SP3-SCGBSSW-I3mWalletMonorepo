@@ -22,6 +22,6 @@ export interface PublicSettings {
   currentWallet?: string // Module name of the current wallet
 }
 
-export const PUBLIC_SETTINGS_FIELDS: (keyof PublicSettings)[] = [
+export const PUBLIC_SETTINGS_FIELDS: Array<keyof PublicSettings> = [
   'version', 'auth', 'enc', 'cloud', 'store', 'currentWallet'
 ]

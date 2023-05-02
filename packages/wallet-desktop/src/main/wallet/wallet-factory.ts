@@ -3,7 +3,6 @@ import { Provider, TaskDescription, WalletInfo, WalletMetadataMap } from '@walle
 import {
   Feature, FeatureHandler, FeatureManager, FeatureType, filterUndefined, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
 } from '@wallet/main/internal'
-import _ from 'lodash'
 import { v4 as uuid } from 'uuid'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -237,7 +236,7 @@ export class WalletFactory {
         },
         public: filterUndefined({
           ...mem.settings.public,
-          currentWallet: mem.settings.public.currentWallet ?? name,
+          currentWallet: mem.settings.public.currentWallet ?? name
         })
       }
     }))
@@ -324,7 +323,7 @@ export class WalletFactory {
         resources = {}
         identities = {}
       }
-      
+
       return {
         ...mem,
         settings: {

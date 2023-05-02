@@ -47,10 +47,10 @@ export function IdentityDetails (props: Props): JSX.Element {
               <Details.Title>Verifiable Credentials</Details.Title>
               {Object.entries(resourcesSummary).map(([key, value], index) => (
                 <JsonUi
-                prop={key}
-                value={value}
-                key={index}
-              />
+                  prop={key}
+                  value={value}
+                  key={index}
+                />
               ))}
             </Details.Body>
           ) : ''

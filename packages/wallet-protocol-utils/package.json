@@ -1,6 +1,6 @@
 {
   "name": "@i3m/wallet-protocol-utils",
-  "version": "2.5.11",
+  "version": "2.6.0",
   "description": "A set of utilities for the wallet protocol. It includes dialogs for setting the PIN in browser JS apps and Node.js, and session managers for managing wallet-protocol's session obtained after successful pairing with an i3M-Wallet desktop app.",
   "keywords": [
     "i3-MARKET",
@@ -129,7 +129,7 @@
     }
   },
   "devDependencies": {
-    "@i3m/wallet-protocol-api": "^2.5.11",
+    "@i3m/wallet-protocol-api": "^2.6.0",
     "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-inject": "^5.0.3",
     "@rollup/plugin-json": "^6.0.0",
@@ -160,7 +160,7 @@
     "typescript": "^4.9.0"
   },
   "dependencies": {
-    "@i3m/wallet-protocol": "^2.5.11",
+    "@i3m/wallet-protocol": "^2.6.0",
     "rxjs": "^7.5.5"
   }
 }

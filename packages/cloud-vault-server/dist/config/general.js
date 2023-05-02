@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.general = void 0;
 const parseProcessEnvVar_1 = require("./parseProcessEnvVar");
 const nodeEnv = (0, parseProcessEnvVar_1.parseProccessEnvVar)('NODE_ENV', 'string', { defaultValue: 'production', allowedValues: ['production', 'development'] });
-const version = '2.5.12';
+const version = '2.6.0';
 exports.general = {
     nodeEnv,
     version

@@ -100,7 +100,7 @@ export const buildMenuBar = (locals: Locals): Menu => {
     template.unshift({ label: name })
   }
 
-  if (process.env.NODE_ENV) {
+  if (process.env.NODE_ENV === 'development') {
     template.push({
       label: 'Development',
       submenu: [
