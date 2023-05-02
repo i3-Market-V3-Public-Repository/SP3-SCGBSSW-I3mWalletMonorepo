@@ -3,7 +3,7 @@ import { VaultState } from '@i3m/cloud-vault-client'
 import * as React from 'react'
 import { Alert, Button, ButtonProps } from 'react-bootstrap'
 
-import { DEFAULT_CLOUD_URL, deleteCloudAction, firstFilled, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudAction, syncCloudAction, toVaultState } from '@wallet/lib'
+import { deleteCloudAction, logoutCloudAction, registerCloudAction, reloginCloudAction, stopCloudAction, syncCloudAction, toVaultState } from '@wallet/lib'
 import { useAction, useSharedMemory } from '@wallet/renderer/communication'
 import { Details, ExternalLink, Section } from '@wallet/renderer/components'
 

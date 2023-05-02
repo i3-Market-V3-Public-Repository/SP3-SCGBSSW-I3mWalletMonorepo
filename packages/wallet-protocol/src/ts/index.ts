@@ -7,4 +7,5 @@
 export * from './transport'
 export * from './protocol'
 export * from './errors'
+export { Subject, Queue } from './util'
 export { default as constants } from './constants'

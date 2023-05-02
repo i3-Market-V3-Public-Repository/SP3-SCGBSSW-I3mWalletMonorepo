@@ -1,11 +1,11 @@
-import http from 'http'
 import { WalletError } from '@i3m/base-wallet'
-import { WalletProtocol, HttpResponderTransport, Identity } from '@i3m/wallet-protocol'
+import { HttpResponderTransport, Identity, WalletProtocol } from '@i3m/wallet-protocol'
+import http from 'http'
 
-import { Locals, MainContext } from '@wallet/main/internal'
-import { cors } from './cors'
+import { handleErrorCatch, Locals, MainContext } from '@wallet/main/internal'
+import { errors, importJWK, JWK, KeyLike } from 'jose'
 import { JwtCodeGenerator } from './code-generator'
-import { KeyLike, errors, JWK, importJWK } from 'jose'
+import { cors } from './cors'
 
 interface Params {
   key: KeyLike | Uint8Array
@@ -103,20 +103,34 @@ export class ConnectManager {
   }
 
   startWalletProtocol (): void {
-    this.walletProtocol.run().then(() => {
+    const _startWalletProtocol = async (): Promise<void> => {
+      if (this.walletProtocol.isRunning) {
+        // TODO: Finish the protocol without launching an error and restarting??
+        // await this.walletProtocol.finish()
+
+        // Or just do nothing...
+        return
+      }
+
+      try {
+        await this.walletProtocol.run()
+      } catch (err) {
+        // Pairing failed
+        this.locals.toast.show({
+          message: 'Unsuccessful pairing',
+          type: 'error'
+        })
+        return
+      }
+
       // Pairing correct
       this.locals.windowManager.openMainWindow('/wallet/explorer')
       this.locals.toast.show({
         message: 'Successful pairing',
         type: 'success'
       })
-    }).catch((err) => {
-      // Pairing failed
-      this.locals.toast.show({
-        message: 'Unsuccessful pairing',
-        type: 'error'
-      })
-      throw err
-    })
+    }
+
+    _startWalletProtocol().catch(...handleErrorCatch(this.locals))
   }
 }

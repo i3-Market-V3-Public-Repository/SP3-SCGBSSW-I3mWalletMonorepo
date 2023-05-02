@@ -179,8 +179,7 @@ export abstract class ResponderTransport<Req, Res> extends BaseTransport<Req, Re
   finish (protocol: WalletProtocol): void {
     super.finish(protocol)
     this.stopPairing()
-    // TODO: When has error??
-    this.rpcSubject.err('Finished')
+    this.rpcSubject.finish()
     this.connString = undefined
   }
 }

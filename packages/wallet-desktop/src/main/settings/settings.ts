@@ -1,7 +1,7 @@
 import { Store } from '@i3m/base-wallet'
 import { exportJWK, generateSecret } from 'jose'
 
-import { DEFAULT_WALLET_PACKAGES, Provider, PublicSettings } from '@wallet/lib'
+import { DEFAULT_WALLET_PACKAGES, Provider, PublicSettings, PUBLIC_SETTINGS_FIELDS } from '@wallet/lib'
 import { Locals, StoreOptions } from '@wallet/main/internal'
 import _ from 'lodash'
 
@@ -15,7 +15,7 @@ export async function fixPublicSettings (locals: Locals): Promise<void> {
 
   // Clean public settings
   const cleanPublicSettings = _<PublicSettings>(shm.memory.settings.public)
-    .pick('version', 'auth', 'enc', 'store', 'cloud')
+    .pick(...PUBLIC_SETTINGS_FIELDS)
     .omitBy(_.isUndefined)
     .value() as PublicSettings
 

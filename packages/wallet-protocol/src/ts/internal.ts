@@ -1,7 +1,7 @@
 export { default as constants } from './constants'
 export * from './crypto'
 export * from './util'
-export * from './subject'
+export * from './util/subject'
 export * from './protocol'
 export * from './transport'
 export * from './errors'

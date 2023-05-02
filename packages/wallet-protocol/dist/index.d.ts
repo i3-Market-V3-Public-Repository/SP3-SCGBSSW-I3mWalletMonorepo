@@ -27,13 +27,33 @@ declare class BaseCipher {
     decrypt(ciphertext: Uint8Array): Promise<Uint8Array>;
 }
 
+declare class Queue<T> {
+    readonly maxLength: number;
+    protected _values: T[];
+    protected _first: number;
+    protected _length: number;
+    constructor(maxLength: number);
+    get length(): number;
+    push(value: T): void;
+    pop(): T | undefined;
+    private get lastIndex();
+    get last(): T | undefined;
+}
+
+type Resolver<T> = (value: T) => void;
+type Rejecter = (reason: any) => void;
 declare class Subject<T = unknown> {
-    protected resolve?: (value: T) => void;
-    protected reject?: (reason: any) => void;
+    readonly queueLength: number;
+    protected queue: Queue<T>;
+    protected resolvePending?: Resolver<T>;
+    protected rejectPending?: Rejecter;
+    constructor(queueLength?: number);
     get promise(): Promise<T>;
     protected createPromise(): Promise<T>;
     next(value: T): void;
     err(reason: any): void;
+    finish(): void;
+    private unbindPromise;
 }
 
 declare class EventEmitter {
@@ -103,6 +123,7 @@ declare class Session<T extends Transport> {
 
 declare class WalletProtocol<T extends Transport = Transport> extends EventEmitter {
     transport: T;
+    _running: Promise<Session<T>> | undefined;
     constructor(transport: T);
     computeR(ra: Uint8Array, rb: Uint8Array): Promise<Uint8Array>;
     computeNx(): Promise<Uint8Array>;
@@ -110,6 +131,8 @@ declare class WalletProtocol<T extends Transport = Transport> extends EventEmitt
     validateAuthData(fullPkeData: ProtocolPKEData, fullAuthData: ProtocolAuthData): Promise<void>;
     computeMasterKey(ecdh: BaseECDH, fullPkeData: ProtocolPKEData, fullAuthData: ProtocolAuthData): Promise<MasterKey>;
     run(): Promise<Session<T>>;
+    get isRunning(): boolean;
+    finish(): Promise<void>;
     on(event: 'connString', listener: (connString: ConnectionString) => void): this;
     on(event: 'masterKey', listener: (masterKey: MasterKey) => void): this;
     on(event: 'finished', listener: () => void): this;
@@ -135,7 +158,9 @@ interface CodeGenerator {
 }
 declare const defaultCodeGenerator: CodeGenerator;
 
-declare class InvalidPinError extends Error {
+declare class WalletProtocolError extends Error {
+}
+declare class InvalidPinError extends WalletProtocolError {
 }
 
 interface Transport<Req = any, Res = any> {
@@ -266,4 +291,4 @@ declare class HttpResponderTransport extends ResponderTransport<http.IncomingMes
     use(listener: http.RequestListener): void;
 }
 
-export { AuthData, BaseTransport, CodeGenerator, ConnectionString, HttpInitiatorTransport, HttpRequest, HttpResponderOptions, HttpResponderTransport, HttpResponse, Identity, InvalidPinError, MasterKey, PKEData, ProtocolAuthData, ProtocolPKEData, Session, Transport, TransportRequest, TransportResponse, WalletProtocol, _default as constants, defaultCodeGenerator };
+export { AuthData, BaseTransport, CodeGenerator, ConnectionString, HttpInitiatorTransport, HttpRequest, HttpResponderOptions, HttpResponderTransport, HttpResponse, Identity, InvalidPinError, MasterKey, PKEData, ProtocolAuthData, ProtocolPKEData, Queue, Session, Subject, Transport, TransportRequest, TransportResponse, WalletProtocol, WalletProtocolError, _default as constants, defaultCodeGenerator };

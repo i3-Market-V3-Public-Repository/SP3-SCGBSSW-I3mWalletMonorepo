@@ -1,34 +1,36 @@
-# Class: InvalidPinError
+# Class: WalletProtocolError
 
 ## Hierarchy
 
-- [`WalletProtocolError`](WalletProtocolError.md)
+- `Error`
 
-  ↳ **`InvalidPinError`**
+  ↳ **`WalletProtocolError`**
+
+  ↳↳ [`InvalidPinError`](InvalidPinError.md)
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](InvalidPinError.md#constructor)
+- [constructor](WalletProtocolError.md#constructor)
 
 ### Properties
 
-- [message](InvalidPinError.md#message)
-- [name](InvalidPinError.md#name)
-- [stack](InvalidPinError.md#stack)
-- [prepareStackTrace](InvalidPinError.md#preparestacktrace)
-- [stackTraceLimit](InvalidPinError.md#stacktracelimit)
+- [message](WalletProtocolError.md#message)
+- [name](WalletProtocolError.md#name)
+- [stack](WalletProtocolError.md#stack)
+- [prepareStackTrace](WalletProtocolError.md#preparestacktrace)
+- [stackTraceLimit](WalletProtocolError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](InvalidPinError.md#capturestacktrace)
+- [captureStackTrace](WalletProtocolError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new InvalidPinError**(`message?`)
+• **new WalletProtocolError**(`message?`)
 
 #### Parameters
 
@@ -38,7 +40,7 @@
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[constructor](WalletProtocolError.md#constructor)
+Error.constructor
 
 #### Defined in
 
@@ -52,7 +54,7 @@ node_modules/typescript/lib/lib.es5.d.ts:1059
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[message](WalletProtocolError.md#message)
+Error.message
 
 #### Defined in
 
@@ -66,7 +68,7 @@ ___
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[name](WalletProtocolError.md#name)
+Error.name
 
 #### Defined in
 
@@ -80,7 +82,7 @@ ___
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[stack](WalletProtocolError.md#stack)
+Error.stack
 
 #### Defined in
 
@@ -115,7 +117,7 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[prepareStackTrace](WalletProtocolError.md#preparestacktrace)
+Error.prepareStackTrace
 
 #### Defined in
 
@@ -129,7 +131,7 @@ ___
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[stackTraceLimit](WalletProtocolError.md#stacktracelimit)
+Error.stackTraceLimit
 
 #### Defined in
 
@@ -156,7 +158,7 @@ Create .stack property on a target object
 
 #### Inherited from
 
-[WalletProtocolError](WalletProtocolError.md).[captureStackTrace](WalletProtocolError.md#capturestacktrace)
+Error.captureStackTrace
 
 #### Defined in
 

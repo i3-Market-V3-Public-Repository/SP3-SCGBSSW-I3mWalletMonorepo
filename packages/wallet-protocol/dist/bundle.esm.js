@@ -283,25 +283,90 @@ const bufferUtils = {
     }
 };
 
+class Queue {
+    constructor(maxLength) {
+        this.maxLength = maxLength;
+        this._values = new Array(maxLength);
+        this._first = 0;
+        this._length = 0;
+    }
+    get length() {
+        return this._length;
+    }
+    push(value) {
+        this._values[this.lastIndex] = value;
+        if (this.length >= this.maxLength) {
+            this._first = (this._first + 1) % this.maxLength;
+        }
+        else {
+            this._length++;
+        }
+    }
+    pop() {
+        if (this.length > 0) {
+            const v = this._values[this._first];
+            this._first = (this._first + 1) % this.maxLength;
+            this._length--;
+            return v;
+        }
+    }
+    get lastIndex() {
+        return (this._first + this._length) % this.maxLength;
+    }
+    get last() {
+        return this._values[this.lastIndex];
+    }
+}
+
 class Subject {
+    constructor(queueLength = 1) {
+        this.queueLength = queueLength;
+        this.queue = new Queue(queueLength);
+    }
     get promise() {
         return this.createPromise();
     }
     async createPromise() {
+        const v = this.queue.pop();
+        if (v !== undefined) {
+            return v;
+        }
         return await new Promise((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
+            if (this.rejectPending !== undefined || this.resolvePending !== undefined) {
+                reject(new WalletProtocolError('wallet protocol: cannot create two promises of one subject'));
+                this.unbindPromise();
+                return;
+            }
+            this.resolvePending = (v) => {
+                resolve(v);
+            };
+            this.rejectPending = (err) => reject(err);
         });
     }
     next(value) {
-        if (this.resolve != null) {
-            this.resolve(value);
+        if (this.resolvePending != null) {
+            this.resolvePending(value);
+            this.unbindPromise();
+        }
+        else {
+            this.queue.push(value);
         }
     }
     err(reason) {
-        if (this.reject != null) {
-            this.reject(reason);
+        if (this.rejectPending != null) {
+            this.rejectPending(reason);
+            this.unbindPromise();
         }
+    }
+    finish() {
+        if (this.rejectPending !== undefined) {
+            this.rejectPending(new WalletProtocolError('wallet protocol: the subject has a pending promise'));
+            this.unbindPromise();
+        }
+    }
+    unbindPromise() {
+        this.resolvePending = undefined;
+        this.rejectPending = undefined;
     }
 }
 
@@ -515,9 +580,21 @@ class WalletProtocol extends EventEmitter {
             this.emit('masterKey', masterKey);
             return session;
         };
-        return await _run().finally(() => {
+        const running = _run();
+        this._running = running;
+        running.finally(() => {
             this.transport.finish(this);
         });
+        return await running;
+    }
+    get isRunning() {
+        return this._running !== undefined;
+    }
+    async finish() {
+        this.transport.finish(this);
+        if (this._running !== undefined) {
+            await this._running.catch(() => { });
+        }
     }
     on(event, listener) {
         return super.on(event, listener);
@@ -575,7 +652,9 @@ const defaultCodeGenerator = {
     }
 };
 
-class InvalidPinError extends Error {
+class WalletProtocolError extends Error {
+}
+class InvalidPinError extends WalletProtocolError {
 }
 
 class InitiatorTransport extends BaseTransport {
@@ -839,7 +918,7 @@ class ResponderTransport extends BaseTransport {
     finish(protocol) {
         super.finish(protocol);
         this.stopPairing();
-        this.rpcSubject.err('Finished');
+        this.rpcSubject.finish();
         this.connString = undefined;
     }
 }
@@ -974,4 +1053,4 @@ class HttpResponderTransport extends ResponderTransport {
     }
 }
 
-export { BaseTransport, ConnectionString, HttpInitiatorTransport, HttpResponderTransport, InvalidPinError, MasterKey, Session, WalletProtocol, constants, defaultCodeGenerator };
+export { BaseTransport, ConnectionString, HttpInitiatorTransport, HttpResponderTransport, InvalidPinError, MasterKey, Queue, Session, Subject, WalletProtocol, WalletProtocolError, constants, defaultCodeGenerator };

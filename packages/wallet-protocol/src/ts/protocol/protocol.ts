@@ -18,6 +18,7 @@ import { MasterKey } from './master-key'
 import { Session } from './session'
 
 export class WalletProtocol<T extends Transport = Transport> extends EventEmitter {
+  _running: Promise<Session<T>> | undefined
   constructor (public transport: T) {
     super()
   }
@@ -158,9 +159,25 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
       return session
     }
 
-    return await _run().finally(() => {
+    const running = _run()
+    this._running = running
+
+    running.finally(() => {
       this.transport.finish(this)
     })
+
+    return await running
+  }
+
+  get isRunning (): boolean {
+    return this._running !== undefined
+  }
+
+  async finish (): Promise<void> {
+    this.transport.finish(this)
+    if (this._running !== undefined) {
+      await this._running.catch(() => {})
+    }
   }
 
   on (event: 'connString', listener: (connString: ConnectionString) => void): this

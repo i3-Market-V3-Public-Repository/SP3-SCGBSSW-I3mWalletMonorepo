@@ -12,8 +12,11 @@ The implementation of a protocol that can securely connect the i3M Wallet with a
 - [HttpResponderTransport](classes/HttpResponderTransport.md)
 - [InvalidPinError](classes/InvalidPinError.md)
 - [MasterKey](classes/MasterKey.md)
+- [Queue](classes/Queue.md)
 - [Session](classes/Session.md)
+- [Subject](classes/Subject.md)
 - [WalletProtocol](classes/WalletProtocol.md)
+- [WalletProtocolError](classes/WalletProtocolError.md)
 
 ### Interfaces
 
@@ -52,7 +55,7 @@ The implementation of a protocol that can securely connect the i3M Wallet with a
 
 #### Defined in
 
-[src/ts/transport/transport.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c392ccb/packages/wallet-protocol/src/ts/transport/transport.ts#L12)
+[src/ts/transport/transport.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7bac7f16/packages/wallet-protocol/src/ts/transport/transport.ts#L12)
 
 ___
 
@@ -68,7 +71,7 @@ ___
 
 #### Defined in
 
-[src/ts/transport/transport.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c392ccb/packages/wallet-protocol/src/ts/transport/transport.ts#L13)
+[src/ts/transport/transport.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7bac7f16/packages/wallet-protocol/src/ts/transport/transport.ts#L13)
 
 ## Variables
 
@@ -91,7 +94,7 @@ ___
 
 #### Defined in
 
-[src/ts/constants/index.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c392ccb/packages/wallet-protocol/src/ts/constants/index.ts#L4)
+[src/ts/constants/index.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7bac7f16/packages/wallet-protocol/src/ts/constants/index.ts#L4)
 
 ___
 
@@ -101,4 +104,4 @@ ___
 
 #### Defined in
 
-[src/ts/protocol/code-generator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/c392ccb/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L9)
+[src/ts/protocol/code-generator.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/7bac7f16/packages/wallet-protocol/src/ts/protocol/code-generator.ts#L9)

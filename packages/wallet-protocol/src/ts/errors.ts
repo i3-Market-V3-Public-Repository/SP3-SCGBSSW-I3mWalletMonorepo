@@ -1,4 +1,8 @@
 
-export class InvalidPinError extends Error {
+export class WalletProtocolError extends Error {
+
+}
+
+export class InvalidPinError extends WalletProtocolError {
 
 }
