@@ -164,6 +164,7 @@ export class WalletProtocol<T extends Transport = Transport> extends EventEmitte
 
     running.finally(() => {
       this.transport.finish(this)
+      this._running = undefined
     })
 
     return await running

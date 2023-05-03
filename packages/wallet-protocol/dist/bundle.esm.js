@@ -584,6 +584,7 @@ class WalletProtocol extends EventEmitter {
         this._running = running;
         running.finally(() => {
             this.transport.finish(this);
+            this._running = undefined;
         });
         return await running;
     }
