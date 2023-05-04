@@ -50,7 +50,7 @@
 
 #### Defined in
 
-[src/ts/util/subject.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L12)
+[src/ts/util/subject.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L12)
 
 ## Properties
 
@@ -60,7 +60,7 @@
 
 #### Defined in
 
-[src/ts/util/subject.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L8)
+[src/ts/util/subject.ts:8](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L8)
 
 ___
 
@@ -70,7 +70,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L12)
+[src/ts/util/subject.ts:12](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L12)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L10)
+[src/ts/util/subject.ts:10](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L10)
 
 ___
 
@@ -90,7 +90,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L9)
+[src/ts/util/subject.ts:9](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L9)
 
 ## Accessors
 
@@ -104,7 +104,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L16)
+[src/ts/util/subject.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L16)
 
 ## Methods
 
@@ -118,7 +118,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L20)
+[src/ts/util/subject.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L20)
 
 ___
 
@@ -138,7 +138,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L49)
+[src/ts/util/subject.ts:49](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L49)
 
 ___
 
@@ -152,7 +152,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L56)
+[src/ts/util/subject.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L56)
 
 ___
 
@@ -172,4 +172,4 @@ ___
 
 #### Defined in
 
-[src/ts/util/subject.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/subject.ts#L40)
+[src/ts/util/subject.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/wallet-protocol/src/ts/util/subject.ts#L40)

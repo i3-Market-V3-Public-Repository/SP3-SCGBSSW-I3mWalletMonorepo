@@ -1,6 +1,6 @@
 {
   "name": "@i3m/cloud-vault-client",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "A TypeScript/JavaScript implementation of a client for the i3M-Wallet Cloud-Vault server",
   "keywords": [
     "vault",
