@@ -1,35 +1,41 @@
 import _ from 'lodash'
-import { Locals, handleCanBePromise, MainContext } from '@wallet/main/internal'
-import { PrivateSettings, PublicSettings } from '@wallet/lib'
+import { Store } from '@i3m/base-wallet'
+import { Locals, handleCanBePromise, MainContext, getUndefinedKeys, WalletDesktopError } from '@wallet/main/internal'
 
 export const bindWithSettings = async (ctx: MainContext, locals: Locals): Promise<void> => {
   const { sharedMemoryManager: shm, storeManager } = locals
   const privStore = storeManager.getStore('private-settings')
   const pubStore = storeManager.getStore('public-settings')
 
-  async function updatePrivateSettingsIfChanged (curr: PrivateSettings, prev?: PrivateSettings): Promise<void> {
+  async function updateSettingsIfChanged <T extends Record<any, any>> (store: Store<T>, curr: T, prev?: T): Promise<void> {
     if (!_.isEqual(curr, prev)) {
-      await privStore.set(curr)
-    }
-  }
+      const undefinedKeys = getUndefinedKeys(curr)
+      for (const key of undefinedKeys) {
+        if (!_.unset(curr, key)) {
+          throw new WalletDesktopError(`could not delete property ${key} from ${store.getPath()}`, {
+            message: 'Store error',
+            details: `Could not delete property ${key} from ${store.getPath()}`,
+            severity: 'error'
+          })
+        }
+        await pubStore.delete(key)
+      }
 
-  async function updatePublicSettingsIfChanged (curr: PublicSettings, prev?: PublicSettings): Promise<void> {
-    if (!_.isEqual(curr, prev)) {
-      await pubStore.set(curr)
+      await store.set(curr)
     }
   }
 
   // Update stores
-  await updatePrivateSettingsIfChanged(shm.memory.settings.private, ctx.initialPrivateSettings)
-  await updatePublicSettingsIfChanged(shm.memory.settings.public, ctx.initialPublicSettings)
+  await updateSettingsIfChanged(privStore, shm.memory.settings.private, ctx.initialPrivateSettings)
+  await updateSettingsIfChanged(pubStore, shm.memory.settings.public, ctx.initialPublicSettings)
 
   shm.on('change', ({ curr, prev, ctx }) => {
     const modifiers = ctx?.modifiers ?? {}
     if (modifiers['no-settings-update'] !== true) {
-      let promise = updatePrivateSettingsIfChanged(curr.settings.private, prev.settings.private)
+      let promise = updateSettingsIfChanged(privStore, curr.settings.private, prev.settings.private)
       handleCanBePromise(locals, promise)
 
-      promise = updatePublicSettingsIfChanged(curr.settings.public, prev.settings.public)
+      promise = updateSettingsIfChanged(pubStore, curr.settings.public, prev.settings.public)
       handleCanBePromise(locals, promise)
     }
   })

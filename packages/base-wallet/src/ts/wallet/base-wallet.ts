@@ -392,7 +392,7 @@ export class BaseWallet<
             ...prev,
             [claim.claimType]: {
               type: 'select',
-              message: `${sdrMessage.from ?? 'UNKNOWN'} has requested the claim <b>${claim.claimType}</b>.You have the following claim/s that meet the request. \nSelect the claim to disclouse or leave empty for not disclousing it.${claim.essential === true ? '\n<b>This claim is compulsory. Not disclosing it will cancel the disclosure.</b>' : ''}`,
+              message: `${sdrMessage.from ?? 'UNKNOWN'} has requested the claim <b>${claim.claimType}</b>.You have the following claim/s that meet the request. \nSelect the claim to disclose or leave empty for not disclosing it.${claim.essential === true ? '\n<b>This claim is compulsory. Not disclosing it will cancel the disclosure.</b>' : ''}`,
               values: [undefined, ...claim.credentials],
 
               getText (credential) {
@@ -920,7 +920,8 @@ export class BaseWallet<
             message: `Do you want to add a non-repudiation proof into your wallet?\nType: ${decodedProof.proofType}\nExchangeId: ${await exchangeId(decodedProof.exchange)}`,
             values: [yes, yesToAll, no],
             getText: (option) => option.text,
-            getContext: (option) => option.context
+            getContext: (option) => option.context,
+            showInput: false
           })
 
           if (confirmation === undefined || confirmation.value === 'no') {

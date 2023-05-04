@@ -94,6 +94,8 @@ export class ElectronDialog implements Dialog {
           title,
           message: message,
           allowCancel: allowCancel,
+          freeAnswer: false,
+
           type: 'confirmation',
           acceptMsg: acceptMsg,
           rejectMsg: rejectMsg
@@ -101,7 +103,7 @@ export class ElectronDialog implements Dialog {
       }
       case 'select':
       {
-        const { title, message, values, allowCancel } = options
+        const { title, message, values, allowCancel, freeAnswer, showInput } = options
         const getText = options.getText ?? ((v: string): string => v)
         const getContext = options.getContext ?? ((v): DialogOptionContext => 'success')
 
@@ -110,7 +112,10 @@ export class ElectronDialog implements Dialog {
           title,
           message,
           allowCancel,
+
           type: 'select',
+          freeAnswer: freeAnswer,
+          showInput: showInput,
           options: values.map((value: any, i) => ({
             index: i,
             value,

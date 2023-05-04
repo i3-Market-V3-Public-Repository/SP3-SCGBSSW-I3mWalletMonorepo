@@ -14,4 +14,4 @@
 
 #### Defined in
 
-[wallet-protocol-utils/src/ts/types.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/wallet-protocol-utils/src/ts/types.ts#L16)
+[wallet-protocol-utils/src/ts/types.ts:16](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol-utils/src/ts/types.ts#L16)

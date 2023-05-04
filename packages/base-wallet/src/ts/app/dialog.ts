@@ -17,6 +17,9 @@ export interface ConfirmationOptions extends BaseDialogOptions {
 }
 
 export interface SelectOptions<T> extends BaseDialogOptions {
+  freeAnswer?: boolean
+  showInput?: boolean
+
   values: T[]
   getText?: (obj: T) => string
   getContext?: (obj: T) => DialogOptionContext

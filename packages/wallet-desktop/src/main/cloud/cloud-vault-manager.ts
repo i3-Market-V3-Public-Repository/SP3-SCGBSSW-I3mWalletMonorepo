@@ -180,6 +180,7 @@ export class CloudVaultManager {
       const option = await dialog.select({
         title: 'Secure Cloud Vault',
         message: 'If you already have a backup in a cloud vault server, do you want to load it?',
+        showInput: false,
         ...loginBuilder
       })
 

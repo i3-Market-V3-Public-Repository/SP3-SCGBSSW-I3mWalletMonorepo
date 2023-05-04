@@ -30,6 +30,7 @@ export interface ConfirmationDialogData extends BaseDialogData<boolean> {
 
 export interface SelectDialogData<T> extends BaseDialogData<T> {
   type: 'select'
+  showInput?: boolean
   options?: Array<DialogOption<T>>
 }
 

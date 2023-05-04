@@ -17,9 +17,11 @@
 ### Properties
 
 - [allowCancel](SelectOptions.md#allowcancel)
+- [freeAnswer](SelectOptions.md#freeanswer)
 - [getContext](SelectOptions.md#getcontext)
 - [getText](SelectOptions.md#gettext)
 - [message](SelectOptions.md#message)
+- [showInput](SelectOptions.md#showinput)
 - [timeout](SelectOptions.md#timeout)
 - [title](SelectOptions.md#title)
 - [values](SelectOptions.md#values)
@@ -36,7 +38,17 @@
 
 #### Defined in
 
-[src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L6)
+[src/ts/app/dialog.ts:6](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L6)
+
+___
+
+### freeAnswer
+
+• `Optional` **freeAnswer**: `boolean`
+
+#### Defined in
+
+[src/ts/app/dialog.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L20)
 
 ___
 
@@ -60,7 +72,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L22)
+[src/ts/app/dialog.ts:25](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L25)
 
 ___
 
@@ -84,7 +96,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L21)
+[src/ts/app/dialog.ts:24](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L24)
 
 ___
 
@@ -98,7 +110,17 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L4)
+[src/ts/app/dialog.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L4)
+
+___
+
+### showInput
+
+• `Optional` **showInput**: `boolean`
+
+#### Defined in
+
+[src/ts/app/dialog.ts:21](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L21)
 
 ___
 
@@ -112,7 +134,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L5)
+[src/ts/app/dialog.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L5)
 
 ___
 
@@ -126,7 +148,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L3)
+[src/ts/app/dialog.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L3)
 
 ___
 
@@ -136,4 +158,4 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L20)
+[src/ts/app/dialog.ts:23](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L23)

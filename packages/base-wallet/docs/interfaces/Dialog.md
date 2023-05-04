@@ -31,7 +31,7 @@
 
 #### Defined in
 
-[src/ts/app/dialog.ts:57](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L57)
+[src/ts/app/dialog.ts:60](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L60)
 
 ___
 
@@ -55,7 +55,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:56](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L56)
+[src/ts/app/dialog.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L59)
 
 ___
 
@@ -85,7 +85,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:59](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L59)
+[src/ts/app/dialog.ts:62](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L62)
 
 ___
 
@@ -115,7 +115,7 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L58)
+[src/ts/app/dialog.ts:61](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L61)
 
 ___
 
@@ -139,4 +139,4 @@ ___
 
 #### Defined in
 
-[src/ts/app/dialog.ts:55](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/base-wallet/src/ts/app/dialog.ts#L55)
+[src/ts/app/dialog.ts:58](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/base-wallet/src/ts/app/dialog.ts#L58)

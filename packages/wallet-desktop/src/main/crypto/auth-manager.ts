@@ -124,12 +124,18 @@ export class AuthManager {
       authKeys,
       encKeys
     }
-    await keyCtx.encKeys.prepareEncryption(keyCtx)
 
-    // Store the new auth and enc
-    await keyCtx.encKeys.storeSettings(this.locals, keyCtx)
-    await keyCtx.authKeys.register(keyCtx)
-    await keyCtx.authKeys.storeSettings(this.locals, keyCtx)
+    await this.locals.taskManager.createTask('labeled', {
+      title: 'Computing keys',
+      details: 'Deriving cryptographic keys from password',
+      freezing: true
+    }, async (task) => {
+      await keyCtx.encKeys.prepareEncryption(keyCtx)
+      // Store the new auth and enc
+      await keyCtx.encKeys.storeSettings(this.locals, keyCtx)
+      await keyCtx.authKeys.register(keyCtx)
+      await keyCtx.authKeys.storeSettings(this.locals, keyCtx)
+    })
 
     return keyCtx
   }

@@ -22,6 +22,8 @@ interface ConfirmationOptions extends BaseDialogOptions {
     rejectMsg?: string;
 }
 interface SelectOptions<T> extends BaseDialogOptions {
+    freeAnswer?: boolean;
+    showInput?: boolean;
     values: T[];
     getText?: (obj: T) => string;
     getContext?: (obj: T) => DialogOptionContext;

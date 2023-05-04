@@ -54,7 +54,7 @@ export const fixPrivateSettings = async (locals: Locals): Promise<void> => {
 
   let providers = privateSettings.providers
   if (!validProviders(providers)) {
-    providers = [{ name: 'Rinkeby', network: 'rinkeby', rpcUrl: ['https://rpc.ankr.com/eth_rinkeby'] }]
+    providers = []
   }
 
   const wallet = privateSettings.wallet

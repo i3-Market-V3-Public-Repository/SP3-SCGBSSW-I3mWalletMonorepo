@@ -1,6 +1,7 @@
 
 import { FeatureContext, Locals, logger, MainContext } from '@wallet/main/internal'
 import { FeatureHandler } from './feature-handler'
+import { WalletInfo } from '@wallet/lib'
 
 export interface Feature<T> {
   handler: FeatureHandler<T>

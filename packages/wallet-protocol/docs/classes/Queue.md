@@ -49,7 +49,7 @@
 
 #### Defined in
 
-[src/ts/util/queue.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L7)
+[src/ts/util/queue.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L7)
 
 ## Properties
 
@@ -59,7 +59,7 @@
 
 #### Defined in
 
-[src/ts/util/queue.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L4)
+[src/ts/util/queue.ts:4](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L4)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L5)
+[src/ts/util/queue.ts:5](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L5)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L3)
+[src/ts/util/queue.ts:3](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L3)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L7)
+[src/ts/util/queue.ts:7](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L7)
 
 ## Accessors
 
@@ -103,7 +103,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L40)
+[src/ts/util/queue.ts:40](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L40)
 
 ___
 
@@ -117,7 +117,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L13)
+[src/ts/util/queue.ts:13](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L13)
 
 ## Methods
 
@@ -131,7 +131,7 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L26)
+[src/ts/util/queue.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L26)
 
 ___
 
@@ -151,4 +151,4 @@ ___
 
 #### Defined in
 
-[src/ts/util/queue.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/8755ad1b/packages/wallet-protocol/src/ts/util/queue.ts#L17)
+[src/ts/util/queue.ts:17](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/wallet-protocol/src/ts/util/queue.ts#L17)

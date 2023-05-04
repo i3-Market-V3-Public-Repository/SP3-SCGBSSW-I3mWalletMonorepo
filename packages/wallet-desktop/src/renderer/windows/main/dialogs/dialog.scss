@@ -1,10 +1,10 @@
 
 
 @keyframes highlight {
-  0% {border-color: #4BA846;}
+  0% {border-color: i3m.$danger;}
   40% {border-color: transparent;}
   60% {border-color: transparent;}
-  100% {border-color: #4BA846;}
+  100% {border-color: i3m.$danger;}
 }
 
 .dialog-overlay {

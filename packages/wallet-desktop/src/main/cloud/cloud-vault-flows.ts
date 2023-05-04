@@ -23,6 +23,7 @@ export class CloudVaultFlows {
       title: 'Cloud Vault',
       message: `There has been a conflict between the local version (${localVersion}) and the remote version ('${remoteVersion}).\n\n Which version would you want to use?`,
       allowCancel: true,
+      showInput: false,
       ...optionBuilder
     })
 
@@ -45,6 +46,7 @@ export class CloudVaultFlows {
         title: 'Cloud Vault',
         message: `You must provide the URL of your Cloud Vault server (i.e. ${DEFAULT_CLOUD_URL})`,
         allowCancel: true,
+        freeAnswer: true,
         values: DEFAULT_VAULT_PROVIDERS
       })
 

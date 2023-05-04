@@ -43,7 +43,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L26)
+[cloud-vault-client/src/ts/request.ts:26](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L26)
 
 ## Properties
 
@@ -53,7 +53,7 @@
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L19)
+[cloud-vault-client/src/ts/request.ts:19](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L19)
 
 ___
 
@@ -63,7 +63,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L20)
+[cloud-vault-client/src/ts/request.ts:20](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L20)
 
 ___
 
@@ -77,7 +77,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L22)
+[cloud-vault-client/src/ts/request.ts:22](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L22)
 
 ## Accessors
 
@@ -91,7 +91,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L46)
+[cloud-vault-client/src/ts/request.ts:46](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L46)
 
 • `set` **defaultCallOptions**(`opts`): `void`
 
@@ -107,7 +107,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L50)
+[cloud-vault-client/src/ts/request.ts:50](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L50)
 
 ___
 
@@ -121,7 +121,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L38)
+[cloud-vault-client/src/ts/request.ts:38](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L38)
 
 • `set` **defaultUrl**(`url`): `void`
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L42)
+[cloud-vault-client/src/ts/request.ts:42](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L42)
 
 ## Methods
 
@@ -164,7 +164,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:160](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L160)
+[cloud-vault-client/src/ts/request.ts:160](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L160)
 
 ▸ **delete**<`T`\>(`options?`): `Promise`<`T`\>
 
@@ -186,7 +186,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:161](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L161)
+[cloud-vault-client/src/ts/request.ts:161](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L161)
 
 ___
 
@@ -213,7 +213,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:172](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L172)
+[cloud-vault-client/src/ts/request.ts:172](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L172)
 
 ▸ **get**<`T`\>(`options?`): `Promise`<`T`\>
 
@@ -235,7 +235,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:173](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L173)
+[cloud-vault-client/src/ts/request.ts:173](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L173)
 
 ___
 
@@ -263,7 +263,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:184](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L184)
+[cloud-vault-client/src/ts/request.ts:184](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L184)
 
 ▸ **post**<`T`\>(`requestBody`, `options?`): `Promise`<`T`\>
 
@@ -286,7 +286,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:185](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L185)
+[cloud-vault-client/src/ts/request.ts:185](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L185)
 
 ___
 
@@ -314,7 +314,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:203](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L203)
+[cloud-vault-client/src/ts/request.ts:203](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L203)
 
 ▸ **put**<`T`\>(`requestBody`, `options?`): `Promise`<`T`\>
 
@@ -337,7 +337,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:204](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L204)
+[cloud-vault-client/src/ts/request.ts:204](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L204)
 
 ___
 
@@ -351,7 +351,7 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L91)
+[cloud-vault-client/src/ts/request.ts:91](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L91)
 
 ___
 
@@ -371,4 +371,4 @@ ___
 
 #### Defined in
 
-[cloud-vault-client/src/ts/request.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/645d0838/packages/cloud-vault-client/src/ts/request.ts#L77)
+[cloud-vault-client/src/ts/request.ts:77](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/fe110225/packages/cloud-vault-client/src/ts/request.ts#L77)

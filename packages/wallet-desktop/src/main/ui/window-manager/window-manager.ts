@@ -112,9 +112,9 @@ export class WindowManager {
     })
 
     // Open the DevTools.
-    if (process.env.NODE_ENV === 'development') {
-      window.webContents.openDevTools()
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   window.webContents.openDevTools()
+    // }
   }
 
   protected openWindow (windowArgs: WindowArgs): CustomWindow {

@@ -92,6 +92,7 @@ export function Dialog (props: DialogProps): JSX.Element {
   let dialogData: DialogData
   let maxTabIndex = 0
   let order: any[] = []
+  let showInput: boolean = true
 
   if (props.type === 'form') {
     maxTabIndex = props.order.length
@@ -121,6 +122,7 @@ export function Dialog (props: DialogProps): JSX.Element {
       break
 
     case 'confirmation':
+      showInput = false
       message = dialogData.message !== undefined ? dialogData.message : 'Are you sure?'
       options = [
         { text: dialogData.acceptMsg ?? 'Yes', value: true, context: 'success' },
@@ -130,13 +132,14 @@ export function Dialog (props: DialogProps): JSX.Element {
       break
 
     case 'select':
+      showInput = dialogData.showInput ?? true
       options = (dialogData.options ?? [])
       break
   }
 
   const filteredOptions = options.filter(option => option.text.match(regex))
 
-  const showInput = props.type !== 'confirmation'
+  const freeAnswer = dialogData.freeAnswer ?? false
   const showOptions = filteredOptions.length > 0
   const showTitle = title !== undefined
   const showMessage = message !== undefined
@@ -150,6 +153,9 @@ export function Dialog (props: DialogProps): JSX.Element {
     } else {
       if (exit) {
         onClose(undefined)
+      } else if (!freeAnswer && selectedOption === undefined) {
+        setHighlight(true)
+        setText('')
       } else if (props.type === 'form') {
         buildFormValue(onClose, selectedOption)
       } else if (selectedOption === undefined) {
@@ -163,7 +169,7 @@ export function Dialog (props: DialogProps): JSX.Element {
   const getSelectedOption = (): DialogOption<any> | undefined => {
     if (filteredOptions.length > 0) {
       return filteredOptions[selectedOption]
-    } else if (text !== '') {
+    } else if (freeAnswer && text !== '') {
       return { text, value: text, context: 'success' }
     } else {
       return undefined
@@ -185,8 +191,12 @@ export function Dialog (props: DialogProps): JSX.Element {
   const updateFormValues = (onUpdate: (value: Array<DialogOption<any> | undefined>) => void, option?: DialogOption<any>): void => {
     const newFormValues = [...formValues]
     const selectedOption = option ?? getSelectedOption()
+
     if (dialogData.allowCancel === false && selectedOption === undefined) {
       setHighlight(true)
+    } else if (!freeAnswer && selectedOption === undefined) {
+      setHighlight(true)
+      setText('')
     } else {
       newFormValues[tabIndex] = selectedOption
       setFormValues(newFormValues)
