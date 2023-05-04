@@ -22,7 +22,7 @@ export async function handleVaultErrors (locals: Locals, err: VaultError): Promi
     toast.show({
       type: 'error',
       message: 'Cloud Vault',
-      details: `${err.message}: ${err.data.toString() as string}; ${err.cause as string ?? 'unknown cause'}`
+      details: `${err.message}: ${err.data?.toString() as string ?? 'no data'}; ${err.cause as string ?? 'unknown cause'}`
     })
   }
 }

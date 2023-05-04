@@ -4,14 +4,16 @@ export interface IBasicTaskHandler<T extends WalletTask['type']> {
   id: string
   type: T
   task: WalletTaskFor<T>
+  update: () => this
 }
 
 export interface ProgressTaskHandler extends IBasicTaskHandler<'progress'> {
-  setProgress: (value: number) => void
+  setProgress: (value: number) => this
 }
 
 export interface LabeledTaskHandler extends IBasicTaskHandler<'labeled'> {
-  setDetails: (label: string) => void
+  setDetails: (label: string) => this
+  setFreezing: (freezing: boolean) => this
 }
 
 export type TaskHandlers = ProgressTaskHandler | LabeledTaskHandler

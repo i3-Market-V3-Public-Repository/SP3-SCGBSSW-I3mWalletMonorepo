@@ -50,7 +50,9 @@ export class StoreManager extends StoreBag {
 
     runtimeManager.on('private-settings', async (task) => {
       // Load encrypted settings
-      task.setDetails('Migrating and loading encrypted stores')
+      task
+        .setDetails('Migrating and loading encrypted stores')
+        .update()
       await this.loadPrivateSettings()
     })
 
@@ -62,7 +64,9 @@ export class StoreManager extends StoreBag {
 
     runtimeManager.on('wallet-stores', async (task) => {
       // Load encrypted settings
-      task.setDetails('Migrating and loading encrypted stores')
+      task
+        .setDetails('Migrating and loading encrypted stores')
+        .update()
       await this.loadWalletStores()
     })
   }
@@ -185,7 +189,6 @@ export class StoreManager extends StoreBag {
     const walletOptionsBuilders = Object
       .values(walletSettings.wallets)
       .map((wallet) => {
-
         let storeFeature
         try {
           storeFeature = walletFactory.getWalletFeatureByType<StoreFeatureOptions>(wallet.package, 'store')

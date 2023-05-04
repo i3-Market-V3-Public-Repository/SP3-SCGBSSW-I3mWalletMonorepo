@@ -19,8 +19,19 @@ export class LabeledTaskHandlerImpl implements LabeledTaskHandler {
     }
   }
 
-  setDetails (label: string): void {
+  setDetails (label: string): this {
     this.description.details = label
+
+    return this
+  }
+
+  setFreezing (freezing: boolean): this {
+    this.description.freezing = freezing
+    return this
+  }
+
+  update (): this {
     this.methods.updateTask(this.task)
+    return this
   }
 }

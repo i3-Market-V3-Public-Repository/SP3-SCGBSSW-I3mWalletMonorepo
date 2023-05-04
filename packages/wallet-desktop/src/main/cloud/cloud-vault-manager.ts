@@ -10,6 +10,11 @@ interface Params {
   publicCloud?: CloudVaultPublicSettings
 }
 
+interface LoginData {
+  credentials?: Credentials
+  freezing?: boolean
+}
+
 export class CloudVaultManager {
   protected failed: boolean
   protected flows: CloudVaultFlows
@@ -170,6 +175,8 @@ export class CloudVaultManager {
 
   protected async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
     const { dialog } = this.locals
+    const initialTaskDetails = task.task.description.details ?? ''
+    task.setDetails('Setting up your cloud vault').update()
 
     const loginBuilder = dialog.useOptionsBuilder()
     loginBuilder.add('No', 'danger')
@@ -186,7 +193,7 @@ export class CloudVaultManager {
 
       if (loginBuilder.compare(option, login)) {
         try {
-          await this.loginTask(task)
+          await this.loginTask(task, { freezing: true })
           sync = true
           continue
         } catch (err: unknown) {
@@ -198,12 +205,12 @@ export class CloudVaultManager {
     }
 
     if (sync) {
-      await this.locals.syncManager.sync({
-        direction: 'pull',
-        timestamps: this.timestamps,
-        force: true
-      })
+      task.setDetails('Restoring your cloud vault data').setFreezing(true).update()
+      await this.locals.syncManager.sync({ direction: 'pull', force: true })
+      task.setFreezing(false).update()
     }
+
+    task.setDetails(initialTaskDetails).update()
   }
 
   get isConnected (): boolean {
@@ -269,9 +276,11 @@ export class CloudVaultManager {
     }
   }
 
-  protected async loginTask (task: LabeledTaskHandler, optCredentails?: Credentials): Promise<void> {
+  protected async loginTask (task: LabeledTaskHandler, loginData?: LoginData): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const errorMessage = 'Vault login error'
+    const optCredentails = loginData?.credentials
+    const freezing = loginData?.freezing ?? false
 
     const publicCloudSettings = shm.memory.settings.public.cloud
     shm.update(mem => ({
@@ -285,6 +294,11 @@ export class CloudVaultManager {
     try {
       await this.initializeClientIfNeeded()
       const credentials = await this.flows.askCredentials(errorMessage, { credentials: optCredentails, store: true })
+      if (freezing) {
+        task
+          .setFreezing(true)
+          .update()
+      }
       await this.client.login(credentials.username, credentials.password, publicCloudSettings?.timestamp)
       shm.update(mem => ({
         ...mem,
@@ -293,6 +307,11 @@ export class CloudVaultManager {
           registration: undefined
         }
       }))
+      if (freezing) {
+        task
+          .setFreezing(false)
+          .update()
+      }
     } finally {
       shm.update(mem => ({
         ...mem,
@@ -375,7 +394,7 @@ export class CloudVaultManager {
     const { taskManager } = this.locals
     const taskInfo: TaskDescription = { title: 'Login Cloud User' }
     await taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.loginTask(task, credentials)
+      return await this.loginTask(task, { credentials })
     })
   }
 

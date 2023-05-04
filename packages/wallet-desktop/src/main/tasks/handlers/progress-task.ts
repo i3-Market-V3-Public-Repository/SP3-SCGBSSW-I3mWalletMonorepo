@@ -21,10 +21,16 @@ export class ProgressTaskHandlerImpl implements ProgressTaskHandler {
     }
   }
 
-  setProgress (value: number): void {
+  setProgress (value: number): this {
     this.progress = value
     if (value >= 100) {
-
+      throw new Error('Not implemented yet!')
     }
+    return this
+  }
+
+  update (): this {
+    this.methods.updateTask(this.task)
+    return this
   }
 }

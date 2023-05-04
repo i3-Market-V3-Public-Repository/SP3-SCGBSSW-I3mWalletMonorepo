@@ -1,10 +1,9 @@
 import { v4 as uuid } from 'uuid'
 
-import { DEFAULT_PROVIDERS_DATA, Descriptors, WalletMetadata } from "@i3m/base-wallet"
+import { DEFAULT_PROVIDERS_DATA, Descriptors, WalletMetadata } from '@i3m/base-wallet'
 
-import { Provider, WalletInfo } from "@wallet/lib"
+import { Provider, WalletInfo } from '@wallet/lib'
 import { Locals, WalletDesktopError } from '@wallet/main/internal'
-
 
 interface WalletCreationForm {
   name: string
@@ -13,7 +12,6 @@ interface WalletCreationForm {
 }
 
 export class WalletFactoryFlows {
-  
   constructor (protected locals: Locals) {}
 
   get walletNames (): string[] {
@@ -62,7 +60,7 @@ export class WalletFactoryFlows {
     return walletName
   }
 
-  async getNewWalletInfo(): Promise<WalletInfo> {
+  async getNewWalletInfo (): Promise<WalletInfo> {
     const { sharedMemoryManager: shm, dialog } = this.locals
     const walletPackages = shm.memory.walletsMetadata
     const privateSettings = shm.memory.settings.private
@@ -128,5 +126,4 @@ export class WalletFactoryFlows {
       }
     }
   }
-
 }

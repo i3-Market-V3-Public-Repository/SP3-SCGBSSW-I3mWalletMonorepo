@@ -1,7 +1,7 @@
 
 export interface TaskDescription {
   readonly title: string
-  readonly freezing?: boolean
+  freezing?: boolean
   details?: string
 }
 

@@ -106,13 +106,12 @@ export class WalletFactory {
     await this.changeWallet(walletInfo)
   }
 
-
-  protected setWallet (walletInfo: WalletInfo, wallet: Wallet) {
+  protected setWallet (walletInfo: WalletInfo, wallet: Wallet): void {
     this._walletName = walletInfo.name
     this._wallet = wallet
   }
 
-  protected unsetWallet () {
+  protected unsetWallet (): void {
     this._walletName = undefined
     this._wallet = undefined
   }
@@ -175,6 +174,7 @@ export class WalletFactory {
     const currentWallet = shm.memory.settings.public.currentWallet
 
     const { [walletName]: walletInfo, ...newWallets } = wallets
+    const newWalletInfos = Object.values(newWallets)
     if (walletInfo === undefined) {
       throw new Error('Inconsistent data!')
     }
@@ -189,7 +189,12 @@ export class WalletFactory {
       let resources = mem.resources
       let identities = mem.identities
       if (current === walletName) {
-        current = undefined
+        if (newWalletInfos.length > 0) {
+          current = newWalletInfos[0].name
+        } else {
+          current = undefined
+        }
+
         resources = {}
         identities = {}
       }
