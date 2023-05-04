@@ -28,7 +28,7 @@ WalletOptionsSettings.dialog
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:249](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/base-wallet/dist/index.d.ts#L249)
+[base-wallet/dist/index.d.ts:249](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29e1d97/packages/base-wallet/dist/index.d.ts#L249)
 
 ___
 
@@ -42,7 +42,7 @@ WalletOptionsSettings.provider
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:252](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/base-wallet/dist/index.d.ts#L252)
+[base-wallet/dist/index.d.ts:252](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29e1d97/packages/base-wallet/dist/index.d.ts#L252)
 
 ___
 
@@ -56,7 +56,7 @@ WalletOptionsSettings.providersData
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:253](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/base-wallet/dist/index.d.ts#L253)
+[base-wallet/dist/index.d.ts:253](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29e1d97/packages/base-wallet/dist/index.d.ts#L253)
 
 ___
 
@@ -70,7 +70,7 @@ WalletOptionsSettings.store
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:250](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/base-wallet/dist/index.d.ts#L250)
+[base-wallet/dist/index.d.ts:250](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29e1d97/packages/base-wallet/dist/index.d.ts#L250)
 
 ___
 
@@ -84,4 +84,4 @@ WalletOptionsSettings.toast
 
 #### Defined in
 
-[base-wallet/dist/index.d.ts:251](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/578e6321/packages/base-wallet/dist/index.d.ts#L251)
+[base-wallet/dist/index.d.ts:251](https://gitlab.com/i3-market/code/wp3/t3.2/i3m-wallet-monorepo/-/blob/e29e1d97/packages/base-wallet/dist/index.d.ts#L251)
