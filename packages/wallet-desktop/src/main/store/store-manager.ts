@@ -6,7 +6,7 @@ import fs from 'fs/promises'
 import {
   createDefaultPrivateSettings,
   Credentials, PrivateSettings, PublicSettings, storeChangedAction, StoreClass,
-  StoreClasses, StoreModel, StoreModels, StoreSettings
+  StoreClasses, StoreModel, StoreModels, StoreSettings, WalletInfo
 } from '@wallet/lib'
 import {
   fixPrivateSettings,
@@ -14,8 +14,7 @@ import {
   Locals, logger, MainContext,
   PublicSettingsOptions,
   softwareVersion,
-  StoreFeatureOptions,
-  WalletDesktopError
+  StoreFeatureOptions
 } from '@wallet/main/internal'
 
 import { VAULT_STATE } from '@i3m/cloud-vault-client'
@@ -181,14 +180,25 @@ export class StoreManager extends StoreBag {
   }
 
   public async loadWalletStores (): Promise<void> {
-    const { walletFactory, sharedMemoryManager: shm } = this.locals
+    const { walletFactory, sharedMemoryManager: shm, toast } = this.locals
     const walletSettings = shm.memory.settings.private.wallet
     const walletOptionsBuilders = Object
       .values(walletSettings.wallets)
-      .map((wallet) => ({
-        wallet,
-        storeFeature: walletFactory.getWalletFeature<StoreFeatureOptions>(wallet.package, 'store')
-      }))
+      .map((wallet) => {
+
+        let storeFeature
+        try {
+          storeFeature = walletFactory.getWalletFeatureByType<StoreFeatureOptions>(wallet.package, 'store')
+        } catch (err) {
+          toast.show({
+            message: 'Wallet Stores',
+            details: `Could not load store for wallet ${wallet.name}`,
+            type: 'warning'
+          })
+        }
+
+        return { wallet, storeFeature }
+      })
       .filter(({ storeFeature }) => storeFeature !== undefined)
       .map(({ wallet, storeFeature }) => {
         return {
@@ -206,18 +216,12 @@ export class StoreManager extends StoreBag {
   }
 
   // Store Bag methods
-  public async buildWalletStore (walletName: string): Promise<void> {
-    const { walletFactory, sharedMemoryManager: shm } = this.locals
-    const walletSettings = shm.memory.settings.private.wallet
-    const wallet = walletSettings?.wallets[walletName]
-    if (wallet === undefined) {
-      throw new WalletDesktopError('Wallet metadata not found')
-    }
-
-    const storeFeature = walletFactory.getWalletFeature<StoreFeatureOptions>(wallet.package, 'store')
-    const options = await this.builder.buildWalletStoreOptions(wallet, storeFeature?.opts)
+  public async buildWalletStore (walletInfo: WalletInfo): Promise<void> {
+    const { walletFactory } = this.locals
+    const storeFeature = walletFactory.getWalletFeatureByType<StoreFeatureOptions>(walletInfo.package, 'store')
+    const options = await this.builder.buildWalletStoreOptions(walletInfo, storeFeature?.opts)
     const [walletStore, fixedOptions] = await this.builder.buildStore({ ...options })
-    this.sendStoreToBag(walletStore, fixedOptions, 'wallet', walletName)
+    this.sendStoreToBag(walletStore, fixedOptions, 'wallet', walletInfo.name)
   }
 
   public deleteStoreById (storeId: string): void {

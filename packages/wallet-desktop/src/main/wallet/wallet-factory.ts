@@ -1,11 +1,11 @@
-import { DEFAULT_PROVIDERS_DATA, Descriptors, ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
-import { Provider, TaskDescription, WalletInfo, WalletMetadataMap } from '@wallet/lib'
+import { DEFAULT_PROVIDERS_DATA, ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
+import { TaskDescription, WalletInfo, WalletMetadataMap } from '@wallet/lib'
 import {
-  Feature, FeatureHandler, FeatureManager, FeatureType, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
+  Feature, FeatureHandler, FeatureManager, FeatureType, handleErrorCatch, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
 } from '@wallet/main/internal'
-import { v4 as uuid } from 'uuid'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
+import { WalletFactoryFlows } from './wallet-factory-flows'
 
 interface WalletFeatureMap {
   [name: string]: Array<Feature<any>> | undefined
@@ -13,12 +13,6 @@ interface WalletFeatureMap {
 
 interface FeatureMap {
   [name: string]: FeatureHandler<any>
-}
-
-interface WalletCreationForm {
-  name: string
-  walletMetadata: [string, WalletMetadata]
-  provider: Provider
 }
 
 const featureMap: FeatureMap = {
@@ -29,6 +23,7 @@ export class WalletFactory {
   protected _wallet: Wallet | undefined
   protected _walletName: string | undefined
 
+  protected flows: WalletFactoryFlows
   protected featuresByWallet: WalletFeatureMap
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<WalletFactory> {
@@ -36,8 +31,8 @@ export class WalletFactory {
   }
 
   constructor (protected locals: Locals) {
-    this._walletName = undefined
     this.featuresByWallet = {}
+    this.flows = new WalletFactoryFlows(locals)
     this.bindRuntimeEvents()
   }
 
@@ -51,10 +46,8 @@ export class WalletFactory {
     runtimeManager.on('ui', async () => {
       await this.loadCurrentWallet()
 
-      //
-      if (!this.hasWalletsCreated) {
-        await this.createWallet()
-      }
+      const forceWalletPromise = this.forceOneWallet()
+      forceWalletPromise.catch(...handleErrorCatch(this.locals))
     })
   }
 
@@ -101,135 +94,42 @@ export class WalletFactory {
     }
     logger.debug(`The current configuration has the following wallets: ${Object.keys(wallet.wallets).join(', ')}`)
 
-    await this.changeWallet(currentWallet)
-  }
-
-  async buildWalletTask (walletInfo: WalletInfo, task: LabeledTaskHandler): Promise<Wallet> {
-    const { sharedMemoryManager: shm, featureContext, featureManager, dialog, toast } = this.locals
-    const { providers } = shm.memory.settings.private
-    const providersData = providers.reduce<Record<string, ProviderData>>(
-      (prev, curr) => {
-        prev[`did:ethr:${curr.network}`] = curr
-        return prev
-      }, { ...DEFAULT_PROVIDERS_DATA })
-
-    try {
-      // Init wallet features
-      // Initialize all the features
-      await featureManager.clearFeatures(walletInfo.name)
-      const features = this.featuresByWallet[walletInfo.package]
-      if (features !== undefined) {
-        for (const feature of features) {
-          featureManager.addFeature(feature)
-        }
-      }
-      await featureManager.start(walletInfo.name)
-
-      // Initialize wallet
-      const walletMain: WalletBuilder<any> = (await import(walletInfo.package)).default
-      const wallet = await walletMain({
-        ...walletInfo.args,
-
-        store: featureContext.store,
-        toast,
-        dialog,
-        providersData
+    const walletInfo = wallet.wallets[currentWallet]
+    if (walletInfo === undefined) {
+      throw new WalletDesktopError('cannot load current wallet: inconsistent data', {
+        message: 'Load Wallet',
+        details: 'Cannot load current wallet: inconsistent data',
+        severity: 'error'
       })
-
-      return wallet
-    } catch (err) {
-      // Start errors should be bypassed
-      if (err instanceof StartFeatureError) {
-        throw err
-      }
-      if (err instanceof Error) {
-        logger.error(err.stack)
-      } else {
-        logger.error(err)
-      }
-
-      throw new InvalidWalletError(`Cannot initialize the wallet '${walletInfo.name}'`)
     }
+
+    await this.changeWallet(walletInfo)
   }
 
-  providerSelect (providers: Provider[]): Descriptors<Provider> {
-    const completeProviderList: Provider[] = [
-      ...Object.values(DEFAULT_PROVIDERS_DATA).map((provider) => ({
-        ...provider,
-        name: provider.network
-      })),
-      ...providers
-    ]
-    return {
-      type: 'select',
-      message: 'Select a network',
-      values: completeProviderList,
-      getText (provider) {
-        return provider.name
-      }
-    }
+
+  protected setWallet (walletInfo: WalletInfo, wallet: Wallet) {
+    this._walletName = walletInfo.name
+    this._wallet = wallet
   }
 
+  protected unsetWallet () {
+    this._walletName = undefined
+    this._wallet = undefined
+  }
+
+  // **** External utilities ****
   async createWallet (): Promise<WalletInfo> {
-    const { sharedMemoryManager: shm, dialog } = this.locals
-    const walletPackages = shm.memory.walletsMetadata
-    const privateSettings = shm.memory.settings.private
-
-    const walletCreationForm = await dialog.form<WalletCreationForm>({
-      title: 'Wallet creation',
-      descriptors: {
-        name: { type: 'text', message: 'Introduce a name for the wallet', allowCancel: false },
-        walletMetadata: {
-          type: 'select',
-          message: 'Select a wallet type',
-          values: Object.entries<WalletMetadata>(walletPackages),
-          getText ([walletPackage, walletMetadata]) {
-            return walletMetadata.name
-          }
-        },
-        provider: this.providerSelect(privateSettings.providers)
-      },
-      order: ['name', 'walletMetadata', 'provider']
-    })
-
-    if (walletCreationForm === undefined) {
-      throw new WalletDesktopError('cannot create wallet: dialog cancelled', {
-        message: 'Create Wallet',
-        severity: 'warning',
-        details: 'Dialog cancelled'
-      })
-    }
-
-    // Wallet already exists
-    if (walletCreationForm.name in privateSettings.wallet.wallets) {
-      throw new WalletDesktopError(`cannot create wallet: ${walletCreationForm.name} already exists`, {
-        message: 'Create Wallet',
-        severity: 'warning',
-        details: `Wallet ${walletCreationForm.name} already exists`
-      })
-    }
-
-    const walletInfo: WalletInfo = {
-      name: walletCreationForm.name,
-      package: walletCreationForm.walletMetadata[0],
-      store: uuid(),
-      args: {
-        provider: `did:ethr:${walletCreationForm.provider.network}`
-      }
-    }
+    const { sharedMemoryManager: shm, featureManager } = this.locals
+    const walletInfo = await this.flows.getNewWalletInfo()
 
     try {
-      await this.buildWallet(walletInfo)
+      await this.changeWallet(walletInfo)
     } catch (err) {
       // Create a floating feature manager
-      const featureManager = new FeatureManager(this.locals)
-      const features = this.featuresByWallet[walletInfo.package]
-      if (features !== undefined) {
-        for (const feature of features) {
-          featureManager.addFeature(feature)
-        }
+      if (featureManager.hasFeatures) {
+        await featureManager.delete()
+        await featureManager.clearFeatures()
       }
-      await featureManager.delete(walletInfo.name)
 
       throw new WalletDesktopError('wallet was not created because the initialization was cancelled or failed.', {
         message: 'Create wallet',
@@ -239,7 +139,7 @@ export class WalletFactory {
     }
 
     // Write the new wallet info
-    const name = walletCreationForm.name
+    const name = walletInfo.name
     shm.update((mem) => ({
       ...mem,
       settings: {
@@ -266,55 +166,7 @@ export class WalletFactory {
   }
 
   async selectWallet (walletName?: string): Promise<string> {
-    const { sharedMemoryManager: shm, dialog } = this.locals
-    if (walletName === undefined) {
-      walletName = await dialog.select({
-        values: this.walletNames
-      })
-    }
-
-    if (walletName === undefined) {
-      throw new WalletDesktopError('cannot change wallet: user cancelled', {
-        message: 'Select wallet',
-        severity: 'warning',
-        details: 'User cancelled'
-      })
-    }
-
-    if (walletName === shm.memory.settings.public.currentWallet) {
-      return walletName
-    }
-
-    shm.update((mem) => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        private: {
-          ...mem.settings.private,
-          wallet: {
-            ...mem.settings.private.wallet
-          }
-        },
-        public: {
-          ...mem.settings.public,
-          currentWallet: walletName
-        }
-      },
-      identities: {},
-      resources: {}
-    }))
-
-    return walletName
-  }
-
-  async buildWallet (walletInfo: WalletInfo): Promise<Wallet> {
-    const taskInfo: TaskDescription = {
-      title: 'Build Wallet',
-      details: `Building wallet ${walletInfo.name}`
-    }
-    return await this.locals.taskManager.createTask('labeled', taskInfo, async (task) => {
-      return await this.buildWalletTask(walletInfo, task)
-    })
+    return await this.flows.selectWallet(walletName)
   }
 
   async deleteWallet (walletName: string): Promise<void> {
@@ -329,13 +181,8 @@ export class WalletFactory {
 
     // Create a floating feature manager
     const featureManager = new FeatureManager(this.locals)
-    const features = this.featuresByWallet[walletInfo.package]
-    if (features !== undefined) {
-      for (const feature of features) {
-        featureManager.addFeature(feature)
-      }
-    }
-    await featureManager.delete(walletName)
+    await featureManager.loadWalletFeatures(walletInfo)
+    await featureManager.delete()
 
     this.locals.sharedMemoryManager.update((mem) => {
       let current = currentWallet
@@ -369,35 +216,88 @@ export class WalletFactory {
     })
   }
 
-  async changeWallet (walletName: string): Promise<void> {
+  // ***** Internal features *****
+  protected async buildWalletTask (walletInfo: WalletInfo, task: LabeledTaskHandler): Promise<Wallet> {
+    const { sharedMemoryManager: shm, featureContext, featureManager, dialog, toast } = this.locals
+    const { providers } = shm.memory.settings.private
+    const providersData = providers.reduce<Record<string, ProviderData>>(
+      (prev, curr) => {
+        prev[`did:ethr:${curr.network}`] = curr
+        return prev
+      }, { ...DEFAULT_PROVIDERS_DATA })
+
+    try {
+      // Init wallet features
+      // Initialize all the features
+      if (featureManager.hasFeatures) {
+        await featureManager.clearFeatures()
+      }
+
+      await featureManager.loadWalletFeatures(walletInfo)
+      await featureManager.start()
+
+      // Initialize wallet
+      const walletMain: WalletBuilder<any> = (await import(walletInfo.package)).default
+      const wallet = await walletMain({
+        ...walletInfo.args,
+
+        store: featureContext.store,
+        toast,
+        dialog,
+        providersData
+      })
+
+      return wallet
+    } catch (err) {
+      // Start errors should be bypassed
+      if (err instanceof StartFeatureError) {
+        throw err
+      }
+      if (err instanceof Error) {
+        logger.error(err.stack)
+      } else {
+        logger.error(err)
+      }
+
+      throw new InvalidWalletError(`Cannot initialize the wallet '${walletInfo.name}'`)
+    }
+  }
+
+  protected async buildWallet (walletInfo: WalletInfo): Promise<Wallet> {
+    const taskInfo: TaskDescription = {
+      title: 'Build Wallet',
+      details: `Building wallet ${walletInfo.name}`
+    }
+    return await this.locals.taskManager.createTask('labeled', taskInfo, async (task) => {
+      return await this.buildWalletTask(walletInfo, task)
+    })
+  }
+
+  async forceOneWallet (): Promise<void> {
+    //
+    while (!this.hasWalletsCreated) {
+      await this.createWallet().catch(...handleErrorCatch(this.locals))
+    }
+  }
+
+  async changeWallet (walletInfo: WalletInfo): Promise<void> {
+    const walletName = walletInfo.name
     if (walletName === this._walletName) {
       return
     }
 
     logger.info(`Change wallet to ${walletName}`)
-    const { apiManager, sharedMemoryManager: shm } = this.locals
+    const { apiManager } = this.locals
 
     // Stop API
     await apiManager.close()
 
     // Build the current wallet
     try {
-      const walletInfo = shm.memory.settings.private.wallet.wallets[walletName]
-      if (walletInfo === undefined) {
-        throw new Error('Inconsistent data!')
-      }
-
-      this._wallet = await this.buildWallet(walletInfo)
-      this._walletName = walletName
+      const wallet = await this.buildWallet(walletInfo)
+      this.setWallet(walletInfo, wallet)
     } catch (err) {
-      this._wallet = undefined
-      this._walletName = undefined
-      console.trace(err)
-      this.locals.toast.show({
-        message: 'Wallet initialization',
-        details: `Could not initialize the wallet '${walletName}'`,
-        type: 'warning'
-      })
+      this.unsetWallet()
       this.locals.sharedMemoryManager.update((mem) => ({
         ...mem,
         settings: {
@@ -414,11 +314,15 @@ export class WalletFactory {
           }
         }
       }))
-      return
+      throw new WalletDesktopError(`could not change to wallet '${walletName}'`, {
+        message: 'Wallet initialization',
+        details: `Could not initialize the wallet '${walletName}'`,
+        severity: 'warning'
+      })
     }
 
     this.locals.toast.show({
-      message: 'Wallet change',
+      message: 'Wallet select',
       type: 'info',
       details: `Using wallet '${walletName}'`
     })
@@ -448,7 +352,7 @@ export class WalletFactory {
     return features
   }
 
-  getWalletFeature <T>(walletPackage: string, featureName: FeatureType): Feature<T> | undefined {
+  getWalletFeatureByType <T>(walletPackage: string, featureName: FeatureType): Feature<T> | undefined {
     const features = this.getWalletFeatures<T>(walletPackage)
     const feature = features.reduce<Feature<T> | undefined>((prev, curr) => {
       if (curr.handler.name === featureName) {
@@ -459,16 +363,8 @@ export class WalletFactory {
     return feature
   }
 
-  get walletNames (): string[] {
-    return Object.keys(this.locals.sharedMemoryManager.memory.settings.private.wallet.wallets)
-  }
-
   get walletPackages (): string[] {
     return this.locals.sharedMemoryManager.memory.settings.private.wallet.packages
-  }
-
-  get walletName (): string | undefined {
-    return this._walletName
   }
 
   get wallet (): Wallet {

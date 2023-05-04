@@ -1,5 +1,5 @@
 
-import { FeatureContext, Locals, logger, MainContext } from '@wallet/main/internal'
+import { FeatureContext, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 import { FeatureHandler } from './feature-handler'
 import { WalletInfo } from '@wallet/lib'
 
@@ -8,10 +8,9 @@ export interface Feature<T> {
   opts?: T
 }
 
-// FIXME: The feature management is too messy.
-// It is difficult to understand how to use it because it is too dependent to the WalletFactory.
 export class FeatureManager {
   features: Map<string, Feature<any>>
+  walletInfo?: WalletInfo
 
   static async initialize (ctx: MainContext, locals: Locals): Promise<FeatureManager> {
     return new FeatureManager(locals)
@@ -29,6 +28,10 @@ export class FeatureManager {
     return { handler, opts }
   }
 
+  get hasFeatures (): boolean {
+    return this.walletInfo !== undefined
+  }
+
   addFeature<T> (feature: Feature<T>): void {
     const name = feature.handler.name
     if (this.features.has(name)) {
@@ -39,44 +42,81 @@ export class FeatureManager {
     this.features.set(name, feature)
   }
 
-  async getWallet (walletName?: string): Promise<string> {
-    if (walletName !== undefined) {
-      return walletName
+  async loadWalletFeatures (walletInfo: WalletInfo): Promise<void> {
+    if (this.walletInfo !== undefined) {
+      throw new WalletDesktopError('wallet features already loaded', {
+        message: 'Wallet Feautes',
+        details: 'Could not load wallet features. You must clean previous features first.',
+        severity: 'error'
+      })
     }
 
-    const { sharedMemoryManager: shm } = this.locals
-    const currentWallet = shm.memory.settings.public.currentWallet
-    if (currentWallet === undefined) {
-      throw new Error('Wallet settings is undefined')
-    }
+    const { walletFactory } = this.locals
 
-    return currentWallet
+    const oldFeatures = this.features
+    const oldWalletInfo = this.walletInfo
+
+    this.walletInfo = walletInfo
+    this.features = new Map()
+
+    try {
+      const features = walletFactory.getWalletFeatures(walletInfo.package)
+      if (features !== undefined) {
+        for (const feature of features) {
+          this.addFeature(feature)
+        }
+      }
+    } catch (err) {
+      this.features = oldFeatures
+      this.walletInfo = oldWalletInfo
+
+      throw err
+    }
   }
 
-  async clearFeatures (walletName?: string): Promise<void> {
+  // Wallet feature events
+  async start (): Promise<void> {
+    if (this.walletInfo === undefined) {
+      throw new WalletDesktopError('cannot start features', {
+        message: 'Wallet Features',
+        details: 'Cannot start features without initializing the feature manager',
+        severity: 'error'
+      })
+    }
+
+    for (const [, feature] of this.features) {
+      if (feature.handler.start !== undefined) {
+        await feature.handler.start(this.walletInfo, feature.opts, this.locals)
+      }
+    }
+  }
+
+  async clearFeatures (): Promise<void> {
+    if (this.walletInfo === undefined) {
+      return
+    }
+
     for (const [, feature] of this.features) {
       if (feature.handler.stop !== undefined) {
-        const wallet = await this.getWallet(walletName)
-        await feature.handler.stop(wallet, feature.opts, this.locals)
+        await feature.handler.stop(this.walletInfo, feature.opts, this.locals)
       }
     }
     this.features.clear()
+    this.walletInfo = undefined
   }
 
-  async start (walletName?: string): Promise<void> {
-    for (const [, feature] of this.features) {
-      if (feature.handler.start !== undefined) {
-        const wallet = await this.getWallet(walletName)
-        await feature.handler.start(wallet, feature.opts, this.locals)
-      }
+  async delete (): Promise<void> {
+    if (this.walletInfo === undefined) {
+      throw new WalletDesktopError('cannot start features', {
+        message: 'Wallet Features',
+        details: 'Cannot start features without initializing the feature manager',
+        severity: 'error'
+      })
     }
-  }
 
-  async delete (walletName?: string): Promise<void> {
     for (const [, feature] of this.features) {
       if (feature.handler.delete !== undefined) {
-        const wallet = await this.getWallet(walletName)
-        await feature.handler.delete(wallet, feature.opts, this.locals)
+        await feature.handler.delete(this.walletInfo, feature.opts, this.locals)
       }
     }
   }

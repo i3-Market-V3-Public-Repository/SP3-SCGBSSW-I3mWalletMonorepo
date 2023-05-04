@@ -15,6 +15,7 @@ export interface ChangeEvent {
     emitter?: BrowserWindow
     modifiers?: {
       'no-settings-update'?: boolean
+      'no-wallet-change'?: boolean
     }
   }
 }

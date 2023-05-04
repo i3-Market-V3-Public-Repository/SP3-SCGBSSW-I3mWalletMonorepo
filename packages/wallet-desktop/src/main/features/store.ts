@@ -13,24 +13,24 @@ export interface StoreFeatureOptions {
 export const storeFeature: FeatureHandler<StoreFeatureOptions> = {
   name: 'store',
 
-  async start (walletName, opts, locals) {
+  async start (walletInfo, opts, locals) {
     const { storeManager } = locals
-    if (!storeManager.hasStore('wallet', walletName)) {
-      await storeManager.buildWalletStore(walletName)
+    if (!storeManager.hasStore('wallet', walletInfo.name)) {
+      await storeManager.buildWalletStore(walletInfo)
     }
     // TODO: Should we allow use the getStore method outside??
-    locals.featureContext.store = storeManager.getStore('wallet', walletName)
+    locals.featureContext.store = storeManager.getStore('wallet', walletInfo.name)
     locals.sharedMemoryManager.update((mem) => ({ ...mem, hasStore: true }))
   },
 
-  async delete (walletName, opts, locals) {
+  async delete (walletInfo, opts, locals) {
     const { storeManager } = locals
-    if (storeManager.hasStore('wallet', walletName)) {
-      storeManager.deleteStore('wallet', walletName)
+    if (storeManager.hasStore('wallet', walletInfo.name)) {
+      storeManager.deleteStore('wallet', walletInfo.name)
     }
   },
 
-  async stop (walletName, opts, locals) {
+  async stop (walletInfo, opts, locals) {
     delete locals.featureContext.store
     locals.sharedMemoryManager.update((mem) => ({ ...mem, hasStore: false }))
   }
