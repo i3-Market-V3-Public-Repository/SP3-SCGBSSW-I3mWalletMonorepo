@@ -19,7 +19,7 @@ export async function handleVaultErrors (locals: Locals, err: VaultError): Promi
       message: 'Cloud Vault',
       details: 'Invalid credentials.'
     })
-  }else if (checkErrorType(err, 'unauthorized')) {
+  } else if (checkErrorType(err, 'unauthorized')) {
     locals.cloudVaultManager.removeCredentials()
     toast.show({
       type: 'error',

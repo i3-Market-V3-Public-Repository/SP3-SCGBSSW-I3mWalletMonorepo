@@ -1,7 +1,7 @@
 import { DEFAULT_PROVIDERS_DATA, ProviderData, Wallet, WalletBuilder, WalletMetadata } from '@i3m/base-wallet'
 import { TaskDescription, WalletInfo, WalletMetadataMap } from '@wallet/lib'
 import {
-  Feature, FeatureHandler, FeatureManager, FeatureType, handleErrorCatch, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
+  Feature, FeatureHandler, FeatureManager, FeatureType, LabeledTaskHandler, Locals, logger, MainContext, StartFeatureError, storeFeature, WalletDesktopError
 } from '@wallet/main/internal'
 
 import { InvalidWalletError, NoWalletSelectedError } from './errors'
@@ -46,8 +46,8 @@ export class WalletFactory {
     runtimeManager.on('ui', async () => {
       await this.loadCurrentWallet()
 
-      const forceWalletPromise = this.forceOneWallet()
-      forceWalletPromise.catch(...handleErrorCatch(this.locals))
+      // const forceWalletPromise = this.forceOneWallet()
+      // forceWalletPromise.catch(...handleErrorCatch(this.locals))
     })
   }
 
@@ -278,12 +278,12 @@ export class WalletFactory {
     })
   }
 
-  async forceOneWallet (): Promise<void> {
-    //
-    while (!this.hasWalletsCreated) {
-      await this.createWallet().catch(...handleErrorCatch(this.locals))
-    }
-  }
+  // async forceOneWallet (): Promise<void> {
+  //   //
+  //   while (!this.hasWalletsCreated) {
+  //     await this.createWallet().catch(...handleErrorCatch(this.locals))
+  //   }
+  // }
 
   async changeWallet (walletInfo: WalletInfo): Promise<void> {
     const walletName = walletInfo.name

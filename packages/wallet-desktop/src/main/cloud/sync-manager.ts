@@ -80,14 +80,14 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
     const { sharedMemoryManager } = this.locals
     const cloud = sharedMemoryManager.memory.settings.public.cloud
 
-    this.semaphore.wait(async () => {
+    await this.semaphore.wait(async () => {
       let conflict = false
       let direction: SyncDirection | undefined
       if (isAutoSync(opts)) {
         const fixedRemoteTimestamp = opts.timestamps.remote ?? 0
         const fixedLocalTimestamp = opts.timestamps.local ?? 0
         const unsyncedChanges = cloud?.unsyncedChanges ?? false
-  
+
         if (fixedRemoteTimestamp > fixedLocalTimestamp) {
           if (unsyncedChanges && opts.force !== true) {
             conflict = true
@@ -108,7 +108,7 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
           details: 'Invalid cloud vault sync options'
         })
       }
-  
+
       if (conflict) {
         await this.conflict()
       } else {
@@ -122,7 +122,6 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
         }
       }
     })
-
   }
 
   async conflict (): Promise<void> {
