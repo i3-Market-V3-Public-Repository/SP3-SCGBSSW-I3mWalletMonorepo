@@ -13,10 +13,18 @@ export async function handleVaultErrors (locals: Locals, err: VaultError): Promi
       details: 'Cannot connect to the vault server.'
     })
   } else if (checkErrorType(err, 'invalid-credentials')) {
+    locals.cloudVaultManager.removeCredentials()
     toast.show({
       type: 'error',
       message: 'Cloud Vault',
       details: 'Invalid credentials.'
+    })
+  }else if (checkErrorType(err, 'unauthorized')) {
+    locals.cloudVaultManager.removeCredentials()
+    toast.show({
+      type: 'error',
+      message: 'Cloud Vault',
+      details: 'Unauthorized.'
     })
   } else {
     toast.show({

@@ -323,6 +323,22 @@ export class CloudVaultManager {
     }
   }
 
+  removeCredentials (): void {
+    this.locals.sharedMemoryManager.update((mem) => ({
+      ...mem,
+      settings: {
+        ...mem.settings,
+        private: {
+          ...mem.settings.private,
+          cloud: {
+            ...mem.settings.private.cloud,
+            credentials: undefined
+          }
+        }
+      }
+    }))
+  }
+
   // *************** Client Methods *************** //
   async initializeClientIfNeeded (): Promise<void> {
     // If the url is different from the current one close the vault.

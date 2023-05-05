@@ -1,5 +1,5 @@
 import { checkErrorType, VaultError, VaultStorage } from '@i3m/cloud-vault-client'
-import { AsyncEventHandler, Locals, MainContext, WalletDesktopError } from '@wallet/main/internal'
+import { AsyncEventHandler, Locals, MainContext, Semaphore, WalletDesktopError } from '@wallet/main/internal'
 
 export type SyncDirection = 'pull' | 'push' | 'none'
 export type ResolveFunction = (direction: SyncDirection, force?: boolean) => Promise<void>
@@ -54,9 +54,11 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
     return new SynchronizationManager(locals)
   }
 
+  semaphore: Semaphore
   constructor (protected locals: Locals) {
     super()
 
+    this.semaphore = new Semaphore()
     this.resolve.bind(this)
   }
 
@@ -78,46 +80,49 @@ export class SynchronizationManager extends AsyncEventHandler<SyncEvents> {
     const { sharedMemoryManager } = this.locals
     const cloud = sharedMemoryManager.memory.settings.public.cloud
 
-    let conflict = false
-    let direction: SyncDirection | undefined
-    if (isAutoSync(opts)) {
-      const fixedRemoteTimestamp = opts.timestamps.remote ?? 0
-      const fixedLocalTimestamp = opts.timestamps.local ?? 0
-      const unsyncedChanges = cloud?.unsyncedChanges ?? false
-
-      if (fixedRemoteTimestamp > fixedLocalTimestamp) {
-        if (unsyncedChanges && opts.force !== true) {
-          conflict = true
+    this.semaphore.wait(async () => {
+      let conflict = false
+      let direction: SyncDirection | undefined
+      if (isAutoSync(opts)) {
+        const fixedRemoteTimestamp = opts.timestamps.remote ?? 0
+        const fixedLocalTimestamp = opts.timestamps.local ?? 0
+        const unsyncedChanges = cloud?.unsyncedChanges ?? false
+  
+        if (fixedRemoteTimestamp > fixedLocalTimestamp) {
+          if (unsyncedChanges && opts.force !== true) {
+            conflict = true
+          } else {
+            direction = 'pull'
+          }
+        } else if (unsyncedChanges) {
+          direction = 'push'
         } else {
-          direction = 'pull'
+          direction = 'none'
         }
-      } else if (unsyncedChanges) {
-        direction = 'push'
+      } else if (isForceSync(opts)) {
+        direction = opts.direction
       } else {
-        direction = 'none'
-      }
-    } else if (isForceSync(opts)) {
-      direction = opts.direction
-    } else {
-      throw new WalletDesktopError('invalid cloud vault sync options', {
-        message: 'Cloud Vault Sync',
-        severity: 'error',
-        details: 'Invalid cloud vault sync options'
-      })
-    }
-
-    if (conflict) {
-      await this.conflict()
-    } else {
-      if (direction !== undefined) {
-        await this.resolve(direction, opts.force)
-      } else {
-        throw new WalletDesktopError('Invalid cloud vault synchronization', {
-          message: 'Cloud vault synchronization',
-          severity: 'error'
+        throw new WalletDesktopError('invalid cloud vault sync options', {
+          message: 'Cloud Vault Sync',
+          severity: 'error',
+          details: 'Invalid cloud vault sync options'
         })
       }
-    }
+  
+      if (conflict) {
+        await this.conflict()
+      } else {
+        if (direction !== undefined) {
+          await this.resolve(direction, opts.force)
+        } else {
+          throw new WalletDesktopError('Invalid cloud vault synchronization', {
+            message: 'Cloud vault synchronization',
+            severity: 'error'
+          })
+        }
+      }
+    })
+
   }
 
   async conflict (): Promise<void> {

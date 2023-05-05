@@ -300,7 +300,7 @@ export class VaultClient extends EventEmitter {
     if (currentState !== VAULT_STATE.INITIALIZED && currentState !== VAULT_STATE.LOGGED_IN) {
       throw new VaultError('error', new Error('in order to login you should be in state INITIALIZED or LOGGED IN but not receiving SSE events'))
     }
-    await this.switchToState(VAULT_STATE.CONNECTED, {
+    await this.switchToState(VAULT_STATE.LOGGED_IN, {
       username,
       password,
       timestamp
