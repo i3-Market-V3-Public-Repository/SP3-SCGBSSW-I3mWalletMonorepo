@@ -6,7 +6,7 @@ on:
 jobs:
   pack:
     name: pack and generate release draft
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
