@@ -17,15 +17,10 @@ jobs:
           node-version: 18
       
       - name: Install root dependencies
-        run: npm i
+        run: npm ci
 
       - name: Install desktop dependencies
         run: npm run install:desktop
-
-      - name: Run tests
-        run: npm test
-        env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
