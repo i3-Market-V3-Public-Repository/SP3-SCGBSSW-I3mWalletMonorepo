@@ -170,7 +170,7 @@
     "@veramo/did-resolver": "^1.2.0",
     "@veramo/key-manager": "^1.2.0",
     "@veramo/message-handler": "^1.2.0",
-    "@veramo/selective-disclosure": "^1.2.0",
+    "@veramo/selective-disclosure": "^5.2.0",
     "debug": "^4.3.4",
     "did-jwt": "^6.8.0",
     "did-resolver": "^3.1.0",
