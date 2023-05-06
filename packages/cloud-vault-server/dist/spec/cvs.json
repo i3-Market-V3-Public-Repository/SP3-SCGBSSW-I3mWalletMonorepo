@@ -688,7 +688,7 @@
     "securitySchemes": {
       "i3m": {
         "type": "openIdConnect",
-        "openIdConnectUrl": "https://identity1.i3-market.eu/release2/oidc/.well-known/openid-configuration"
+        "openIdConnectUrl": "OIDC_PROVIDER_URI/.well-known/openid-configuration"
       },
       "bearerAuth": {
         "type": "http",
@@ -1223,10 +1223,5 @@
         }
       }
     }
-  },
-  "servers": [
-    {
-      "url": "http://localhost:3000"
-    }
-  ]
+  }
 }
