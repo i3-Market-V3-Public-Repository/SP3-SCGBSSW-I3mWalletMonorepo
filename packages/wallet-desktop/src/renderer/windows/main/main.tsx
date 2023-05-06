@@ -40,7 +40,6 @@ function App (props: MainArgs): JSX.Element {
         <Route path='/wallet'>
           <Wallet />
         </Route>
-        <FreezeOverlay />
       </ContextMenu>
     </div>
   )
@@ -78,7 +77,8 @@ export default function Main (props: MainArgs): JSX.Element {
     <Router>
       <App {...props} />
       {
-        dialogProps !== undefined ? <Dialog {...dialogProps} /> : null
+        dialogProps !== undefined ? <Dialog {...dialogProps} />
+          : <FreezeOverlay />
       }
       <Toasts toasts={toasts} />
     </Router>

@@ -12,8 +12,14 @@ const COLOR = '#3BBD59'
 export function FreezeOverlay (): JSX.Element | null {
   const [sharedMemory] = useSharedMemory()
 
-  const task: WalletTask | undefined = sharedMemory.tasks
-    .filter((task) => task.description.freezing === true)[0]
+  const tasks: WalletTask[] = sharedMemory.tasks
+    .filter((task) => task.description.freezing === true)
+
+  // Get last task because it is the newer one!
+  let task: WalletTask | undefined
+  if (tasks.length > 0) {
+    task = tasks[tasks.length - 1]
+  }
 
   return task !== undefined ? (
     <div className='freeze-overlay'>

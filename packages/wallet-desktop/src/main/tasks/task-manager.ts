@@ -1,5 +1,5 @@
 import { TaskDescription, WalletTaskTypes } from '@wallet/lib'
-import { Locals, MainContext } from '@wallet/main/internal'
+import { Locals, logger, MainContext } from '@wallet/main/internal'
 
 import { AddTaskMethod, FinishTaskMethod, LabeledTaskHandlerImpl, ProgressTaskHandlerImpl, TaskHandlerFor, TaskMethods, UpdateTaskMethod } from './handlers'
 
@@ -36,6 +36,7 @@ export class TaskManager implements TaskMethods {
 
   async createTask <T extends WalletTaskTypes, R>(type: T, description: TaskDescription, handler: (task: TaskHandlerFor<T>) => Promise<R>): Promise<R> {
     let taskHandler: TaskHandlerFor<T>
+    const hrstart = process.hrtime()
     // TODO: Fix this anys...
     if (type === 'labeled') {
       taskHandler = new LabeledTaskHandlerImpl(this, description) as any
@@ -47,9 +48,12 @@ export class TaskManager implements TaskMethods {
 
     let result
     try {
+      logger.debug(`[title=${description.title},id=${taskHandler.id}] Task started!`)
       this.addTask(taskHandler.task)
       result = await handler(taskHandler)
     } finally {
+      const hrend = process.hrtime(hrstart)
+      logger.debug(`[title=${description.title},id=${taskHandler.id}] Task ended: ${hrend[0]}s ${hrend[1] / 1000000}ms`)
       this.finishTask(taskHandler.task)
     }
     return result

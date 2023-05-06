@@ -1,7 +1,7 @@
 import { CbOnEventFn as ClientCallback, VaultClient, VaultStorage, VAULT_STATE } from '@i3m/cloud-vault-client'
 
 import { CloudVaultPrivateSettings, CloudVaultPublicSettings, Credentials, TaskDescription } from '@wallet/lib'
-import { getVersionDate, handleError, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, SyncTimestamps, WalletDesktopError } from '@wallet/main/internal'
+import { getVersionDate, handleErrorCatch, handlePromise, LabeledTaskHandler, Locals, logger, MainContext, SyncTimestamps, WalletDesktopError } from '@wallet/main/internal'
 import { StoresBundle } from '../store/store-bundle'
 import { CloudVaultFlows } from './cloud-vault-flows'
 
@@ -56,7 +56,7 @@ export class CloudVaultManager {
     // Cloud vault workflow
     runtimeManager.on('cloud-auth', async (task) => {
       if (authManager.justRegistered) {
-        await this.firstTimeSync(task)
+        await this.flows.firstTimeSync(task)
       } else {
         const cloud = shm.memory.settings.private.cloud
         if (cloud?.credentials !== undefined) {
@@ -173,52 +173,16 @@ export class CloudVaultManager {
     this.client.on('sync-stop', onSyncStop)
   }
 
-  protected async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
-    const { dialog } = this.locals
-    const initialTaskDetails = task.task.description.details ?? ''
-    task.setDetails('Setting up your cloud vault').update()
-
-    const loginBuilder = dialog.useOptionsBuilder()
-    loginBuilder.add('No', 'danger')
-    const login = loginBuilder.add('Yes')
-
-    let sync = false
-    while (!sync) {
-      const option = await dialog.select({
-        title: 'Secure Cloud Vault',
-        message: 'If you already have a backup in a cloud vault server, do you want to load it?',
-        showInput: false,
-        ...loginBuilder
-      })
-
-      if (loginBuilder.compare(option, login)) {
-        try {
-          await this.loginTask(task, { freezing: true })
-          sync = true
-          continue
-        } catch (err: unknown) {
-          await handleError(this.locals, err)
-        }
-      } else {
-        break
-      }
-    }
-
-    if (sync) {
-      task.setDetails('Restoring your cloud vault data').setFreezing(true).update()
-      await this.locals.syncManager.sync({ direction: 'pull', force: true })
-      task.setFreezing(false).update()
-    }
-
-    task.setDetails(initialTaskDetails).update()
-  }
-
   get isConnected (): boolean {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state >= VAULT_STATE.CONNECTED
   }
 
   get isDisconnected (): boolean {
     return this.locals.sharedMemoryManager.memory.cloudVaultData.state < VAULT_STATE.CONNECTED
+  }
+
+  get isLoggedIn (): boolean {
+    return this.locals.sharedMemoryManager.memory.cloudVaultData.state > VAULT_STATE.LOGGED_IN
   }
 
   get timestamps (): SyncTimestamps {
@@ -276,7 +240,7 @@ export class CloudVaultManager {
     }
   }
 
-  protected async loginTask (task: LabeledTaskHandler, loginData?: LoginData): Promise<void> {
+  async loginTask (task: LabeledTaskHandler, loginData?: LoginData): Promise<void> {
     const { sharedMemoryManager: shm } = this.locals
     const errorMessage = 'Vault login error'
     const optCredentails = loginData?.credentials
@@ -416,7 +380,7 @@ export class CloudVaultManager {
 
   // *************** Sync *************** //
   async storeVault (force = false): Promise<void> {
-    if (this.isDisconnected) {
+    if (this.isLoggedIn) {
       return
     }
 
@@ -438,7 +402,7 @@ export class CloudVaultManager {
   }
 
   async restoreVault (vault?: VaultStorage): Promise<void> {
-    if (this.isDisconnected) {
+    if (this.isLoggedIn) {
       return
     }
 

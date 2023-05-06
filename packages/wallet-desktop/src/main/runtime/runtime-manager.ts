@@ -154,10 +154,10 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
     await this.launch()
 
     const { taskManager } = this.locals
-    await taskManager.createTask('labeled', { title: 'Starting' }, this.start)
-    await taskManager.createTask('labeled', { title: 'Authenticating' }, this.auth)
-    await taskManager.createTask('labeled', { title: 'Migrating' }, this.load)
-    await taskManager.createTask('labeled', { title: 'UI' }, this.ui)
+    await taskManager.createTask('labeled', { title: 'Starting', details: 'Initializing the application', freezing: true }, this.start)
+    await taskManager.createTask('labeled', { title: 'Authenticating', details: 'Authenticating the user', freezing: true }, this.auth)
+    await taskManager.createTask('labeled', { title: 'Loading', details: 'Loading your data', freezing: true }, this.load)
+    await taskManager.createTask('labeled', { title: 'UI', details: 'Performing last UI adjustments', freezing: true }, this.ui)
   }
 
   async launch (): Promise<void> {

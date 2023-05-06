@@ -2,11 +2,50 @@ import { VerifiableCredentialResource } from '@i3m/base-wallet'
 import { passwordCheck } from '@i3m/cloud-vault-client'
 import { Credentials, DEFAULT_CLOUD_URL, DEFAULT_VAULT_PROVIDERS, filled } from '@wallet/lib'
 
-import { getVersionDate, Locals, WalletDesktopError } from '@wallet/main/internal'
+import { getVersionDate, handleError, LabeledTaskHandler, Locals, WalletDesktopError } from '@wallet/main/internal'
 import { SyncDirection } from './sync-manager'
 
 export class CloudVaultFlows {
   constructor (protected locals: Locals) {}
+
+  async firstTimeSync (task: LabeledTaskHandler): Promise<void> {
+    const { dialog, cloudVaultManager } = this.locals
+    const initialTaskDetails = task.task.description.details ?? ''
+    task.setDetails('Setting up your cloud vault').update()
+
+    const loginBuilder = dialog.useOptionsBuilder()
+    loginBuilder.add('No', 'danger')
+    const login = loginBuilder.add('Yes')
+
+    let sync = false
+    while (!sync) {
+      const option = await dialog.select({
+        title: 'Secure Cloud Vault',
+        message: 'If you already have a backup in a cloud vault server, do you want to load it?',
+        showInput: false,
+        ...loginBuilder
+      })
+
+      if (loginBuilder.compare(option, login)) {
+        try {
+          await cloudVaultManager.loginTask(task, { freezing: true })
+          sync = true
+          continue
+        } catch (err: unknown) {
+          await handleError(this.locals, err)
+        }
+      } else {
+        break
+      }
+    }
+
+    if (sync) {
+      task.setDetails('Restoring your cloud vault data').update()
+      await this.locals.syncManager.sync({ direction: 'pull', force: true })
+    }
+
+    task.setDetails(initialTaskDetails).update()
+  }
 
   async askConflictResolution (localTimestamp?: number, remoteTimestamp?: number): Promise<SyncDirection> {
     const { dialog } = this.locals

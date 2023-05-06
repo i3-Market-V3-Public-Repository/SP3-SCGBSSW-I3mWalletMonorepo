@@ -1,15 +1,21 @@
-import { currentAuthAlgorithm, currentEncAlgorithm, currentStoreType, getCurrentAuthKeys, getCurrentEncKeys, logger, WalletDesktopError } from '@wallet/main/internal'
+import { currentAuthAlgorithm, currentEncAlgorithm, currentStoreType, getCurrentAuthKeys, getCurrentEncKeys, LabeledTaskHandler, Locals, logger, MainContext, WalletDesktopError } from '@wallet/main/internal'
 
 import { RuntimeScript } from '../runtime-script'
 
-export const migrate: RuntimeScript = async (ctx, locals) => {
+async function _migrate (ctx: MainContext, locals: Locals, task: LabeledTaskHandler): Promise<void> {
+  const { versionManager } = locals
+  task
+    .setDetails(`Migrating your local data from version ${versionManager.settingsVersion} to version ${versionManager.softwareVersion}`)
+    .setFreezing(true)
+    .update()
+
   const { keyCtx } = ctx
   if (keyCtx === undefined) {
     throw new WalletDesktopError('invalid context for this runtime!')
   }
 
   //
-  const { sharedMemoryManager: shm, storeManager, keysManager, versionManager } = locals
+  const { sharedMemoryManager: shm, storeManager, keysManager } = locals
   const { public: publicSettings } = shm.memory.settings
 
   let migrateStores = false
@@ -65,4 +71,11 @@ export const migrate: RuntimeScript = async (ctx, locals) => {
   }
 
   await versionManager.migrateSettingsVersion()
+}
+
+export const migrate: RuntimeScript = async (ctx, locals) => {
+  const { taskManager } = locals
+  await taskManager.createTask('labeled', { title: 'Migrate' }, async (task) => {
+    await _migrate(ctx, locals, task)
+  })
 }
