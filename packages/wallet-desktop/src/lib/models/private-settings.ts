@@ -28,8 +28,10 @@ export interface DeveloperSettings {
 
 export interface WalletConnectSettings {
   enableTokenExpiration: boolean
-  tokenTTL: number // in seconds
+  tokenTTL?: number // in seconds
 }
+
+export const DEFAULT_TOKEN_TLL = 2419200 // 4 weeks
 
 export interface Credentials {
   username: string
@@ -73,7 +75,7 @@ export function createDefaultPrivateSettings (): PrivateSettings {
     providers: [],
     connect: {
       enableTokenExpiration: true,
-      tokenTTL: 2419200 // 4 weeks
+      tokenTTL: DEFAULT_TOKEN_TLL // 4 weeks
     },
     developer: {
       enableDeveloperFunctions: false,

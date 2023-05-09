@@ -1,9 +1,15 @@
-import { VerifiableCredentialResource } from '@i3m/base-wallet'
+import { Identity, VerifiableCredentialResource } from '@i3m/base-wallet'
 import { passwordCheck } from '@i3m/cloud-vault-client'
 import { Credentials, DEFAULT_CLOUD_URL, DEFAULT_VAULT_PROVIDERS, filled } from '@wallet/lib'
 
 import { getVersionDate, handleError, LabeledTaskHandler, Locals, WalletDesktopError } from '@wallet/main/internal'
 import { SyncDirection } from './sync-manager'
+
+interface RegistrationIdentity {
+  identity: Identity
+  provider?: boolean
+  consumer?: boolean
+}
 
 export class CloudVaultFlows {
   constructor (protected locals: Locals) {}
@@ -166,8 +172,8 @@ export class CloudVaultFlows {
     })
   }
 
-  async askRegistrationCredential (errorMessage: string): Promise<VerifiableCredentialResource> {
-    const { dialog } = this.locals
+  async askRegistrationCredential (errorMessage: string): Promise<RegistrationIdentity> {
+    const { dialog, sharedMemoryManager: shm } = this.locals
 
     const resources = Object.values(this.locals.sharedMemoryManager.memory.resources)
     const vcs = resources.filter((resource) => {
@@ -180,26 +186,63 @@ export class CloudVaultFlows {
       return false
     }) as VerifiableCredentialResource[]
 
-    let vc: VerifiableCredentialResource | undefined
-    if (vcs.length > 1) {
+    const { identities } = shm.memory
+    const possibleIdentities: Record<string /* DID */, RegistrationIdentity> = {}
+    for (const vc of vcs) {
+      if (vc.identity !== undefined) {
+        const identity = identities[vc.identity]
+        if (identity === undefined) {
+          continue
+        }
+
+        const subject = vc.resource.credentialSubject
+        let regIdentity: RegistrationIdentity
+        if (possibleIdentities[vc.identity] !== undefined) {
+          regIdentity = possibleIdentities[vc.identity]
+        } else {
+          regIdentity = { identity }
+          possibleIdentities[vc.identity] = regIdentity
+        }
+
+        if (subject.consumer === true) {
+          regIdentity.consumer = true
+        }
+
+        if (subject.provider === true) {
+          regIdentity.provider = true
+        }
+      }
+    }
+
+    const possibleIdentitiesList = Object.values(possibleIdentities)
+    let reg: RegistrationIdentity | undefined
+    if (possibleIdentitiesList.length > 1) {
       const response = await dialog.select({
         title: 'Cloud Vault',
         message: 'Select a valid i3-market identity to register it into the vault server.',
-        values: vcs,
-        getText (vc) {
-          const subject = vc.resource.credentialSubject
-          const type = subject.consumer === undefined ? 'Provider' : 'Consumer'
+        values: possibleIdentitiesList,
+        getText (reg) {
+          const alias = reg.identity.alias
+          const name = alias !== undefined ? alias : (reg.identity.did.substring(0, 23) + '...')
+          const types: string[] = []
+          if (reg.consumer === true) {
+            types.push('Consumer')
+          }
 
-          return `${type} (${vc.resource.credentialSubject.id.substring(0, 23)}...)`
+          if (reg.provider === true) {
+            types.push('Provider')
+          }
+
+          return `${name} (as ${types.join('/')})`
         }
       })
 
-      vc = response
+      reg = response
     } else {
-      vc = vcs[0]
+      reg = possibleIdentitiesList[0]
     }
 
-    if (vc === undefined) {
+    if (reg === undefined) {
       throw new WalletDesktopError('You need a valid provider/consumer i3-market credential to register a user', {
         severity: 'error',
         message: errorMessage,
@@ -207,6 +250,6 @@ export class CloudVaultFlows {
       })
     }
 
-    return vc
+    return reg
   }
 }

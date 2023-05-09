@@ -2,6 +2,7 @@ import { CodeGenerator, MasterKey } from '@i3m/wallet-protocol'
 import { EncryptJWT, jwtDecrypt, KeyLike } from 'jose'
 
 import { Locals } from '@wallet/main/internal'
+import { DEFAULT_TOKEN_TLL } from '@wallet/lib'
 
 export class JwtCodeGenerator implements CodeGenerator {
   constructor (protected key: KeyLike | Uint8Array, protected locals: Locals) { }
@@ -19,7 +20,7 @@ export class JwtCodeGenerator implements CodeGenerator {
 
     const connect = shm.memory.settings.private.connect
     if (connect.enableTokenExpiration) {
-      const exp = iat + connect.tokenTTL
+      const exp = iat + (connect.tokenTTL ?? DEFAULT_TOKEN_TLL)
       token.setExpirationTime(exp)
     }
 

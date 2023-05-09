@@ -155,19 +155,21 @@ export class VersionManager {
   }
 
   async migrateSettingsVersion (): Promise<void> {
-    const { sharedMemoryManager: shm } = this.locals
-    shm.update((mem) => ({
-      ...mem,
-      settings: {
-        ...mem.settings,
-        public: {
-          ...mem.settings.public,
-          version: this.softwareVersion
+    if (this.settingsVersion !== this.softwareVersion) {
+      const { sharedMemoryManager: shm } = this.locals
+      shm.update((mem) => ({
+        ...mem,
+        settings: {
+          ...mem.settings,
+          public: {
+            ...mem.settings.public,
+            version: this.softwareVersion
+          }
         }
-      }
-    }))
-    this.settingsVersion = this.softwareVersion
+      }))
+      this.settingsVersion = this.softwareVersion
 
-    logger.debug('Migration finished')
+      logger.debug('Migration version!')
+    }
   }
 }

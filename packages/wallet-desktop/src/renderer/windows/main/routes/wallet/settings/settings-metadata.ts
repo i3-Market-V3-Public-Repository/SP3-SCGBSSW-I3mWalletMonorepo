@@ -39,6 +39,7 @@ export interface InputSettingsMetadata extends BaseSettingsMetadata<string> {
 
 export interface NumberSettingsMetadata extends BaseSettingsMetadata<number> {
   type: 'number'
+  placeholder?: number
 }
 
 export interface ArraySettingsMetadata<T = any, S extends BaseSettingsMetadata = SettingsMetadata> extends BaseSettingsMetadata<T[]> {

@@ -18,6 +18,7 @@ export function SettingsNumber (props: Props): JSX.Element {
   const value = _.get(sharedMemory.settings, metadata.key) ?? 0
   const label = executeFunctionOrValue(metadata.label, metadata, value, sharedMemory)
   const id = `settings-${label}`
+  const placeholder = metadata.placeholder !== undefined ? metadata.placeholder.toString() : undefined
 
   const onChange: React.ChangeEventHandler<HTMLInputElement> = (ev) => {
     const newValue = ev.target.valueAsNumber
@@ -35,7 +36,7 @@ export function SettingsNumber (props: Props): JSX.Element {
   return (
     <>
       <label htmlFor={id} title={label}>{label}</label>
-      <Form.Control id={id} type='number' size='sm' onChange={onChange} value={value} />
+      <Form.Control id={id} type='number' placeholder={placeholder} size='sm' onChange={onChange} value={value} />
     </>
   )
 }

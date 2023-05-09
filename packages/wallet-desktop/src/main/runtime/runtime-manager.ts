@@ -9,9 +9,7 @@ import {
   LabeledTaskHandler,
   Locals,
   LocalsKey,
-  LocalsSetter,
-  logger,
-  MainContext, PropInitializer,
+  LocalsSetter, MainContext, PropInitializer,
   SharedMemoryManager,
   StoreManager, SynchronizationManager, TaskManager,
   ToastManager,
@@ -161,29 +159,24 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
   }
 
   async launch (): Promise<void> {
-    logger.debug('[RuntimeManager] Launch!')
     await this.emit('before-launch')
     await this.emit('launch')
     await this.emit('after-launch')
   }
 
   async start (): Promise<void> {
-    logger.debug('[RuntimeManager] Start!')
     await this.emit('before-start')
     await this.emit('start')
     await this.emit('after-start')
   }
 
   async auth (task: LabeledTaskHandler): Promise<void> {
-    logger.debug('[RuntimeManager] Auth!')
     await this.emit('before-auth', task)
     await this.emit('auth', task)
     await this.emit('after-auth', task)
   }
 
   async load (task: LabeledTaskHandler): Promise<void> {
-    logger.debug('[RuntimeManager] Load!')
-
     await this.emit('private-settings', task)
     await this.emit('after-private-settings', task)
     await this.emit('wallet-metadatas', task)
@@ -196,7 +189,6 @@ export class RuntimeManager extends AsyncEventHandler<RuntimeEvents> {
   }
 
   async ui (): Promise<void> {
-    logger.debug('[RuntimeManager] UI!')
     await this.emit('ui')
   }
 }

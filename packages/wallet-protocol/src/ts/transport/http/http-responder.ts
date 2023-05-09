@@ -1,9 +1,9 @@
 import http from 'http'
 
-import { constants, format } from '../../internal'
-import { ResponderTransport, ResponderOptions } from '../responder-transport'
-import { HttpResponse } from './http-response'
+import { constants, format, MasterKey, WalletProtocolError } from '../../internal'
+import { ResponderOptions, ResponderTransport } from '../responder-transport'
 import { HttpRequest } from './http-initiator'
+import { HttpResponse } from './http-response'
 
 export interface HttpResponderOptions extends ResponderOptions {
   rpcUrl: string
@@ -42,14 +42,25 @@ export class HttpResponderTransport extends ResponderTransport<http.IncomingMess
     res: http.ServerResponse,
     authentication: string
   ): Promise<void> {
-    const code = format.utf2U8Arr(authentication)
-    const masterKey = await this.opts.codeGenerator.getMasterKey(code)
+    let masterKey: MasterKey
+    try {
+      const code = format.utf2U8Arr(authentication)
+      masterKey = await this.opts.codeGenerator.getMasterKey(code)
+    } catch (err) {
+      throw new WalletProtocolError('Unauthorized token', 401, err)
+    }
 
-    const ciphertextBase64 = await this.readRequestBody(req)
-    const ciphertext = format.base642U8Arr(ciphertextBase64)
-    const message = await masterKey.decrypt(ciphertext)
-    const messageJson = format.u8Arr2Utf(message)
-    const body: HttpRequest = JSON.parse(messageJson)
+    let body: HttpRequest
+    try {
+      const ciphertextBase64 = await this.readRequestBody(req)
+      const ciphertext = format.base642U8Arr(ciphertextBase64)
+      const message = await masterKey.decrypt(ciphertext)
+      const messageJson = format.u8Arr2Utf(message)
+      body = JSON.parse(messageJson)
+    } catch (err) {
+      throw new WalletProtocolError('Invalid request body', 401, err)
+    }
+
     let innerBody: any = {}
     const init: RequestInit = body.init ?? {}
     if (init.body !== undefined && init.body !== '') {

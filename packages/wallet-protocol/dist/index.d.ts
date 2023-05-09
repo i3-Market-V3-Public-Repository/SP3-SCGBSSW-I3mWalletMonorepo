@@ -159,6 +159,9 @@ interface CodeGenerator {
 declare const defaultCodeGenerator: CodeGenerator;
 
 declare class WalletProtocolError extends Error {
+    readonly httpCode: number;
+    readonly parentError?: unknown;
+    constructor(message: string, httpCode?: number, parentError?: unknown);
 }
 declare class InvalidPinError extends WalletProtocolError {
 }

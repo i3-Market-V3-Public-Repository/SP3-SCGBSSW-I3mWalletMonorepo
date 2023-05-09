@@ -1,3 +1,4 @@
+import { DEFAULT_TOKEN_TLL } from '@wallet/lib'
 import { MetadataRecord } from '../settings-metadata'
 
 export const walletProtocolMetadata: MetadataRecord = {
@@ -10,6 +11,7 @@ export const walletProtocolMetadata: MetadataRecord = {
     {
       label: 'Wallet protocol session TTL',
       type: 'number',
+      placeholder: DEFAULT_TOKEN_TLL,
       key: 'private.connect.tokenTTL'
     }
   ]

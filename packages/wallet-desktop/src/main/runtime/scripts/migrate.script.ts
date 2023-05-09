@@ -6,7 +6,6 @@ async function _migrate (ctx: MainContext, locals: Locals, task: LabeledTaskHand
   const { versionManager } = locals
   task
     .setDetails(`Migrating your local data from version ${versionManager.settingsVersion} to version ${versionManager.softwareVersion}`)
-    .setFreezing(true)
     .update()
 
   const { keyCtx } = ctx
@@ -23,6 +22,7 @@ async function _migrate (ctx: MainContext, locals: Locals, task: LabeledTaskHand
   // Migrate store type
   const storeSettings = publicSettings.store
   if (storeSettings?.type !== currentStoreType) {
+    logger.debug(`Migrate store type from ${storeSettings?.type ?? 'default'} to '${currentStoreType}'`)
     migrateStores = true
 
     // Set default StoreBuilder settings
@@ -67,6 +67,7 @@ async function _migrate (ctx: MainContext, locals: Locals, task: LabeledTaskHand
   delete ctx.keyCtx
 
   if (migrateStores) {
+    logger.debug('Migrate stores data!')
     await storeManager.migrateStores()
   }
 
@@ -75,7 +76,7 @@ async function _migrate (ctx: MainContext, locals: Locals, task: LabeledTaskHand
 
 export const migrate: RuntimeScript = async (ctx, locals) => {
   const { taskManager } = locals
-  await taskManager.createTask('labeled', { title: 'Migrate' }, async (task) => {
+  await taskManager.createTask('labeled', { title: 'Migrate', freezing: true }, async (task) => {
     await _migrate(ctx, locals, task)
   })
 }

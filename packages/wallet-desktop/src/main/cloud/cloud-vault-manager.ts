@@ -182,7 +182,7 @@ export class CloudVaultManager {
   }
 
   get isLoggedIn (): boolean {
-    return this.locals.sharedMemoryManager.memory.cloudVaultData.state > VAULT_STATE.LOGGED_IN
+    return this.locals.sharedMemoryManager.memory.cloudVaultData.state >= VAULT_STATE.LOGGED_IN
   }
 
   get timestamps (): SyncTimestamps {
@@ -212,16 +212,9 @@ export class CloudVaultManager {
       const credentials = await this.flows.askCredentials(errorMessage)
       await this.flows.askPasswordConfirmation(credentials)
 
-      const vc = await this.flows.askRegistrationCredential(errorMessage)
-      if (vc.identity === undefined) {
-        throw new WalletDesktopError('Invalid identity', {
-          message: 'Invalid verifiable credential',
-          details: `The verifiable credential '${vc.id}' has no associated identity`
-        })
-      }
-
+      const reg = await this.flows.askRegistrationCredential(errorMessage)
       const username = credentials.username
-      const url = await this.client.getRegistrationUrl(credentials.username, credentials.password, vc.identity)
+      const url = await this.client.getRegistrationUrl(credentials.username, credentials.password, reg.identity.did)
       shm.update((mem) => ({
         ...mem,
         cloudVaultData: {
@@ -380,7 +373,7 @@ export class CloudVaultManager {
 
   // *************** Sync *************** //
   async storeVault (force = false): Promise<void> {
-    if (this.isLoggedIn) {
+    if (!this.isLoggedIn) {
       return
     }
 
@@ -402,7 +395,7 @@ export class CloudVaultManager {
   }
 
   async restoreVault (vault?: VaultStorage): Promise<void> {
-    if (this.isLoggedIn) {
+    if (!this.isLoggedIn) {
       return
     }
 

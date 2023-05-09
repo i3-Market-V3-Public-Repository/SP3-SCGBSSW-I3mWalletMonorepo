@@ -654,6 +654,11 @@ const defaultCodeGenerator = {
 };
 
 class WalletProtocolError extends Error {
+    constructor(message, httpCode = 500, parentError) {
+        super(message);
+        this.httpCode = httpCode;
+        this.parentError = parentError;
+    }
 }
 class InvalidPinError extends WalletProtocolError {
 }
@@ -960,13 +965,25 @@ class HttpResponderTransport extends ResponderTransport {
         this.rpcSubject.next({ req: reqBody, res: new HttpResponse(res) });
     }
     async dispatchEncryptedMessage(req, res, authentication) {
-        const code = format.utf2U8Arr(authentication);
-        const masterKey = await this.opts.codeGenerator.getMasterKey(code);
-        const ciphertextBase64 = await this.readRequestBody(req);
-        const ciphertext = format.base642U8Arr(ciphertextBase64);
-        const message = await masterKey.decrypt(ciphertext);
-        const messageJson = format.u8Arr2Utf(message);
-        const body = JSON.parse(messageJson);
+        let masterKey;
+        try {
+            const code = format.utf2U8Arr(authentication);
+            masterKey = await this.opts.codeGenerator.getMasterKey(code);
+        }
+        catch (err) {
+            throw new WalletProtocolError('Unauthorized token', 401, err);
+        }
+        let body;
+        try {
+            const ciphertextBase64 = await this.readRequestBody(req);
+            const ciphertext = format.base642U8Arr(ciphertextBase64);
+            const message = await masterKey.decrypt(ciphertext);
+            const messageJson = format.u8Arr2Utf(message);
+            body = JSON.parse(messageJson);
+        }
+        catch (err) {
+            throw new WalletProtocolError('Invalid request body', 401, err);
+        }
         let innerBody = {};
         const init = body.init ?? {};
         if (init.body !== undefined && init.body !== '') {
