@@ -1,0 +1,9 @@
+
+
+// The PIN gets compromised
+rule Reveal_PIN:
+  [ !PIN(X, PIN) ] --[ PinReveal(X, PIN) ]-> [ Out(PIN) ]
+
+// Compromising an agent's long-term key
+rule Reveal_DH_ltk:
+  [ !DHLtk($X, ~ltkX) ] --[ DHReveal($X) ]-> [ Out(~ltkX) ]

@@ -1,0 +1,10 @@
+define(<!beginTheory!>,<!dnl
+theory TheoryName
+begin
+
+builtins: diffie-hellman, hashing
+functions: h1/4, h2/6
+
+section{* Wallet Protocol *}
+!>)dnl
+define(<!endTheory!>,<!end!>)dnl

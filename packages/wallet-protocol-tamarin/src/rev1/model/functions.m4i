@@ -1,0 +1,3 @@
+
+define(<!calc_commitment!>, <!h1(pkA, pkB, $1, <ra, rb>)!>)
+define(<!calc_master_key!>, <!h2($1, na, nb, 'Master', A, B)!>)

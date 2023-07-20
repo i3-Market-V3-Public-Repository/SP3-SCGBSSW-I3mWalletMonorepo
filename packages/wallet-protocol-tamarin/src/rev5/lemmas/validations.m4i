@@ -1,0 +1,10 @@
+
+/*
+lemma delete_dhkey_after_use[reuse]:
+  "All K entity X #i #j
+    . SessionKey(entity, X, K)@i
+    & DHReveal(X)@j
+    & not (Ex I PIN #k. PinReveal(I, PIN)@k) ==>
+      #i < #j
+  "
+*/

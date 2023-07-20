@@ -1,0 +1,143 @@
+rule A_PIN_enter:
+let
+  PIN = <~rb, $PORT>
+  init_state('A')
+
+  tid = ~tidA
+  X = $A
+  A = $A
+  rb = ~rb
+  port = $PORT
+in
+  [ Fr(~tidA)
+  , Screen(PIN) // Backchannel
+  ]
+--[ Start(tid, $A, entity)
+  ]->
+  [ State(init, ProtocolState)
+  , !PIN(X, PIN)
+  ]
+
+
+rule A_pke:
+let
+  set_state('A')
+
+  ra = ~ra
+  ltk = ~ltkA
+  pkA = 'g'^ltk
+
+  msg_out = PKEMessage(A, pkA, ra)
+in
+  [ State(init, PrevProtocolState)
+  , Fr(~ra)
+  , Fr(~ltkA)
+  ]
+-->
+  [ State(pke, ProtocolState)
+  , DHLtk(tid, X, ltk)
+  , Out(msg_out)
+  ]
+
+
+rule A_commit:
+let
+  msg_in = PKEMessage(I, pkI, '0')
+  set_state('A')
+
+  B = I
+  pkB = pkI
+  na = ~na
+  ca = calc_commitment(na)
+  msg_out = CommitmentMessage(ca)
+in
+  [ State(pke, PrevProtocolState)
+  , In(msg_in)
+  , Fr(~na)
+  ]
+--[ Neq(pkA, pkB),
+    running(Nonce, tid, pkA, pkB, entity, na)
+  ]->
+  [ State(commitment, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_n_reveal_0:
+let
+  msg_in = CommitmentMessage(c)
+  set_state('A')
+
+  cb = c
+  msg_out = <na>
+in
+  [ State(commitment, PrevProtocolState)
+  , In(msg_in)
+  ]
+--[ Neq(cb, ca)
+  ]->
+  [ State(reveal0, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_n_reveal:
+let
+  msg_in = NonceMessage(n)
+  set_state('A')
+
+  nb = n
+  cb2 = calc_commitment(nb)
+
+  msg_out = NonceMessage(na)
+in
+  [ State(reveal0, PrevProtocolState)
+  , In(msg_in)
+  ]
+--[ Eq(cb, cb2),
+    commit(Nonce, tid, pkA, pkB, entity, nb)
+  ]->
+  [ State(reveal, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_KeyGen:
+let
+  set_state('A')
+
+  pmk = pkB^ltk
+  K = calc_master_key()
+
+  m1 = h(<pkA, pkB, K>)
+  msg_out = KeyMatchMessage(m1)
+in
+  [ State(reveal, PrevProtocolState)
+  , DHLtk(tid, X, ltk)
+  ]
+--[ SessionKey(entity, X, K)
+  , DeleteDH(X)
+  , running(SK, tid, pkA, pkB, entity, K)
+  ]->
+  [ State(key, ProtocolState)
+  , !Session(tid, X, K)
+  , Out(msg_out)
+  ]
+
+rule A_KeyMatch:
+let
+  msg_in = KeyMatchMessage(m2)
+  set_state('A')
+
+  m1 = h(<pkA, pkB, K>)
+  vm2 = h(<pkA, pkB, m1, K>) // m2 verifier
+in
+  [ State(key, PrevProtocolState)
+  , !Session(tid, X, K)
+  , In(msg_in)
+  ]
+--[ Eq(m2, vm2)
+  , commit(SK, tid, pkA, pkB, entity, K)
+  ]->
+  [ State(match, ProtocolState)
+  ]

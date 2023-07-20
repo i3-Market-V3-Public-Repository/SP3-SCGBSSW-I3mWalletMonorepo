@@ -1,0 +1,125 @@
+rule B_PIN_send:
+let
+  init_state('B')
+
+  tid = ~tidB
+  X = $B
+  B = $B
+  rb = ~rb
+  port = $PORT
+  PIN = <rb, port>
+in
+  [ Fr(~tidB)
+  , Fr(~rb)
+  ]
+--[ Start(tid, $B, entity)
+  ]->
+  [ State(init, ProtocolState)
+  , !PIN(X, PIN)
+  , Screen(PIN) // Backchannel
+  ]
+
+rule B_pke:
+let
+  msg_in = PKEMessage(I, pkI, r)
+  set_state('B')
+
+  ltk = ~ltkB
+  pkB = 'g'^ltk
+
+  A = I
+  pkA = pkI
+  ra = r
+  msg_out = PKEMessage(B, pkB, '0')
+in
+  [ State(init, PrevProtocolState)
+  , In(msg_in)
+  , Fr(~ltkB)
+  ]
+--[ Neq(pkA, pkB)
+  ]->
+  [ State(pke, ProtocolState)
+  , DHLtk(tid, X, ltk)
+  , Out(msg_out)
+  ]
+
+rule B_commit:
+let
+  msg_in = CommitmentMessage(c)
+  set_state('B')
+
+  ca = c
+  nb = ~nb
+  cb = calc_commitment(B, A, nb)
+  msg_out = CommitmentMessage(cb)
+in
+  [ State(pke, PrevProtocolState)
+  , In(msg_in)
+  , Fr(~nb)
+  ]
+--[ running(Nonce, tid, B, A, entity, nb)
+  ]->
+  [ State(commitment, ProtocolState)
+  , Out(msg_out)
+  ]
+
+rule B_n_reveal:
+let
+  msg_in = NonceMessage(n)
+  set_state('B')
+
+  na = n
+  ca2 = calc_commitment(A, B, na)
+
+  msg_out = NonceMessage(nb)
+in
+  [ State(commitment, PrevProtocolState)
+  , In(msg_in)
+  ]
+--[ Eq(ca, ca2)
+  , commit(Nonce, tid, B, A, entity, na)
+  ]->
+  [ State(reveal, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule B_KeyGen:
+let
+  set_state('B')
+
+  pmk = pkA^ltk
+  K = calc_master_key()
+in
+  [ State(reveal, PrevProtocolState)
+  , DHLtk(tid, X, ltk)
+  ]
+--[ SessionKey(entity, X, K)
+  , DeleteDH(X)
+  , running(SK, tid, B, A, entity, K)
+  ]->
+  [ State(key, ProtocolState)
+  , !Session(tid, X, K)
+  ]
+
+
+rule B_KeyMatch:
+let
+  msg_in = KeyMatchMessage(m1)
+  set_state('B')
+
+  vm1 = h(<pkA, pkB, K>) // m1 verifier
+
+  m2 = h(<pkA, pkB, m1, K>)
+  msg_out = KeyMatchMessage(m2)
+in
+  [ State(key, PrevProtocolState)
+  , !Session(tid, X, K)
+  , In(msg_in)
+  ]
+--[ Eq(m1, vm1)
+  , commit(SK, tid, B, A, entity, K)
+  ]->
+  [ State(match, ProtocolState)
+  , Out(msg_out)
+  ]

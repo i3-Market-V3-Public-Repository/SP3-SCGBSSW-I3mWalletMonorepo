@@ -1,0 +1,4 @@
+define(theoryInject(lemmas), <!dnl
+include(lemmas/execution.m4i)dnl
+include(lemmas/security-features.m4i)dnl
+!>)dnl

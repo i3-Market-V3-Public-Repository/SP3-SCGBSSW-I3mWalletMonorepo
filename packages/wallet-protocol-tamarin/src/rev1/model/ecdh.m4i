@@ -1,0 +1,15 @@
+// ------------------ Prerequisits ------------------
+
+// --- Public key infrastructure ---
+
+rule Register_DH_pk:
+let
+  pkX = 'g'^~ltkX
+in
+  [ Fr(~ltkX) ]
+--[ GenLtk($X, ~ltkX)
+  ]->
+  [ !DHLtk($X, ~ltkX)
+  , !DHPk($X, pkX)
+  , Out(pkX)
+  ]

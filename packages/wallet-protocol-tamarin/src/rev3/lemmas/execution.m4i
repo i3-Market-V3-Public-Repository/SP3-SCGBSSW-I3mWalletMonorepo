@@ -1,0 +1,9 @@
+// ------------------ Execution ------------------
+
+lemma executable:
+  exists-trace
+    "Ex tid pkA pkB K #i
+      . commit(SK, tid, pkA, pkB, 'B', K)@i
+      & not (Ex I #k. DHReveal(I)@k)
+      & not (Ex I PIN #k. PinReveal(I, PIN)@k)
+    "

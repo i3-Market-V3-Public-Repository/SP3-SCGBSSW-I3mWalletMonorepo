@@ -1,0 +1,17 @@
+// ------------------ Execution ------------------
+
+lemma executable:
+  exists-trace
+    "Ex A B K #i #j
+      . SessionKey('A', A, K)@i
+      & SessionKey('B', B, K)@j
+    "
+
+
+/*
+lemma unique_session_keys:
+  "Ex A K #i #j
+    . SessionKey('A', A, K)@i
+    & SessionKey('B', A, K)@j ==>
+      #i = #j"
+*/

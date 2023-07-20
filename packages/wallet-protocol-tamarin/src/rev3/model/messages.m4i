@@ -1,0 +1,4 @@
+define(<!PKEMessage!>, <!<'publicKeyExchange', <<$1, $2>, $3>>!>)dnl
+define(<!CommitmentMessage!>, <!<'commitment', $1>!>)dnl
+define(<!NonceMessage!>, <!<'nonce', $1>!>)dnl
+define(<!KeyMatchMessage!>, <!<'keyMatch', $1>!>)dnl

@@ -1,0 +1,13 @@
+
+lemma session_key_secrecy[use_induction]:
+  all-traces
+    "All K entity X #i
+      /* Each time a session key is generated */
+      . SessionKey(entity, X, K)@i
+      /* if any ECDH ltk was compromised */
+      & not (Ex I #k. DHReveal(I)@k)
+      /* nor the PIN */
+      & not (Ex I PIN #k. PinReveal(I, PIN)@k) ==>
+        /* the attacker cannot know the secret key */
+        not (Ex #k. K(K)@k)
+    "

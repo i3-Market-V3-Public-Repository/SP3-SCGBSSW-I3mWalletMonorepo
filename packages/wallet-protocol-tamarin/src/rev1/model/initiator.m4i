@@ -1,0 +1,115 @@
+rule A_PIN_enter:
+let
+  PIN = <~rb, $PORT>
+  init_state('A')
+
+  tid = ~tid
+  X = $A
+  ltk = ~ltkA
+  rb = ~rb
+  port = $PORT
+  A = $A
+  pkA = 'g'^~ltkA
+in
+  [ !DHLtk($A, ~ltkA)
+  , Fr(~tid)
+  , Screen(PIN) // Backchannel
+  ]
+--[ Start(tid, $A, entity)
+  ]->
+  [ State(init, ProtocolState)
+  , !PIN(X, PIN)
+  ]
+
+
+rule A_pke:
+let
+  set_state('A')
+
+  ra = ~ra
+  msg_out = <A, pkA, ra>
+in
+  [ State(init, PrevProtocolState)
+  , Fr(~ra)
+  ]
+-->
+  [ State(pke, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_commit:
+let
+  msg_in = <I, pkI>
+  set_state('A')
+
+  B = I
+  pkB = pkI
+  na = ~na
+  ca = calc_commitment(na)
+  msg_out = ca
+in
+  [ State(pke, PrevProtocolState)
+  , In(msg_in)
+  , Fr(~na)
+  ]
+--[ Neq(pkA, pkB),
+    running(Nonce, tid, A, B, entity, na)
+  ]->
+  [ State(commitment, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_n_reveal_0:
+let
+  msg_in = <c>
+  set_state('A')
+
+  cb = c
+  msg_out = <na>
+in
+  [ State(commitment, PrevProtocolState)
+  , In(msg_in)
+  ]
+--[
+  ]->
+  [ State(reveal0, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_n_reveal:
+let
+  msg_in = <n>
+  set_state('A')
+
+  nb = n
+  cb2 = calc_commitment(nb)
+
+  msg_out = <na>
+in
+  [ State(reveal0, PrevProtocolState)
+  , In(msg_in)
+  ]
+--[ Eq(cb, cb2),
+    commit(Nonce, tid, A, B, entity, nb)
+  ]->
+  [ State(reveal, ProtocolState)
+  , Out(msg_out)
+  ]
+
+
+rule A_KeyGen:
+let
+  set_state('A')
+
+  K = calc_master_key(pkB^ltk)
+in
+  [ State(reveal, PrevProtocolState)
+  ]
+--[ SessionKey(entity, X, K)
+  ]->
+  [ State(key, ProtocolState)
+  , !Session(entity, X, K)
+  ]

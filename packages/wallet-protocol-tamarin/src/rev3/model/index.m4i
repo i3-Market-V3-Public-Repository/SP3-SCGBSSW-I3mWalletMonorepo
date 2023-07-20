@@ -1,0 +1,14 @@
+include(model/state.m4i)dnl
+include(model/functions.m4i)dnl
+include(model/messages.m4i)dnl
+
+define(theoryInject(model), <!
+include(model/ecdh.m4i)dnl
+
+// ------------------ Wallet Protocol ------------------
+include(model/initiator.m4i)dnl
+include(model/responder.m4i)dnl
+
+// ------------------ Attacker ------------------
+include(model/adversary.m4i)dnl
+!>)dnl

@@ -1,0 +1,5 @@
+include(theory/variables.m4i)dnl
+include(theory/inject.m4i)dnl
+include(theory/actions.m4i)dnl
+include(theory/axioms.m4i)dnl
+include(theory/theory.m4i)dnl

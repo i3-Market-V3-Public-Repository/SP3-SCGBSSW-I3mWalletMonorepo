@@ -1,0 +1,23 @@
+dnl(/*
+##### Running and Commit
+
+We conform to the the syntax of authentication from [Lowe 1997](http://ieeexplore.ieee.org/xpl/login.jsp?tp=&arnumber=596782&url=http%3A%2F%2Fieeexplore.ieee.org%2Fxpls%2Fabs_all.jsp%3Farnumber%3D596782).
+
+A statement of the form `Running(A, B, role, data)` means that party A:
+believes they are speaking to B; is currently running the protocol as role
+`role`; and has derived the information `data`.
+
+The statement `Commit(A, B, role, data)` has the same
+meaning, but it additionally says that A has finished (some part of) the protocol
+and is committing to using the information `data`.
+
+A Running action merely logs `data` as something which
+is known, whereas a Commit action signals the intention to use the value of
+`data` in some future process.
+
+For example, data might be cryptographic material such as a shared secret, or
+randomness. Ideally, we would expect that for each `Running(A, B, role, data)` there
+wound be a corresponding `Commit(B, A, role2, data)` to pair with it.
+*/)
+define(<!running!>, <!R$1($2, $3, $4, <shift(shift(shift(shift($@))))>)!>)dnl
+define(<!commit!>, <!C$1($2, $3, $4, <shift(shift(shift(shift($@))))>)!>)dnl

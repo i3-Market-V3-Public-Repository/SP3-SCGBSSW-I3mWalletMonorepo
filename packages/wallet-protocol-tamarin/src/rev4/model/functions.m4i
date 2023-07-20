@@ -1,0 +1,2 @@
+define(<!calc_commitment!>, <!h(<pkA, pkB, $1, <ra, rb>>)!>)
+define(<!calc_master_key!>, <!h(<pmk, na, nb, 'Master', pkA, pkB, <ra, rb>>)!>)

@@ -1,0 +1,4 @@
+define(<!ProtocolName!>,<!WalletProtocol!>)dnl
+define(<!ProtocolRevision!>,<!4!>)dnl
+define(<!TheoryName!>,<!ProtocolName<!!>_Rev<!!>ProtocolRevision!>)dnl
+define(<!TheoryFileName!>,TheoryName<!.spthy!>)dnl

@@ -1,0 +1,71 @@
+define(<!State!>,<!State_$1(shift($@))!>)dnl
+
+define(<!ProtocolState!>, 
+<!entity, dnl
+tid, dnl
+X, dnl
+ltk, dnl
+A, dnl
+B, dnl
+pkA, dnl
+pkB, dnl
+ra, dnl
+rb, dnl
+na, dnl
+nb, dnl
+ca, dnl
+cb, dnl
+port dnl
+!>)dnl
+
+define(<!PrevProtocolState!>, 
+<!entity, dnl
+tid_prev, dnl
+X_prev, dnl
+ltk_prev, dnl
+A_prev, dnl
+B_prev, dnl
+pkA_prev, dnl
+pkB_prev, dnl
+ra_prev, dnl
+rb_prev, dnl
+na_prev, dnl
+nb_prev, dnl
+ca_prev, dnl
+cb_prev, dnl
+port_prev dnl
+!>)dnl
+
+define(<!init_state!>,
+<!entity = $1
+  tid = '0'
+  X = '0'
+  ltk = '0'
+  A = '0'
+  B = '0'
+  pkA = '0'
+  pkB = '0'
+  ra = '0'
+  rb = '0'
+  na = '0'
+  nb = '0'
+  ca = '0'
+  cb = '0'
+  port = '0'!>)dnl
+
+define(<!set_state!>, 
+<!entity = $1
+  tid = tid_prev
+  X = X_prev
+  ltk = ltk_prev
+  A = A_prev
+  B = B_prev
+  pkA = pkA_prev
+  pkB = pkB_prev
+  ra = ra_prev
+  rb = rb_prev
+  na = na_prev
+  nb = nb_prev
+  ca = ca_prev
+  cb = cb_prev
+  port = port_prev!>)dnl

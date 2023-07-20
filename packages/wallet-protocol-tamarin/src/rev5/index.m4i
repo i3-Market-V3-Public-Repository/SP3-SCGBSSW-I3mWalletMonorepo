@@ -1,0 +1,11 @@
+changequote(`<!',`!>')dnl
+changecom(<!/*!>,<!*/!>)dnl
+include(theory/index.m4i)dnl
+include(model/index.m4i)dnl
+include(lemmas/index.m4i)dnl
+// base wallet protocol template
+beginTheory()
+    theoryInject(axioms)
+    theoryInject(model)
+    theoryInject(lemmas)
+endTheory()
