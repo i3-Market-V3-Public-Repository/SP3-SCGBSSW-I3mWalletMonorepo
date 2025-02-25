@@ -180,7 +180,7 @@
     "object-sha": "^2.1.1",
     "rxjs": "^7.8.0",
     "uuid": "^8.3.2",
-    "web-did-resolver": "^2.0.4",
+    "web-did-resolver": "^2.0.29",
     "write-file-atomic": "^5.0.1"
   }
 }
