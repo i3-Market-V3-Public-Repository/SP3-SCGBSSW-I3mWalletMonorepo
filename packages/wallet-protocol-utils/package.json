@@ -161,6 +161,6 @@
   },
   "dependencies": {
     "@i3m/wallet-protocol": "^2.6.1",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.8.2"
   }
 }
